@@ -44,7 +44,7 @@ In bubbles view, people who don't belong to any group are collected into their o
 
 ## The group detail page
 
-Opening a group shows its name, description, color, and the full list of current members with a count, along with the tools to add or remove people. Below the member manager, a table of the members lets you change each person's relationship, last contact date and location in place, the same way as in the [people list](/features/people/).
+Opening a group shows its name, description, color, and the full list of current members. The members are shown as a table with each person's relationship to you, last contact date, location and connections to other people. Relationship, last contact and location can be changed in place, the same way as in the [people list](/features/people/). The Connections column lists how each member is related to other people. Connections to other members of the same group come first and are highlighted. A switch above the table changes the view to a network graph that shows only the members of the group. Adding and removing members is under **Add or remove members** below the table.
 
 ## Tier limits
 

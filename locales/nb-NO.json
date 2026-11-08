@@ -1612,7 +1612,13 @@
       "remove": "Fjern",
       "clearAll": "Fjern alle",
       "allSelected": "Alle elementer er allerede valgt",
-      "tableTitle": "Detaljer"
+      "connections": "Forbindelser",
+      "connectionInGroup": "Også i denne gruppen",
+      "moreConnections": "+{count} til",
+      "viewLabel": "Visning",
+      "viewList": "Liste",
+      "viewNetwork": "Nettverk",
+      "manageMembers": "Legg til eller fjern medlemmer"
     },
     "delete": {
       "button": "Slett",

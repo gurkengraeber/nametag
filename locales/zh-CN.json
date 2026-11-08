@@ -1612,7 +1612,13 @@
       "remove": "移除",
       "clearAll": "全部清除",
       "allSelected": "所有项目已被选择",
-      "tableTitle": "详情"
+      "connections": "关系",
+      "connectionInGroup": "也在此群组中",
+      "moreConnections": "另外 {count} 个",
+      "viewLabel": "视图",
+      "viewList": "列表",
+      "viewNetwork": "网络",
+      "manageMembers": "添加或移除成员"
     },
     "delete": {
       "button": "删除",

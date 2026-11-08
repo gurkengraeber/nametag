@@ -1612,7 +1612,13 @@
       "remove": "Verwijderen",
       "clearAll": "Alles wissen",
       "allSelected": "Alle items zijn al geselecteerd",
-      "tableTitle": "Details"
+      "connections": "Verbindingen",
+      "connectionInGroup": "Ook in deze groep",
+      "moreConnections": "+{count} meer",
+      "viewLabel": "Weergave",
+      "viewList": "Lijst",
+      "viewNetwork": "Netwerk",
+      "manageMembers": "Leden toevoegen of verwijderen"
     },
     "delete": {
       "button": "Verwijderen",

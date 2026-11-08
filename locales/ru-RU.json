@@ -1612,7 +1612,13 @@
       "remove": "Удалить",
       "clearAll": "Очистить всё",
       "allSelected": "Все элементы уже выбраны",
-      "tableTitle": "Подробности"
+      "connections": "Связи",
+      "connectionInGroup": "Тоже в этой группе",
+      "moreConnections": "ещё {count}",
+      "viewLabel": "Вид",
+      "viewList": "Список",
+      "viewNetwork": "Сеть",
+      "manageMembers": "Добавить или удалить участников"
     },
     "delete": {
       "button": "Удалить",

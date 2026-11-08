@@ -12,6 +12,16 @@ import {
 } from './QuickEditCells';
 import { formatCanonicalName, type NameDisplayFormat } from '@/lib/nameUtils';
 
+interface GroupMemberConnection {
+  id: string;
+  name: string;
+  middleName: string | null;
+  surname: string | null;
+  secondLastName: string | null;
+  nickname: string | null;
+  typeLabel: string | null;
+}
+
 interface GroupMemberRow {
   id: string;
   name: string;
@@ -24,13 +34,77 @@ interface GroupMemberRow {
   lastContact: Date | string | null;
   relationshipToUserId: string | null;
   addresses: Array<{ locality: string | null; country: string | null }>;
+  /** This person's relationships to other people, in either direction already merged. */
+  connections: GroupMemberConnection[];
 }
 
-interface GroupMembersTableProps {
+export interface GroupMembersTableProps {
   members: GroupMemberRow[];
   relationshipTypes: QuickEditRelationshipType[];
   nameOrder?: 'WESTERN' | 'EASTERN';
   nameDisplayFormat?: NameDisplayFormat;
+}
+
+const MAX_VISIBLE_CONNECTIONS = 6;
+
+/**
+ * The relationships of one member to other people. Connections to other
+ * members of the same group come first and are highlighted.
+ */
+function ConnectionsCell({
+  connections,
+  memberIds,
+  nameOrder,
+  nameDisplayFormat,
+}: {
+  connections: GroupMemberConnection[];
+  memberIds: Set<string>;
+  nameOrder?: 'WESTERN' | 'EASTERN';
+  nameDisplayFormat?: NameDisplayFormat;
+}) {
+  const t = useTranslations('groups.members');
+
+  if (connections.length === 0) {
+    return <span className="text-sm text-muted">{'\u2014'}</span>;
+  }
+
+  const ordered = [...connections].sort(
+    (a, b) => Number(memberIds.has(b.id)) - Number(memberIds.has(a.id)),
+  );
+  const visible = ordered.slice(0, MAX_VISIBLE_CONNECTIONS);
+  const hidden = ordered.slice(MAX_VISIBLE_CONNECTIONS);
+
+  return (
+    <div className="flex flex-wrap gap-1 min-w-[18rem] max-w-md">
+      {visible.map((connection, index) => {
+        const inGroup = memberIds.has(connection.id);
+        return (
+          <Link
+            // The same person can be connected through several relationship types
+            key={`${connection.id}:${index}`}
+            href={`/people/${connection.id}`}
+            title={inGroup ? t('connectionInGroup') : undefined}
+            className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs whitespace-nowrap transition-colors ${
+              inGroup
+                ? 'bg-primary/10 text-primary font-medium hover:bg-primary/20'
+                : 'bg-surface-elevated text-muted hover:text-foreground'
+            }`}
+          >
+            {connection.typeLabel && <span className="opacity-70">{connection.typeLabel}:</span>}
+            <span>{formatCanonicalName(connection, nameOrder, nameDisplayFormat)}</span>
+          </Link>
+        );
+      })}
+      {hidden.length > 0 && (
+        <span
+          className="inline-flex items-center px-2 py-0.5 rounded text-xs text-muted"
+          title={hidden.map((connection) => formatCanonicalName(connection, nameOrder, nameDisplayFormat)).join(', ')}
+        >
+          {t('moreConnections', { count: hidden.length })}
+        </span>
+      )}
+    </div>
+  );
 }
 
 /**
@@ -50,13 +124,14 @@ export default function GroupMembersTable({
     return null;
   }
 
+  const memberIds = new Set(members.map((member) => member.id));
+
   const sortedMembers = [...members].sort((a, b) =>
     formatCanonicalName(a, nameOrder).localeCompare(formatCanonicalName(b, nameOrder)),
   );
 
   return (
-    <div className="mt-6">
-      <h2 className="text-sm font-medium text-foreground mb-2">{t('tableTitle')}</h2>
+    <div>
       <div className="overflow-x-auto border border-border rounded-lg">
         <table className="min-w-full divide-y divide-border">
           <thead className="bg-surface-elevated">
@@ -72,6 +147,9 @@ export default function GroupMembersTable({
               </th>
               <th className="px-4 py-2 text-left text-xs font-medium text-muted uppercase tracking-wider">
                 {tPeople('quickEdit.location')}
+              </th>
+              <th className="px-4 py-2 text-left text-xs font-medium text-muted uppercase tracking-wider">
+                {t('connections')}
               </th>
             </tr>
           </thead>
@@ -103,6 +181,14 @@ export default function GroupMembersTable({
                       personId={member.id}
                       city={member.addresses[0]?.locality ?? null}
                       country={member.addresses[0]?.country ?? null}
+                    />
+                  </td>
+                  <td className="px-4 py-3 align-top">
+                    <ConnectionsCell
+                      connections={member.connections}
+                      memberIds={memberIds}
+                      nameOrder={nameOrder}
+                      nameDisplayFormat={nameDisplayFormat}
                     />
                   </td>
                 </tr>

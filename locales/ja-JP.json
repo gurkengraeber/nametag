@@ -1612,7 +1612,13 @@
       "remove": "削除",
       "clearAll": "すべてクリア",
       "allSelected": "すべてのアイテムがすでに選択されています",
-      "tableTitle": "詳細"
+      "connections": "つながり",
+      "connectionInGroup": "このグループにも所属",
+      "moreConnections": "ほか{count}件",
+      "viewLabel": "表示",
+      "viewList": "リスト",
+      "viewNetwork": "ネットワーク",
+      "manageMembers": "メンバーを追加または削除"
     },
     "delete": {
       "button": "削除",

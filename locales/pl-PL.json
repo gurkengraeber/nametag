@@ -1612,7 +1612,13 @@
       "remove": "Usuń",
       "clearAll": "Wyczyść wszystko",
       "allSelected": "Wszystkie elementy są już zaznaczone",
-      "tableTitle": "Szczegóły"
+      "connections": "Powiązania",
+      "connectionInGroup": "Także w tej grupie",
+      "moreConnections": "+{count} więcej",
+      "viewLabel": "Widok",
+      "viewList": "Lista",
+      "viewNetwork": "Sieć",
+      "manageMembers": "Dodaj lub usuń członków"
     },
     "delete": {
       "button": "Usuń",
