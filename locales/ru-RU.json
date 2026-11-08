@@ -153,7 +153,15 @@
         "ruRU": "Русский (Russian)",
         "nlNL": "Nederlands (Dutch)",
         "frFR": "Français (French)",
-        "plPL": "Polski (Polish)"
+        "plPL": "Polski (Polish)",
+        "error": "Не удалось сменить язык. Попробуйте ещё раз."
+      },
+      "namesTitle": "Имена",
+      "namesDescription": "Выберите, как записываются имена и какие части показываются. Пример меняется вместе с выбором.",
+      "namePreview": {
+        "title": "Так выглядит имя",
+        "page": "На странице человека",
+        "compact": "В списках и на графе"
       }
     },
     "notifications": {

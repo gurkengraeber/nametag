@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { toast } from 'sonner';
 import SettingsMessage from '@/components/ui/SettingsMessage';
 
 interface WeeklyDigestSettingsProps {
@@ -21,7 +22,6 @@ export default function WeeklyDigestSettings({ currentEnabled, currentWeekday, d
   const [weekday, setWeekday] = useState(currentWeekday);
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState('');
-  const [isSuccess, setIsSuccess] = useState(false);
 
   const save = async (nextEnabled: boolean, nextWeekday: number) => {
     const previousEnabled = enabled;
@@ -37,7 +37,6 @@ export default function WeeklyDigestSettings({ currentEnabled, currentWeekday, d
     setWeekday(nextWeekday);
     setIsLoading(true);
     setMessage('');
-    setIsSuccess(false);
 
     try {
       const response = await fetch('/api/user/weekly-digest', {
@@ -54,21 +53,15 @@ export default function WeeklyDigestSettings({ currentEnabled, currentWeekday, d
         setEnabled(previousEnabled);
         setWeekday(previousWeekday);
         setMessage(data.error || t('digestError'));
-        setIsSuccess(false);
         return;
       }
 
-      setMessage(t('digestSuccess'));
-      setIsSuccess(true);
+      toast.success(t('digestSuccess'));
       router.refresh();
-
-      // Clear success message after 2 seconds
-      setTimeout(() => setMessage(''), 2000);
     } catch {
       setEnabled(previousEnabled);
       setWeekday(previousWeekday);
       setMessage(t('digestError'));
-      setIsSuccess(false);
     } finally {
       setIsLoading(false);
     }
@@ -87,7 +80,7 @@ export default function WeeklyDigestSettings({ currentEnabled, currentWeekday, d
   return (
     <div className="space-y-4">
       <label
-        className={`flex items-center justify-between gap-4 ${disabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+        className={`flex items-center justify-between gap-4 min-h-11 ${disabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
       >
         <span className="text-foreground">{t('digestToggle')}</span>
         <button
@@ -118,7 +111,7 @@ export default function WeeklyDigestSettings({ currentEnabled, currentWeekday, d
             value={weekday}
             onChange={handleWeekdayChange}
             disabled={disabled || isLoading}
-            className="w-full max-w-xs px-3 py-2 border border-border rounded-lg bg-surface text-foreground focus:ring-2 focus:ring-primary focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full max-w-xs min-h-11 px-3 py-2 border border-border rounded-lg bg-surface text-foreground focus:ring-2 focus:ring-primary focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {WEEKDAY_OPTIONS.map((day) => (
               <option key={day} value={day}>
@@ -129,7 +122,7 @@ export default function WeeklyDigestSettings({ currentEnabled, currentWeekday, d
         </div>
       )}
 
-      <SettingsMessage message={message} isSuccess={isSuccess} />
+      <SettingsMessage message={message} isSuccess={false} />
     </div>
   );
 }

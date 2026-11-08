@@ -153,7 +153,15 @@
         "ruRU": "Русский (Russian)",
         "nlNL": "Nederlands (Dutch)",
         "frFR": "Français (French)",
-        "plPL": "Polski"
+        "plPL": "Polski",
+        "error": "Nie udało się zmienić języka. Spróbuj ponownie."
+      },
+      "namesTitle": "Imiona i nazwiska",
+      "namesDescription": "Wybierz, jak zapisywane są imiona i nazwiska i które części są widoczne. Przykład zmienia się wraz z wyborem.",
+      "namePreview": {
+        "title": "Tak wygląda imię i nazwisko",
+        "page": "Na stronie osoby",
+        "compact": "Na listach i w grafie"
       }
     },
     "notifications": {

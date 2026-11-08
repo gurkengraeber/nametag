@@ -122,7 +122,7 @@ export default function LanguageSelector({
       window.location.reload();
     } catch (error) {
       console.error('Error updating language:', error);
-      toast.error('Failed to update language. Please try again.');
+      toast.error(t('error'));
       setSelectedLanguage(currentLanguage);
       setIsLoading(false);
     }

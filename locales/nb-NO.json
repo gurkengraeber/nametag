@@ -153,7 +153,15 @@
         "ruRU": "Русский (Russian)",
         "nlNL": "Nederlands (Dutch)",
         "frFR": "Français (French)",
-        "plPL": "Polski (Polish)"
+        "plPL": "Polski (Polish)",
+        "error": "Kunne ikke endre språk. Prøv igjen."
+      },
+      "namesTitle": "Navn",
+      "namesDescription": "Velg hvordan navn skrives og hvilke deler som vises. Eksempelet endrer seg mens du velger.",
+      "namePreview": {
+        "title": "Slik ser et navn ut",
+        "page": "På en persons side",
+        "compact": "I lister og grafen"
       }
     },
     "notifications": {

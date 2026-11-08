@@ -153,7 +153,15 @@
         "ruRU": "Русский (Russian)",
         "nlNL": "Nederlands (Dutch)",
         "frFR": "Français (French)",
-        "plPL": "Polski (Polish)"
+        "plPL": "Polski (Polish)",
+        "error": "Impossibile cambiare la lingua. Riprova."
+      },
+      "namesTitle": "Nomi",
+      "namesDescription": "Scegli come vengono scritti i nomi e quali parti mostrare. L'esempio cambia mentre scegli.",
+      "namePreview": {
+        "title": "Ecco come appare un nome",
+        "page": "Nella pagina di una persona",
+        "compact": "Negli elenchi e nel grafo"
       }
     },
     "notifications": {

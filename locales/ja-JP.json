@@ -153,7 +153,15 @@
         "ruRU": "Русский (Russian)",
         "nlNL": "Nederlands (Dutch)",
         "frFR": "Français (French)",
-        "plPL": "Polski (Polish)"
+        "plPL": "Polski (Polish)",
+        "error": "言語を変更できませんでした。もう一度お試しください。"
+      },
+      "namesTitle": "名前",
+      "namesDescription": "名前の書き方と表示する部分を選びます。例は選択に合わせて変わります。",
+      "namePreview": {
+        "title": "名前の見え方",
+        "page": "人物のページ",
+        "compact": "一覧とグラフ"
       }
     },
     "notifications": {

@@ -272,7 +272,7 @@ export default function NotificationChannelsCard({
       <h2 className="text-xl font-bold text-foreground mb-4">{t('channelsTitle')}</h2>
       <p className="text-muted mb-6">{t('channelsDescription')}</p>
 
-      <div className="flex items-center justify-between py-3 border-b border-border">
+      <div className="flex items-center justify-between py-3 min-h-11 border-b border-border">
         <span className="text-foreground">{t('channelEmail')}</span>
         <button
           type="button"

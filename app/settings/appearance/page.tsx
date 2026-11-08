@@ -2,8 +2,7 @@ import { auth } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import ThemeToggle from '@/components/ThemeToggle';
 import DateFormatSelector from '@/components/DateFormatSelector';
-import NameOrderSelector from '@/components/NameOrderSelector';
-import NameDisplayFormatSelector from '@/components/NameDisplayFormatSelector';
+import NameStyleSettings from '@/components/settings/NameStyleSettings';
 import LanguageSelector from '@/components/LanguageSelector';
 import GraphDisplaySelector from '@/components/GraphDisplaySelector';
 import InstallAppSettings from '@/components/InstallAppSettings';
@@ -65,26 +64,18 @@ export default async function AppearanceSettingsPage() {
         <DateFormatSelector userId={session.user.id} currentFormat={currentDateFormat} />
       </div>
 
-      {/* Name Display Order Settings */}
+      {/* Name order and format, with a live example */}
       <div className="bg-surface shadow rounded-lg p-6">
         <h2 className="text-xl font-bold text-foreground mb-4">
-          {t('nameOrderTitle')}
+          {t('namesTitle')}
         </h2>
         <p className="text-muted mb-6">
-          {t('nameOrderDescription')}
+          {t('namesDescription')}
         </p>
-        <NameOrderSelector currentOrder={currentNameOrder} />
-      </div>
-
-      {/* Name Display Format Settings */}
-      <div className="bg-surface shadow rounded-lg p-6">
-        <h2 className="text-xl font-bold text-foreground mb-4">
-          {t('nameDisplayFormatTitle')}
-        </h2>
-        <p className="text-muted mb-6">
-          {t('nameDisplayFormatDescription')}
-        </p>
-        <NameDisplayFormatSelector currentFormat={currentNameDisplayFormat} />
+        <NameStyleSettings
+          currentOrder={currentNameOrder}
+          currentFormat={currentNameDisplayFormat}
+        />
       </div>
 
       {/* Network Graph Display Settings */}
