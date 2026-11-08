@@ -76,6 +76,8 @@ function makePerson(overrides: Partial<PersonRow> = {}): PersonRow {
     photo: null,
     lastContact: null,
     relationshipToUser: null,
+    relationshipToUserId: null,
+    addresses: [],
     groups: [],
     relationshipsFrom: [],
     relationshipsTo: [],
@@ -90,6 +92,7 @@ const defaultTranslations: React.ComponentProps<typeof PeopleListClient>['transl
   relationshipToUser: 'Relationship',
   groups: 'Groups',
   lastContact: 'Last Contact',
+  location: 'Location',
   actions: 'Actions',
   indirect: 'Indirect',
   orphanWarning: 'This person has no relationships',
@@ -119,7 +122,6 @@ function defaultProps(
     groupFilter: '',
     relationshipFilter: '',
     cfFilter: null,
-    dateFormat: 'MDY',
     availableGroups: [],
     relationshipTypes: [],
     customFieldTemplates: [],
@@ -180,7 +182,7 @@ describe('PeopleListClient', () => {
           </Wrapper>
         );
 
-        expect(screen.getByText('08/10/2026')).toBeInTheDocument();
+        expect(screen.getByLabelText('Last Contact')).toHaveValue('2026-08-10');
       });
     });
 
@@ -225,16 +227,18 @@ describe('PeopleListClient', () => {
       expect(viewLink).toHaveAttribute('href', '/people/p-1');
     });
 
-    it('renders relationship badge when person has a relationship', () => {
+    it('selects the relationship type of a person in the relationship cell', () => {
       render(
         <Wrapper>
           <PeopleListClient
             {...defaultProps({
+              relationshipTypes: [{ id: 'rt-1', label: 'Friend', color: '#10B981' }],
               people: [
                 makePerson({
                   id: 'p-1',
                   name: 'Alice',
                   relationshipToUser: { label: 'Friend', color: '#10B981' },
+                  relationshipToUserId: 'rt-1',
                 }),
               ],
             })}
@@ -242,7 +246,7 @@ describe('PeopleListClient', () => {
         </Wrapper>
       );
 
-      expect(screen.getByText('Friend')).toBeInTheDocument();
+      expect(screen.getByLabelText('Relationship to User')).toHaveValue('rt-1');
     });
 
     it('renders indirect badge when person has no direct relationship', () => {
@@ -264,7 +268,8 @@ describe('PeopleListClient', () => {
         </Wrapper>
       );
 
-      expect(screen.getByText('Indirect')).toBeInTheDocument();
+      expect(screen.getByLabelText('Relationship to User')).toHaveValue('');
+      expect(screen.getByRole('option', { name: 'Indirect' })).toBeInTheDocument();
     });
 
     it('renders group badges for person', () => {
@@ -520,7 +525,8 @@ describe('PeopleListClient', () => {
       );
 
       expect(screen.getByText('All relationships')).toBeInTheDocument();
-      expect(screen.getByText('Friend')).toBeInTheDocument();
+      // Once in the filter and once in the relationship cell of the one row
+      expect(screen.getAllByText('Friend')).toHaveLength(2);
     });
   });
 

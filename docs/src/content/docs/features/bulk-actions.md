@@ -11,6 +11,8 @@ When you're organizing a large import or cleaning up your contact list, editing 
 
 On the People page, checkboxes appear next to each contact. Check the ones you want to act on, or select all, to build your selection before choosing an action.
 
+If you filter the list first (by group, relationship or custom field), **select all** only reaches the people that filter shows, on every page. With no filter, it reaches everyone.
+
 ## Bulk delete
 
 Delete every selected contact at once. Like a single-person delete, they go to trash rather than being removed immediately, so you have 30 days to restore them if needed. A confirmation modal shows how many contacts are about to be deleted before anything happens.

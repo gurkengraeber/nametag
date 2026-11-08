@@ -1559,7 +1559,13 @@
       "dropzoneActive": "Rilascia immagine qui",
       "close": "Chiudi"
     },
-    "viewPhoto": "Vedi foto"
+    "viewPhoto": "Vedi foto",
+    "quickEdit": {
+      "location": "Luogo",
+      "cityPlaceholder": "Città",
+      "countryPlaceholder": "Paese",
+      "saveError": "Impossibile salvare la modifica"
+    }
   },
   "groups": {
     "title": "Gruppi",
@@ -1605,7 +1611,14 @@
       "errorConnection": "Impossibile connettersi al server",
       "remove": "Rimuovi",
       "clearAll": "Cancella tutti",
-      "allSelected": "Tutti gli elementi sono già selezionati"
+      "allSelected": "Tutti gli elementi sono già selezionati",
+      "connections": "Connessioni",
+      "connectionInGroup": "Anche in questo gruppo",
+      "moreConnections": "+{count} altre",
+      "viewLabel": "Vista",
+      "viewList": "Elenco",
+      "viewNetwork": "Rete",
+      "manageMembers": "Aggiungi o rimuovi membri"
     },
     "delete": {
       "button": "Elimina",

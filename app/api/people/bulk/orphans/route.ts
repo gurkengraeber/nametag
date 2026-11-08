@@ -2,6 +2,7 @@ import { prisma } from '@/lib/prisma';
 import { formatFullName } from '@/lib/nameUtils';
 import { apiResponse, handleApiError, parseRequestBody, withAuth } from '@/lib/api-utils';
 import { validateRequest, bulkOrphansSchema } from '@/lib/validations';
+import { buildPeopleWhere } from '@/lib/people-filter';
 
 export const POST = withAuth(async (request, session) => {
   try {
@@ -9,7 +10,7 @@ export const POST = withAuth(async (request, session) => {
     const validation = validateRequest(bulkOrphansSchema, body);
     if (!validation.success) return validation.response;
 
-    const { personIds, selectAll } = validation.data;
+    const { personIds, selectAll, filter } = validation.data;
 
     // Fetch user's nameOrder preference
     const user = await prisma.user.findUnique({
@@ -21,7 +22,7 @@ export const POST = withAuth(async (request, session) => {
     let targetIds: string[];
     if (selectAll) {
       const allPeople = await prisma.person.findMany({
-        where: { userId: session.user.id, deletedAt: null },
+        where: buildPeopleWhere(session.user.id, filter),
         select: { id: true },
       });
       targetIds = allPeople.map((p) => p.id);

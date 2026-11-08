@@ -9,9 +9,10 @@ import BulkDeleteModal from './BulkDeleteModal';
 import BulkGroupAssignModal from './BulkGroupAssignModal';
 import BulkRelationshipModal from './BulkRelationshipModal';
 import PersonAvatar from './PersonPhoto';
+import { RelationshipCell, LastContactCell, LocationCell, toDateInputValue } from './QuickEditCells';
 import { formatCanonicalName, type NameDisplayFormat } from '@/lib/nameUtils';
-import { formatDate, parseCalendarDate, type DateFormat } from '@/lib/date-format';
 import CustomFieldFilter from './customFields/CustomFieldFilter';
+import { formatCustomFieldFilter, type PeopleFilter } from '@/lib/people-filter';
 import type { CustomFieldTemplate } from '@prisma/client';
 
 interface PersonRow {
@@ -25,6 +26,8 @@ interface PersonRow {
   photo: string | null;
   lastContact: Date | null;
   relationshipToUser: { label: string; color: string | null } | null;
+  relationshipToUserId: string | null;
+  addresses: Array<{ locality: string | null; country: string | null }>;
   groups: Array<{ groupId: string; group: { name: string; color: string | null } }>;
   relationshipsFrom: Array<{ id: string }>;
   relationshipsTo: Array<{ id: string }>;
@@ -52,7 +55,6 @@ interface PeopleListClientProps {
   groupFilter: string;
   relationshipFilter: string;
   cfFilter: { slug: string; value: string } | null;
-  dateFormat: DateFormat;
   availableGroups: Group[];
   relationshipTypes: RelationshipType[];
   customFieldTemplates: CustomFieldTemplate[];
@@ -65,6 +67,7 @@ interface PeopleListClientProps {
     relationshipToUser: string;
     groups: string;
     lastContact: string;
+    location: string;
     actions: string;
     indirect: string;
     orphanWarning: string;
@@ -134,7 +137,6 @@ export default function PeopleListClient({
   groupFilter,
   relationshipFilter,
   cfFilter,
-  dateFormat,
   availableGroups,
   relationshipTypes,
   customFieldTemplates,
@@ -166,6 +168,16 @@ export default function PeopleListClient({
 
   // Group state (for inline creation in modal)
   const [groups, setGroups] = useState<Group[]>(availableGroups);
+
+  // What "select all" means: everyone the active filters match, on every page
+  const activeFilter = useMemo<PeopleFilter>(
+    () => ({
+      ...(groupFilter ? { group: groupFilter } : {}),
+      ...(relationshipFilter ? { relationship: relationshipFilter } : {}),
+      ...(cfFilter ? { cf: formatCustomFieldFilter(cfFilter) } : {}),
+    }),
+    [groupFilter, relationshipFilter, cfFilter],
+  );
 
   const pageIds = useMemo(() => people.map((p) => p.id), [people]);
   const allPageSelected = pageIds.length > 0 && pageIds.every((id) => selectedIds.has(id));
@@ -386,6 +398,9 @@ export default function PeopleListClient({
                     {sortBy === 'lastContact' && <span className="text-primary">{order === 'asc' ? '\u2191' : '\u2193'}</span>}
                   </Link>
                 </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted uppercase tracking-wider">
+                  {tt.location}
+                </th>
                 <th className="px-6 py-3 text-right text-xs font-medium text-muted uppercase tracking-wider">
                   {tt.actions}
                 </th>
@@ -446,22 +461,13 @@ export default function PeopleListClient({
                     <td className="hidden lg:table-cell px-6 py-4 whitespace-nowrap text-sm text-muted">
                       {person.nickname ? `'${person.nickname}'` : '\u2014'}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      {person.relationshipToUser ? (
-                        <span
-                          className="inline-flex items-center px-2 py-1 rounded text-xs font-medium"
-                          style={{
-                            backgroundColor: person.relationshipToUser.color ? `${person.relationshipToUser.color}20` : 'var(--badge-bg)',
-                            color: person.relationshipToUser.color || 'var(--badge-text)',
-                          }}
-                        >
-                          {person.relationshipToUser.label}
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium text-muted bg-surface-elevated">
-                          {tt.indirect}
-                        </span>
-                      )}
+                    <td className="px-4 py-3 whitespace-nowrap">
+                      <RelationshipCell
+                        personId={person.id}
+                        value={person.relationshipToUserId}
+                        types={relationshipTypes}
+                        onSaved={() => router.refresh()}
+                      />
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex flex-wrap gap-1">
@@ -480,8 +486,15 @@ export default function PeopleListClient({
                         {person.groups.length === 0 && <span className="text-sm text-muted">{'\u2014'}</span>}
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-muted">
-                      {person.lastContact ? formatDate(parseCalendarDate(person.lastContact), dateFormat) : '\u2014'}
+                    <td className="px-4 py-3 whitespace-nowrap">
+                      <LastContactCell personId={person.id} value={toDateInputValue(person.lastContact)} />
+                    </td>
+                    <td className="px-4 py-3 whitespace-nowrap">
+                      <LocationCell
+                        personId={person.id}
+                        city={person.addresses[0]?.locality ?? null}
+                        country={person.addresses[0]?.country ?? null}
+                      />
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right">
                       <div className="flex justify-end gap-3">
@@ -650,6 +663,7 @@ export default function PeopleListClient({
         onClose={() => setShowDeleteModal(false)}
         selectedIds={Array.from(selectedIds)}
         selectAll={selectAllPages}
+        filter={activeFilter}
         selectedNames={selectedNames}
         totalCount={totalCount}
         onSuccess={handleDeleteSuccess}
@@ -660,6 +674,7 @@ export default function PeopleListClient({
         onClose={() => setShowGroupModal(false)}
         selectedIds={Array.from(selectedIds)}
         selectAll={selectAllPages}
+        filter={activeFilter}
         totalCount={totalCount}
         availableGroups={groups}
         onSuccess={handleSuccess}
@@ -671,6 +686,7 @@ export default function PeopleListClient({
         onClose={() => setShowRelationshipModal(false)}
         selectedIds={Array.from(selectedIds)}
         selectAll={selectAllPages}
+        filter={activeFilter}
         totalCount={totalCount}
         relationshipTypes={relationshipTypes}
         onSuccess={handleSuccess}

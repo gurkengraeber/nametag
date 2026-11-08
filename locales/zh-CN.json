@@ -1559,7 +1559,13 @@
       "dropzoneActive": "在此处放置图像",
       "close": "关闭"
     },
-    "viewPhoto": "查看照片"
+    "viewPhoto": "查看照片",
+    "quickEdit": {
+      "location": "所在地",
+      "cityPlaceholder": "城市",
+      "countryPlaceholder": "国家",
+      "saveError": "无法保存更改"
+    }
   },
   "groups": {
     "title": "分组",
@@ -1605,7 +1611,14 @@
       "errorConnection": "无法连接到服务器",
       "remove": "移除",
       "clearAll": "全部清除",
-      "allSelected": "所有项目已被选择"
+      "allSelected": "所有项目已被选择",
+      "connections": "关系",
+      "connectionInGroup": "也在此群组中",
+      "moreConnections": "另外 {count} 个",
+      "viewLabel": "视图",
+      "viewList": "列表",
+      "viewNetwork": "网络",
+      "manageMembers": "添加或移除成员"
     },
     "delete": {
       "button": "删除",

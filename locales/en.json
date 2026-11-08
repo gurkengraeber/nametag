@@ -1559,7 +1559,13 @@
       "dropzoneActive": "Drop image here",
       "close": "Close"
     },
-    "viewPhoto": "View photo"
+    "viewPhoto": "View photo",
+    "quickEdit": {
+      "location": "Location",
+      "cityPlaceholder": "City",
+      "countryPlaceholder": "Country",
+      "saveError": "Could not save the change"
+    }
   },
   "groups": {
     "title": "Groups",
@@ -1605,7 +1611,14 @@
       "errorConnection": "Unable to connect to server",
       "remove": "Remove",
       "clearAll": "Clear all",
-      "allSelected": "All items are already selected"
+      "allSelected": "All items are already selected",
+      "connections": "Connections",
+      "connectionInGroup": "Also in this group",
+      "moreConnections": "+{count} more",
+      "viewLabel": "View",
+      "viewList": "List",
+      "viewNetwork": "Network",
+      "manageMembers": "Add or remove members"
     },
     "delete": {
       "button": "Delete",

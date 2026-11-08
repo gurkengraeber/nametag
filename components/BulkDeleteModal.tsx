@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import ConfirmationModal from './ui/ConfirmationModal';
 import { useSearchIndex } from './SearchIndexProvider';
+import type { PeopleFilter } from '@/lib/people-filter';
 
 interface Orphan {
   id: string;
@@ -15,6 +16,8 @@ interface BulkDeleteModalProps {
   onClose: () => void;
   selectedIds: string[];
   selectAll: boolean;
+  /** The active filters of the people list, so "all" means the filtered people. */
+  filter?: PeopleFilter;
   selectedNames: string[];
   totalCount: number;
   onSuccess: () => void;
@@ -25,6 +28,7 @@ export default function BulkDeleteModal({
   onClose,
   selectedIds,
   selectAll,
+  filter,
   selectedNames,
   totalCount,
   onSuccess,
@@ -60,7 +64,7 @@ export default function BulkDeleteModal({
       fetch('/api/people/bulk/orphans', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(selectAll ? { selectAll: true } : { personIds: selectedIds }),
+        body: JSON.stringify(selectAll ? { selectAll: true, filter } : { personIds: selectedIds }),
         signal: controller.signal,
       })
         .then((res) => res.json())
@@ -77,7 +81,7 @@ export default function BulkDeleteModal({
 
       return () => controller.abort();
     }
-  }, [isOpen, selectedIds, selectAll]);
+  }, [isOpen, selectedIds, selectAll, filter]);
 
   const handleDelete = async () => {
     setIsDeleting(true);
@@ -89,7 +93,7 @@ export default function BulkDeleteModal({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           action: 'delete',
-          ...(selectAll ? { selectAll: true } : { personIds: selectedIds }),
+          ...(selectAll ? { selectAll: true, filter } : { personIds: selectedIds }),
           deleteOrphans,
           orphanIds: orphans.map((o) => o.id),
           deleteFromCardDav,

@@ -1559,7 +1559,13 @@
       "dropzoneActive": "Slipp bildet her",
       "close": "Lukk"
     },
-    "viewPhoto": "Vis bilde"
+    "viewPhoto": "Vis bilde",
+    "quickEdit": {
+      "location": "Sted",
+      "cityPlaceholder": "By",
+      "countryPlaceholder": "Land",
+      "saveError": "Kunne ikke lagre endringen"
+    }
   },
   "groups": {
     "title": "Grupper",
@@ -1605,7 +1611,14 @@
       "errorConnection": "Kan ikke koble til serveren",
       "remove": "Fjern",
       "clearAll": "Fjern alle",
-      "allSelected": "Alle elementer er allerede valgt"
+      "allSelected": "Alle elementer er allerede valgt",
+      "connections": "Forbindelser",
+      "connectionInGroup": "Også i denne gruppen",
+      "moreConnections": "+{count} til",
+      "viewLabel": "Visning",
+      "viewList": "Liste",
+      "viewNetwork": "Nettverk",
+      "manageMembers": "Legg til eller fjern medlemmer"
     },
     "delete": {
       "button": "Slett",

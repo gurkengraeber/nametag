@@ -5,6 +5,7 @@ import { prisma } from '@/lib/prisma';
 import DeleteGroupButton from '@/components/DeleteGroupButton';
 import Navigation from '@/components/Navigation';
 import GroupMembersManager from '@/components/GroupMembersManager';
+import GroupMembersView from '@/components/GroupMembersView';
 import { getTranslations } from 'next-intl/server';
 import { getUserDisplayPreferences } from '@/lib/user-preferences';
 
@@ -24,7 +25,7 @@ export default async function GroupDetailsPage({
 
   const { id } = await params;
 
-  const [group, allPeople, preferences] = await Promise.all([
+  const [group, allPeople, preferences, relationshipTypes] = await Promise.all([
     prisma.group.findUnique({
       where: {
         id,
@@ -41,10 +42,38 @@ export default async function GroupDetailsPage({
               select: {
                 id: true,
                 name: true,
+                middleName: true,
                 surname: true,
+                secondLastName: true,
                 nickname: true,
                 displayNameOverride: true,
                 photo: true,
+                lastContact: true,
+                relationshipToUserId: true,
+                addresses: {
+                  orderBy: { createdAt: 'asc' },
+                  take: 1,
+                  select: { locality: true, country: true },
+                },
+                relationshipsFrom: {
+                  where: { deletedAt: null, relatedPerson: { deletedAt: null } },
+                  select: {
+                    relatedPerson: {
+                      select: {
+                        id: true,
+                        name: true,
+                        middleName: true,
+                        surname: true,
+                        secondLastName: true,
+                        nickname: true,
+                      },
+                    },
+                    relationshipType: {
+                      where: { deletedAt: null },
+                      select: { label: true },
+                    },
+                  },
+                },
               },
             },
           },
@@ -69,6 +98,11 @@ export default async function GroupDetailsPage({
       },
     }),
     getUserDisplayPreferences(session.user.id),
+    prisma.relationshipType.findMany({
+      where: { userId: session.user.id, deletedAt: null },
+      orderBy: { label: 'asc' },
+      select: { id: true, label: true, color: true },
+    }),
   ]);
   const { nameOrder, nameDisplayFormat } = preferences;
 
@@ -77,6 +111,13 @@ export default async function GroupDetailsPage({
   }
 
   const currentMembers = group.people.map((pg) => pg.person);
+  const memberRows = currentMembers.map(({ relationshipsFrom, ...member }) => ({
+    ...member,
+    connections: relationshipsFrom.map((relationship) => ({
+      ...relationship.relatedPerson,
+      typeLabel: relationship.relationshipType?.label ?? null,
+    })),
+  }));
 
   return (
     <div className="min-h-screen bg-background">
@@ -88,7 +129,7 @@ export default async function GroupDetailsPage({
         currentPath="/groups"
       />
 
-      <main className="max-w-4xl mx-auto py-6 sm:px-6 lg:px-8">
+      <main className="max-w-6xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
           <div className="mb-6">
             <Link
@@ -130,15 +171,36 @@ export default async function GroupDetailsPage({
               </div>
             </div>
 
-            <div className="px-6 py-5">
-              <GroupMembersManager
+            <div className="px-6 py-5 space-y-6">
+              <GroupMembersView
                 groupId={group.id}
-                groupName={group.name}
-                currentMembers={currentMembers}
-                availablePeople={allPeople}
+                members={memberRows}
+                relationshipTypes={relationshipTypes}
                 nameOrder={nameOrder}
                 nameDisplayFormat={nameDisplayFormat}
               />
+              <details open={currentMembers.length === 0}>
+                <summary className="cursor-pointer text-sm font-medium text-primary hover:underline">
+                  {t('members.manageMembers')}
+                </summary>
+                <div className="mt-3">
+                  <GroupMembersManager
+                    groupId={group.id}
+                    groupName={group.name}
+                    currentMembers={currentMembers.map((member) => ({
+                      id: member.id,
+                      name: member.name,
+                      surname: member.surname,
+                      nickname: member.nickname,
+                      displayNameOverride: member.displayNameOverride,
+                      photo: member.photo,
+                    }))}
+                    availablePeople={allPeople}
+                    nameOrder={nameOrder}
+                    nameDisplayFormat={nameDisplayFormat}
+                  />
+                </div>
+              </details>
             </div>
           </div>
         </div>
