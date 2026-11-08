@@ -14,6 +14,7 @@ import PillSelector from './PillSelector';
 import { GraphFilterGroupPill } from './GraphFilterPills';
 import { paintFrame } from './graph/canvas-renderer';
 import { getLODTier } from './graph/lod';
+import { computeFitTransform } from './graph/fit-view';
 import { getCachedPhoto, loadPhoto } from './graph/photo-cache';
 import { buildQuadtree, findNodeAtPoint, type NodeQuadtree } from './graph/hit-test';
 import { diffSimulationData } from './graph/diff-simulation';
@@ -38,6 +39,10 @@ interface UnifiedNetworkGraphProps {
   graphMode?: 'individuals' | 'bubbles' | null;
   compact?: boolean;
 }
+
+// While the layout is still moving the view is re-fitted every few ticks, so
+// the network is in view from the first frame on, even when ticks are slow
+const AUTO_FIT_TICK_INTERVAL = 4;
 
 export default function UnifiedNetworkGraph({
   apiEndpoint,
@@ -67,6 +72,10 @@ export default function UnifiedNetworkGraph({
   const rafRef = useRef<number | null>(null);
   const unpinTimeoutRef = useRef<number | null>(null);
   const isDraggingRef = useRef<boolean>(false);
+  // Set as soon as the user pans, zooms or drags, so the automatic framing of
+  // the network never takes their view away from them. A fresh data load
+  // clears it again.
+  const userMovedViewRef = useRef<boolean>(false);
 
   // Filter state
   const [selectedGroupFilters, setSelectedGroupFilters] = useState<GroupFilterItem[]>([]);
@@ -140,16 +149,41 @@ export default function UnifiedNetworkGraph({
     };
   }, []);
 
-  // Re-center the graph view
-  const recenterGraph = useCallback(() => {
+  // Put "you" in the middle of the canvas and bring the network into view
+  const fitView = useCallback((animate: boolean) => {
     const canvas = canvasRef.current;
     const zoomBehavior = zoomBehaviorRef.current;
     if (!canvas || !zoomBehavior) return;
-    select(canvas)
-      .transition()
-      .duration(750)
-      .call(zoomBehavior.transform, zoomIdentity);
-  }, []);
+    const rect = canvas.getBoundingClientRect();
+    const linkedIds = new Set<string>();
+    for (const edge of edgesRef.current) {
+      linkedIds.add(typeof edge.source === 'string' ? edge.source : edge.source.id);
+      linkedIds.add(typeof edge.target === 'string' ? edge.target : edge.target.id);
+    }
+    const fitNodes = nodesRef.current.map((n) => ({
+      x: n.x,
+      y: n.y,
+      isCenter: n.kind === 'person' && n.isCenter,
+      loose: !linkedIds.has(n.id),
+    }));
+    const fit = computeFitTransform(fitNodes, {
+      width: rect.width,
+      height: rect.height,
+      padding: isMobile ? 36 : undefined,
+    });
+    const target = zoomIdentity.translate(fit.x, fit.y).scale(fit.k);
+    const selection = select(canvas);
+    if (animate) {
+      selection.transition().duration(500).call(zoomBehavior.transform, target);
+    } else {
+      selection.call(zoomBehavior.transform, target);
+    }
+  }, [isMobile]);
+
+  // Re-center the graph view
+  const recenterGraph = useCallback(() => {
+    fitView(true);
+  }, [fitView]);
 
   const toggleFilterSign = (id: string) => {
     setSelectedGroupFilters((prev) =>
@@ -459,12 +493,23 @@ export default function UnifiedNetworkGraph({
     simRef.current?.stop();
     const sim = buildSimulation(nodes, edges);
     if (sim) {
+      // Keep "you" in the middle and the network in view while the layout
+      // unfolds and once it has settled (also after a canvas resize), until the
+      // user takes over the view.
+      let ticks = 0;
+      sim.on('tick.fit', () => {
+        ticks += 1;
+        if (ticks % AUTO_FIT_TICK_INTERVAL === 1 && !userMovedViewRef.current) fitView(false);
+      });
+      sim.on('end.fit', () => {
+        if (!userMovedViewRef.current) fitView(true);
+      });
       sim.alpha(0.3).restart();
       simRef.current = sim;
     }
   }, [
     groups, localGraphMode, expandedBubbles,
-    includeGroupIds, ungroupedLabel, buildSimulation, tPeople,
+    includeGroupIds, ungroupedLabel, buildSimulation, tPeople, fitView,
   ]);
 
   // Step 4: Data-fetch effect
@@ -485,6 +530,7 @@ export default function UnifiedNetworkGraph({
       if (cancelled) return;
 
       rawCacheRef.current = data;
+      userMovedViewRef.current = false;
       recomposeAndBuildSim(data);
     };
 
@@ -548,6 +594,8 @@ export default function UnifiedNetworkGraph({
         return true;
       })
       .on('zoom', (event) => {
+        // Only gestures carry a source event, fitView's own transforms do not.
+        if (event.sourceEvent) userMovedViewRef.current = true;
         transformRef.current = event.transform;
         requestPaint();
       });
@@ -650,6 +698,7 @@ export default function UnifiedNetworkGraph({
         dragStartX = event.x;
         dragStartY = event.y;
         isDraggingRef.current = true;
+        userMovedViewRef.current = true;
         if (!event.active && simRef.current) simRef.current.alphaTarget(0.1).restart();
         d.fx = d.x;
         d.fy = d.y;
@@ -811,7 +860,7 @@ export default function UnifiedNetworkGraph({
           className={`w-full bg-surface rounded-lg border border-border ${
             compact
               ? 'h-[400px] sm:h-[500px] lg:h-[600px] xl:h-[700px] 2xl:h-[800px]'
-              : 'h-[400px] sm:h-[500px] lg:h-[70vh] lg:min-h-[600px]'
+              : 'h-[400px] sm:h-[500px] lg:h-[calc(100dvh-26rem)] lg:min-h-[480px]'
           }`}
         />
         <div className="absolute bottom-4 right-4 flex gap-2">

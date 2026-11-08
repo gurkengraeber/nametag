@@ -9,7 +9,7 @@ The network graph turns your list of people into a picture: a living map of who 
 
 ## Two contexts
 
-- **Dashboard**: you sit at the center, with your entire network radiating outward. This is the big-picture view of everyone you've added.
+- **Dashboard**: you sit at the center, with your entire network radiating outward. This is the big-picture view of everyone you've added. When the page opens, the graph is framed so that you are in the middle and your network is in view, until you pan or zoom yourself.
 - **Person detail page**: the selected person sits at the center instead, showing their direct connections. This is the focused view for understanding one person's place in your network.
 
 ## Display modes
@@ -44,7 +44,7 @@ A help button next to the filters walks through these modes with visual examples
 - **Drag a node** to rearrange it manually. Nametag's force simulation will let it settle back into place once you let go, unless you've pinned it by moving it
 - **Scroll to zoom** in and out
 - **Drag the background** to pan around
-- A **recenter button** resets the zoom and pan back to the default view
+- A **recenter button** puts you back in the middle and zooms out far enough to bring your network into view
 
 There are no dedicated keyboard shortcuts beyond these pointer interactions today.
 
