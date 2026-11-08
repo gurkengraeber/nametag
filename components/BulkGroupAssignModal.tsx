@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import ConfirmationModal from './ui/ConfirmationModal';
 import GroupsSelector from './GroupsSelector';
 import { useSearchIndex } from './SearchIndexProvider';
+import type { PeopleFilter } from '@/lib/people-filter';
 
 interface Group {
   id: string;
@@ -18,6 +19,8 @@ interface BulkGroupAssignModalProps {
   onClose: () => void;
   selectedIds: string[];
   selectAll: boolean;
+  /** The active filters of the people list, so "all" means the filtered people. */
+  filter?: PeopleFilter;
   totalCount: number;
   availableGroups: Group[];
   onSuccess: () => void;
@@ -29,6 +32,7 @@ export default function BulkGroupAssignModal({
   onClose,
   selectedIds,
   selectAll,
+  filter,
   totalCount,
   availableGroups,
   onSuccess,
@@ -63,7 +67,7 @@ export default function BulkGroupAssignModal({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           action: 'addToGroups',
-          ...(selectAll ? { selectAll: true } : { personIds: selectedIds }),
+          ...(selectAll ? { selectAll: true, filter } : { personIds: selectedIds }),
           groupIds: selectedGroupIds,
         }),
       });

@@ -36,6 +36,24 @@ describe('Bulk Orphans API', () => {
     mocks.userFindUnique.mockResolvedValue({ nameOrder: 'WESTERN' });
   });
 
+  it('only treats the people matching the filter as deleted when selecting all', async () => {
+    mocks.personFindMany.mockResolvedValue([]);
+    mocks.cardDavConnectionFindUnique.mockResolvedValue(null);
+
+    const request = new Request('http://localhost/api/people/bulk/orphans', {
+      method: 'POST',
+      body: JSON.stringify({ selectAll: true, filter: { group: 'g1', relationship: 'none' } }),
+    });
+    await POST(request);
+
+    expect(mocks.personFindMany.mock.calls[0][0].where).toEqual({
+      userId: 'user-123',
+      deletedAt: null,
+      groups: { some: { groupId: 'g1' } },
+      relationshipToUserId: null,
+    });
+  });
+
   it('should return orphans for multiple people', async () => {
     const allPeople = [
       {

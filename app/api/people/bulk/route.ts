@@ -3,6 +3,7 @@ import { apiResponse, handleApiError, parseRequestBody, withAuth } from '@/lib/a
 import { validateRequest, bulkActionSchema } from '@/lib/validations';
 import { deleteFromCardDav as deleteContactFromCardDav } from '@/lib/carddav/delete-contact';
 import { batchSyncPersonsToCardDav } from '@/lib/carddav/group-sync';
+import { buildPeopleWhere, type PeopleFilter } from '@/lib/people-filter';
 import { createModuleLogger } from '@/lib/logger';
 
 const log = createModuleLogger('people-bulk');
@@ -10,14 +11,16 @@ const log = createModuleLogger('people-bulk');
 async function resolvePersonIds(
   personIds: string[] | undefined,
   selectAll: boolean | undefined,
-  userId: string
+  userId: string,
+  filter?: PeopleFilter
 ): Promise<string[]> {
   if (!selectAll && (!personIds || personIds.length === 0)) {
     return [];
   }
   if (selectAll) {
+    // "All" means all the people the list shows, so the list's filters apply
     const allPeople = await prisma.person.findMany({
-      where: { userId, deletedAt: null },
+      where: buildPeopleWhere(userId, filter),
       select: { id: true },
     });
     return allPeople.map((p) => p.id);
@@ -39,7 +42,7 @@ export const POST = withAuth(async (request, session) => {
 
     switch (data.action) {
       case 'delete': {
-        const ids = await resolvePersonIds(data.personIds, data.selectAll, session.user.id);
+        const ids = await resolvePersonIds(data.personIds, data.selectAll, session.user.id, data.filter);
         if (ids.length === 0) return apiResponse.ok({ success: true, affectedCount: 0 });
 
         // Validate orphan IDs belong to the current user
@@ -100,7 +103,7 @@ export const POST = withAuth(async (request, session) => {
           return apiResponse.notFound('No valid groups found');
         }
 
-        const ids = await resolvePersonIds(data.personIds, data.selectAll, session.user.id);
+        const ids = await resolvePersonIds(data.personIds, data.selectAll, session.user.id, data.filter);
         if (ids.length === 0) return apiResponse.ok({ success: true, affectedCount: 0 });
 
         // Find existing memberships to avoid duplicates
@@ -153,7 +156,7 @@ export const POST = withAuth(async (request, session) => {
           return apiResponse.notFound('Relationship type not found');
         }
 
-        const ids = await resolvePersonIds(data.personIds, data.selectAll, session.user.id);
+        const ids = await resolvePersonIds(data.personIds, data.selectAll, session.user.id, data.filter);
         if (ids.length === 0) return apiResponse.ok({ success: true, affectedCount: 0 });
 
         const result = await prisma.person.updateMany({

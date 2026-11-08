@@ -266,9 +266,17 @@ export const deletePersonSchema = z.object({
 // Bulk action schemas
 // ============================================
 
+// The filters of the people list. With selectAll they limit "all" to the filtered people.
+export const peopleFilterSchema = z.object({
+  group: z.string().max(100).optional(),
+  relationship: z.string().max(100).optional(),
+  cf: z.string().max(300).optional(),
+});
+
 const bulkTargetSchema = z.object({
   personIds: z.array(z.string()).optional(),
   selectAll: z.boolean().optional(),
+  filter: peopleFilterSchema.optional(),
 }).refine(
   (data) => (data.personIds && data.personIds.length > 0) || data.selectAll === true,
   { message: 'Either personIds or selectAll must be provided' }
@@ -281,6 +289,7 @@ export const bulkActionSchema = z.discriminatedUnion('action', [
     action: z.literal('delete'),
     personIds: z.array(z.string()).optional(),
     selectAll: z.boolean().optional(),
+    filter: peopleFilterSchema.optional(),
     deleteOrphans: z.boolean(),
     orphanIds: z.array(z.string()).optional(),
     deleteFromCardDav: z.boolean(),
@@ -289,12 +298,14 @@ export const bulkActionSchema = z.discriminatedUnion('action', [
     action: z.literal('addToGroups'),
     personIds: z.array(z.string()).optional(),
     selectAll: z.boolean().optional(),
+    filter: peopleFilterSchema.optional(),
     groupIds: z.array(z.string()).min(1),
   }),
   z.object({
     action: z.literal('setRelationship'),
     personIds: z.array(z.string()).optional(),
     selectAll: z.boolean().optional(),
+    filter: peopleFilterSchema.optional(),
     relationshipTypeId: z.string(),
   }),
 ]);

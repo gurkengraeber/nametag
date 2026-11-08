@@ -6,6 +6,16 @@ import {
 import { zodBody, jsonBody, pathParam, jsonResponse, ref400, ref401, ref404, refMessage, refGraph, refSuccess, resp, sessionOrToken } from './helpers';
 import { DEFAULT_PEOPLE_PAGE_SIZE, MAX_PEOPLE_PAGE_SIZE } from '../constants';
 
+const peopleFilterProperty = {
+  type: 'object',
+  description: 'With selectAll: limits "all" to the people the People list shows with these filters.',
+  properties: {
+    group: { type: 'string', description: 'Group ID, or "none" for people without a group' },
+    relationship: { type: 'string', description: 'Relationship type ID, or "none" for people without one' },
+    cf: { type: 'string', description: 'Custom field filter as "slug:value"' },
+  },
+};
+
 export function peoplePaths(): Record<string, Record<string, unknown>> {
   return {
     '/api/people': {
@@ -297,7 +307,7 @@ export function peoplePaths(): Record<string, Record<string, unknown>> {
       post: {
         tags: ['People'],
         summary: 'Bulk actions on people',
-        description: 'Perform bulk operations on multiple people. Supports delete (soft-delete with optional orphan and CardDAV cleanup), add to groups, and set relationship type. Specify either personIds or selectAll: true.',
+        description: 'Perform bulk operations on multiple people. Supports delete (soft-delete with optional orphan and CardDAV cleanup), add to groups, and set relationship type. Specify either personIds or selectAll: true. With selectAll, the optional filter limits the action to the people matching the filters of the People list.',
         security: sessionOrToken(),
         requestBody: jsonBody({
           type: 'object',
@@ -311,6 +321,7 @@ export function peoplePaths(): Record<string, Record<string, unknown>> {
                 action: { type: 'string', enum: ['delete'] },
                 personIds: { type: 'array', items: { type: 'string' } },
                 selectAll: { type: 'boolean' },
+                filter: peopleFilterProperty,
                 deleteOrphans: { type: 'boolean' },
                 orphanIds: { type: 'array', items: { type: 'string' } },
                 deleteFromCardDav: { type: 'boolean' },
@@ -323,6 +334,7 @@ export function peoplePaths(): Record<string, Record<string, unknown>> {
                 action: { type: 'string', enum: ['addToGroups'] },
                 personIds: { type: 'array', items: { type: 'string' } },
                 selectAll: { type: 'boolean' },
+                filter: peopleFilterProperty,
                 groupIds: { type: 'array', items: { type: 'string' } },
               },
             },
@@ -333,6 +345,7 @@ export function peoplePaths(): Record<string, Record<string, unknown>> {
                 action: { type: 'string', enum: ['setRelationship'] },
                 personIds: { type: 'array', items: { type: 'string' } },
                 selectAll: { type: 'boolean' },
+                filter: peopleFilterProperty,
                 relationshipTypeId: { type: 'string' },
               },
             },
@@ -363,6 +376,7 @@ export function peoplePaths(): Record<string, Record<string, unknown>> {
           properties: {
             personIds: { type: 'array', items: { type: 'string' } },
             selectAll: { type: 'boolean' },
+                filter: peopleFilterProperty,
           },
         }),
         responses: {

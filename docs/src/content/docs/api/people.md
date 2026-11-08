@@ -312,6 +312,18 @@ POST /api/people/bulk
 
 Runs one action against multiple people. Specify either `personIds` or `selectAll: true`.
 
+With `selectAll`, you can add a `filter` so that "all" means only the people the People list shows with those filters. Without a filter, `selectAll` reaches every person you have. The filter takes `group` (a group ID, or `none` for people without a group), `relationship` (a relationship type ID, or `none`) and `cf` (a custom field filter as `slug:value`). Filters combine, so a person must match all of them. The filter is ignored when you pass `personIds`.
+
+```json
+{
+  "action": "delete",
+  "selectAll": true,
+  "filter": { "group": "clxgroup1", "relationship": "none" },
+  "deleteOrphans": false,
+  "deleteFromCardDav": false
+}
+```
+
 **Delete**
 
 ```json
@@ -360,7 +372,7 @@ curl -X POST https://your-instance.example.com/api/people/bulk \
 POST /api/people/bulk/orphans
 ```
 
-Computes the aggregate orphan list for a proposed bulk delete, before you commit to it.
+Computes the aggregate orphan list for a proposed bulk delete, before you commit to it. It takes the same `personIds`, `selectAll` and `filter` fields as the bulk action, so send the same selection to both.
 
 ```bash
 curl -X POST https://your-instance.example.com/api/people/bulk/orphans \

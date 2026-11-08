@@ -12,6 +12,7 @@ import PersonAvatar from './PersonPhoto';
 import { RelationshipCell, LastContactCell, LocationCell, toDateInputValue } from './QuickEditCells';
 import { formatCanonicalName, type NameDisplayFormat } from '@/lib/nameUtils';
 import CustomFieldFilter from './customFields/CustomFieldFilter';
+import { formatCustomFieldFilter, type PeopleFilter } from '@/lib/people-filter';
 import type { CustomFieldTemplate } from '@prisma/client';
 
 interface PersonRow {
@@ -167,6 +168,16 @@ export default function PeopleListClient({
 
   // Group state (for inline creation in modal)
   const [groups, setGroups] = useState<Group[]>(availableGroups);
+
+  // What "select all" means: everyone the active filters match, on every page
+  const activeFilter = useMemo<PeopleFilter>(
+    () => ({
+      ...(groupFilter ? { group: groupFilter } : {}),
+      ...(relationshipFilter ? { relationship: relationshipFilter } : {}),
+      ...(cfFilter ? { cf: formatCustomFieldFilter(cfFilter) } : {}),
+    }),
+    [groupFilter, relationshipFilter, cfFilter],
+  );
 
   const pageIds = useMemo(() => people.map((p) => p.id), [people]);
   const allPageSelected = pageIds.length > 0 && pageIds.every((id) => selectedIds.has(id));
@@ -652,6 +663,7 @@ export default function PeopleListClient({
         onClose={() => setShowDeleteModal(false)}
         selectedIds={Array.from(selectedIds)}
         selectAll={selectAllPages}
+        filter={activeFilter}
         selectedNames={selectedNames}
         totalCount={totalCount}
         onSuccess={handleDeleteSuccess}
@@ -662,6 +674,7 @@ export default function PeopleListClient({
         onClose={() => setShowGroupModal(false)}
         selectedIds={Array.from(selectedIds)}
         selectAll={selectAllPages}
+        filter={activeFilter}
         totalCount={totalCount}
         availableGroups={groups}
         onSuccess={handleSuccess}
@@ -673,6 +686,7 @@ export default function PeopleListClient({
         onClose={() => setShowRelationshipModal(false)}
         selectedIds={Array.from(selectedIds)}
         selectAll={selectAllPages}
+        filter={activeFilter}
         totalCount={totalCount}
         relationshipTypes={relationshipTypes}
         onSuccess={handleSuccess}

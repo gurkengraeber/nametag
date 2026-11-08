@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 import ConfirmationModal from './ui/ConfirmationModal';
 import { useSearchIndex } from './SearchIndexProvider';
+import type { PeopleFilter } from '@/lib/people-filter';
 
 interface RelationshipType {
   id: string;
@@ -17,6 +18,8 @@ interface BulkRelationshipModalProps {
   onClose: () => void;
   selectedIds: string[];
   selectAll: boolean;
+  /** The active filters of the people list, so "all" means the filtered people. */
+  filter?: PeopleFilter;
   totalCount: number;
   relationshipTypes: RelationshipType[];
   onSuccess: () => void;
@@ -27,6 +30,7 @@ export default function BulkRelationshipModal({
   onClose,
   selectedIds,
   selectAll,
+  filter,
   totalCount,
   relationshipTypes,
   onSuccess,
@@ -60,7 +64,7 @@ export default function BulkRelationshipModal({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           action: 'setRelationship',
-          ...(selectAll ? { selectAll: true } : { personIds: selectedIds }),
+          ...(selectAll ? { selectAll: true, filter } : { personIds: selectedIds }),
           relationshipTypeId: selectedTypeId,
         }),
       });

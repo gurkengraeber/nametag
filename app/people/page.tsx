@@ -10,6 +10,7 @@ import ImportSuccessToast from '@/components/ImportSuccessToast';
 import { canCreateResource } from '@/lib/billing/subscription';
 import { getTranslations } from 'next-intl/server';
 import PeopleListClient from '@/components/PeopleListClient';
+import { buildPeopleWhere, parseCustomFieldFilter } from '@/lib/people-filter';
 import { getUserDisplayPreferences } from '@/lib/user-preferences';
 
 const ITEMS_PER_PAGE = 50;
@@ -47,60 +48,15 @@ export default async function PeoplePage({
   const groupFilter = params.group || '';
   const relationshipFilter = params.relationship || '';
   const cfParam = params.cf || '';
-  let cfFilter: { slug: string; value: string } | null = null;
-  if (cfParam) {
-    const idx = cfParam.indexOf(':');
-    if (idx > 0) {
-      cfFilter = { slug: cfParam.slice(0, idx), value: cfParam.slice(idx + 1) };
-    }
-  }
+  const cfFilter = parseCustomFieldFilter(cfParam);
   const skip = (currentPage - 1) * ITEMS_PER_PAGE;
 
-  // Build where clause for people query
-  const peopleWhere: {
-    userId: string;
-    deletedAt: null;
-    groups?: { none: Record<string, never> } | { some: { groupId: string } };
-    relationshipToUserId?: string | null;
-    customFieldValues?: {
-      some: {
-        value: { equals: string; mode: 'insensitive' };
-        template: { slug: string; userId: string; deletedAt: null };
-      };
-    };
-  } = {
-    userId: session.user.id,
-    deletedAt: null,
-  };
-
-  if (groupFilter === 'none') {
-    peopleWhere.groups = { none: {} };
-  } else if (groupFilter) {
-    peopleWhere.groups = { some: { groupId: groupFilter } };
-  }
-
-  if (relationshipFilter === 'none') {
-    peopleWhere.relationshipToUserId = null;
-  } else if (relationshipFilter) {
-    peopleWhere.relationshipToUserId = relationshipFilter;
-  }
-
-  if (cfFilter) {
-    // Case-insensitive match. Harmless for NUMBER ("42" == "42"), BOOLEAN
-    // ("true"/"false" are lowercase), and SELECT (dropdown values match the
-    // stored option's exact casing). For TEXT, this lets users find values
-    // without remembering the exact casing.
-    peopleWhere.customFieldValues = {
-      some: {
-        value: { equals: cfFilter.value, mode: 'insensitive' },
-        template: {
-          slug: cfFilter.slug,
-          userId: session.user.id,
-          deletedAt: null,
-        },
-      },
-    };
-  }
+  // The bulk actions use the same filter, so "select all" matches what the list shows
+  const peopleWhere = buildPeopleWhere(session.user.id, {
+    group: groupFilter,
+    relationship: relationshipFilter,
+    cf: cfParam,
+  });
 
   // Get total count for pagination
   const totalCount = await prisma.person.count({
