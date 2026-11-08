@@ -875,6 +875,34 @@
       "geocodingLabel": "住所を自動的に位置特定する",
       "success": "マップ設定を保存しました",
       "error": "マップ設定を保存できませんでした"
+    },
+    "overviewTitle": "概要",
+    "backToOverview": "設定一覧",
+    "groups": {
+      "personal": "あなた",
+      "preferences": "環境設定",
+      "connections": "連携",
+      "data": "データとヘルプ"
+    },
+    "search": {
+      "label": "設定を検索",
+      "placeholder": "設定を検索(例: パスワード、言語、リマインダー)",
+      "noResults": "\"{query}\" に一致する設定はありません",
+      "noResultsHint": "短い言葉で試すか、検索を消してすべてのグループを表示してください。",
+      "keywords": {
+        "profile": "名前 写真 アバター メール ニックネーム",
+        "security": "パスワード セッション デバイス サインアウト ログイン",
+        "billing": "プラン 購読 支払い 請求書",
+        "appearance": "テーマ ダーク ライト 言語 日付 形式 名前 順序 グラフ インストール",
+        "notifications": "リマインダー メール プッシュ 通知 週間 まとめ",
+        "custom-fields": "カスタム フィールド 追加項目",
+        "map": "地図 ジオコーディング 住所 場所",
+        "carddav": "連絡先 同期 carddav 電話 アドレス帳",
+        "api-tokens": "api トークン アクセス スクリプト 連携",
+        "account": "エクスポート インポート バックアップ 削除 アカウント ダウンロード",
+        "trash": "削除済み 復元 ごみ箱",
+        "about": "バージョン ライセンス ヘルプ 情報"
+      }
     }
   },
   "customFields": {

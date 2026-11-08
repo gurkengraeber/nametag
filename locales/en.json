@@ -875,6 +875,34 @@
       "geocodingLabel": "Locate addresses automatically",
       "success": "Map settings saved",
       "error": "Could not save map settings"
+    },
+    "overviewTitle": "Overview",
+    "backToOverview": "All settings",
+    "groups": {
+      "personal": "You",
+      "preferences": "Preferences",
+      "connections": "Connections",
+      "data": "Data and help"
+    },
+    "search": {
+      "label": "Search settings",
+      "placeholder": "Search settings, e.g. password, language, reminders",
+      "noResults": "No settings match \"{query}\"",
+      "noResultsHint": "Try a shorter word, or browse the groups by clearing the search.",
+      "keywords": {
+        "profile": "name photo avatar email nickname",
+        "security": "password sessions devices sign out login",
+        "billing": "plan subscription payment invoice",
+        "appearance": "theme dark light language date format name order graph install",
+        "notifications": "reminders email push notify digest weekly",
+        "custom-fields": "custom fields tags extra",
+        "map": "map geocoding address location",
+        "carddav": "contacts sync carddav phone address book",
+        "api-tokens": "api token access script integration",
+        "account": "export import backup delete account download",
+        "trash": "deleted recover restore bin",
+        "about": "version license help about"
+      }
     }
   },
   "customFields": {

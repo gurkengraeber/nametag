@@ -875,6 +875,34 @@
       "geocodingLabel": "Adressen automatisch lokalisieren",
       "success": "Karteneinstellungen gespeichert",
       "error": "Karteneinstellungen konnten nicht gespeichert werden"
+    },
+    "overviewTitle": "Übersicht",
+    "backToOverview": "Alle Einstellungen",
+    "groups": {
+      "personal": "Du",
+      "preferences": "Vorlieben",
+      "connections": "Verbindungen",
+      "data": "Daten und Hilfe"
+    },
+    "search": {
+      "label": "Einstellungen durchsuchen",
+      "placeholder": "Einstellungen suchen, z. B. Passwort, Sprache, Erinnerungen",
+      "noResults": "Keine Einstellung passt zu \"{query}\"",
+      "noResultsHint": "Versuche ein kürzeres Wort oder lösche die Suche, um alle Gruppen zu sehen.",
+      "keywords": {
+        "profile": "name foto profilbild e-mail spitzname",
+        "security": "passwort sitzungen geräte abmelden anmeldung",
+        "billing": "tarif abo zahlung rechnung",
+        "appearance": "design thema dunkel hell sprache datumsformat namensreihenfolge graph installieren",
+        "notifications": "erinnerungen e-mail push benachrichtigung zusammenfassung wöchentlich",
+        "custom-fields": "eigene felder zusatzfelder",
+        "map": "karte adresse standort geocoding",
+        "carddav": "kontakte sync carddav telefon adressbuch",
+        "api-tokens": "api token zugriff skript schnittstelle",
+        "account": "export import sicherung backup löschen konto herunterladen",
+        "trash": "gelöscht wiederherstellen papierkorb",
+        "about": "version lizenz hilfe über"
+      }
     }
   },
   "customFields": {

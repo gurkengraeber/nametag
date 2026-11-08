@@ -875,6 +875,34 @@
       "geocodingLabel": "Localizar direcciones automáticamente",
       "success": "Ajustes del mapa guardados",
       "error": "No se pudieron guardar los ajustes del mapa"
+    },
+    "overviewTitle": "Resumen",
+    "backToOverview": "Todos los ajustes",
+    "groups": {
+      "personal": "Tú",
+      "preferences": "Preferencias",
+      "connections": "Conexiones",
+      "data": "Datos y ayuda"
+    },
+    "search": {
+      "label": "Buscar ajustes",
+      "placeholder": "Buscar ajustes, p. ej. contraseña, idioma, recordatorios",
+      "noResults": "Ningún ajuste coincide con \"{query}\"",
+      "noResultsHint": "Prueba con una palabra más corta o borra la búsqueda para ver todos los grupos.",
+      "keywords": {
+        "profile": "nombre foto avatar correo apodo",
+        "security": "contraseña sesiones dispositivos cerrar sesión acceso",
+        "billing": "plan suscripción pago factura",
+        "appearance": "tema oscuro claro idioma formato de fecha orden de nombre grafo instalar",
+        "notifications": "recordatorios correo push notificaciones resumen semanal",
+        "custom-fields": "campos personalizados extra",
+        "map": "mapa geocodificación dirección ubicación",
+        "carddav": "contactos sincronizar carddav teléfono libreta",
+        "api-tokens": "api token acceso script integración",
+        "account": "exportar importar copia de seguridad eliminar cuenta descargar",
+        "trash": "eliminados recuperar restaurar papelera",
+        "about": "versión licencia ayuda acerca"
+      }
     }
   },
   "customFields": {

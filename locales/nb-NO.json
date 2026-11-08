@@ -875,6 +875,34 @@
       "geocodingLabel": "Lokaliser adresser automatisk",
       "success": "Kartinnstillinger lagret",
       "error": "Kunne ikke lagre kartinnstillingene"
+    },
+    "overviewTitle": "Oversikt",
+    "backToOverview": "Alle innstillinger",
+    "groups": {
+      "personal": "Deg",
+      "preferences": "Preferanser",
+      "connections": "Tilkoblinger",
+      "data": "Data og hjelp"
+    },
+    "search": {
+      "label": "Søk i innstillinger",
+      "placeholder": "Søk, f.eks. passord, språk, påminnelser",
+      "noResults": "Ingen innstillinger passer til \"{query}\"",
+      "noResultsHint": "Prøv et kortere ord, eller tøm søket for å se alle gruppene.",
+      "keywords": {
+        "profile": "navn bilde avatar e-post kallenavn",
+        "security": "passord økter enheter logg ut innlogging",
+        "billing": "abonnement betaling faktura",
+        "appearance": "tema mørk lys språk datoformat navnerekkefølge graf installer",
+        "notifications": "påminnelser e-post push varsler ukesammendrag",
+        "custom-fields": "egendefinerte felt ekstra",
+        "map": "kart geokoding adresse sted",
+        "carddav": "kontakter synkronisering carddav telefon adressebok",
+        "api-tokens": "api token tilgang skript integrasjon",
+        "account": "eksporter importer sikkerhetskopi slett konto last ned",
+        "trash": "slettet gjenopprett papirkurv",
+        "about": "versjon lisens hjelp om"
+      }
     }
   },
   "customFields": {

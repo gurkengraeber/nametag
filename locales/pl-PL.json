@@ -875,6 +875,34 @@
       "geocodingLabel": "Lokalizuj adresy automatycznie",
       "success": "Ustawienia mapy zostały zapisane",
       "error": "Nie udało się zapisać ustawień mapy"
+    },
+    "overviewTitle": "Przegląd",
+    "backToOverview": "Wszystkie ustawienia",
+    "groups": {
+      "personal": "Ty",
+      "preferences": "Preferencje",
+      "connections": "Połączenia",
+      "data": "Dane i pomoc"
+    },
+    "search": {
+      "label": "Szukaj w ustawieniach",
+      "placeholder": "Szukaj, np. hasło, język, przypomnienia",
+      "noResults": "Żadne ustawienie nie pasuje do \"{query}\"",
+      "noResultsHint": "Spróbuj krótszego słowa albo wyczyść wyszukiwanie, aby zobaczyć wszystkie grupy.",
+      "keywords": {
+        "profile": "imię zdjęcie awatar e-mail pseudonim",
+        "security": "hasło sesje urządzenia wyloguj logowanie",
+        "billing": "plan subskrypcja płatność faktura",
+        "appearance": "motyw ciemny jasny język format daty kolejność imion graf zainstaluj",
+        "notifications": "przypomnienia e-mail push powiadomienia podsumowanie tygodniowe",
+        "custom-fields": "pola niestandardowe dodatkowe",
+        "map": "mapa geokodowanie adres lokalizacja",
+        "carddav": "kontakty synchronizacja carddav telefon książka adresowa",
+        "api-tokens": "api token dostęp skrypt integracja",
+        "account": "eksport import kopia zapasowa usuń konto pobierz",
+        "trash": "usunięte przywróć kosz",
+        "about": "wersja licencja pomoc o aplikacji"
+      }
     }
   },
   "customFields": {

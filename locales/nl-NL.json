@@ -875,6 +875,34 @@
       "geocodingLabel": "Adressen automatisch lokaliseren",
       "success": "Kaartinstellingen opgeslagen",
       "error": "Kon de kaartinstellingen niet opslaan"
+    },
+    "overviewTitle": "Overzicht",
+    "backToOverview": "Alle instellingen",
+    "groups": {
+      "personal": "Jij",
+      "preferences": "Voorkeuren",
+      "connections": "Verbindingen",
+      "data": "Gegevens en hulp"
+    },
+    "search": {
+      "label": "Instellingen doorzoeken",
+      "placeholder": "Zoek, bijv. wachtwoord, taal, herinneringen",
+      "noResults": "Geen instelling past bij \"{query}\"",
+      "noResultsHint": "Probeer een korter woord of wis de zoekopdracht om alle groepen te zien.",
+      "keywords": {
+        "profile": "naam foto avatar e-mail bijnaam",
+        "security": "wachtwoord sessies apparaten uitloggen inloggen",
+        "billing": "abonnement betaling factuur",
+        "appearance": "thema donker licht taal datumnotatie naamvolgorde graaf installeren",
+        "notifications": "herinneringen e-mail push meldingen weekoverzicht",
+        "custom-fields": "eigen velden extra",
+        "map": "kaart geocodering adres locatie",
+        "carddav": "contacten synchronisatie carddav telefoon adresboek",
+        "api-tokens": "api token toegang script integratie",
+        "account": "exporteren importeren back-up verwijderen account downloaden",
+        "trash": "verwijderd herstellen prullenbak",
+        "about": "versie licentie help over"
+      }
     }
   },
   "customFields": {

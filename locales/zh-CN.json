@@ -875,6 +875,34 @@
       "geocodingLabel": "自动定位地址",
       "success": "地图设置已保存",
       "error": "无法保存地图设置"
+    },
+    "overviewTitle": "概览",
+    "backToOverview": "全部设置",
+    "groups": {
+      "personal": "你",
+      "preferences": "偏好",
+      "connections": "连接",
+      "data": "数据与帮助"
+    },
+    "search": {
+      "label": "搜索设置",
+      "placeholder": "搜索设置,例如密码、语言、提醒",
+      "noResults": "没有与\"{query}\"匹配的设置",
+      "noResultsHint": "试试更短的词,或清除搜索以查看全部分组。",
+      "keywords": {
+        "profile": "姓名 照片 头像 邮箱 昵称",
+        "security": "密码 会话 设备 退出 登录",
+        "billing": "套餐 订阅 付款 发票",
+        "appearance": "主题 深色 浅色 语言 日期格式 姓名顺序 图谱 安装",
+        "notifications": "提醒 邮件 推送 通知 每周 摘要",
+        "custom-fields": "自定义 字段 额外",
+        "map": "地图 地理编码 地址 位置",
+        "carddav": "联系人 同步 carddav 电话 通讯录",
+        "api-tokens": "api 令牌 访问 脚本 集成",
+        "account": "导出 导入 备份 删除 账户 下载",
+        "trash": "已删除 恢复 回收站",
+        "about": "版本 许可 帮助 关于"
+      }
     }
   },
   "customFields": {

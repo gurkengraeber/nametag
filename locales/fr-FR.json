@@ -875,6 +875,34 @@
       "geocodingLabel": "Localiser les adresses automatiquement",
       "success": "Paramètres de la carte enregistrés",
       "error": "Impossible d'enregistrer les paramètres de la carte"
+    },
+    "overviewTitle": "Aperçu",
+    "backToOverview": "Tous les réglages",
+    "groups": {
+      "personal": "Vous",
+      "preferences": "Préférences",
+      "connections": "Connexions",
+      "data": "Données et aide"
+    },
+    "search": {
+      "label": "Rechercher dans les réglages",
+      "placeholder": "Rechercher, par ex. mot de passe, langue, rappels",
+      "noResults": "Aucun réglage ne correspond à \"{query}\"",
+      "noResultsHint": "Essayez un mot plus court ou effacez la recherche pour voir tous les groupes.",
+      "keywords": {
+        "profile": "nom photo avatar e-mail surnom",
+        "security": "mot de passe sessions appareils déconnexion connexion",
+        "billing": "forfait abonnement paiement facture",
+        "appearance": "thème sombre clair langue format de date ordre des noms graphe installer",
+        "notifications": "rappels e-mail push notifications résumé hebdomadaire",
+        "custom-fields": "champs personnalisés supplémentaires",
+        "map": "carte géocodage adresse lieu",
+        "carddav": "contacts synchronisation carddav téléphone carnet",
+        "api-tokens": "api jeton accès script intégration",
+        "account": "exporter importer sauvegarde supprimer compte télécharger",
+        "trash": "supprimés récupérer restaurer corbeille",
+        "about": "version licence aide à propos"
+      }
     }
   },
   "customFields": {

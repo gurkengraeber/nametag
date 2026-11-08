@@ -875,6 +875,34 @@
       "geocodingLabel": "Localizza automaticamente gli indirizzi",
       "success": "Impostazioni della mappa salvate",
       "error": "Impossibile salvare le impostazioni della mappa"
+    },
+    "overviewTitle": "Panoramica",
+    "backToOverview": "Tutte le impostazioni",
+    "groups": {
+      "personal": "Tu",
+      "preferences": "Preferenze",
+      "connections": "Connessioni",
+      "data": "Dati e aiuto"
+    },
+    "search": {
+      "label": "Cerca nelle impostazioni",
+      "placeholder": "Cerca, ad es. password, lingua, promemoria",
+      "noResults": "Nessuna impostazione corrisponde a \"{query}\"",
+      "noResultsHint": "Prova con una parola più corta o cancella la ricerca per vedere tutti i gruppi.",
+      "keywords": {
+        "profile": "nome foto avatar email soprannome",
+        "security": "password sessioni dispositivi disconnetti accesso",
+        "billing": "piano abbonamento pagamento fattura",
+        "appearance": "tema scuro chiaro lingua formato data ordine nomi grafo installa",
+        "notifications": "promemoria email push notifiche riepilogo settimanale",
+        "custom-fields": "campi personalizzati extra",
+        "map": "mappa geocodifica indirizzo posizione",
+        "carddav": "contatti sincronizzazione carddav telefono rubrica",
+        "api-tokens": "api token accesso script integrazione",
+        "account": "esporta importa backup elimina account scarica",
+        "trash": "eliminati recupera ripristina cestino",
+        "about": "versione licenza aiuto informazioni"
+      }
     }
   },
   "customFields": {
