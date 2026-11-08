@@ -1719,6 +1719,20 @@
       "placeholder": "逆関係を検索または作成...",
       "createNew": "Enterキーを押して新しいタイプを作成：\"{searchTerm}\"",
       "willCreate": "✓ 新しいタイプを作成します：\"{value}\""
+    },
+    "members": {
+      "label": "人物 ({count})",
+      "placeholder": "名前を入力して人物を追加...",
+      "emptyMessage": "一致する人物は見つかりませんでした",
+      "helpText": "名前を入力して人物を検索し、Enterキーを押して追加します。すでに別の関係が設定されている人物は、この関係に切り替わります。削除するには×をクリックします。",
+      "addedSuccess": "{name}が{type}に追加されました",
+      "removedSuccess": "{name}が{type}から削除されました",
+      "errorAdd": "メンバーの追加に失敗しました",
+      "errorRemove": "メンバーの削除に失敗しました",
+      "errorConnection": "サーバーに接続できません",
+      "remove": "削除",
+      "clearAll": "すべてクリア",
+      "allSelected": "すべてのアイテムがすでに選択されています"
     }
   },
   "relationships": {

@@ -1719,6 +1719,20 @@
       "placeholder": "Zoek of maak een omgekeerde relatie...",
       "createNew": "Druk op Enter om een nieuw type te maken: \"{searchTerm}\"",
       "willCreate": "✓ Zal nieuw type maken: \"{value}\""
+    },
+    "members": {
+      "label": "Personen ({count})",
+      "placeholder": "Typ een naam om personen toe te voegen...",
+      "emptyMessage": "Geen personen gevonden die overeenkomen",
+      "helpText": "Typ om personen te zoeken en druk op Enter om ze toe te voegen. Wie al een andere relatie heeft, wordt naar deze omgezet. Klik op × om ze te verwijderen.",
+      "addedSuccess": "{name} toegevoegd aan {type}",
+      "removedSuccess": "{name} verwijderd uit {type}",
+      "errorAdd": "Lid toevoegen mislukt",
+      "errorRemove": "Lid verwijderen mislukt",
+      "errorConnection": "Kan geen verbinding maken met de server",
+      "remove": "Verwijderen",
+      "clearAll": "Alles wissen",
+      "allSelected": "Alle items zijn al geselecteerd"
     }
   },
   "relationships": {

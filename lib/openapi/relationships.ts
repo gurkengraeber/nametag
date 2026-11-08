@@ -1,6 +1,7 @@
 import {
   createRelationshipSchema, updateRelationshipSchema,
   createRelationshipTypeSchema, updateRelationshipTypeSchema,
+  addRelationshipTypeMemberSchema,
 } from '../validations';
 import { zodBody, pathParam, jsonResponse, ref400, ref401, ref404, refMessage, refSuccess, resp, sessionOrToken } from './helpers';
 
@@ -196,6 +197,36 @@ export function relationshipsPaths(): Record<string, Record<string, unknown>> {
         responses: {
           '200': refSuccess(),
           '400': resp('Type is in use'),
+          '401': ref401(),
+          '404': ref404(),
+        },
+      },
+    },
+    '/api/relationship-types/{id}/members': {
+      post: {
+        tags: ['Relationships'],
+        summary: 'Set your relationship to a person',
+        description: 'Sets this relationship type as how you relate to the given person. Replaces any relationship type the person had before.',
+        security: sessionOrToken(),
+        parameters: [pathParam('id', 'Relationship type ID')],
+        requestBody: zodBody(addRelationshipTypeMemberSchema),
+        responses: {
+          '200': refSuccess(),
+          '400': ref400(),
+          '401': ref401(),
+          '404': ref404(),
+        },
+      },
+    },
+    '/api/relationship-types/{id}/members/{personId}': {
+      delete: {
+        tags: ['Relationships'],
+        summary: 'Clear your relationship to a person',
+        description: 'Removes this relationship type from the person. Only works if the person currently has this type.',
+        security: sessionOrToken(),
+        parameters: [pathParam('id', 'Relationship type ID'), pathParam('personId', 'Person ID')],
+        responses: {
+          '200': refSuccess(),
           '401': ref401(),
           '404': ref404(),
         },

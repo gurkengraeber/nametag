@@ -1719,6 +1719,20 @@
       "placeholder": "Rechercher ou créer la relation inverse...",
       "createNew": "Appuyez sur Entrée pour créer le type : \"{searchTerm}\"",
       "willCreate": "✓ Le type suivant sera créé : \"{value}\""
+    },
+    "members": {
+      "label": "Personnes ({count})",
+      "placeholder": "Saisissez un nom pour ajouter des personnes...",
+      "emptyMessage": "Aucune personne ne correspond à",
+      "helpText": "Saisissez du texte pour rechercher des personnes et appuyez sur Entrée pour les ajouter. Toute personne ayant déjà une autre relation passe à celle-ci. Cliquez sur × pour les retirer.",
+      "addedSuccess": "{name} a été ajouté à {type}",
+      "removedSuccess": "{name} a été retiré de {type}",
+      "errorAdd": "Échec de l'ajout du membre",
+      "errorRemove": "Échec du retrait du membre",
+      "errorConnection": "Impossible de se connecter au serveur",
+      "remove": "Retirer",
+      "clearAll": "Tout effacer",
+      "allSelected": "Tous les éléments sont déjà sélectionnés"
     }
   },
   "relationships": {

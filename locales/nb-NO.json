@@ -1719,6 +1719,20 @@
       "placeholder": "Søk etter eller opprett omvendt relasjon...",
       "createNew": "Trykk Enter for å opprette ny type: \"{searchTerm}\"",
       "willCreate": "✓ Oppretter ny type: \"{value}\""
+    },
+    "members": {
+      "label": "Personer ({count})",
+      "placeholder": "Skriv et navn for å legge til personer...",
+      "emptyMessage": "Fant ingen personer som samsvarer med",
+      "helpText": "Skriv for å søke etter personer og trykk Enter for å legge dem til. Alle som allerede har en annen relasjon, byttes til denne. Klikk på × for å fjerne.",
+      "addedSuccess": "{name} ble lagt til i {type}",
+      "removedSuccess": "{name} ble fjernet fra {type}",
+      "errorAdd": "Kunne ikke legge til medlem",
+      "errorRemove": "Kunne ikke fjerne medlem",
+      "errorConnection": "Kan ikke koble til serveren",
+      "remove": "Fjern",
+      "clearAll": "Fjern alle",
+      "allSelected": "Alle elementer er allerede valgt"
     }
   },
   "relationships": {

@@ -1719,6 +1719,20 @@
       "placeholder": "Wyszukaj lub utwórz relację odwrotną...",
       "createNew": "Naciśnij Enter, aby utworzyć nowy typ: „{searchTerm}”",
       "willCreate": "✓ Zostanie utworzony nowy typ: „{value}”"
+    },
+    "members": {
+      "label": "Osoby ({count})",
+      "placeholder": "Wpisz imię, aby dodać osoby...",
+      "emptyMessage": "Nie znaleziono osób pasujących do",
+      "helpText": "Wpisz, aby wyszukać osoby, i naciśnij Enter, aby je dodać. Osoba, która ma już inną relację, zostanie przełączona na tę. Kliknij ×, aby usunąć.",
+      "addedSuccess": "Dodano {name} do grupy: {type}",
+      "removedSuccess": "Usunięto {name} z grupy: {type}",
+      "errorAdd": "Nie udało się dodać członka",
+      "errorRemove": "Nie udało się usunąć członka",
+      "errorConnection": "Nie można połączyć się z serwerem",
+      "remove": "Usuń",
+      "clearAll": "Wyczyść wszystko",
+      "allSelected": "Wszystkie elementy są już zaznaczone"
     }
   },
   "relationships": {

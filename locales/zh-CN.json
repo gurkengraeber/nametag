@@ -1719,6 +1719,20 @@
       "placeholder": "搜索或创建反向关系...",
       "createNew": "按 Enter 键创建新类型：\"{searchTerm}\"",
       "willCreate": "✓ 将创建新类型：\"{value}\""
+    },
+    "members": {
+      "label": "联系人 ({count})",
+      "placeholder": "输入姓名以添加联系人...",
+      "emptyMessage": "未找到匹配的联系人",
+      "helpText": "输入以搜索联系人并按 Enter 键添加。已有其他关系的联系人将切换为此关系。单击 × 移除。",
+      "addedSuccess": "{name} 已添加到 {type}",
+      "removedSuccess": "{name} 已从 {type} 中移除",
+      "errorAdd": "添加成员失败",
+      "errorRemove": "移除成员失败",
+      "errorConnection": "无法连接到服务器",
+      "remove": "移除",
+      "clearAll": "全部清除",
+      "allSelected": "所有项目已被选择"
     }
   },
   "relationships": {

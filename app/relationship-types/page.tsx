@@ -102,9 +102,12 @@ export default async function RelationshipTypesPage() {
                         />
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-foreground">
+                        <Link
+                          href={`/relationship-types/${type.id}`}
+                          className="text-sm font-medium text-primary hover:underline"
+                        >
                           {type.label}
-                        </div>
+                        </Link>
                         <div className="text-xs text-muted">
                           {t('usedTimes', { count: type.totalUsageCount })}
                         </div>

@@ -40,6 +40,10 @@ On a person's detail page, you'll see both their relationship to you (if any) an
 
 From the Relationship Types page you can create, edit, and soft-delete types. Each type displays a usage count, how many relationships (both person-to-person and to you) currently use it, so you can see the impact before removing one. Soft-deleted types can be restored; see [Trash & Restore](/features/trash/) for details.
 
+### Adding people to a relationship type
+
+Click a type's name on the Relationship Types page to open its own page. It lists everyone you have that relationship with. Type a name to add a person, or click the × on a person to remove them. If the person already has a different relationship to you, it is replaced by this one. This is the quickest way to set the same relationship for many people without opening each profile. See [Bulk Actions](/features/bulk-actions/) for doing it from the people list instead.
+
 ## Relationships in the network graph
 
 Every relationship, whether it's your connection to someone or a connection between two other people, appears as an edge in the [network graph](/features/network-graph/), colored by relationship type. This is what turns your list of contacts into a visual map of how everyone connects.

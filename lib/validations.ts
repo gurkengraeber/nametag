@@ -336,6 +336,10 @@ export const addGroupMemberSchema = z.object({
   personId: z.string().min(1, 'Person ID is required'),
 });
 
+export const addRelationshipTypeMemberSchema = z.object({
+  personId: z.string().min(1, 'Person ID is required'),
+});
+
 // ============================================
 // Journal schemas
 // ============================================

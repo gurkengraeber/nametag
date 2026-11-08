@@ -255,6 +255,44 @@ curl -X DELETE https://your-instance.example.com/api/relationship-types/clxtype1
 { "success": true }
 ```
 
+### Set your relationship to a person
+
+```
+POST /api/relationship-types/{id}/members
+```
+
+Sets this type as how you relate to the given person, replacing any type the person had before.
+
+```bash
+curl -X POST https://your-instance.example.com/api/relationship-types/clxtype1/members \
+  -H "Authorization: Bearer ntag_xxx" \
+  -H "Content-Type: application/json" \
+  -d '{ "personId": "clxperson1" }'
+```
+
+```json
+{ "success": true }
+```
+
+Returns `404` if the type or the person does not exist.
+
+### Clear your relationship to a person
+
+```
+DELETE /api/relationship-types/{id}/members/{personId}
+```
+
+Removes this type from the person. Returns `404` if the person currently has a different type or none.
+
+```bash
+curl -X DELETE https://your-instance.example.com/api/relationship-types/clxtype1/members/clxperson1 \
+  -H "Authorization: Bearer ntag_xxx"
+```
+
+```json
+{ "success": true }
+```
+
 ### Restore a deleted relationship type
 
 ```

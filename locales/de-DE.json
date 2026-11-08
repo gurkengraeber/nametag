@@ -1719,6 +1719,20 @@
       "placeholder": "Gegenbeziehung suchen oder erstellen...",
       "createNew": "Enter drücken, um neuen Typ zu erstellen: \"{searchTerm}\"",
       "willCreate": "✓ Neuer Typ wird erstellt: \"{value}\""
+    },
+    "members": {
+      "label": "Personen ({count})",
+      "placeholder": "Namen eingeben, um Personen hinzuzufügen...",
+      "emptyMessage": "Keine Personen gefunden passend zu",
+      "helpText": "Tippe, um nach Personen zu suchen, und drücke Enter, um sie hinzuzufügen. Wer bereits eine andere Beziehung hat, wird auf diese umgestellt. Klicke auf ×, um sie zu entfernen.",
+      "addedSuccess": "{name} zu {type} hinzugefügt",
+      "removedSuccess": "{name} aus {type} entfernt",
+      "errorAdd": "Mitglied konnte nicht hinzugefügt werden",
+      "errorRemove": "Mitglied konnte nicht entfernt werden",
+      "errorConnection": "Verbindung zum Server nicht möglich",
+      "remove": "Entfernen",
+      "clearAll": "Alles entfernen",
+      "allSelected": "Alle Elemente sind bereits ausgewählt"
     }
   },
   "relationships": {
