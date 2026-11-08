@@ -150,6 +150,44 @@ curl -X PUT https://your-instance.example.com/api/people/clx1 \
 { "person": { "id": "clx1", "name": "Ada", "jobTitle": "Mathematician" } }
 ```
 
+## Quickly update one person
+
+```
+PATCH /api/people/{id}/quick-update
+```
+
+Changes a single field in place without sending the whole person. All fields are optional, but at least one is required. Only the fields you send are changed.
+
+| Field | Meaning |
+| --- | --- |
+| `lastContact` | Date as `YYYY-MM-DD`, or `null` to clear it |
+| `relationshipToUserId` | ID of one of your relationship types, or `null` to clear it |
+| `city` | City of the person's first address, or `null` to clear it |
+| `country` | Country of the person's first address, or `null` to clear it |
+
+`city` and `country` edit the first address. If the person has no address yet, one of type `home` is created. Clearing both leaves the address in place with those two fields empty.
+
+```bash
+curl -X PATCH https://your-instance.example.com/api/people/clx1/quick-update \
+  -H "Authorization: Bearer ntag_xxx" \
+  -H "Content-Type: application/json" \
+  -d '{ "lastContact": "2026-11-08", "city": "Berlin" }'
+```
+
+```json
+{
+  "person": {
+    "id": "clx1",
+    "lastContact": "2026-11-08T00:00:00.000Z",
+    "relationshipToUserId": null,
+    "city": "Berlin",
+    "country": null
+  }
+}
+```
+
+Returns `404` if the person or the relationship type does not exist.
+
 ## Delete a person
 
 ```

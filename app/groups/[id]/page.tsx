@@ -5,6 +5,7 @@ import { prisma } from '@/lib/prisma';
 import DeleteGroupButton from '@/components/DeleteGroupButton';
 import Navigation from '@/components/Navigation';
 import GroupMembersManager from '@/components/GroupMembersManager';
+import GroupMembersTable from '@/components/GroupMembersTable';
 import { getTranslations } from 'next-intl/server';
 import { getUserDisplayPreferences } from '@/lib/user-preferences';
 
@@ -24,7 +25,7 @@ export default async function GroupDetailsPage({
 
   const { id } = await params;
 
-  const [group, allPeople, preferences] = await Promise.all([
+  const [group, allPeople, preferences, relationshipTypes] = await Promise.all([
     prisma.group.findUnique({
       where: {
         id,
@@ -41,10 +42,19 @@ export default async function GroupDetailsPage({
               select: {
                 id: true,
                 name: true,
+                middleName: true,
                 surname: true,
+                secondLastName: true,
                 nickname: true,
                 displayNameOverride: true,
                 photo: true,
+                lastContact: true,
+                relationshipToUserId: true,
+                addresses: {
+                  orderBy: { createdAt: 'asc' },
+                  take: 1,
+                  select: { locality: true, country: true },
+                },
               },
             },
           },
@@ -69,6 +79,11 @@ export default async function GroupDetailsPage({
       },
     }),
     getUserDisplayPreferences(session.user.id),
+    prisma.relationshipType.findMany({
+      where: { userId: session.user.id, deletedAt: null },
+      orderBy: { label: 'asc' },
+      select: { id: true, label: true, color: true },
+    }),
   ]);
   const { nameOrder, nameDisplayFormat } = preferences;
 
@@ -136,6 +151,12 @@ export default async function GroupDetailsPage({
                 groupName={group.name}
                 currentMembers={currentMembers}
                 availablePeople={allPeople}
+                nameOrder={nameOrder}
+                nameDisplayFormat={nameDisplayFormat}
+              />
+              <GroupMembersTable
+                members={currentMembers}
+                relationshipTypes={relationshipTypes}
                 nameOrder={nameOrder}
                 nameDisplayFormat={nameDisplayFormat}
               />

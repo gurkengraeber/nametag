@@ -1559,7 +1559,13 @@
       "dropzoneActive": "Afbeelding hier neerzetten",
       "close": "Sluiten"
     },
-    "viewPhoto": "Foto bekijken"
+    "viewPhoto": "Foto bekijken",
+    "quickEdit": {
+      "location": "Woonplaats",
+      "cityPlaceholder": "Stad",
+      "countryPlaceholder": "Land",
+      "saveError": "De wijziging kon niet worden opgeslagen"
+    }
   },
   "groups": {
     "title": "Groepen",
@@ -1605,7 +1611,8 @@
       "errorConnection": "Kan geen verbinding maken met de server",
       "remove": "Verwijderen",
       "clearAll": "Alles wissen",
-      "allSelected": "Alle items zijn al geselecteerd"
+      "allSelected": "Alle items zijn al geselecteerd",
+      "tableTitle": "Details"
     },
     "delete": {
       "button": "Verwijderen",

@@ -65,6 +65,8 @@ The People page shows everyone in your network, 50 per page.
 
 **Columns adapt to your screen width.** On wide screens the list breaks names into separate Name, Surname and Nickname columns, so each one can be sorted on its own. On narrow screens there is no room for all three, so they collapse into a single **Full Name** column showing the complete name. That column follows your [name order and name display format](/features/settings/) settings, so a Short name display format shows only the nickname or first name there too.
 
+**Quick editing.** The Relationship, Last contact and Location columns can be changed right in the list, so you don't have to open each profile. Pick a relationship from the drop-down, set the last contact date or press **Today**, and type a city and country. Each change is saved as soon as you leave the field. Location edits the person's first address and adds one if there is none yet.
+
 **Sorting** is available by:
 
 - Name

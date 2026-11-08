@@ -238,6 +238,22 @@ export const createPersonSchema = z.object({
 
 export const updatePersonSchema = createPersonSchema.partial();
 
+// Fields that can be changed in place from a list or table, one at a time.
+// city and country edit the first address of the person.
+export const quickUpdatePersonSchema = z
+  .object({
+    lastContact: z.preprocess(
+      (val) => (val === '' ? null : val),
+      z.iso.date({ error: 'Invalid date' }).nullable().optional(),
+    ),
+    relationshipToUserId: z.string().min(1).nullable().optional(),
+    city: z.string().trim().max(100).nullable().optional(),
+    country: z.string().trim().max(100).nullable().optional(),
+  })
+  .refine((data) => Object.values(data).some((value) => value !== undefined), {
+    message: 'At least one field is required',
+  });
+
 export const deletePersonSchema = z.object({
   deleteOrphans: z.boolean().optional()
     .describe('Also delete people only connected through this person'),

@@ -1559,7 +1559,13 @@
       "dropzoneActive": "ここに画像をドロップ",
       "close": "閉じる"
     },
-    "viewPhoto": "写真を表示"
+    "viewPhoto": "写真を表示",
+    "quickEdit": {
+      "location": "居住地",
+      "cityPlaceholder": "市区町村",
+      "countryPlaceholder": "国",
+      "saveError": "変更を保存できませんでした"
+    }
   },
   "groups": {
     "title": "グループ",
@@ -1605,7 +1611,8 @@
       "errorConnection": "サーバーに接続できません",
       "remove": "削除",
       "clearAll": "すべてクリア",
-      "allSelected": "すべてのアイテムがすでに選択されています"
+      "allSelected": "すべてのアイテムがすでに選択されています",
+      "tableTitle": "詳細"
     },
     "delete": {
       "button": "削除",

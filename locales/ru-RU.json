@@ -1559,7 +1559,13 @@
       "dropzoneActive": "Отпустите изображение здесь",
       "close": "Закрыть"
     },
-    "viewPhoto": "Посмотреть фото"
+    "viewPhoto": "Посмотреть фото",
+    "quickEdit": {
+      "location": "Место жительства",
+      "cityPlaceholder": "Город",
+      "countryPlaceholder": "Страна",
+      "saveError": "Не удалось сохранить изменение"
+    }
   },
   "groups": {
     "title": "Группы",
@@ -1605,7 +1611,8 @@
       "errorConnection": "Не удалось подключиться к серверу",
       "remove": "Удалить",
       "clearAll": "Очистить всё",
-      "allSelected": "Все элементы уже выбраны"
+      "allSelected": "Все элементы уже выбраны",
+      "tableTitle": "Подробности"
     },
     "delete": {
       "button": "Удалить",

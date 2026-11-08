@@ -44,7 +44,7 @@ In bubbles view, people who don't belong to any group are collected into their o
 
 ## The group detail page
 
-Opening a group shows its name, description, color, and the full list of current members with a count, along with the tools to add or remove people.
+Opening a group shows its name, description, color, and the full list of current members with a count, along with the tools to add or remove people. Below the member manager, a table of the members lets you change each person's relationship, last contact date and location in place, the same way as in the [people list](/features/people/).
 
 ## Tier limits
 

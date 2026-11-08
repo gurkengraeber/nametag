@@ -38,7 +38,7 @@ export default async function PeoplePage({
   const canCreate = await canCreateResource(session.user.id, 'people');
 
   // Fetch user's date format preference
-  const { dateFormat, nameOrder, nameDisplayFormat } = await getUserDisplayPreferences(session.user.id);
+  const { nameOrder, nameDisplayFormat } = await getUserDisplayPreferences(session.user.id);
 
   const params = await searchParams;
   const currentPage = Number(params.page) || 1;
@@ -115,6 +115,11 @@ export default async function PeoplePage({
       where: peopleWhere,
       include: {
         relationshipToUser: { select: { label: true, color: true } },
+        addresses: {
+          orderBy: { createdAt: 'asc' },
+          take: 1,
+          select: { locality: true, country: true },
+        },
         groups: {
           where: { group: { deletedAt: null } },
           include: { group: { select: { name: true, color: true } } },
@@ -269,7 +274,6 @@ export default async function PeoplePage({
                 groupFilter={groupFilter}
                 relationshipFilter={relationshipFilter}
                 cfFilter={cfFilter}
-                dateFormat={dateFormat}
                 availableGroups={allGroups}
                 relationshipTypes={relationshipTypes}
                 customFieldTemplates={customFieldTemplates}
@@ -282,6 +286,7 @@ export default async function PeoplePage({
                   relationshipToUser: t('relationshipToUser'),
                   groups: t('groups'),
                   lastContact: t('lastContact'),
+                  location: t('quickEdit.location'),
                   actions: t('actions'),
                   indirect: t('indirect'),
                   orphanWarning: t('orphanWarning'),

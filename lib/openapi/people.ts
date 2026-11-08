@@ -1,7 +1,7 @@
 import {
   createPersonSchema, updatePersonSchema, deletePersonSchema,
   createImportantDateSchema, updateImportantDateSchema,
-  mergePersonSchema,
+  mergePersonSchema, quickUpdatePersonSchema,
 } from '../validations';
 import { zodBody, jsonBody, pathParam, jsonResponse, ref400, ref401, ref404, refMessage, refGraph, refSuccess, resp, sessionOrToken } from './helpers';
 import { DEFAULT_PEOPLE_PAGE_SIZE, MAX_PEOPLE_PAGE_SIZE } from '../constants';
@@ -132,6 +132,36 @@ export function peoplePaths(): Record<string, Record<string, unknown>> {
         requestBody: zodBody(deletePersonSchema),
         responses: {
           '200': refMessage(),
+          '401': ref401(),
+          '404': ref404(),
+        },
+      },
+    },
+    '/api/people/{id}/quick-update': {
+      patch: {
+        tags: ['People'],
+        summary: 'Quickly update one person',
+        description: 'Changes the last contact date, the relationship to you, or the city and country of a person in one call. Only the fields sent are changed. City and country edit the first address, which is created when the person has none.',
+        security: sessionOrToken(),
+        parameters: [pathParam('id', 'Person ID')],
+        requestBody: zodBody(quickUpdatePersonSchema),
+        responses: {
+          '200': jsonResponse('Person updated', {
+            type: 'object',
+            properties: {
+              person: {
+                type: 'object',
+                properties: {
+                  id: { type: 'string' },
+                  lastContact: { type: 'string', format: 'date-time', nullable: true },
+                  relationshipToUserId: { type: 'string', nullable: true },
+                  city: { type: 'string', nullable: true },
+                  country: { type: 'string', nullable: true },
+                },
+              },
+            },
+          }),
+          '400': ref400(),
           '401': ref401(),
           '404': ref404(),
         },

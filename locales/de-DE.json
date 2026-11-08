@@ -1559,7 +1559,13 @@
       "dropzoneActive": "Bild hier ablegen",
       "close": "Schließen"
     },
-    "viewPhoto": "Foto ansehen"
+    "viewPhoto": "Foto ansehen",
+    "quickEdit": {
+      "location": "Wohnort",
+      "cityPlaceholder": "Stadt",
+      "countryPlaceholder": "Land",
+      "saveError": "Die Änderung konnte nicht gespeichert werden"
+    }
   },
   "groups": {
     "title": "Gruppen",
@@ -1605,7 +1611,8 @@
       "errorConnection": "Verbindung zum Server nicht möglich",
       "remove": "Entfernen",
       "clearAll": "Alles entfernen",
-      "allSelected": "Alle Elemente sind bereits ausgewählt"
+      "allSelected": "Alle Elemente sind bereits ausgewählt",
+      "tableTitle": "Details"
     },
     "delete": {
       "button": "Löschen",
