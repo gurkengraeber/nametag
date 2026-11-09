@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import {
-  PERSON_FORM_DEFAULTS_KEY,
+  getPersonFormDefaultsKey,
   loadPersonFormDefaults,
   savePersonFormDefaults,
   sanitizePersonFormDefaults,
@@ -15,28 +15,68 @@ function memoryStorage(initial: Record<string, string> = {}) {
     setItem: (key: string, value: string) => {
       data[key] = value;
     },
+    removeItem: (key: string) => {
+      delete data[key];
+    },
   };
 }
 
+const NOW = Date.UTC(2026, 10, 9);
+const DAY = 24 * 60 * 60 * 1000;
+
 describe('person form defaults storage', () => {
-  it('round-trips defaults', () => {
+  it('uses a key namespaced by account', () => {
+    expect(getPersonFormDefaultsKey('u1')).toBe('nametag:newPerson:u1:defaults');
+  });
+
+  it('round-trips defaults and stores only ids', () => {
     const storage = memoryStorage();
-    savePersonFormDefaults({ relationshipToUserId: 'rt1', groupIds: ['g1', 'g2'] }, storage);
-    expect(loadPersonFormDefaults(storage)).toEqual({ relationshipToUserId: 'rt1', groupIds: ['g1', 'g2'] });
+    savePersonFormDefaults('u1', { relationshipToUserId: 'rt1', groupIds: ['g1', 'g2'] }, storage, NOW);
+    expect(Object.keys(storage.data)).toEqual(['nametag:newPerson:u1:defaults']);
+    expect(JSON.parse(storage.data['nametag:newPerson:u1:defaults'])).toEqual({
+      userId: 'u1',
+      savedAt: NOW,
+      relationshipToUserId: 'rt1',
+      groupIds: ['g1', 'g2'],
+    });
+    expect(loadPersonFormDefaults('u1', storage, NOW + DAY)).toEqual({
+      relationshipToUserId: 'rt1',
+      groupIds: ['g1', 'g2'],
+    });
+  });
+
+  it('does not hand out another account\'s values', () => {
+    const storage = memoryStorage();
+    savePersonFormDefaults('u1', { relationshipToUserId: 'rt1', groupIds: [] }, storage, NOW);
+    expect(loadPersonFormDefaults('u2', storage, NOW)).toBeNull();
+    // Even a value copied under the wrong key is rejected by the embedded id
+    storage.data[getPersonFormDefaultsKey('u2')] = storage.data[getPersonFormDefaultsKey('u1')];
+    expect(loadPersonFormDefaults('u2', storage, NOW)).toBeNull();
+  });
+
+  it('discards values older than 30 days', () => {
+    const storage = memoryStorage();
+    savePersonFormDefaults('u1', { relationshipToUserId: 'rt1', groupIds: [] }, storage, NOW);
+    expect(loadPersonFormDefaults('u1', storage, NOW + 29 * DAY)).not.toBeNull();
+    expect(loadPersonFormDefaults('u1', storage, NOW + 31 * DAY)).toBeNull();
+    expect(storage.data[getPersonFormDefaultsKey('u1')]).toBeUndefined();
   });
 
   it('returns null for missing, broken or foreign data', () => {
-    expect(loadPersonFormDefaults(null)).toBeNull();
-    expect(loadPersonFormDefaults(memoryStorage())).toBeNull();
-    expect(loadPersonFormDefaults(memoryStorage({ [PERSON_FORM_DEFAULTS_KEY]: '{oops' }))).toBeNull();
-    expect(loadPersonFormDefaults(memoryStorage({ [PERSON_FORM_DEFAULTS_KEY]: '"text"' }))).toBeNull();
+    const key = getPersonFormDefaultsKey('u1');
+    expect(loadPersonFormDefaults('u1', null)).toBeNull();
+    expect(loadPersonFormDefaults('', memoryStorage())).toBeNull();
+    expect(loadPersonFormDefaults('u1', memoryStorage())).toBeNull();
+    expect(loadPersonFormDefaults('u1', memoryStorage({ [key]: '{oops' }))).toBeNull();
+    expect(loadPersonFormDefaults('u1', memoryStorage({ [key]: '"text"' }))).toBeNull();
   });
 
   it('ignores wrongly typed members', () => {
+    const key = getPersonFormDefaultsKey('u1');
     const storage = memoryStorage({
-      [PERSON_FORM_DEFAULTS_KEY]: JSON.stringify({ relationshipToUserId: 5, groupIds: ['g1', 7, null] }),
+      [key]: JSON.stringify({ userId: 'u1', savedAt: NOW, relationshipToUserId: 5, groupIds: ['g1', 7, null] }),
     });
-    expect(loadPersonFormDefaults(storage)).toEqual({ relationshipToUserId: '', groupIds: ['g1'] });
+    expect(loadPersonFormDefaults('u1', storage, NOW)).toEqual({ relationshipToUserId: '', groupIds: ['g1'] });
   });
 
   it('does not throw when storage fails', () => {
@@ -48,8 +88,8 @@ describe('person form defaults storage', () => {
         throw new Error('full');
       },
     };
-    expect(loadPersonFormDefaults(broken)).toBeNull();
-    expect(() => savePersonFormDefaults({ relationshipToUserId: '', groupIds: [] }, broken)).not.toThrow();
+    expect(loadPersonFormDefaults('u1', broken)).toBeNull();
+    expect(() => savePersonFormDefaults('u1', { relationshipToUserId: '', groupIds: [] }, broken)).not.toThrow();
   });
 });
 

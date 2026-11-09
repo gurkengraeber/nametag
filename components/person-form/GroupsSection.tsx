@@ -64,6 +64,7 @@ export default function GroupsSection({
       <GroupsSelector
         availableGroups={groups}
         selectedGroupIds={formData.groupIds}
+        showCreateHint={false}
         onChange={(groupIds) => onFormDataChange({ groupIds })}
       />
     </>

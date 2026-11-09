@@ -3,7 +3,18 @@
  * mapping of server validation errors onto the field they belong to.
  */
 
-export const PERSON_FORM_DEFAULTS_KEY = 'nametag.newPerson.defaults';
+/** Remembered values are dropped after this many days. */
+export const PERSON_FORM_DEFAULTS_MAX_AGE_DAYS = 30;
+const MAX_AGE_MS = PERSON_FORM_DEFAULTS_MAX_AGE_DAYS * 24 * 60 * 60 * 1000;
+
+/**
+ * Storage key, namespaced by account so one browser shared by several
+ * accounts never mixes them up (and the sign-out cleanup can remove every
+ * key with the `nametag:` prefix).
+ */
+export function getPersonFormDefaultsKey(userId: string): string {
+  return `nametag:newPerson:${userId}:defaults`;
+}
 
 export interface PersonFormDefaults {
   relationshipToUserId: string;
@@ -13,6 +24,7 @@ export interface PersonFormDefaults {
 interface StorageLike {
   getItem(key: string): string | null;
   setItem(key: string, value: string): void;
+  removeItem?(key: string): void;
 }
 
 function getBrowserStorage(): StorageLike | null {
@@ -23,17 +35,29 @@ function getBrowserStorage(): StorageLike | null {
   }
 }
 
-/** Reads the remembered defaults. Never throws; returns null when unavailable or invalid. */
+/**
+ * Reads the remembered defaults of this account. Only IDs are stored, never
+ * names or notes. Never throws; returns null when unavailable, invalid,
+ * written for another account or older than 30 days.
+ */
 export function loadPersonFormDefaults(
-  storage: StorageLike | null = getBrowserStorage()
+  userId: string,
+  storage: StorageLike | null = getBrowserStorage(),
+  now: number = Date.now()
 ): PersonFormDefaults | null {
-  if (!storage) return null;
+  if (!storage || !userId) return null;
+  const key = getPersonFormDefaultsKey(userId);
   try {
-    const raw = storage.getItem(PERSON_FORM_DEFAULTS_KEY);
+    const raw = storage.getItem(key);
     if (!raw) return null;
     const parsed: unknown = JSON.parse(raw);
     if (typeof parsed !== 'object' || parsed === null) return null;
     const record = parsed as Record<string, unknown>;
+    if (record.userId !== userId) return null;
+    if (typeof record.savedAt !== 'number' || now - record.savedAt > MAX_AGE_MS) {
+      storage.removeItem?.(key);
+      return null;
+    }
     const relationshipToUserId =
       typeof record.relationshipToUserId === 'string' ? record.relationshipToUserId : '';
     const groupIds = Array.isArray(record.groupIds)
@@ -47,12 +71,22 @@ export function loadPersonFormDefaults(
 
 /** Remembers the defaults for the next new person. Failures are ignored. */
 export function savePersonFormDefaults(
+  userId: string,
   defaults: PersonFormDefaults,
-  storage: StorageLike | null = getBrowserStorage()
+  storage: StorageLike | null = getBrowserStorage(),
+  now: number = Date.now()
 ): void {
-  if (!storage) return;
+  if (!storage || !userId) return;
   try {
-    storage.setItem(PERSON_FORM_DEFAULTS_KEY, JSON.stringify(defaults));
+    storage.setItem(
+      getPersonFormDefaultsKey(userId),
+      JSON.stringify({
+        userId,
+        savedAt: now,
+        relationshipToUserId: defaults.relationshipToUserId,
+        groupIds: defaults.groupIds,
+      })
+    );
   } catch {
     // Storage can be full or blocked (private mode). Remembering is optional.
   }
