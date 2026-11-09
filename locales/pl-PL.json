@@ -55,16 +55,69 @@
     "search": {
       "placeholder": "Szukaj osób...",
       "searching": "Wyszukiwanie...",
-      "noResults": "Nie znaleziono osób pasujących do „{searchTerm}”"
+      "noResults": "Nie znaleziono osób pasujących do „{searchTerm}”",
+      "error": "Wyszukiwanie jest teraz niedostępne. Sprawdź połączenie i spróbuj ponownie.",
+      "offline": "Jesteś offline. Wyszukiwanie wymaga połączenia, dopóki kontakty się nie wczytają.",
+      "retry": "Spróbuj ponownie",
+      "recent": "Ostatnio otwarte",
+      "emptyTitle": "Brak osób",
+      "emptyDescription": "Dodaj pierwszą osobę lub zaimportuj kontakty przez CardDAV.",
+      "addPerson": "Dodaj osobę",
+      "importContacts": "Importuj kontakty",
+      "noResultsHint": "Sprawdź pisownię albo spróbuj wyszukać grupę, miejsce lub notatkę.",
+      "addAsNew": "Dodaj \"{searchTerm}\" jako nową osobę",
+      "resultCount": "{count, plural, one {# wynik} few {# wyniki} many {# wyników} other {# wyniku}}",
+      "keyHint": "Enter otwiera profil. Shift+Enter lub Tab pokazuje szybkie akcje.",
+      "actions": {
+        "title": "Szybkie akcje",
+        "contactedToday": "Kontakt dzisiaj",
+        "alreadyContactedToday": "Kontakt dzisiaj",
+        "contactedDone": "Oznaczono {name} jako skontaktowaną dzisiaj",
+        "addToGroup": "Dodaj do grupy",
+        "addedToGroup": "Dodano {name} do grupy {group}",
+        "setRelationship": "Ustaw relację",
+        "relationshipSet": "{name} ma teraz relację: {relationship}",
+        "back": "Wstecz",
+        "filter": "Filtruj...",
+        "noMatches": "Nic nie pasuje",
+        "noGroups": "Nie masz jeszcze grup.",
+        "createGroup": "Utwórz grupę",
+        "noRelationshipTypes": "Nie masz jeszcze typów relacji.",
+        "createRelationshipType": "Utwórz",
+        "failed": "Nie udało się zaktualizować: {name}. Spróbuj ponownie."
+      },
+      "matchedIn": {
+        "group": "Grupa",
+        "relationship": "Relacja",
+        "locality": "Miejsce",
+        "organization": "Organizacja",
+        "jobTitle": "Stanowisko",
+        "notes": "W notatkach",
+        "contact": "Dane kontaktowe",
+        "other": "Inne dane"
+      }
     },
     "userMenu": {
       "settings": "Ustawienia",
       "documentation": "Dokumentacja",
-      "signOut": "Wyloguj się"
+      "signOut": "Wyloguj się",
+      "shortcuts": "Skróty klawiszowe"
     },
     "journal": "Dziennik",
     "createJournal": "Nowy wpis",
-    "map": "Mapa"
+    "map": "Mapa",
+    "newPerson": "Nowa osoba",
+    "shortcuts": {
+      "title": "Skróty klawiszowe",
+      "close": "Zamknij skróty",
+      "description": "Klawisze działają wszędzie, z wyjątkiem pisania w polu tekstowym.",
+      "search": "Szukaj",
+      "or": "lub",
+      "newPerson": "Nowa osoba",
+      "help": "Pokaż tę pomoc",
+      "goTo": "Przejdź do",
+      "then": "potem"
+    }
   },
   "notifications": {
     "push": {

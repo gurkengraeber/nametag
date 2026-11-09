@@ -14,13 +14,15 @@ const VARIANTS = {
 interface AccountMenuItemsProps {
   variant?: keyof typeof VARIANTS;
   onNavigate?: () => void;
+  /** Desktop only: phones have no keyboard to show shortcuts for. */
+  onShowShortcuts?: () => void;
 }
 
 /**
  * Settings, documentation and sign out. Rendered both in the desktop user
  * dropdown and in the mobile navigation drawer, so the two can't drift apart.
  */
-export default function AccountMenuItems({ variant = 'compact', onNavigate }: AccountMenuItemsProps) {
+export default function AccountMenuItems({ variant = 'compact', onNavigate, onShowShortcuts }: AccountMenuItemsProps) {
   const t = useTranslations('nav.userMenu');
   const row = `flex items-center gap-2 text-foreground hover:bg-surface-elevated transition-colors ${VARIANTS[variant]}`;
 
@@ -50,6 +52,21 @@ export default function AccountMenuItems({ variant = 'compact', onNavigate }: Ac
         </svg>
         {t('documentation')}
       </a>
+      {onShowShortcuts && (
+        <button
+          type="button"
+          onClick={() => {
+            onNavigate?.();
+            onShowShortcuts();
+          }}
+          className={`w-full text-left cursor-pointer ${row}`}
+        >
+          <svg className="w-4 h-4 text-secondary flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7a2 2 0 012-2h14a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V7zm4 3h.01M11 10h.01M15 10h.01M7 14h10" />
+          </svg>
+          {t('shortcuts')}
+        </button>
+      )}
       <hr className="my-1 border-border" />
       <button onClick={onSignOut} className={`w-full text-left cursor-pointer ${row}`}>
         <svg className="w-4 h-4 text-tertiary flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">

@@ -3,55 +3,104 @@
 import { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import { useSession } from 'next-auth/react';
 import type MiniSearch from 'minisearch';
-import { createSearchIndex, searchIndex as performSearch } from '@/lib/search-index';
+import {
+  createSearchIndex,
+  getIndexedPerson,
+  searchIndex as performSearch,
+} from '@/lib/search-index';
 import type { SearchDocument, PersonSearchResult } from '@/lib/search-index';
+
+export interface SearchGroupOption {
+  id: string;
+  name: string;
+}
+
+export interface SearchRelationshipTypeOption {
+  id: string;
+  label: string;
+}
 
 interface SearchIndexContextType {
   search: (query: string) => PersonSearchResult[];
+  /** Looks one person up by id, for example to resolve recently opened people. */
+  getPerson: (id: string) => PersonSearchResult | null;
   isReady: boolean;
+  /** Grows with every successful load, so callers can re-run a search on fresh data. */
+  version: number;
+  /** True when the last attempt to load the index failed. */
+  hasError: boolean;
+  /** Groups and relationship types the quick actions can offer. */
+  groups: SearchGroupOption[];
+  relationshipTypes: SearchRelationshipTypeOption[];
+  /** True once the index has loaded and holds no people at all. */
+  isEmpty: boolean;
   refreshIndex: () => void;
 }
 
 const SearchIndexContext = createContext<SearchIndexContextType | undefined>(undefined);
 
-async function fetchAndBuildIndex(
-  indexRef: React.RefObject<MiniSearch<SearchDocument> | null>,
-  setIsReady: (ready: boolean) => void,
-) {
-  try {
-    const response = await fetch('/api/people/search-index');
-    if (!response.ok) return;
-    const data = await response.json();
-
-    indexRef.current = createSearchIndex(data.people);
-    setIsReady(true);
-  } catch {
-    // Silently fail; search falls back to server-side
-  }
+interface IndexPayload {
+  people: SearchDocument[];
+  groups?: SearchGroupOption[];
+  relationshipTypes?: SearchRelationshipTypeOption[];
 }
 
 export function SearchIndexProvider({ children }: { children: React.ReactNode }) {
   const { data: session } = useSession();
   const [isReady, setIsReady] = useState(false);
+  const [hasError, setHasError] = useState(false);
+  const [isEmpty, setIsEmpty] = useState(false);
+  const [version, setVersion] = useState(0);
+  const [groups, setGroups] = useState<SearchGroupOption[]>([]);
+  const [relationshipTypes, setRelationshipTypes] = useState<SearchRelationshipTypeOption[]>([]);
   const indexRef = useRef<MiniSearch<SearchDocument> | null>(null);
+
+  const loadIndex = useCallback(async () => {
+    try {
+      const response = await fetch('/api/people/search-index');
+      if (!response.ok) {
+        setHasError(true);
+        return;
+      }
+      const data: IndexPayload = await response.json();
+
+      indexRef.current = createSearchIndex(data.people);
+      setGroups(data.groups ?? []);
+      setRelationshipTypes(data.relationshipTypes ?? []);
+      setIsEmpty(data.people.length === 0);
+      setHasError(false);
+      setIsReady(true);
+      setVersion((current) => current + 1);
+    } catch {
+      // Search falls back to the server; the error flag lets the UI say so.
+      setHasError(true);
+    }
+  }, []);
 
   useEffect(() => {
     if (session?.user) {
-      fetchAndBuildIndex(indexRef, setIsReady);
+      loadIndex();
     }
-  }, [session]);
+  }, [session, loadIndex]);
 
   const search = useCallback((query: string): PersonSearchResult[] => {
     if (!indexRef.current) return [];
     return performSearch(indexRef.current, query);
   }, []);
 
-  const refreshIndex = useCallback(() => {
-    fetchAndBuildIndex(indexRef, setIsReady);
+  const getPerson = useCallback((id: string): PersonSearchResult | null => {
+    if (!indexRef.current) return null;
+    return getIndexedPerson(indexRef.current, id);
   }, []);
 
+  const refreshIndex = useCallback(() => {
+    loadIndex();
+  }, [loadIndex]);
+
   return (
-    <SearchIndexContext.Provider value={{ search, isReady, refreshIndex }}>
+    <SearchIndexContext.Provider
+      value={{ search, getPerson, isReady, version, hasError, groups, relationshipTypes, isEmpty, refreshIndex }}
+    >
       {children}
     </SearchIndexContext.Provider>
   );

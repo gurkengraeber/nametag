@@ -55,16 +55,69 @@
     "search": {
       "placeholder": "Zoek personen...",
       "searching": "Zoeken...",
-      "noResults": "Geen personen gevonden die overeenkomen met \"{searchTerm}\""
+      "noResults": "Geen personen gevonden die overeenkomen met \"{searchTerm}\"",
+      "error": "Zoeken is nu niet beschikbaar. Controleer je verbinding en probeer het opnieuw.",
+      "offline": "Je bent offline. Zoeken heeft een verbinding nodig totdat je contacten zijn geladen.",
+      "retry": "Opnieuw proberen",
+      "recent": "Onlangs geopend",
+      "emptyTitle": "Nog geen personen",
+      "emptyDescription": "Voeg je eerste persoon toe of importeer je contacten met CardDAV.",
+      "addPerson": "Een persoon toevoegen",
+      "importContacts": "Contacten importeren",
+      "noResultsHint": "Controleer de spelling of probeer een groep, plaats of notitie.",
+      "addAsNew": "\"{searchTerm}\" toevoegen als nieuwe persoon",
+      "resultCount": "{count, plural, one {# resultaat} other {# resultaten}}",
+      "keyHint": "Enter opent het profiel. Shift+Enter of Tab toont snelle acties.",
+      "actions": {
+        "title": "Snelle acties",
+        "contactedToday": "Vandaag contact gehad",
+        "alreadyContactedToday": "Vandaag contact gehad",
+        "contactedDone": "{name} gemarkeerd als vandaag contact gehad",
+        "addToGroup": "Aan groep toevoegen",
+        "addedToGroup": "{name} toegevoegd aan {group}",
+        "setRelationship": "Relatie instellen",
+        "relationshipSet": "{name} is nu: {relationship}",
+        "back": "Terug",
+        "filter": "Filteren...",
+        "noMatches": "Niets gevonden",
+        "noGroups": "Je hebt nog geen groepen.",
+        "createGroup": "Een groep maken",
+        "noRelationshipTypes": "Je hebt nog geen relatietypen.",
+        "createRelationshipType": "Maak er een",
+        "failed": "{name} kon niet worden bijgewerkt. Probeer het opnieuw."
+      },
+      "matchedIn": {
+        "group": "Groep",
+        "relationship": "Relatie",
+        "locality": "Plaats",
+        "organization": "Organisatie",
+        "jobTitle": "Functie",
+        "notes": "In notities",
+        "contact": "Contactgegevens",
+        "other": "Overige gegevens"
+      }
     },
     "userMenu": {
       "settings": "Instellingen",
       "documentation": "Documentatie",
-      "signOut": "Uitloggen"
+      "signOut": "Uitloggen",
+      "shortcuts": "Sneltoetsen"
     },
     "journal": "Dagboek",
     "createJournal": "Nieuwe invoer",
-    "map": "Kaart"
+    "map": "Kaart",
+    "newPerson": "Nieuwe persoon",
+    "shortcuts": {
+      "title": "Sneltoetsen",
+      "close": "Sneltoetsen sluiten",
+      "description": "De toetsen werken overal, behalve terwijl je in een veld typt.",
+      "search": "Zoeken",
+      "or": "of",
+      "newPerson": "Nieuwe persoon",
+      "help": "Deze hulp tonen",
+      "goTo": "Ga naar",
+      "then": "dan"
+    }
   },
   "notifications": {
     "push": {

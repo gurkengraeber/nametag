@@ -55,16 +55,69 @@
     "search": {
       "placeholder": "Søk etter personer...",
       "searching": "Søker...",
-      "noResults": "Fant ingen personer som samsvarer med \"{searchTerm}\""
+      "noResults": "Fant ingen personer som samsvarer med \"{searchTerm}\"",
+      "error": "Søket er ikke tilgjengelig akkurat nå. Sjekk tilkoblingen og prøv igjen.",
+      "offline": "Du er frakoblet. Søket trenger tilkobling til kontaktene dine er lastet.",
+      "retry": "Prøv igjen",
+      "recent": "Nylig åpnet",
+      "emptyTitle": "Ingen personer ennå",
+      "emptyDescription": "Legg til den første personen din, eller importer kontaktene dine med CardDAV.",
+      "addPerson": "Legg til en person",
+      "importContacts": "Importer kontakter",
+      "noResultsHint": "Sjekk stavemåten, eller prøv en gruppe, et sted eller et notat.",
+      "addAsNew": "Legg til \"{searchTerm}\" som ny person",
+      "resultCount": "{count, plural, one {# treff} other {# treff}}",
+      "keyHint": "Enter åpner profilen. Skift+Enter eller Tab viser hurtighandlinger.",
+      "actions": {
+        "title": "Hurtighandlinger",
+        "contactedToday": "Kontaktet i dag",
+        "alreadyContactedToday": "Kontaktet i dag",
+        "contactedDone": "{name} er markert som kontaktet i dag",
+        "addToGroup": "Legg til i gruppe",
+        "addedToGroup": "{name} er lagt til i {group}",
+        "setRelationship": "Angi forhold",
+        "relationshipSet": "{name} er nå: {relationship}",
+        "back": "Tilbake",
+        "filter": "Filtrer...",
+        "noMatches": "Ingenting passer",
+        "noGroups": "Du har ingen grupper ennå.",
+        "createGroup": "Opprett en gruppe",
+        "noRelationshipTypes": "Du har ingen forholdstyper ennå.",
+        "createRelationshipType": "Opprett en",
+        "failed": "Kunne ikke oppdatere {name}. Prøv igjen."
+      },
+      "matchedIn": {
+        "group": "Gruppe",
+        "relationship": "Forhold",
+        "locality": "Sted",
+        "organization": "Organisasjon",
+        "jobTitle": "Stillingstittel",
+        "notes": "I notatene",
+        "contact": "Kontaktinformasjon",
+        "other": "Andre opplysninger"
+      }
     },
     "userMenu": {
       "settings": "Innstillinger",
       "documentation": "Dokumentasjon",
-      "signOut": "Logg ut"
+      "signOut": "Logg ut",
+      "shortcuts": "Hurtigtaster"
     },
     "journal": "Journal",
     "createJournal": "Ny oppføring",
-    "map": "Kart"
+    "map": "Kart",
+    "newPerson": "Ny person",
+    "shortcuts": {
+      "title": "Hurtigtaster",
+      "close": "Lukk hurtigtaster",
+      "description": "Tastene virker overalt, unntatt mens du skriver i et felt.",
+      "search": "Søk",
+      "or": "eller",
+      "newPerson": "Ny person",
+      "help": "Vis denne hjelpen",
+      "goTo": "Gå til",
+      "then": "deretter"
+    }
   },
   "notifications": {
     "push": {

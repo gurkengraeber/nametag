@@ -55,16 +55,69 @@
     "search": {
       "placeholder": "搜索联系人...",
       "searching": "搜索中...",
-      "noResults": "未找到匹配\"{searchTerm}\"的联系人"
+      "noResults": "未找到匹配\"{searchTerm}\"的联系人",
+      "error": "搜索暂时不可用。请检查网络连接后重试。",
+      "offline": "你已离线。在联系人加载完成之前，搜索需要网络连接。",
+      "retry": "重试",
+      "recent": "最近打开",
+      "emptyTitle": "还没有联系人",
+      "emptyDescription": "添加第一位联系人，或通过 CardDAV 导入联系人。",
+      "addPerson": "添加联系人",
+      "importContacts": "导入联系人",
+      "noResultsHint": "请检查拼写，或试试按分组、地点或备注搜索。",
+      "addAsNew": "将“{searchTerm}”添加为新联系人",
+      "resultCount": "{count} 个结果",
+      "keyHint": "按 Enter 打开资料。按 Shift+Enter 或 Tab 显示快捷操作。",
+      "actions": {
+        "title": "快捷操作",
+        "contactedToday": "今天已联系",
+        "alreadyContactedToday": "今天已联系",
+        "contactedDone": "已将 {name} 标记为今天已联系",
+        "addToGroup": "添加到分组",
+        "addedToGroup": "已将 {name} 添加到 {group}",
+        "setRelationship": "设置关系",
+        "relationshipSet": "{name} 现在是：{relationship}",
+        "back": "返回",
+        "filter": "筛选...",
+        "noMatches": "没有匹配项",
+        "noGroups": "你还没有分组。",
+        "createGroup": "创建分组",
+        "noRelationshipTypes": "你还没有关系类型。",
+        "createRelationshipType": "创建一个",
+        "failed": "无法更新 {name}。请重试。"
+      },
+      "matchedIn": {
+        "group": "分组",
+        "relationship": "关系",
+        "locality": "地点",
+        "organization": "组织",
+        "jobTitle": "职位",
+        "notes": "备注中",
+        "contact": "联系方式",
+        "other": "其他信息"
+      }
     },
     "userMenu": {
       "settings": "设置",
       "documentation": "文档",
-      "signOut": "退出登录"
+      "signOut": "退出登录",
+      "shortcuts": "键盘快捷键"
     },
     "journal": "日记",
     "createJournal": "新条目",
-    "map": "地图"
+    "map": "地图",
+    "newPerson": "新建联系人",
+    "shortcuts": {
+      "title": "键盘快捷键",
+      "close": "关闭快捷键",
+      "description": "除了在输入框中打字时，这些单键在任何地方都有效。",
+      "search": "搜索",
+      "or": "或",
+      "newPerson": "新建联系人",
+      "help": "显示此帮助",
+      "goTo": "前往",
+      "then": "然后"
+    }
   },
   "notifications": {
     "push": {

@@ -1,6 +1,7 @@
 import { prisma } from '@/lib/prisma';
 import { apiResponse, withAuth } from '@/lib/api-utils';
 import { filterPeople } from '@/lib/search';
+import { nameMatchBonus } from '@/lib/search-index';
 
 export const GET = withAuth(async (request, session) => {
   const { searchParams } = new URL(request.url);
@@ -32,11 +33,16 @@ export const GET = withAuth(async (request, session) => {
     },
   });
 
+  // Names that start with the query come first, the rest keeps alphabetical order.
   const people = filterPeople(
     allPeople,
     query,
     ['name', 'surname', 'middleName', 'secondLastName', 'nickname', 'displayNameOverride']
-  ).slice(0, 20);
+  )
+    .map((person) => ({ person, bonus: nameMatchBonus(person, query) }))
+    .sort((a, b) => b.bonus - a.bonus)
+    .map(({ person }) => person)
+    .slice(0, 20);
 
   return apiResponse.ok({ people });
 });

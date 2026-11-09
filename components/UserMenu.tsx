@@ -10,9 +10,11 @@ interface UserMenuProps {
   userName?: string | null;
   userNickname?: string | null;
   userPhoto?: string | null;
+  /** Adds a "Keyboard shortcuts" row; the menu closes itself when it is chosen. */
+  onShowShortcuts?: () => void;
 }
 
-export default function UserMenu({ userEmail, userName, userNickname, userPhoto }: UserMenuProps) {
+export default function UserMenu({ userEmail, userName, userNickname, userPhoto, onShowShortcuts }: UserMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -57,7 +59,7 @@ export default function UserMenu({ userEmail, userName, userNickname, userPhoto 
 
       {isOpen && (
         <div className="absolute right-0 mt-2 w-48 bg-surface rounded-lg shadow-lg py-1 z-50 border border-border">
-          <AccountMenuItems onNavigate={() => setIsOpen(false)} />
+          <AccountMenuItems onNavigate={() => setIsOpen(false)} onShowShortcuts={onShowShortcuts} />
         </div>
       )}
     </div>

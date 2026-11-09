@@ -55,16 +55,69 @@
     "search": {
       "placeholder": "人物を検索...",
       "searching": "検索中...",
-      "noResults": "\"{searchTerm}\"に一致する人物は見つかりませんでした"
+      "noResults": "\"{searchTerm}\"に一致する人物は見つかりませんでした",
+      "error": "現在、検索を利用できません。接続を確認して、もう一度お試しください。",
+      "offline": "オフラインです。連絡先の読み込みが終わるまで、検索には接続が必要です。",
+      "retry": "もう一度試す",
+      "recent": "最近開いた人物",
+      "emptyTitle": "まだ人物がいません",
+      "emptyDescription": "最初の人物を追加するか、CardDAV で連絡先をインポートしましょう。",
+      "addPerson": "人物を追加",
+      "importContacts": "連絡先をインポート",
+      "noResultsHint": "綴りを確認するか、グループ、場所、メモで探してみてください。",
+      "addAsNew": "「{searchTerm}」を新しい人物として追加",
+      "resultCount": "{count}件の結果",
+      "keyHint": "Enter でプロフィールを開きます。Shift+Enter または Tab でクイック操作を表示します。",
+      "actions": {
+        "title": "クイック操作",
+        "contactedToday": "今日連絡した",
+        "alreadyContactedToday": "今日連絡した",
+        "contactedDone": "{name}を今日連絡した人として記録しました",
+        "addToGroup": "グループに追加",
+        "addedToGroup": "{name}を{group}に追加しました",
+        "setRelationship": "関係を設定",
+        "relationshipSet": "{name}の関係を設定しました: {relationship}",
+        "back": "戻る",
+        "filter": "絞り込み...",
+        "noMatches": "一致するものがありません",
+        "noGroups": "まだグループがありません。",
+        "createGroup": "グループを作成",
+        "noRelationshipTypes": "まだ関係の種類がありません。",
+        "createRelationshipType": "作成する",
+        "failed": "{name}を更新できませんでした。もう一度お試しください。"
+      },
+      "matchedIn": {
+        "group": "グループ",
+        "relationship": "関係",
+        "locality": "場所",
+        "organization": "組織",
+        "jobTitle": "役職",
+        "notes": "メモ内",
+        "contact": "連絡先情報",
+        "other": "その他の情報"
+      }
     },
     "userMenu": {
       "settings": "設定",
       "documentation": "ドキュメント",
-      "signOut": "サインアウト"
+      "signOut": "サインアウト",
+      "shortcuts": "キーボードショートカット"
     },
     "journal": "ジャーナル",
     "createJournal": "新しいエントリー",
-    "map": "マップ"
+    "map": "マップ",
+    "newPerson": "新しい人物",
+    "shortcuts": {
+      "title": "キーボードショートカット",
+      "close": "ショートカットを閉じる",
+      "description": "入力欄に文字を入力している間を除き、どこでも1キーで操作できます。",
+      "search": "検索",
+      "or": "または",
+      "newPerson": "新しい人物",
+      "help": "このヘルプを表示",
+      "goTo": "移動",
+      "then": "次に"
+    }
   },
   "notifications": {
     "push": {
