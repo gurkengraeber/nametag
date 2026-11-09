@@ -285,7 +285,14 @@
       "pushDeviceDisabled": "この端末は配信の失敗が続いたため、オフになりました。",
       "pushDeviceDisabledRejected": "プッシュサービスがメッセージを拒否しました。この端末でプッシュ通知をもう一度オンにして、登録し直してください。",
       "pushDeviceDisabledUnreachable": "端末に接続できませんでした。この端末でプッシュ通知をもう一度オンにして、登録し直してください。",
-      "endpointAddTooLong": "そのURLは長すぎます。短くしてもう一度お試しください。"
+      "endpointAddTooLong": "そのURLは長すぎます。短くしてもう一度お試しください。",
+      "summary": {
+        "none": "リマインダーの通知先がオンになっていないため、近づく日付をお知らせできません。下でメールまたはプッシュをオンにしてください。",
+        "active": "リマインダーは {channels} で届きます。",
+        "email": "メール",
+        "push": "{count, plural, other {#台のデバイス}}へのプッシュ",
+        "destinations": "{count, plural, other {#件のその他の通知先}}"
+      }
     },
     "security": {
       "title": "セキュリティ",

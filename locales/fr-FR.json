@@ -285,7 +285,14 @@
       "pushDeviceDisabled": "Cet appareil a été désactivé après plusieurs échecs de livraison.",
       "pushDeviceDisabledRejected": "Le service de notifications a rejeté les messages. Réactivez les notifications depuis cet appareil pour le réenregistrer.",
       "pushDeviceDisabledUnreachable": "L'appareil était injoignable. Réactivez les notifications depuis cet appareil pour le réenregistrer.",
-      "endpointAddTooLong": "Cette URL est trop longue. Raccourcissez-la et réessayez."
+      "endpointAddTooLong": "Cette URL est trop longue. Raccourcissez-la et réessayez.",
+      "summary": {
+        "none": "Aucun canal de rappel n'est activé, vous ne serez donc pas prévenu des prochaines dates. Activez l'e-mail ou le push ci-dessous.",
+        "active": "Les rappels vous parviennent par {channels}.",
+        "email": "e-mail",
+        "push": "push sur {count, plural, one {# appareil} other {# appareils}}",
+        "destinations": "{count, plural, one {# autre destination} other {# autres destinations}}"
+      }
     },
     "security": {
       "title": "Sécurité",

@@ -285,7 +285,14 @@
       "pushDeviceDisabled": "Este dispositivo se desactivó tras varios fallos de entrega.",
       "pushDeviceDisabledRejected": "El servicio de notificaciones rechazó los mensajes. Vuelve a activar las notificaciones desde este dispositivo para registrarlo de nuevo.",
       "pushDeviceDisabledUnreachable": "No se pudo contactar con el dispositivo. Vuelve a activar las notificaciones desde este dispositivo para registrarlo de nuevo.",
-      "endpointAddTooLong": "Esa URL es demasiado larga. Acórtala e inténtalo de nuevo."
+      "endpointAddTooLong": "Esa URL es demasiado larga. Acórtala e inténtalo de nuevo.",
+      "summary": {
+        "none": "No hay ningún canal de recordatorios activado, así que no te enterarás de las próximas fechas. Activa correo o push más abajo.",
+        "active": "Los recordatorios te llegan por {channels}.",
+        "email": "correo",
+        "push": "push en {count, plural, one {# dispositivo} other {# dispositivos}}",
+        "destinations": "{count, plural, one {# otro destino} other {# otros destinos}}"
+      }
     },
     "security": {
       "title": "Seguridad",

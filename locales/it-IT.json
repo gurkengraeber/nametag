@@ -285,7 +285,14 @@
       "pushDeviceDisabled": "Questo dispositivo è stato disattivato dopo ripetuti errori di consegna.",
       "pushDeviceDisabledRejected": "Il servizio di notifiche ha rifiutato i messaggi. Riattiva le notifiche da questo dispositivo per registrarlo di nuovo.",
       "pushDeviceDisabledUnreachable": "Non è stato possibile raggiungere il dispositivo. Riattiva le notifiche da questo dispositivo per registrarlo di nuovo.",
-      "endpointAddTooLong": "Questo URL è troppo lungo. Accorcialo e riprova."
+      "endpointAddTooLong": "Questo URL è troppo lungo. Accorcialo e riprova.",
+      "summary": {
+        "none": "Nessun canale per i promemoria è attivo, quindi non sarai avvisato delle prossime date. Attiva email o push qui sotto.",
+        "active": "I promemoria ti arrivano tramite {channels}.",
+        "email": "email",
+        "push": "push su {count, plural, one {# dispositivo} other {# dispositivi}}",
+        "destinations": "{count, plural, one {# altra destinazione} other {# altre destinazioni}}"
+      }
     },
     "security": {
       "title": "Sicurezza",

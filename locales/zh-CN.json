@@ -285,7 +285,14 @@
       "pushDeviceDisabled": "该设备在多次投递失败后已被关闭。",
       "pushDeviceDisabledRejected": "推送服务拒绝了这些消息。请在该设备上重新开启推送以再次注册。",
       "pushDeviceDisabledUnreachable": "无法连接到该设备。请在该设备上重新开启推送以再次注册。",
-      "endpointAddTooLong": "该网址过长。请缩短后重试。"
+      "endpointAddTooLong": "该网址过长。请缩短后重试。",
+      "summary": {
+        "none": "没有开启任何提醒渠道,因此你不会收到即将到来的日期提醒。请在下方开启邮件或推送。",
+        "active": "提醒将通过 {channels} 发送给你。",
+        "email": "邮件",
+        "push": "{count, plural, other {# 台设备}}上的推送",
+        "destinations": "{count, plural, other {# 个其他目的地}}"
+      }
     },
     "security": {
       "title": "安全",

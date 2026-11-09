@@ -285,7 +285,14 @@
       "pushDeviceDisabled": "Denne enheten ble slått av etter gjentatte leveringsfeil.",
       "pushDeviceDisabledRejected": "Pushtjenesten avviste meldingene. Slå på push igjen fra denne enheten for å registrere den på nytt.",
       "pushDeviceDisabledUnreachable": "Enheten kunne ikke nås. Slå på push igjen fra denne enheten for å registrere den på nytt.",
-      "endpointAddTooLong": "Den URL-en er for lang. Gjør den kortere og prøv igjen."
+      "endpointAddTooLong": "Den URL-en er for lang. Gjør den kortere og prøv igjen.",
+      "summary": {
+        "none": "Ingen påminnelseskanal er slått på, så du får ikke vite om kommende datoer. Slå på e-post eller push nedenfor.",
+        "active": "Påminnelser når deg via {channels}.",
+        "email": "e-post",
+        "push": "push på {count, plural, one {# enhet} other {# enheter}}",
+        "destinations": "{count, plural, one {# annen mottaker} other {# andre mottakere}}"
+      }
     },
     "security": {
       "title": "Sikkerhet",

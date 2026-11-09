@@ -285,7 +285,14 @@
       "pushDeviceDisabled": "To urządzenie zostało wyłączone po powtarzających się błędach dostarczania.",
       "pushDeviceDisabledRejected": "Usługa push odrzuciła wiadomości. Włącz ponownie powiadomienia push na tym urządzeniu, aby zarejestrować je od nowa.",
       "pushDeviceDisabledUnreachable": "Nie udało się połączyć z urządzeniem. Włącz ponownie powiadomienia push na tym urządzeniu, aby zarejestrować je od nowa.",
-      "endpointAddTooLong": "Ten adres URL jest za długi. Skróć go i spróbuj ponownie."
+      "endpointAddTooLong": "Ten adres URL jest za długi. Skróć go i spróbuj ponownie.",
+      "summary": {
+        "none": "Żaden kanał przypomnień nie jest włączony, więc nie dowiesz się o zbliżających się datach. Włącz poniżej e-mail lub push.",
+        "active": "Przypomnienia docierają do Ciebie przez: {channels}.",
+        "email": "e-mail",
+        "push": "push na {count, plural, one {# urządzeniu} other {# urządzeniach}}",
+        "destinations": "{count, plural, one {# inny cel} few {# inne cele} many {# innych celów} other {# innego celu}}"
+      }
     },
     "security": {
       "title": "Bezpieczeństwo",

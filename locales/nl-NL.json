@@ -285,7 +285,14 @@
       "pushDeviceDisabled": "Dit apparaat is uitgeschakeld na herhaalde bezorgfouten.",
       "pushDeviceDisabledRejected": "De pushdienst heeft de berichten geweigerd. Zet push weer aan op dit apparaat om het opnieuw te registreren.",
       "pushDeviceDisabledUnreachable": "Het apparaat was niet bereikbaar. Zet push weer aan op dit apparaat om het opnieuw te registreren.",
-      "endpointAddTooLong": "Die URL is te lang. Maak hem korter en probeer het opnieuw."
+      "endpointAddTooLong": "Die URL is te lang. Maak hem korter en probeer het opnieuw.",
+      "summary": {
+        "none": "Er staat geen herinneringskanaal aan, dus je hoort niets over aankomende data. Zet hieronder e-mail of push aan.",
+        "active": "Herinneringen bereiken je via {channels}.",
+        "email": "e-mail",
+        "push": "push op {count, plural, one {# apparaat} other {# apparaten}}",
+        "destinations": "{count, plural, one {# andere bestemming} other {# andere bestemmingen}}"
+      }
     },
     "security": {
       "title": "Beveiliging",

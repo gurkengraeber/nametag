@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
+import { Button } from '@/components/ui/Button';
 
 interface Device {
   id: string;
@@ -312,14 +313,16 @@ export default function NotificationChannelsCard({
         {pushAvailable &&
           !iosHint &&
           (pushState === 'available' || (pushState === 'subscribed' && devices.length === 0)) && (
-            <button
+            <Button
               type="button"
+              variant="secondary"
+              size="sm"
+              className="mt-2"
               onClick={() => void enablePush()}
               disabled={busy}
-              className="mt-2 px-3 py-1 rounded-md border border-border disabled:opacity-50"
             >
               {t('pushEnable')}
-            </button>
+            </Button>
           )}
 
         {pushAvailable && pushState === 'subscribed' && devices.length > 0 && (
@@ -339,7 +342,7 @@ export default function NotificationChannelsCard({
                   <button
                     type="button"
                     onClick={() => void removeDevice(device.id)}
-                    className="text-muted hover:text-foreground"
+                    className="min-h-11 sm:min-h-0 px-2 text-muted hover:text-foreground"
                   >
                     {t('pushRemove')}
                   </button>

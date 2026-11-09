@@ -285,7 +285,14 @@
       "pushDeviceDisabled": "This device was switched off after repeated delivery failures.",
       "pushDeviceDisabledRejected": "The push service rejected the messages. Turn push back on from this device to re-register it.",
       "pushDeviceDisabledUnreachable": "The device could not be reached. Turn push back on from this device to re-register it.",
-      "endpointAddTooLong": "That URL is too long. Shorten it and try again."
+      "endpointAddTooLong": "That URL is too long. Shorten it and try again.",
+      "summary": {
+        "none": "No reminder channel is on, so you will not hear about upcoming dates. Turn on email or push below.",
+        "active": "Reminders reach you by {channels}.",
+        "email": "email",
+        "push": "push on {count, plural, one {# device} other {# devices}}",
+        "destinations": "{count, plural, one {# other destination} other {# other destinations}}"
+      }
     },
     "security": {
       "title": "Security",

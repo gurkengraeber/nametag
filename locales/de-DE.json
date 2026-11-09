@@ -285,7 +285,14 @@
       "pushDeviceDisabled": "Dieses Gerät wurde nach wiederholten Zustellfehlern abgeschaltet.",
       "pushDeviceDisabledRejected": "Der Push-Dienst hat die Nachrichten abgelehnt. Schalte Push auf diesem Gerät wieder ein, um es neu zu registrieren.",
       "pushDeviceDisabledUnreachable": "Das Gerät war nicht erreichbar. Schalte Push auf diesem Gerät wieder ein, um es neu zu registrieren.",
-      "endpointAddTooLong": "Diese URL ist zu lang. Kürze sie und versuche es erneut."
+      "endpointAddTooLong": "Diese URL ist zu lang. Kürze sie und versuche es erneut.",
+      "summary": {
+        "none": "Es ist kein Kanal für Erinnerungen eingeschaltet, du erfährst also nichts über anstehende Termine. Schalte unten E-Mail oder Push ein.",
+        "active": "Erinnerungen erreichen dich per {channels}.",
+        "email": "E-Mail",
+        "push": "Push auf {count, plural, one {# Gerät} other {# Geräten}}",
+        "destinations": "{count, plural, one {# weiteres Ziel} other {# weiteren Zielen}}"
+      }
     },
     "security": {
       "title": "Sicherheit",
