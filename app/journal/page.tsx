@@ -7,11 +7,12 @@ import JournalTimeline from '@/components/JournalTimeline';
 import JournalFilters from '@/components/JournalFilters';
 import { Button } from '@/components/ui/Button';
 import { getUserDisplayPreferences } from '@/lib/user-preferences';
+import { buildJournalWhere, parseDateParam, parsePersonIds } from '@/lib/journal';
 
 export default async function JournalPage({
   searchParams,
 }: {
-  searchParams: Promise<{ person?: string; q?: string }>;
+  searchParams: Promise<{ person?: string; q?: string; from?: string; to?: string }>;
 }) {
   const session = await auth();
   const t = await getTranslations('journal');
@@ -21,9 +22,11 @@ export default async function JournalPage({
   }
 
   const params = await searchParams;
-  const personFilterParam = params.person;
-  const personFilterIds = personFilterParam ? personFilterParam.split(',').filter(Boolean) : [];
-  const searchQuery = params.q;
+  const personFilterIds = parsePersonIds(params.person);
+  const searchQuery = params.q?.trim() || undefined;
+  const fromDay = parseDateParam(params.from) ?? undefined;
+  const toDay = parseDateParam(params.to) ?? undefined;
+  const hasFilters = personFilterIds.length > 0 || Boolean(searchQuery) || Boolean(fromDay) || Boolean(toDay);
 
   const [preferences, people, entries] = await Promise.all([
     getUserDisplayPreferences(session.user.id),
@@ -42,25 +45,13 @@ export default async function JournalPage({
       orderBy: { name: 'asc' },
     }),
     prisma.journalEntry.findMany({
-      where: {
+      where: buildJournalWhere({
         userId: session.user.id,
-        deletedAt: null,
-        ...(personFilterIds.length > 0
-          ? {
-              AND: personFilterIds.map((pid) => ({
-                people: { some: { personId: pid } },
-              })),
-            }
-          : {}),
-        ...(searchQuery
-          ? {
-              OR: [
-                { title: { contains: searchQuery, mode: 'insensitive' } },
-                { body: { contains: searchQuery, mode: 'insensitive' } },
-              ],
-            }
-          : {}),
-      },
+        personIds: personFilterIds,
+        search: searchQuery,
+        from: fromDay,
+        to: toDay,
+      }),
       include: {
         people: {
           where: { person: { deletedAt: null } },
@@ -107,7 +98,13 @@ export default async function JournalPage({
             <h1 className="text-3xl font-bold text-foreground">
               {t('title')}
             </h1>
-            <Button href="/journal/new">
+            <Button
+              href={
+                personFilterIds.length > 0
+                  ? `/journal/new?person=${personFilterIds.join(',')}`
+                  : '/journal/new'
+              }
+            >
               {t('addEntry')}
             </Button>
           </div>
@@ -116,6 +113,8 @@ export default async function JournalPage({
             people={people}
             currentPersonIds={personFilterIds}
             currentSearch={searchQuery}
+            currentFrom={fromDay}
+            currentTo={toDay}
             nameOrder={nameOrder}
             nameDisplayFormat={nameDisplayFormat}
           />
@@ -125,6 +124,9 @@ export default async function JournalPage({
             nameOrder={nameOrder}
             nameDisplayFormat={nameDisplayFormat}
             locale={locale}
+            searchQuery={searchQuery}
+            hasFilters={hasFilters}
+            personIds={personFilterIds}
           />
         </div>
       </main>
