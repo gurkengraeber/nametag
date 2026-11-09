@@ -307,7 +307,7 @@ describe('RelationshipBuilder brush mode', () => {
 
 describe('RelationshipBuilder dragging', () => {
   function pointer(type: string, target: Element | Window, init: PointerEventInit) {
-    fireEvent(target, new PointerEvent(type, { bubbles: true, cancelable: true, pointerId: 1, ...init }));
+    fireEvent(target, new PointerEvent(type, { bubbles: true, cancelable: true, pointerId: 1, isPrimary: true, ...init }));
   }
 
   function underPointer(element: Element | null) {
@@ -361,6 +361,12 @@ describe('RelationshipBuilder dragging', () => {
       personId: 'anna',
       relatedPersonId: 'cara',
     });
+  });
+
+  it('keeps the browser from starting a native image drag on a card', () => {
+    renderBuilder();
+    const notPrevented = fireEvent.dragStart(card('Anna Schmidt'));
+    expect(notPrevented).toBe(false);
   });
 
   it('ignores a drop on the same card or on empty space', () => {

@@ -41,6 +41,8 @@ function PersonCard({
       aria-pressed={selected}
       aria-label={ariaLabel}
       onPointerDown={(event) => onPointerDown(event, person.id)}
+      // The avatar image would otherwise start a native image drag and cancel ours.
+      onDragStart={(event) => event.preventDefault()}
       onClick={() => onActivate(person.id)}
       className={[
         'group flex flex-col gap-1.5 w-full min-h-16 px-3 py-2.5 text-left rounded-lg border bg-surface',

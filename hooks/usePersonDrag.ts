@@ -108,8 +108,10 @@ export function usePersonDrag({ enabled, onDrop }: UsePersonDragOptions) {
 
   const start = useCallback(
     (event: ReactPointerEvent<HTMLElement>, personId: string) => {
-      if (!enabled || sessionRef.current) return;
+      if (!enabled || !event.isPrimary) return;
       if (event.pointerType === 'mouse' && event.button !== 0) return;
+      // A leftover session (a pointerup that never arrived) must not block new drags.
+      teardownRef.current?.();
 
       const session: Session = {
         pointerId: event.pointerId,
