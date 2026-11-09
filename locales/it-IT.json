@@ -1045,7 +1045,8 @@
       "emptyFiltered": "Nessuno corrisponde a questi filtri.",
       "clearFilters": "Rimuovi filtri",
       "noConnections": "Nessuno è ancora collegato. Apri l'elenco qui sotto per collegare le persone a te.",
-      "emptyNetwork": "Ancora nessuno da mostrare."
+      "emptyNetwork": "Ancora nessuno da mostrare.",
+      "zoomHint": "Tieni premuto Ctrl (Cmd su Mac) e scorri per ingrandire"
     },
     "stats": {
       "ariaLabel": "Panoramica",
@@ -1110,7 +1111,7 @@
     "lastContactUpdateError": "Aggiornamento ultimo contatto fallito",
     "noContactRecorded": "Non hai ancora contattato questa persona",
     "relationshipNetwork": "Network relazioni",
-    "graphHelp": "Clicca i nodi per navigare • Trascina per riposizionare • Scorrimento per zoomare",
+    "graphHelp": "Clicca i nodi per navigare • Trascina per riposizionare • Ctrl + scorrimento per zoomare",
     "cardDavSynced": "Sincronizzato su CardDAV",
     "cardDavNotSynced": "Non sincronizzato su CardDAV",
     "you": "Tu",

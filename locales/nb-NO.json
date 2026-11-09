@@ -1045,7 +1045,8 @@
       "emptyFiltered": "Ingen passer til disse filtrene.",
       "clearFilters": "Fjern filtre",
       "noConnections": "Ingen er knyttet til deg ennå. Åpne listen under for å knytte personer til deg.",
-      "emptyNetwork": "Ingen å vise ennå."
+      "emptyNetwork": "Ingen å vise ennå.",
+      "zoomHint": "Hold Ctrl (Cmd på Mac) og rull for å zoome"
     },
     "stats": {
       "ariaLabel": "Oversikt",
@@ -1110,7 +1111,7 @@
     "lastContactUpdateError": "Kunne ikke oppdatere siste kontakt",
     "noContactRecorded": "Du har ikke kontaktet denne personen ennå",
     "relationshipNetwork": "Relasjonsnettverk",
-    "graphHelp": "Klikk på noder for å navigere • Dra for å flytte • Rull for å zoome",
+    "graphHelp": "Klikk på noder for å navigere • Dra for å flytte • Ctrl + rulling for å zoome",
     "cardDavSynced": "Synkronisert med CardDAV",
     "cardDavNotSynced": "Ikke synkronisert med CardDAV",
     "you": "Du",

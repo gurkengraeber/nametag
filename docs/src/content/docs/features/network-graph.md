@@ -10,7 +10,7 @@ The network graph turns your list of people into a picture: a living map of who 
 ## Two contexts
 
 - **Dashboard**: you sit at the center, with your entire network radiating outward. This is the big-picture view of everyone you've added. The page is built so that the greeting, a few key figures (people, groups, events this week) and the whole network fit on one screen: the graph takes the height that is left, and your upcoming events sit below it. When the page opens, the graph is framed so that you are in the middle and your network is in view, until you pan or zoom yourself.
-- **Person detail page**: the selected person sits at the center instead, showing their direct connections. This is the focused view for understanding one person's place in your network.
+- **Person detail page**: the selected person sits at the center instead, showing their direct connections. This is the focused view for understanding one person's place in your network. The window is only as tall as it needs to be: a person with a few connections gets a small graph, one with many connections a taller one.
 
 ## Display modes
 
@@ -58,7 +58,7 @@ The button in the top right corner of the dashboard graph shows the graph in ful
 
 - **Click a node** to navigate to that person's detail page (clicking the center node on the dashboard takes you to your own dashboard)
 - **Drag a node** to rearrange it manually. Nametag's force simulation will let it settle back into place once you let go, unless you've pinned it by moving it
-- **Scroll to zoom** in and out
+- **Hold Ctrl (Cmd on Mac) and scroll to zoom** in and out. Without the key the mouse wheel scrolls the page, so the graph never traps you while you scroll past it. In full screen the wheel zooms directly, and on a touch screen a vertical swipe scrolls the page while two fingers zoom
 - **Drag the background** to pan around
 - **Search** a person by name to zoom in on them
 - A **recenter button** puts you back in the middle and zooms out far enough to bring your network into view
