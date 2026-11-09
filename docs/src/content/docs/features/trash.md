@@ -15,6 +15,8 @@ When you delete a person, group, relationship, relationship type, or important d
 
 Trashed items stay recoverable for 30 days from the moment they're deleted. During that window, you can bring anything back exactly as it was.
 
+When you delete someone from their own page, a message with an **Undo** button appears for a few seconds and brings the person back at once. It does not appear when you also removed the contact from the CardDAV server, because that cannot be taken back from Nametag. The person stays in the trash either way.
+
 ## Viewing and restoring trash
 
 Go to **Settings > Trash** to see all deleted items. The **All** tab lists everything, most recently deleted first; the other tabs filter by type: People, Groups, Relationships, Relationship Types, and Important Dates. Each tab shows a count, and the search field filters the list by name or title, ignoring case and accents.

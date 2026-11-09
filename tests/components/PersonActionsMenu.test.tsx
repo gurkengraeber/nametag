@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
+import { toast } from 'sonner';
 import userEvent from '@testing-library/user-event';
 import { NextIntlClientProvider } from 'next-intl';
 import PersonActionsMenu from '../../components/PersonActionsMenu';
@@ -279,6 +280,52 @@ describe('PersonActionsMenu', () => {
           expect(deleteCall?.[0]).toContain('/api/people/person-1');
         });
       }
+    });
+  });
+
+  describe('Undo after delete', () => {
+    async function deleteFromMenu(user: ReturnType<typeof userEvent.setup>) {
+      await user.click(screen.getByRole('button', { name: /actions/i }));
+      await user.click(screen.getByText(/^delete$/i));
+      await waitFor(() => expect(screen.getByText(/are you sure/i)).toBeInTheDocument());
+      const confirm = screen
+        .getAllByRole('button', { name: /^delete$/i })
+        .find((btn) => btn.closest('[role="dialog"]') || btn.closest('.fixed'));
+      await user.click(confirm as HTMLElement);
+    }
+
+    it('offers to undo a delete that only moved the person to the trash', async () => {
+      const user = userEvent.setup();
+      renderMenu();
+
+      await deleteFromMenu(user);
+
+      await waitFor(() => expect(toast.success).toHaveBeenCalled());
+      const [message, options] = vi.mocked(toast.success).mock.calls[0] as unknown as [
+        string,
+        { action: { label: string } },
+      ];
+      expect(message).toBe('John Doe was moved to the trash');
+      expect(options.action.label).toBe('Undo');
+    });
+
+    it('offers no undo when the contact was also removed from the CardDAV server', async () => {
+      const user = userEvent.setup();
+      renderMenu({ hasCardDavSync: true });
+
+      await user.click(screen.getByRole('button', { name: /actions/i }));
+      await user.click(screen.getByText(/^delete$/i));
+      await waitFor(() => expect(screen.getByText(/are you sure/i)).toBeInTheDocument());
+      await user.click(screen.getByRole('checkbox', { name: /CardDAV/i }));
+      const confirm = screen
+        .getAllByRole('button', { name: /^delete$/i })
+        .find((btn) => btn.closest('[role="dialog"]') || btn.closest('.fixed'));
+      await user.click(confirm as HTMLElement);
+
+      await waitFor(() =>
+        expect((global.fetch as ReturnType<typeof vi.fn>).mock.calls.some((call) => call[1]?.method === 'DELETE')).toBe(true)
+      );
+      expect(toast.success).not.toHaveBeenCalled();
     });
   });
 

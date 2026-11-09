@@ -16,6 +16,7 @@ import PersonAutocomplete from '@/components/PersonAutocomplete';
 import { DuplicateCandidateDisplay } from '@/components/DuplicatesList';
 import type { NameDisplayFormat } from '@/lib/nameUtils';
 import { useSearchIndex } from '@/components/SearchIndexProvider';
+import { useUndoPersonDelete } from '@/hooks/useUndoPersonDelete';
 
 interface PersonForSearch {
   id: string;
@@ -54,6 +55,7 @@ export default function PersonActionsMenu({
   const tMerge = useTranslations('people.merge');
   const router = useRouter();
   const { refreshIndex } = useSearchIndex();
+  const showUndoDelete = useUndoPersonDelete();
 
   // Dropdown state
   const [menuOpen, setMenuOpen] = useState(false);
@@ -254,6 +256,14 @@ export default function PersonActionsMenu({
       });
 
       if (response.ok) {
+        // Removing the contact from the CardDAV server cannot be taken back from here.
+        if (!deleteFromCardDav) {
+          showUndoDelete({
+            ids: [personId, ...(deleteOrphans ? orphans.map((o) => o.id) : [])],
+            name: personName,
+            onRestored: () => router.refresh(),
+          });
+        }
         router.push('/people');
         router.refresh();
         refreshIndex();
