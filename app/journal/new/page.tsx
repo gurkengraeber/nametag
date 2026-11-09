@@ -5,8 +5,15 @@ import { getTranslations } from 'next-intl/server';
 import Navigation from '@/components/Navigation';
 import JournalEntryForm from '@/components/JournalEntryForm';
 import { getUserDisplayPreferences } from '@/lib/user-preferences';
+import { parseDateParam, parsePersonIds, recentPersonIds } from '@/lib/journal';
 
-export default async function NewJournalEntryPage() {
+// /journal/new?person=<id>[,<id>...]&date=YYYY-MM-DD opens the form with those
+// people tagged and that day chosen, so other pages can link straight here.
+export default async function NewJournalEntryPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ person?: string; date?: string }>;
+}) {
   const session = await auth();
   const t = await getTranslations('journal');
 
@@ -14,7 +21,9 @@ export default async function NewJournalEntryPage() {
     redirect('/login');
   }
 
-  const [preferences, availablePeople] = await Promise.all([
+  const params = await searchParams;
+
+  const [preferences, availablePeople, recentEntries] = await Promise.all([
     getUserDisplayPreferences(session.user.id),
     prisma.person.findMany({
       where: {
@@ -30,7 +39,24 @@ export default async function NewJournalEntryPage() {
       },
       orderBy: { name: 'asc' },
     }),
+    prisma.journalEntry.findMany({
+      where: { userId: session.user.id, deletedAt: null },
+      select: {
+        people: {
+          where: { person: { deletedAt: null } },
+          select: { personId: true },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+      take: 20,
+    }),
   ]);
+
+  const knownIds = new Set(availablePeople.map((p) => p.id));
+  const prefillPersonIds = parsePersonIds(params.person).filter((id) => knownIds.has(id));
+  const prefillDate = parseDateParam(params.date) ?? undefined;
+  const returnHref =
+    prefillPersonIds.length > 0 ? `/journal?person=${prefillPersonIds.join(',')}` : '/journal';
 
   const { nameOrder, dateFormat } = preferences;
 
@@ -50,12 +76,16 @@ export default async function NewJournalEntryPage() {
             {t('newEntry')}
           </h1>
 
-          <div className="bg-surface shadow rounded-lg p-6">
+          <div className="bg-surface shadow rounded-lg p-4 sm:p-6">
             <JournalEntryForm
+              userId={session.user.id}
               mode="create"
               availablePeople={availablePeople}
               nameOrder={nameOrder}
               dateFormat={dateFormat}
+              prefill={{ personIds: prefillPersonIds, date: prefillDate }}
+              recentPersonIds={recentPersonIds(recentEntries, 6)}
+              returnHref={returnHref}
             />
           </div>
         </div>

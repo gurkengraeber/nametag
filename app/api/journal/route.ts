@@ -1,9 +1,9 @@
-import { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
 import { createJournalEntrySchema, validateRequest } from '@/lib/validations';
 import { apiResponse, handleApiError, parseRequestBody, withAuth } from '@/lib/api-utils';
 import { apiError } from '@/lib/api-errors';
 import { sanitizeName, sanitizeNotes } from '@/lib/sanitize';
+import { buildJournalWhere, parsePersonIds } from '@/lib/journal';
 
 const ITEMS_PER_PAGE = 50;
 
@@ -12,22 +12,13 @@ export const GET = withAuth(async (request, session) => {
   try {
     const url = new URL(request.url);
     const page = Math.max(1, Number(url.searchParams.get('page')) || 1);
-    const personId = url.searchParams.get('person');
-    const search = url.searchParams.get('q');
-
-    const where: Prisma.JournalEntryWhereInput = {
+    const where = buildJournalWhere({
       userId: session.user.id,
-      deletedAt: null,
-      ...(personId && {
-        people: { some: { personId } },
-      }),
-      ...(search && {
-        OR: [
-          { title: { contains: search, mode: 'insensitive' as const } },
-          { body: { contains: search, mode: 'insensitive' as const } },
-        ],
-      }),
-    };
+      personIds: parsePersonIds(url.searchParams.get('person')),
+      search: url.searchParams.get('q'),
+      from: url.searchParams.get('from'),
+      to: url.searchParams.get('to'),
+    });
 
     const [entries, totalCount] = await Promise.all([
       prisma.journalEntry.findMany({

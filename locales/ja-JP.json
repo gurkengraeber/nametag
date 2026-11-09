@@ -2317,31 +2317,44 @@
     "noEntriesDescription": "友人とのコーヒー、家族の夕食、旧友との再会。大切な瞬間を記録しましょう。",
     "writeFirstEntry": "最初のエントリーを書く",
     "form": {
-      "titleLabel": "タイトル",
-      "titlePlaceholder": "このエントリーにタイトルを付けてください...",
+      "titleLabel": "タイトル（任意）",
+      "titlePlaceholder": "空欄の場合は最初の行を使います",
       "dateLabel": "日付",
       "peopleLabel": "人物",
       "peoplePlaceholder": "人物を追加するには入力してください...",
       "bodyLabel": "エントリー",
       "bodyPlaceholder": "出会いについて書いてください...",
-      "updateLastContact": "タグ付けした人物の最終連絡日を更新する",
-      "updateLastContactTooltip": "タグ付けした各人物の「最終連絡」日をこのエントリーの日付に設定し、最後にいつ交流したかを追跡できるようにします。",
+      "updateLastContact": "最終連絡日を{date}にする",
       "save": "エントリーを保存",
       "cancel": "キャンセル",
       "markdownSupport": "Markdown形式をサポート",
       "timeLabel": "時刻",
       "addTime": "時刻を追加",
       "removeTime": "時刻を削除",
-      "saved": "エントリーを保存しました"
+      "saved": "エントリーを保存しました",
+      "updateLastContactHelp": "ここでタグ付けした全員に適用されます。すでにそれより新しい最終連絡日がある人は変更されません。",
+      "updateLastContactFuture": "このエントリーは未来の日付のため、最終連絡日は変更されません。変更するにはチェックを入れてください。",
+      "bodyRequired": "保存する前に内容を書いてください。",
+      "untitled": "無題のエントリー",
+      "saveFailed": "エントリーを保存できませんでした。もう一度お試しください。",
+      "saveAndAddAnother": "保存して続けて書く",
+      "savedAddAnother": "エントリーを保存しました。次をどうぞ。",
+      "shortcutHint": "Ctrl+Enter（MacではCmd+Enter）で保存",
+      "recentPeople": "最近書いた人",
+      "draftRestored": "保存されていない下書きを復元しました。",
+      "discardDraft": "下書きを破棄"
     },
     "detail": {
       "editButton": "編集",
       "deleteButton": "削除",
       "confirmDelete": "このジャーナルエントリーを削除してもよろしいですか？",
-      "confirmDeleteDescription": "この操作は元に戻せません。",
+      "confirmDeleteDescription": "エントリーはジャーナルから消えます。削除直後なら元に戻せます。",
       "deleted": "ジャーナルエントリーが削除されました",
       "deleteFailed": "エントリーの削除に失敗しました",
-      "taggedPeople": "人物"
+      "taggedPeople": "人物",
+      "undo": "元に戻す",
+      "restored": "エントリーを復元しました",
+      "restoreFailed": "エントリーを復元できませんでした。"
     },
     "personSection": {
       "title": "ジャーナル",
@@ -2349,7 +2362,26 @@
       "writeOne": "書いてみる",
       "viewAll": "すべてのエントリーを見る",
       "newEntry": "新しいエントリー"
-    }
+    },
+    "filters": {
+      "rangeLabel": "期間",
+      "rangeAny": "すべての期間",
+      "rangeWeek": "直近7日間",
+      "rangeMonth": "直近30日間",
+      "rangeYear": "今年",
+      "rangeCustom": "{from}から{to}まで",
+      "rangeFrom": "{date}以降",
+      "rangeTo": "{date}まで"
+    },
+    "timeline": {
+      "showMore": "エントリー全体を表示",
+      "showLess": "表示を減らす"
+    },
+    "noResults": "条件に合うエントリーはありません",
+    "noResultsDescription": "別の検索語や期間を試すか、絞り込みを解除してください。",
+    "clearFilters": "絞り込みを解除",
+    "writeEntry": "エントリーを書く",
+    "resultCount": "{count, plural, other {#件のエントリー}}"
   },
   "pwa": {
     "description": "大切な人たちの情報を整理しましょう。",

@@ -2317,31 +2317,44 @@
     "noEntriesDescription": "A coffee catch-up, a family dinner, running into an old friend. Capture the moments that matter.",
     "writeFirstEntry": "Write your first entry",
     "form": {
-      "titleLabel": "Title",
-      "titlePlaceholder": "Give this entry a title...",
+      "titleLabel": "Title (optional)",
+      "titlePlaceholder": "Leave empty to use the first line",
       "dateLabel": "Date",
       "peopleLabel": "People",
       "peoplePlaceholder": "Type to add people...",
       "bodyLabel": "Entry",
       "bodyPlaceholder": "Write about your encounter...",
-      "updateLastContact": "Update last contact date for tagged people",
-      "updateLastContactTooltip": "Sets the 'last contacted' date for each tagged person to this entry's date, so you can track when you last interacted with them.",
+      "updateLastContact": "Set last contact to {date}",
       "save": "Save entry",
       "cancel": "Cancel",
       "markdownSupport": "Supports Markdown formatting",
       "timeLabel": "Time",
       "addTime": "Add time",
       "removeTime": "Remove time",
-      "saved": "Entry saved"
+      "saved": "Entry saved",
+      "updateLastContactHelp": "Applies to everyone tagged here. If someone's last contact is already later, it stays as it is.",
+      "updateLastContactFuture": "This entry is dated in the future, so last contact is left alone. Tick the box to change that.",
+      "bodyRequired": "Write something before saving.",
+      "untitled": "Untitled entry",
+      "saveFailed": "Could not save the entry. Please try again.",
+      "saveAndAddAnother": "Save and add another",
+      "savedAddAnother": "Entry saved. Ready for the next one.",
+      "shortcutHint": "Ctrl+Enter (Cmd+Enter on Mac) saves",
+      "recentPeople": "Recently written about",
+      "draftRestored": "We restored your unsaved draft.",
+      "discardDraft": "Discard draft"
     },
     "detail": {
       "editButton": "Edit",
       "deleteButton": "Delete",
       "confirmDelete": "Are you sure you want to delete this journal entry?",
-      "confirmDeleteDescription": "This action cannot be undone.",
+      "confirmDeleteDescription": "The entry disappears from your journal. Right after deleting, you can undo it.",
       "deleted": "Journal entry deleted",
       "deleteFailed": "Failed to delete entry",
-      "taggedPeople": "People"
+      "taggedPeople": "People",
+      "undo": "Undo",
+      "restored": "Entry restored",
+      "restoreFailed": "Could not restore the entry."
     },
     "personSection": {
       "title": "Journal",
@@ -2349,7 +2362,26 @@
       "writeOne": "Write one",
       "viewAll": "View all entries",
       "newEntry": "New entry"
-    }
+    },
+    "filters": {
+      "rangeLabel": "Time range",
+      "rangeAny": "Any time",
+      "rangeWeek": "Last 7 days",
+      "rangeMonth": "Last 30 days",
+      "rangeYear": "This year",
+      "rangeCustom": "{from} to {to}",
+      "rangeFrom": "From {date}",
+      "rangeTo": "Until {date}"
+    },
+    "timeline": {
+      "showMore": "Show full entry",
+      "showLess": "Show less"
+    },
+    "noResults": "No entries match these filters",
+    "noResultsDescription": "Try a different search word or time range, or clear the filters.",
+    "clearFilters": "Clear filters",
+    "writeEntry": "Write an entry",
+    "resultCount": "{count, plural, one {# entry} other {# entries}}"
   },
   "pwa": {
     "description": "Keep track of the people in your life.",

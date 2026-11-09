@@ -2317,31 +2317,44 @@
     "noEntriesDescription": "Een koffie, een familie diner, een oude vriend tegenkomen. Leg de momenten vast die ertoe doen.",
     "writeFirstEntry": "Schrijf uw eerste invoer",
     "form": {
-      "titleLabel": "Titel",
-      "titlePlaceholder": "Geef deze invoer een titel...",
+      "titleLabel": "Titel (optioneel)",
+      "titlePlaceholder": "Laat leeg om de eerste regel te gebruiken",
       "dateLabel": "Datum",
       "peopleLabel": "Personen",
       "peoplePlaceholder": "Typ om personen toe te voegen...",
       "bodyLabel": "Invoer",
       "bodyPlaceholder": "Schrijf over uw ontmoeting...",
-      "updateLastContact": "Laatste contactdatum bijwerken voor getagde personen",
-      "updateLastContactTooltip": "Wijzigt de 'laatst gecontacteerd' datum voor elke getagde persoon in op de datum van deze invoer, zodat u kunt bijhouden wanneer u voor het laatst contact met hen heeft gehad.",
+      "updateLastContact": "Laatste contact instellen op {date}",
       "save": "Invoer opslaan",
       "cancel": "Annuleren",
       "markdownSupport": "Ondersteunt Markdown opmaak",
       "timeLabel": "Tijd",
       "addTime": "Tijd toevoegen",
       "removeTime": "Tijd verwijderen",
-      "saved": "Invoer opgeslagen"
+      "saved": "Invoer opgeslagen",
+      "updateLastContactHelp": "Geldt voor iedereen die hier is getagd. Als iemands laatste contact al later is, blijft die ongewijzigd.",
+      "updateLastContactFuture": "Deze invoer heeft een datum in de toekomst, dus het laatste contact blijft ongewijzigd. Vink het vakje aan om dat te veranderen.",
+      "bodyRequired": "Schrijf iets voordat je opslaat.",
+      "untitled": "Invoer zonder titel",
+      "saveFailed": "De invoer kon niet worden opgeslagen. Probeer het opnieuw.",
+      "saveAndAddAnother": "Opslaan en nog een schrijven",
+      "savedAddAnother": "Invoer opgeslagen. Klaar voor de volgende.",
+      "shortcutHint": "Ctrl+Enter (Cmd+Enter op Mac) slaat op",
+      "recentPeople": "Onlangs over geschreven",
+      "draftRestored": "We hebben je niet-opgeslagen concept hersteld.",
+      "discardDraft": "Concept verwijderen"
     },
     "detail": {
       "editButton": "Bewerken",
       "deleteButton": "Verwijderen",
       "confirmDelete": "Weet u zeker dat u deze dagboekinvoer wilt verwijderen?",
-      "confirmDeleteDescription": "Deze actie kan niet ongedaan worden gemaakt.",
+      "confirmDeleteDescription": "De invoer verdwijnt uit je dagboek. Direct na het verwijderen kun je dit ongedaan maken.",
       "deleted": "Dagboekinvoer verwijderd",
       "deleteFailed": "Invoer verwijderen mislukt",
-      "taggedPeople": "Personen"
+      "taggedPeople": "Personen",
+      "undo": "Ongedaan maken",
+      "restored": "Invoer hersteld",
+      "restoreFailed": "De invoer kon niet worden hersteld."
     },
     "personSection": {
       "title": "Dagboek",
@@ -2349,7 +2362,26 @@
       "writeOne": "Schrijf er een",
       "viewAll": "Alle invoeren bekijken",
       "newEntry": "Nieuwe invoer"
-    }
+    },
+    "filters": {
+      "rangeLabel": "Periode",
+      "rangeAny": "Altijd",
+      "rangeWeek": "Laatste 7 dagen",
+      "rangeMonth": "Laatste 30 dagen",
+      "rangeYear": "Dit jaar",
+      "rangeCustom": "{from} tot {to}",
+      "rangeFrom": "Vanaf {date}",
+      "rangeTo": "Tot {date}"
+    },
+    "timeline": {
+      "showMore": "Hele invoer tonen",
+      "showLess": "Minder tonen"
+    },
+    "noResults": "Geen invoer past bij deze filters",
+    "noResultsDescription": "Probeer een ander zoekwoord of een andere periode, of wis de filters.",
+    "clearFilters": "Filters wissen",
+    "writeEntry": "Invoer schrijven",
+    "resultCount": "{count, plural, one {# invoer} other {# invoeren}}"
   },
   "pwa": {
     "description": "Houd overzicht over de mensen in je leven.",

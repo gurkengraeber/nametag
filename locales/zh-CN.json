@@ -2317,31 +2317,44 @@
     "noEntriesDescription": "与朋友喝咖啡、家庭聚餐、与老友重逢。记录那些重要的时刻。",
     "writeFirstEntry": "写下第一条记录",
     "form": {
-      "titleLabel": "标题",
-      "titlePlaceholder": "给这条记录起个标题...",
+      "titleLabel": "标题（可选）",
+      "titlePlaceholder": "留空则使用第一行",
       "dateLabel": "日期",
       "peopleLabel": "人物",
       "peoplePlaceholder": "输入以添加人物...",
       "bodyLabel": "记录",
       "bodyPlaceholder": "写下您的相遇经历...",
-      "updateLastContact": "更新已标记人物的最近联系日期",
-      "updateLastContactTooltip": "将每位已标记人物的「最近联系」日期设置为本条目的日期，以便追踪上次互动的时间。",
+      "updateLastContact": "将最近联系日期设为 {date}",
       "save": "保存条目",
       "cancel": "取消",
       "markdownSupport": "支持 Markdown 格式",
       "timeLabel": "时间",
       "addTime": "添加时间",
       "removeTime": "移除时间",
-      "saved": "条目已保存"
+      "saved": "条目已保存",
+      "updateLastContactHelp": "适用于此处标记的所有人。如果某人的最近联系日期已更晚，则保持不变。",
+      "updateLastContactFuture": "此条目的日期在未来，因此不会更改最近联系日期。勾选此框可更改。",
+      "bodyRequired": "保存前请先写点内容。",
+      "untitled": "无标题条目",
+      "saveFailed": "无法保存条目，请重试。",
+      "saveAndAddAnother": "保存并继续添加",
+      "savedAddAnother": "条目已保存。可以写下一条了。",
+      "shortcutHint": "Ctrl+Enter（Mac 上为 Cmd+Enter）保存",
+      "recentPeople": "最近提到的人",
+      "draftRestored": "已恢复你未保存的草稿。",
+      "discardDraft": "放弃草稿"
     },
     "detail": {
       "editButton": "编辑",
       "deleteButton": "删除",
       "confirmDelete": "确定要删除这条日记记录吗？",
-      "confirmDeleteDescription": "此操作无法撤销。",
+      "confirmDeleteDescription": "该条目将从你的日记中消失。删除后可以立即撤销。",
       "deleted": "日记条目已删除",
       "deleteFailed": "删除条目失败",
-      "taggedPeople": "人物"
+      "taggedPeople": "人物",
+      "undo": "撤销",
+      "restored": "条目已恢复",
+      "restoreFailed": "无法恢复条目。"
     },
     "personSection": {
       "title": "日记",
@@ -2349,7 +2362,26 @@
       "writeOne": "写一条",
       "viewAll": "查看所有条目",
       "newEntry": "新条目"
-    }
+    },
+    "filters": {
+      "rangeLabel": "时间范围",
+      "rangeAny": "全部时间",
+      "rangeWeek": "最近 7 天",
+      "rangeMonth": "最近 30 天",
+      "rangeYear": "今年",
+      "rangeCustom": "{from} 至 {to}",
+      "rangeFrom": "自 {date} 起",
+      "rangeTo": "截至 {date}"
+    },
+    "timeline": {
+      "showMore": "显示完整条目",
+      "showLess": "收起"
+    },
+    "noResults": "没有符合这些筛选条件的条目",
+    "noResultsDescription": "换一个搜索词或时间范围试试，或清除筛选。",
+    "clearFilters": "清除筛选",
+    "writeEntry": "写一条条目",
+    "resultCount": "{count, plural, other {#条条目}}"
   },
   "pwa": {
     "description": "记录你生活中重要的人。",

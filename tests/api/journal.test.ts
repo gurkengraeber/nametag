@@ -5,6 +5,7 @@ const mocks = vi.hoisted(() => ({
   journalEntryCreate: vi.fn(),
   journalEntryCount: vi.fn(),
   journalEntryFindUnique: vi.fn(),
+  journalEntryFindFirst: vi.fn(),
   journalEntryUpdate: vi.fn(),
   journalEntryPersonDeleteMany: vi.fn(),
   personUpdateMany: vi.fn(),
@@ -20,6 +21,7 @@ vi.mock('../../lib/prisma', () => ({
       create: mocks.journalEntryCreate,
       count: mocks.journalEntryCount,
       findUnique: mocks.journalEntryFindUnique,
+      findFirst: mocks.journalEntryFindFirst,
       update: mocks.journalEntryUpdate,
     },
     journalEntryPerson: {
@@ -50,6 +52,7 @@ vi.mock('../../lib/billing', () => ({
 
 import { GET, POST } from '../../app/api/journal/route';
 import { GET as GET_DETAIL, PUT, DELETE } from '../../app/api/journal/[id]/route';
+import { POST as RESTORE } from '../../app/api/journal/[id]/restore/route';
 
 describe('Journal API', () => {
   beforeEach(() => {
@@ -90,7 +93,72 @@ describe('Journal API', () => {
       expect(mocks.journalEntryFindMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({
-            people: { some: { personId: 'person-1' } },
+            AND: [{ people: { some: { personId: 'person-1', person: { deletedAt: null } } } }],
+          }),
+        })
+      );
+    });
+
+    it('should require every person when several ids are given', async () => {
+      mocks.journalEntryFindMany.mockResolvedValue([]);
+      mocks.journalEntryCount.mockResolvedValue(0);
+
+      await GET(new Request('http://localhost/api/journal?person=person-1,person-2'));
+
+      expect(mocks.journalEntryFindMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            AND: [
+              { people: { some: { personId: 'person-1', person: { deletedAt: null } } } },
+              { people: { some: { personId: 'person-2', person: { deletedAt: null } } } },
+            ],
+          }),
+        })
+      );
+    });
+
+    it('should filter by an inclusive from/to day range', async () => {
+      mocks.journalEntryFindMany.mockResolvedValue([]);
+      mocks.journalEntryCount.mockResolvedValue(0);
+
+      await GET(new Request('http://localhost/api/journal?from=2026-03-01&to=2026-03-31'));
+
+      expect(mocks.journalEntryFindMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            date: {
+              gte: new Date('2026-03-01T00:00:00.000Z'),
+              lt: new Date('2026-04-01T00:00:00.000Z'),
+            },
+          }),
+        })
+      );
+    });
+
+    it('should ignore an invalid date range instead of failing', async () => {
+      mocks.journalEntryFindMany.mockResolvedValue([]);
+      mocks.journalEntryCount.mockResolvedValue(0);
+
+      const response = await GET(new Request('http://localhost/api/journal?from=yesterday&to=2026-13-40'));
+
+      expect(response.status).toBe(200);
+      const where = mocks.journalEntryFindMany.mock.calls[0][0].where;
+      expect(where.date).toBeUndefined();
+    });
+
+    it('should search title and body', async () => {
+      mocks.journalEntryFindMany.mockResolvedValue([]);
+      mocks.journalEntryCount.mockResolvedValue(0);
+
+      await GET(new Request('http://localhost/api/journal?q=lake'));
+
+      expect(mocks.journalEntryFindMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            OR: [
+              { title: { contains: 'lake', mode: 'insensitive' } },
+              { body: { contains: 'lake', mode: 'insensitive' } },
+            ],
           }),
         })
       );
@@ -423,6 +491,55 @@ describe('Journal Detail API', () => {
           data: expect.objectContaining({ deletedAt: expect.any(Date) }),
         })
       );
+    });
+  });
+  describe('POST /api/journal/[id]/restore', () => {
+    const request = new Request('http://localhost/api/journal/entry-1/restore', { method: 'POST' });
+
+    it('should restore a deleted entry owned by the user', async () => {
+      mocks.journalEntryFindFirst.mockResolvedValue({
+        id: 'entry-1',
+        userId: 'user-123',
+        deletedAt: new Date('2026-03-29'),
+      });
+      mocks.journalEntryUpdate.mockResolvedValue({ id: 'entry-1', deletedAt: null, people: [] });
+
+      const response = await RESTORE(request, mockContext);
+      const data = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(data.entry).toEqual(expect.objectContaining({ id: 'entry-1', deletedAt: null }));
+      expect(mocks.journalEntryFindFirst).toHaveBeenCalledWith({
+        where: { id: 'entry-1', userId: 'user-123' },
+      });
+      expect(mocks.journalEntryUpdate).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { id: 'entry-1' },
+          data: { deletedAt: null },
+        })
+      );
+    });
+
+    it('should return 404 when the entry does not exist or belongs to someone else', async () => {
+      mocks.journalEntryFindFirst.mockResolvedValue(null);
+
+      const response = await RESTORE(request, mockContext);
+
+      expect(response.status).toBe(404);
+      expect(mocks.journalEntryUpdate).not.toHaveBeenCalled();
+    });
+
+    it('should return 400 when the entry is not deleted', async () => {
+      mocks.journalEntryFindFirst.mockResolvedValue({
+        id: 'entry-1',
+        userId: 'user-123',
+        deletedAt: null,
+      });
+
+      const response = await RESTORE(request, mockContext);
+
+      expect(response.status).toBe(400);
+      expect(mocks.journalEntryUpdate).not.toHaveBeenCalled();
     });
   });
 });

@@ -81,8 +81,9 @@ export default async function EditJournalEntryPage({
             {t('editEntry')}
           </h1>
 
-          <div className="bg-surface shadow rounded-lg p-6">
+          <div className="bg-surface shadow rounded-lg p-4 sm:p-6">
             <JournalEntryForm
+              userId={session.user.id}
               mode="edit"
               entryId={entry.id}
               initialData={initialData}

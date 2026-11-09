@@ -13,8 +13,10 @@ export function journalPaths(): Record<string, Record<string, unknown>> {
         security: sessionOrToken(),
         parameters: [
           { name: 'page', in: 'query', schema: { type: 'integer', default: 1 }, description: 'Page number' },
-          { name: 'person', in: 'query', schema: { type: 'string' }, description: 'Filter by person ID' },
+          { name: 'person', in: 'query', schema: { type: 'string' }, description: 'Filter by person ID. Pass several IDs separated by commas to get only entries that tag all of them.' },
           { name: 'q', in: 'query', schema: { type: 'string' }, description: 'Search text in title and body' },
+          { name: 'from', in: 'query', schema: { type: 'string', format: 'date' }, description: 'First calendar day to include, as YYYY-MM-DD (compared as a UTC day). Invalid values are ignored.' },
+          { name: 'to', in: 'query', schema: { type: 'string', format: 'date' }, description: 'Last calendar day to include, as YYYY-MM-DD (compared as a UTC day). Invalid values are ignored.' },
         ],
         responses: {
           '200': jsonResponse('List of journal entries', {
@@ -87,11 +89,29 @@ export function journalPaths(): Record<string, Record<string, unknown>> {
       delete: {
         tags: ['Journal'],
         summary: 'Delete a journal entry',
-        description: 'Soft-deletes a journal entry.',
+        description: 'Soft-deletes a journal entry. It can be brought back with the restore endpoint.',
         security: sessionOrToken(),
         parameters: [pathParam('id', 'Journal entry ID')],
         responses: {
           '200': refMessage(),
+          '401': ref401(),
+          '404': ref404(),
+        },
+      },
+    },
+    '/api/journal/{id}/restore': {
+      post: {
+        tags: ['Journal'],
+        summary: 'Restore a deleted journal entry',
+        description: 'Brings back a soft-deleted journal entry, with its tagged people. Returns 400 if the entry is not deleted.',
+        security: sessionOrToken(),
+        parameters: [pathParam('id', 'Journal entry ID')],
+        responses: {
+          '200': jsonResponse('Journal entry restored', {
+            type: 'object',
+            properties: { entry: { $ref: '#/components/schemas/JournalEntry' } },
+          }),
+          '400': ref400(),
           '401': ref401(),
           '404': ref404(),
         },

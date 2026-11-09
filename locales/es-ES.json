@@ -2317,31 +2317,44 @@
     "noEntriesDescription": "Un cafe con amigos, una cena familiar, un reencuentro inesperado. Captura los momentos que importan.",
     "writeFirstEntry": "Escribe tu primera entrada",
     "form": {
-      "titleLabel": "Título",
-      "titlePlaceholder": "Dale un título a esta entrada...",
+      "titleLabel": "Título (opcional)",
+      "titlePlaceholder": "Déjalo vacío para usar la primera línea",
       "dateLabel": "Fecha",
       "peopleLabel": "Personas",
       "peoplePlaceholder": "Escribe para añadir personas...",
       "bodyLabel": "Entrada",
       "bodyPlaceholder": "Escribe sobre tu encuentro...",
-      "updateLastContact": "Actualizar la fecha de último contacto para las personas etiquetadas",
-      "updateLastContactTooltip": "Establece la fecha de 'último contacto' de cada persona etiquetada a la fecha de esta entrada, para que puedas hacer un seguimiento de cuándo interactuaste por última vez con ellas.",
+      "updateLastContact": "Fijar el último contacto en {date}",
       "save": "Guardar entrada",
       "cancel": "Cancelar",
       "markdownSupport": "Admite formato Markdown",
       "timeLabel": "Hora",
       "addTime": "Añadir hora",
       "removeTime": "Quitar hora",
-      "saved": "Entrada guardada"
+      "saved": "Entrada guardada",
+      "updateLastContactHelp": "Se aplica a todas las personas etiquetadas aquí. Si el último contacto de alguien es posterior, se queda como está.",
+      "updateLastContactFuture": "Esta entrada tiene fecha futura, así que el último contacto no se toca. Marca la casilla para cambiarlo.",
+      "bodyRequired": "Escribe algo antes de guardar.",
+      "untitled": "Entrada sin título",
+      "saveFailed": "No se pudo guardar la entrada. Inténtalo de nuevo.",
+      "saveAndAddAnother": "Guardar y añadir otra",
+      "savedAddAnother": "Entrada guardada. Lista para la siguiente.",
+      "shortcutHint": "Ctrl+Enter (Cmd+Enter en Mac) guarda",
+      "recentPeople": "Mencionadas hace poco",
+      "draftRestored": "Hemos recuperado tu borrador sin guardar.",
+      "discardDraft": "Descartar borrador"
     },
     "detail": {
       "editButton": "Editar",
       "deleteButton": "Eliminar",
       "confirmDelete": "¿Estás seguro de que quieres eliminar esta entrada del diario?",
-      "confirmDeleteDescription": "Esta accion no se puede deshacer.",
+      "confirmDeleteDescription": "La entrada desaparece de tu diario. Justo después de borrarla puedes deshacerlo.",
       "deleted": "Entrada del diario eliminada",
       "deleteFailed": "Error al eliminar la entrada",
-      "taggedPeople": "Personas"
+      "taggedPeople": "Personas",
+      "undo": "Deshacer",
+      "restored": "Entrada restaurada",
+      "restoreFailed": "No se pudo restaurar la entrada."
     },
     "personSection": {
       "title": "Diario",
@@ -2349,7 +2362,26 @@
       "writeOne": "Escribe una",
       "viewAll": "Ver todas las entradas",
       "newEntry": "Nueva entrada"
-    }
+    },
+    "filters": {
+      "rangeLabel": "Periodo",
+      "rangeAny": "Cualquier fecha",
+      "rangeWeek": "Últimos 7 días",
+      "rangeMonth": "Últimos 30 días",
+      "rangeYear": "Este año",
+      "rangeCustom": "{from} a {to}",
+      "rangeFrom": "Desde {date}",
+      "rangeTo": "Hasta {date}"
+    },
+    "timeline": {
+      "showMore": "Mostrar la entrada completa",
+      "showLess": "Mostrar menos"
+    },
+    "noResults": "Ninguna entrada coincide con estos filtros",
+    "noResultsDescription": "Prueba con otra palabra de búsqueda u otro periodo, o quita los filtros.",
+    "clearFilters": "Quitar filtros",
+    "writeEntry": "Escribir una entrada",
+    "resultCount": "{count, plural, one {# entrada} other {# entradas}}"
   },
   "pwa": {
     "description": "Organiza a las personas de tu vida.",

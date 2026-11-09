@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { handleSignOut } from '@/app/actions/auth';
+import { clearAllJournalDrafts } from '@/lib/journal';
 
 const VARIANTS = {
   /** Desktop dropdown: tight rows inside a small floating panel. */
@@ -26,6 +27,8 @@ export default function AccountMenuItems({ variant = 'compact', onNavigate }: Ac
 
   const onSignOut = async () => {
     onNavigate?.();
+    // Unsaved journal drafts must not outlive the session on a shared device
+    clearAllJournalDrafts();
     await handleSignOut();
   };
 

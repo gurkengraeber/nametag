@@ -79,15 +79,15 @@ export default async function JournalEntryDetailPage({
             </Link>
           </div>
 
-          <div className="bg-surface shadow rounded-lg p-6">
-            <div className="flex justify-between items-start mb-4">
-              <div>
-                <h1 className="text-3xl font-bold text-foreground mb-1">
+          <div className="bg-surface shadow rounded-lg p-4 sm:p-6">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3 mb-4">
+              <div className="min-w-0">
+                <h1 className="text-3xl font-bold text-foreground mb-1 break-words">
                   {entry.title}
                 </h1>
                 <JournalEntryDateLine dateIso={entry.date.toISOString()} hasTime={entry.hasTime} locale={locale} />
               </div>
-              <div className="flex gap-2">
+              <div className="flex gap-2 flex-shrink-0">
                 <Button href={`/journal/${entry.id}/edit`} size="sm" variant="secondary">
                   {t('detail.editButton')}
                 </Button>

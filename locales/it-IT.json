@@ -2317,31 +2317,44 @@
     "noEntriesDescription": "Un caffè con un amico, una cena in famiglia, incontrare un vecchio amico. Cattura i momenti che contano.",
     "writeFirstEntry": "Scrivi la tua prima voce",
     "form": {
-      "titleLabel": "Titolo",
-      "titlePlaceholder": "Dai un titolo a questa voce...",
+      "titleLabel": "Titolo (facoltativo)",
+      "titlePlaceholder": "Lascia vuoto per usare la prima riga",
       "dateLabel": "Data",
       "peopleLabel": "Persone",
       "peoplePlaceholder": "Digita per aggiungere persone...",
       "bodyLabel": "Voce",
       "bodyPlaceholder": "Scrivi del tuo incontro...",
-      "updateLastContact": "Aggiorna data ultimo contatto per le persone taggate",
-      "updateLastContactTooltip": "Imposta la data 'ultimo contattato' per ogni persona taggata alla data di questa voce, così puoi tracciare quando hai interagito l'ultima volta con loro.",
+      "updateLastContact": "Imposta l'ultimo contatto al {date}",
       "save": "Salva voce",
       "cancel": "Annulla",
       "markdownSupport": "Supporta la formattazione Markdown",
       "timeLabel": "Ora",
       "addTime": "Aggiungi ora",
       "removeTime": "Rimuovi ora",
-      "saved": "Voce salvata"
+      "saved": "Voce salvata",
+      "updateLastContactHelp": "Vale per tutte le persone taggate qui. Se l'ultimo contatto di qualcuno è già successivo, resta invariato.",
+      "updateLastContactFuture": "Questa voce ha una data futura, quindi l'ultimo contatto non viene toccato. Seleziona la casella per cambiarlo.",
+      "bodyRequired": "Scrivi qualcosa prima di salvare.",
+      "untitled": "Voce senza titolo",
+      "saveFailed": "Impossibile salvare la voce. Riprova.",
+      "saveAndAddAnother": "Salva e aggiungi un'altra",
+      "savedAddAnother": "Voce salvata. Pronto per la prossima.",
+      "shortcutHint": "Ctrl+Invio (Cmd+Invio su Mac) salva",
+      "recentPeople": "Citate di recente",
+      "draftRestored": "Abbiamo ripristinato la tua bozza non salvata.",
+      "discardDraft": "Scarta bozza"
     },
     "detail": {
       "editButton": "Modifica",
       "deleteButton": "Elimina",
       "confirmDelete": "Sei sicuro di voler eliminare questa voce di diario?",
-      "confirmDeleteDescription": "Questa azione non può essere annullata.",
+      "confirmDeleteDescription": "La voce scompare dal tuo diario. Subito dopo l'eliminazione puoi annullare.",
       "deleted": "Voce di diario eliminata",
       "deleteFailed": "Eliminazione voce fallita",
-      "taggedPeople": "Persone"
+      "taggedPeople": "Persone",
+      "undo": "Annulla",
+      "restored": "Voce ripristinata",
+      "restoreFailed": "Impossibile ripristinare la voce."
     },
     "personSection": {
       "title": "Diario",
@@ -2349,7 +2362,26 @@
       "writeOne": "Scrivine una",
       "viewAll": "Visualizza tutte le voci",
       "newEntry": "Nuova voce"
-    }
+    },
+    "filters": {
+      "rangeLabel": "Periodo",
+      "rangeAny": "Sempre",
+      "rangeWeek": "Ultimi 7 giorni",
+      "rangeMonth": "Ultimi 30 giorni",
+      "rangeYear": "Quest'anno",
+      "rangeCustom": "Dal {from} al {to}",
+      "rangeFrom": "Dal {date}",
+      "rangeTo": "Fino al {date}"
+    },
+    "timeline": {
+      "showMore": "Mostra la voce completa",
+      "showLess": "Mostra meno"
+    },
+    "noResults": "Nessuna voce corrisponde a questi filtri",
+    "noResultsDescription": "Prova un'altra parola o un altro periodo, oppure azzera i filtri.",
+    "clearFilters": "Azzera filtri",
+    "writeEntry": "Scrivi una voce",
+    "resultCount": "{count, plural, one {# voce} other {# voci}}"
   },
   "pwa": {
     "description": "Tieni traccia delle persone della tua vita.",
