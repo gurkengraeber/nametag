@@ -6,6 +6,7 @@ import type { FormData } from '../../hooks/usePersonForm';
 interface WorkInfoSectionProps {
   formData: FormData;
   onFormDataChange: (updates: Partial<FormData>) => void;
+  errors?: Record<string, string>;
 }
 
 const inputClass =
@@ -14,6 +15,7 @@ const inputClass =
 export default function WorkInfoSection({
   formData,
   onFormDataChange,
+  errors = {},
 }: WorkInfoSectionProps) {
   const t = useTranslations('people.form');
 
@@ -33,8 +35,13 @@ export default function WorkInfoSection({
             value={formData.organization}
             onChange={(e) => onFormDataChange({ organization: e.target.value })}
             placeholder={t('companyPlaceholder')}
+            autoComplete="off"
+            aria-invalid={errors.organization ? true : undefined}
             className={inputClass}
           />
+          {errors.organization && (
+            <p className="text-sm text-warning mt-1">{errors.organization}</p>
+          )}
         </div>
 
         <div>
@@ -50,8 +57,13 @@ export default function WorkInfoSection({
             value={formData.jobTitle}
             onChange={(e) => onFormDataChange({ jobTitle: e.target.value })}
             placeholder={t('jobTitlePlaceholder')}
+            autoComplete="off"
+            aria-invalid={errors.jobTitle ? true : undefined}
             className={inputClass}
           />
+          {errors.jobTitle && (
+            <p className="text-sm text-warning mt-1">{errors.jobTitle}</p>
+          )}
         </div>
       </div>
     </div>
