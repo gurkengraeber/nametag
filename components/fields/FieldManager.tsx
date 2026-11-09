@@ -48,6 +48,19 @@ function setFieldValue<T extends BaseFieldItem>(
   return { ...item, [fieldKey]: rawValue };
 }
 
+/**
+ * Enter inside an entry field confirms that entry instead of submitting the
+ * surrounding person form (which would save the person with the entry lost).
+ */
+function confirmOnEnter(onConfirm: () => void) {
+  return (e: React.KeyboardEvent<HTMLElement>) => {
+    if (e.key !== 'Enter' || e.defaultPrevented) return;
+    if ((e.target as HTMLElement).tagName !== 'INPUT') return;
+    e.preventDefault();
+    onConfirm();
+  };
+}
+
 // ─── Shared input class ───────────────────────────────────────────────────────
 
 const INPUT_BASE =
@@ -349,6 +362,7 @@ export default function FieldManager<T extends BaseFieldItem>({
           placeholder={t(field.placeholderKey)}
           aria-label={t(field.placeholderKey)}
           className={`flex-1 min-w-[120px] ${INPUT_BASE}`}
+          onKeyDown={confirmOnEnter(onConfirm)}
           autoFocus={isAddForm}
         />
         <div className="flex gap-2 ml-auto">
@@ -433,7 +447,10 @@ export default function FieldManager<T extends BaseFieldItem>({
     }
 
     return (
-      <div className={`p-3 ${accentBg} rounded-lg border-2 ${accentBorder} space-y-2`}>
+      <div
+        className={`p-3 ${accentBg} rounded-lg border-2 ${accentBorder} space-y-2`}
+        onKeyDown={confirmOnEnter(onConfirm)}
+      >
         {typeOptions && (
           <div className="flex gap-2">
             <TypeComboBox
@@ -497,6 +514,7 @@ export default function FieldManager<T extends BaseFieldItem>({
             placeholder={t(field.placeholderKey)}
             aria-label={t(field.placeholderKey)}
             className={`flex-1 min-w-[120px] ${INPUT_BASE}`}
+            onKeyDown={confirmOnEnter(handleSaveEdit)}
           />
           <div className="flex gap-2 ml-auto">
             <button

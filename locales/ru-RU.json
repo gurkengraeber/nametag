@@ -1600,6 +1600,17 @@
           "github": "Профиль GitHub",
           "custom": "Пользовательское поле"
         }
+      },
+      "moreNameFields": "Другие поля имени",
+      "moreDetails": "Больше сведений",
+      "fewerDetails": "Меньше сведений",
+      "errorCheckFields": "Проверьте отмеченные поля.",
+      "fieldErrors": {
+        "required": "Это поле обязательно.",
+        "tooLong": "Используйте не более {max} символов.",
+        "tooShort": "Используйте не менее {min} символов.",
+        "invalidFormat": "Значение имеет неверный формат.",
+        "invalidValue": "Значение недопустимо."
       }
     },
     "exportVcf": "Экспорт VCF",
@@ -1778,6 +1789,30 @@
       "undo": "Отменить",
       "restored": "{count, plural, one {Человек восстановлен} few {Восстановлено # человека} many {Восстановлено # человек} other {Восстановлено # человека}}",
       "restoreFailed": "Не удалось восстановить. Это ещё можно сделать в Настройках, в Корзине."
+    },
+    "callAction": "Позвонить",
+    "emailAction": "Эл. почта",
+    "unknownType": "Неизвестно",
+    "summary": {
+      "nextDateToday": "{title} сегодня",
+      "nextDateTomorrow": "{title} завтра",
+      "nextDateIn": "{title} через {days} дн."
+    },
+    "quickActions": {
+      "relationshipLabel": "Отношение к вам",
+      "relationshipNone": "Не указано",
+      "relationshipError": "Не удалось обновить отношение",
+      "groupsLabel": "Группы",
+      "groupsSaved": "Группы обновлены",
+      "groupsError": "Не удалось обновить группы",
+      "addNote": "Добавить заметку",
+      "noteLabel": "Новая заметка",
+      "notePlaceholder": "Напишите, что хотите запомнить",
+      "noteSave": "Добавить к заметкам",
+      "noteSaved": "Заметка добавлена",
+      "noteError": "Не удалось сохранить заметку",
+      "noteEmpty": "Сначала напишите заметку",
+      "noteTooLong": "Заметки превысят {max} символов"
     }
   },
   "groups": {

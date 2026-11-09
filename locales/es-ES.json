@@ -1600,6 +1600,17 @@
           "github": "Perfil de GitHub",
           "custom": "Campo personalizado"
         }
+      },
+      "moreNameFields": "Más campos de nombre",
+      "moreDetails": "Más detalles",
+      "fewerDetails": "Menos detalles",
+      "errorCheckFields": "Revisa los campos marcados.",
+      "fieldErrors": {
+        "required": "Este campo es obligatorio.",
+        "tooLong": "Usa como máximo {max} caracteres.",
+        "tooShort": "Usa al menos {min} caracteres.",
+        "invalidFormat": "Este valor tiene un formato no válido.",
+        "invalidValue": "Este valor no es válido."
       }
     },
     "exportVcf": "Exportar VCF",
@@ -1778,6 +1789,30 @@
       "undo": "Deshacer",
       "restored": "{count, plural, one {Persona restaurada} other {# personas restauradas}}",
       "restoreFailed": "No se pudo restaurar. Aún puedes hacerlo en Ajustes, Papelera."
+    },
+    "callAction": "Llamar",
+    "emailAction": "Correo",
+    "unknownType": "Desconocido",
+    "summary": {
+      "nextDateToday": "{title} hoy",
+      "nextDateTomorrow": "{title} mañana",
+      "nextDateIn": "{title} en {days} días"
+    },
+    "quickActions": {
+      "relationshipLabel": "Relación contigo",
+      "relationshipNone": "Sin definir",
+      "relationshipError": "No se pudo actualizar la relación",
+      "groupsLabel": "Grupos",
+      "groupsSaved": "Grupos actualizados",
+      "groupsError": "No se pudieron actualizar los grupos",
+      "addNote": "Añadir nota",
+      "noteLabel": "Nueva nota",
+      "notePlaceholder": "Escribe algo para recordar",
+      "noteSave": "Añadir a las notas",
+      "noteSaved": "Nota añadida",
+      "noteError": "No se pudo guardar la nota",
+      "noteEmpty": "Escribe primero una nota",
+      "noteTooLong": "Las notas superarían los {max} caracteres"
     }
   },
   "groups": {

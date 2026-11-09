@@ -1600,6 +1600,17 @@
           "github": "Profil na GitHubie",
           "custom": "Pole niestandardowe"
         }
+      },
+      "moreNameFields": "Więcej pól nazwy",
+      "moreDetails": "Więcej szczegółów",
+      "fewerDetails": "Mniej szczegółów",
+      "errorCheckFields": "Sprawdź zaznaczone pola.",
+      "fieldErrors": {
+        "required": "To pole jest wymagane.",
+        "tooLong": "Użyj najwyżej {max} znaków.",
+        "tooShort": "Użyj co najmniej {min} znaków.",
+        "invalidFormat": "Ta wartość ma nieprawidłowy format.",
+        "invalidValue": "Ta wartość jest nieprawidłowa."
       }
     },
     "exportVcf": "Eksportuj VCF",
@@ -1778,6 +1789,30 @@
       "undo": "Cofnij",
       "restored": "{count, plural, one {Przywrócono osobę} few {Przywrócono # osoby} many {Przywrócono # osób} other {Przywrócono # osoby}}",
       "restoreFailed": "Nie udało się przywrócić. Nadal możesz to zrobić w Ustawieniach, w Koszu."
+    },
+    "callAction": "Zadzwoń",
+    "emailAction": "E-mail",
+    "unknownType": "Nieznany",
+    "summary": {
+      "nextDateToday": "{title} dzisiaj",
+      "nextDateTomorrow": "{title} jutro",
+      "nextDateIn": "{title} za {days} dni"
+    },
+    "quickActions": {
+      "relationshipLabel": "Relacja z Tobą",
+      "relationshipNone": "Nie ustawiono",
+      "relationshipError": "Nie udało się zaktualizować relacji",
+      "groupsLabel": "Grupy",
+      "groupsSaved": "Grupy zaktualizowane",
+      "groupsError": "Nie udało się zaktualizować grup",
+      "addNote": "Dodaj notatkę",
+      "noteLabel": "Nowa notatka",
+      "notePlaceholder": "Napisz coś, co chcesz zapamiętać",
+      "noteSave": "Dodaj do notatek",
+      "noteSaved": "Dodano notatkę",
+      "noteError": "Nie udało się zapisać notatki",
+      "noteEmpty": "Najpierw napisz notatkę",
+      "noteTooLong": "Notatki przekroczyłyby {max} znaków"
     }
   },
   "groups": {

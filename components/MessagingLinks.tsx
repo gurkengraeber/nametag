@@ -126,7 +126,7 @@ export default function MessagingLinks({ phoneNumber, personId }: MessagingLinks
     <span className="relative inline-flex" ref={menuRef}>
       <button
         onClick={() => setOpen(!open)}
-        className="p-1 text-muted hover:text-foreground transition-colors rounded-md hover:bg-surface-elevated"
+        className="p-1 inline-flex items-center justify-center min-w-11 min-h-11 sm:min-w-0 sm:min-h-0 text-muted hover:text-foreground transition-colors rounded-md hover:bg-surface-elevated"
         aria-label={t('sendMessage')}
         title={t('sendMessage')}
       >
@@ -144,7 +144,7 @@ export default function MessagingLinks({ phoneNumber, personId }: MessagingLinks
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={handleAppClick}
-                  className="w-full text-left px-3 py-2 text-sm text-foreground hover:bg-surface-elevated transition-colors flex items-center gap-2.5"
+                  className="w-full text-left px-3 py-3 sm:py-2 text-sm text-foreground hover:bg-surface-elevated transition-colors flex items-center gap-2.5"
                   aria-label={label}
                 >
                   <Icon className="w-4 h-4 shrink-0" />
@@ -161,14 +161,14 @@ export default function MessagingLinks({ phoneNumber, personId }: MessagingLinks
                 <button
                   onClick={handleUpdateLastContact}
                   disabled={isUpdating}
-                  className="flex-1 px-3 py-1.5 text-sm font-medium rounded-md bg-primary text-on-primary hover:bg-primary/90 transition-colors disabled:opacity-50"
+                  className="flex-1 px-3 py-2.5 sm:py-1.5 text-sm font-medium rounded-md bg-primary text-on-primary hover:bg-primary/90 transition-colors disabled:opacity-50"
                 >
                   {isUpdating ? t('updating') : t('yes')}
                 </button>
                 <button
                   onClick={handleDismiss}
                   disabled={isUpdating}
-                  className="flex-1 px-3 py-1.5 text-sm font-medium rounded-md border border-border text-foreground hover:bg-surface-elevated transition-colors disabled:opacity-50"
+                  className="flex-1 px-3 py-2.5 sm:py-1.5 text-sm font-medium rounded-md border border-border text-foreground hover:bg-surface-elevated transition-colors disabled:opacity-50"
                 >
                   {t('no')}
                 </button>

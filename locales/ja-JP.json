@@ -1600,6 +1600,17 @@
           "github": "GitHubプロフィール",
           "custom": "カスタムフィールド"
         }
+      },
+      "moreNameFields": "名前の項目をさらに表示",
+      "moreDetails": "詳細を表示",
+      "fewerDetails": "詳細を閉じる",
+      "errorCheckFields": "マークされた項目を確認してください。",
+      "fieldErrors": {
+        "required": "この項目は必須です。",
+        "tooLong": "{max}文字以内で入力してください。",
+        "tooShort": "{min}文字以上で入力してください。",
+        "invalidFormat": "この値の形式が正しくありません。",
+        "invalidValue": "この値は無効です。"
       }
     },
     "exportVcf": "VCFエクスポート",
@@ -1778,6 +1789,30 @@
       "undo": "元に戻す",
       "restored": "{count, plural, other {#人を復元しました}}",
       "restoreFailed": "復元できませんでした。設定のごみ箱から行えます。"
+    },
+    "callAction": "電話する",
+    "emailAction": "メール",
+    "unknownType": "不明",
+    "summary": {
+      "nextDateToday": "{title}は今日です",
+      "nextDateTomorrow": "{title}は明日です",
+      "nextDateIn": "{title}まであと{days}日"
+    },
+    "quickActions": {
+      "relationshipLabel": "あなたとの関係",
+      "relationshipNone": "未設定",
+      "relationshipError": "関係を更新できませんでした",
+      "groupsLabel": "グループ",
+      "groupsSaved": "グループを更新しました",
+      "groupsError": "グループを更新できませんでした",
+      "addNote": "メモを追加",
+      "noteLabel": "新しいメモ",
+      "notePlaceholder": "覚えておきたいことを書いてください",
+      "noteSave": "メモに追加",
+      "noteSaved": "メモを追加しました",
+      "noteError": "メモを保存できませんでした",
+      "noteEmpty": "先にメモを書いてください",
+      "noteTooLong": "メモが{max}文字を超えてしまいます"
     }
   },
   "groups": {

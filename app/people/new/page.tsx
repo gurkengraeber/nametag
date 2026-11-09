@@ -125,6 +125,7 @@ export default async function NewPersonPage({
                 availablePeople={people}
                 userName={session.user.name || session.user.email || 'You'}
                 mode="create"
+                userId={session.user.id}
                 dateFormat={dateFormat}
                 initialName={params.name}
                 initialKnownThrough={params.knownThrough}

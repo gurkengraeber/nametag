@@ -1600,6 +1600,17 @@
           "github": "GitHub 个人资料",
           "custom": "自定义字段"
         }
+      },
+      "moreNameFields": "更多姓名字段",
+      "moreDetails": "更多详情",
+      "fewerDetails": "收起详情",
+      "errorCheckFields": "请检查标记的字段。",
+      "fieldErrors": {
+        "required": "此字段为必填项。",
+        "tooLong": "最多使用{max}个字符。",
+        "tooShort": "至少使用{min}个字符。",
+        "invalidFormat": "此值的格式无效。",
+        "invalidValue": "此值无效。"
       }
     },
     "exportVcf": "导出 VCF",
@@ -1778,6 +1789,30 @@
       "undo": "撤销",
       "restored": "{count, plural, other {已恢复 # 位联系人}}",
       "restoreFailed": "无法恢复。你仍可以在“设置”的“回收站”中恢复。"
+    },
+    "callAction": "拨打电话",
+    "emailAction": "电子邮件",
+    "unknownType": "未知",
+    "summary": {
+      "nextDateToday": "{title}就在今天",
+      "nextDateTomorrow": "{title}就在明天",
+      "nextDateIn": "{days}天后是{title}"
+    },
+    "quickActions": {
+      "relationshipLabel": "与你的关系",
+      "relationshipNone": "未设置",
+      "relationshipError": "无法更新关系",
+      "groupsLabel": "分组",
+      "groupsSaved": "分组已更新",
+      "groupsError": "无法更新分组",
+      "addNote": "添加备注",
+      "noteLabel": "新备注",
+      "notePlaceholder": "写下想要记住的事",
+      "noteSave": "添加到备注",
+      "noteSaved": "备注已添加",
+      "noteError": "无法保存备注",
+      "noteEmpty": "请先写一条备注",
+      "noteTooLong": "备注将超过{max}个字符"
     }
   },
   "groups": {

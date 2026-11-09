@@ -57,6 +57,9 @@ describe('PersonForm display name override - use nickname affordance', () => {
       </Wrapper>
     );
 
+    // The rarer name fields are folded away until asked for
+    await user.click(screen.getByRole('button', { name: /more name fields/i }));
+
     // No nickname yet: the shortcut should not be offered
     expect(screen.queryByRole('button', { name: /use nickname/i })).not.toBeInTheDocument();
 
@@ -76,6 +79,7 @@ describe('PersonForm display name override - use nickname affordance', () => {
       </Wrapper>
     );
 
+    await user.click(screen.getByRole('button', { name: /more name fields/i }));
     await user.type(screen.getByLabelText(/nickname/i), 'Johnny');
     await user.type(screen.getByLabelText(/display name/i), 'Boss');
 

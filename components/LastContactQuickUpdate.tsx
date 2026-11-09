@@ -5,30 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 import { formatDate, getLocalDateString, parseAsLocalDate, type DateFormat } from '@/lib/date-format';
-
-function getRelativeTime(
-  date: Date,
-  t: (key: string, values?: Record<string, string | number>) => string
-): string {
-  const now = new Date();
-  const diffTime = Math.abs(now.getTime() - date.getTime());
-  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-
-  if (diffDays === 0) return t('today');
-  if (diffDays === 1) return t('oneDayAgo');
-  if (diffDays < 28) return t('daysAgo', { days: diffDays });
-
-  // Use calendar-based month/year diff for accuracy
-  let months = (now.getFullYear() - date.getFullYear()) * 12 + now.getMonth() - date.getMonth();
-  if (now.getDate() < date.getDate()) months--;
-
-  if (months < 12) {
-    if (months <= 0) return t('daysAgo', { days: diffDays });
-    return months === 1 ? t('oneMonthAgo') : t('monthsAgo', { months });
-  }
-  const years = Math.floor(months / 12);
-  return years === 1 ? t('oneYearAgo') : t('yearsAgo', { years });
-}
+import { getRelativeTime } from '@/lib/person-profile';
 
 interface LastContactQuickUpdateProps {
   personId: string;
@@ -82,6 +59,7 @@ export default function LastContactQuickUpdate({
   }
 
   const parsedDate = lastContact ? parseAsLocalDate(lastContact) : null;
+  const relativeTime = parsedDate ? getRelativeTime(parsedDate) : null;
   const isToday = !isLoading && parsedDate && Math.floor(Math.abs(new Date().getTime() - parsedDate.getTime()) / (1000 * 60 * 60 * 24)) === 0;
 
   return (
@@ -95,7 +73,7 @@ export default function LastContactQuickUpdate({
             <>
               {formatDate(parsedDate, dateFormat)}{' '}
               <span className="text-sm text-muted">
-                ({getRelativeTime(parsedDate, t)})
+                ({relativeTime ? t(relativeTime.key, relativeTime.values) : ''})
               </span>
             </>
           ) : (
@@ -107,7 +85,7 @@ export default function LastContactQuickUpdate({
           title={t('updateToToday')}
           onClick={handleContactedToday}
           disabled={isLoading}
-          className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-full border border-border text-muted hover:text-primary hover:border-primary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="inline-flex items-center gap-1.5 px-3 py-2 min-h-11 sm:min-h-0 sm:px-2.5 sm:py-1 text-sm sm:text-xs font-medium rounded-full border border-border text-muted hover:text-primary hover:border-primary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isLoading ? (
             <svg className="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24" aria-hidden="true">

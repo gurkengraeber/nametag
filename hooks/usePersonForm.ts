@@ -352,9 +352,20 @@ export function usePersonForm(params: {
   availablePeople: AvailablePerson[];
   youLabel: string;
 }) {
-  const initialState = buildInitialState(params);
+  const [initialState] = useState(() => buildInitialState(params));
   const [state, dispatch] = useReducer(reducer, initialState);
-  const [initialFingerprint] = useState(() => getDataFingerprint(initialState));
+  // Values applied after mount that still count as the untouched starting
+  // point (for example remembered defaults read from localStorage).
+  const [pristineOverrides, setPristineOverrides] = useState<Partial<FormData>>({});
+
+  const initialFingerprint = useMemo(
+    () =>
+      getDataFingerprint({
+        ...initialState,
+        formData: { ...initialState.formData, ...pristineOverrides },
+      }),
+    [initialState, pristineOverrides]
+  );
 
   const isDirty = useMemo(
     () =>
@@ -422,6 +433,10 @@ export function usePersonForm(params: {
       dispatch({ type: 'SET_FORM_DATA', payload: val }),
     []
   );
+  const applyPristineFormData = useCallback((val: Partial<FormData>) => {
+    dispatch({ type: 'SET_FORM_DATA', payload: val });
+    setPristineOverrides((prev) => ({ ...prev, ...val }));
+  }, []);
   const setImportantDates = useCallback(
     (val: ImportantDateItem[]) =>
       dispatch({ type: 'SET_IMPORTANT_DATES', payload: val }),
@@ -471,6 +486,7 @@ export function usePersonForm(params: {
     setInheritGroups,
     setShowDropdown,
     setFormData,
+    applyPristineFormData,
     setImportantDates,
     setPhoneNumbers,
     setEmails,

@@ -104,12 +104,17 @@ describe('PersonForm CardDAV Sync Toggle', () => {
     expect(screen.getByText('Sync to CardDAV server')).toBeInTheDocument();
   });
 
-  it('should default toggle to disabled for new person', () => {
+  it('should default toggle to disabled for new person', async () => {
+    const user = userEvent.setup();
     render(
       <Wrapper>
         <PersonForm {...defaultProps} hasCardDavConnection={true} />
       </Wrapper>
     );
+
+    // The extra sections of a new person are folded under "More details"
+    await user.click(screen.getByRole('button', { name: 'More details' }));
+    await user.click(screen.getByRole('button', { name: 'CardDAV Sync' }));
 
     // The toggle button with bg-muted class means it's disabled
     const toggleButtons = screen.getAllByRole('button');

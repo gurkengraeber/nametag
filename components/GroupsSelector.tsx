@@ -135,7 +135,7 @@ export default function GroupsSelector({
           e.stopPropagation();
           onRemove();
         }}
-        className="hover:bg-surface-elevated rounded-full p-0.5 transition-colors text-muted"
+        className="hover:bg-surface-elevated rounded-full p-0.5 pointer-coarse:p-2.5 pointer-coarse:-m-2 transition-colors text-muted"
         aria-label={`${t('remove')} ${item.label}`}
       >
         <svg

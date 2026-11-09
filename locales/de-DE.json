@@ -1600,6 +1600,17 @@
           "github": "GitHub-Profil",
           "custom": "Benutzerdefiniertes Feld"
         }
+      },
+      "moreNameFields": "Weitere Namensfelder",
+      "moreDetails": "Weitere Angaben",
+      "fewerDetails": "Weniger Angaben",
+      "errorCheckFields": "Bitte prüfe die markierten Felder.",
+      "fieldErrors": {
+        "required": "Dieses Feld ist erforderlich.",
+        "tooLong": "Bitte höchstens {max} Zeichen verwenden.",
+        "tooShort": "Bitte mindestens {min} Zeichen verwenden.",
+        "invalidFormat": "Dieser Wert hat ein ungültiges Format.",
+        "invalidValue": "Dieser Wert ist ungültig."
       }
     },
     "exportVcf": "VCF exportieren",
@@ -1778,6 +1789,30 @@
       "undo": "Rückgängig",
       "restored": "{count, plural, one {Person wiederhergestellt} other {# Personen wiederhergestellt}}",
       "restoreFailed": "Wiederherstellen nicht möglich. Du kannst es noch unter Einstellungen, Papierkorb tun."
+    },
+    "callAction": "Anrufen",
+    "emailAction": "E-Mail",
+    "unknownType": "Unbekannt",
+    "summary": {
+      "nextDateToday": "{title} heute",
+      "nextDateTomorrow": "{title} morgen",
+      "nextDateIn": "{title} in {days} Tagen"
+    },
+    "quickActions": {
+      "relationshipLabel": "Beziehung zu dir",
+      "relationshipNone": "Nicht festgelegt",
+      "relationshipError": "Die Beziehung konnte nicht geändert werden",
+      "groupsLabel": "Gruppen",
+      "groupsSaved": "Gruppen aktualisiert",
+      "groupsError": "Die Gruppen konnten nicht geändert werden",
+      "addNote": "Notiz hinzufügen",
+      "noteLabel": "Neue Notiz",
+      "notePlaceholder": "Schreib auf, was du dir merken willst",
+      "noteSave": "Zu den Notizen hinzufügen",
+      "noteSaved": "Notiz hinzugefügt",
+      "noteError": "Die Notiz konnte nicht gespeichert werden",
+      "noteEmpty": "Schreib zuerst eine Notiz",
+      "noteTooLong": "Die Notizen wären länger als {max} Zeichen"
     }
   },
   "groups": {
