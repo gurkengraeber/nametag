@@ -1,8 +1,22 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { Button } from '@/components/ui/Button';
+import ConfirmationModal from '@/components/ui/ConfirmationModal';
+import BatchProgress from '@/components/carddav/BatchProgress';
+import {
+  compareVersions,
+  parseVersion,
+  planBulkResolution,
+  recommendResolution,
+  type BulkMode,
+  type ConflictFieldKey,
+  type FieldDiff,
+  type RecommendationReason,
+  type ResolutionChoice,
+} from '@/lib/carddav-ui/conflict-diff';
 
 interface Conflict {
   id: string;
@@ -17,84 +31,64 @@ interface Conflict {
   };
 }
 
-interface PersonData {
-  name?: string | null;
-  surname?: string | null;
-  middleName?: string | null;
-  prefix?: string | null;
-  suffix?: string | null;
-  secondLastName?: string | null;
-  nickname?: string | null;
-  organization?: string | null;
-  jobTitle?: string | null;
-  gender?: string | null;
-  birthday?: string | null;
-  anniversary?: string | null;
-  photo?: string | null;
-  notes?: string | null;
-  phoneNumbers?: Array<{ type: string; number: string }>;
-  emails?: Array<{ type: string; email: string }>;
-  addresses?: Array<{
-    type: string;
-    streetLine1?: string | null;
-    streetLine2?: string | null;
-    locality?: string | null;
-    region?: string | null;
-    postalCode?: string | null;
-    country?: string | null;
-  }>;
-  urls?: Array<{ type: string; url: string }>;
-  imHandles?: Array<{ protocol: string; handle: string }>;
-  locations?: Array<{ type: string; latitude: number; longitude: number }>;
-  customFields?: Array<{ key: string; value: string }>;
-}
-
 interface ConflictListProps {
   conflicts: Conflict[];
 }
 
-type ScalarFieldKey = 'name' | 'surname' | 'middleName' | 'prefix' | 'suffix' |
-  'secondLastName' | 'nickname' | 'organization' | 'jobTitle' | 'gender' |
-  'birthday' | 'anniversary' | 'notes';
+const DATE_FIELDS: ReadonlySet<ConflictFieldKey> = new Set(['birthday', 'anniversary']);
 
-const SCALAR_FIELDS: Array<{ key: ScalarFieldKey; label: string }> = [
-  { key: 'name', label: 'name' },
-  { key: 'surname', label: 'surname' },
-  { key: 'middleName', label: 'middleName' },
-  { key: 'prefix', label: 'prefix' },
-  { key: 'suffix', label: 'suffix' },
-  { key: 'secondLastName', label: 'secondLastName' },
-  { key: 'nickname', label: 'nickname' },
-  { key: 'organization', label: 'organization' },
-  { key: 'jobTitle', label: 'jobTitle' },
-  { key: 'gender', label: 'gender' },
-  { key: 'birthday', label: 'birthday' },
-  { key: 'anniversary', label: 'anniversary' },
-  { key: 'notes', label: 'notes' },
-];
+function formatValue(key: ConflictFieldKey, value: string): string {
+  if (DATE_FIELDS.has(key) && /^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    const [y, m, d] = value.split('-').map(Number);
+    return new Date(y, m - 1, d).toLocaleDateString();
+  }
+  return value;
+}
+
+const recommendationKey: Record<RecommendationReason, string> = {
+  identical: 'recommendIdentical',
+  serverAdds: 'recommendServerAdds',
+  localAdds: 'recommendLocalAdds',
+  differs: 'recommendDiffers',
+};
 
 export default function ConflictList({ conflicts }: ConflictListProps) {
   const t = useTranslations('settings.carddav.conflicts');
   const router = useRouter();
   const [resolving, setResolving] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [confirmMode, setConfirmMode] = useState<BulkMode | null>(null);
+  const [bulk, setBulk] = useState<{ done: number; total: number } | null>(null);
+  const [bulkMessage, setBulkMessage] = useState<string | null>(null);
 
-  const handleResolve = async (conflictId: string, resolution: string) => {
+  const analysed = useMemo(
+    () =>
+      conflicts.map((conflict) => {
+        const comparison = compareVersions(parseVersion(conflict.localVersion), parseVersion(conflict.remoteVersion));
+        return { conflict, comparison, recommendation: recommendResolution(comparison) };
+      }),
+    [conflicts]
+  );
+  const safePlan = useMemo(() => planBulkResolution(conflicts, 'safe'), [conflicts]);
+
+  const postResolution = async (conflictId: string, resolution: ResolutionChoice) => {
+    const response = await fetch(`/api/carddav/conflicts/${conflictId}/resolve`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ resolution }),
+    });
+    if (!response.ok) {
+      const data = await response.json().catch(() => ({}));
+      throw new Error((data as { error?: string }).error || t('resolveFailed'));
+    }
+  };
+
+  const handleResolve = async (conflictId: string, resolution: ResolutionChoice) => {
     setResolving(conflictId);
     setError(null);
-
+    setBulkMessage(null);
     try {
-      const response = await fetch(`/api/carddav/conflicts/${conflictId}/resolve`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ resolution }),
-      });
-
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || t('resolveFailed'));
-      }
-
+      await postResolution(conflictId, resolution);
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : t('resolveFailed'));
@@ -103,199 +97,195 @@ export default function ConflictList({ conflicts }: ConflictListProps) {
     }
   };
 
-  const parseVersion = (version: string): PersonData => {
-    try {
-      return JSON.parse(version);
-    } catch {
-      return {};
-    }
-  };
-
-  const formatScalar = (value: string | null | undefined): string => {
-    if (value === null || value === undefined || value === '') return '';
-    // Format date strings
-    if (/^\d{4}-\d{2}-\d{2}/.test(value)) {
+  const handleBulk = async (mode: BulkMode) => {
+    setConfirmMode(null);
+    setError(null);
+    setBulkMessage(null);
+    const plan = planBulkResolution(conflicts, mode);
+    setBulk({ done: 0, total: plan.length });
+    let failed = 0;
+    let firstError: string | null = null;
+    // One after the other: each resolution may push a change to the server.
+    for (let i = 0; i < plan.length; i++) {
       try {
-        return new Date(value).toLocaleDateString();
-      } catch {
-        return value;
+        await postResolution(plan[i].id, plan[i].resolution);
+      } catch (err) {
+        failed++;
+        firstError = firstError ?? (err instanceof Error ? err.message : t('resolveFailed'));
       }
+      setBulk({ done: i + 1, total: plan.length });
     }
-    return value;
+    setBulk(null);
+    setBulkMessage(
+      failed === 0
+        ? t('bulkDone', { count: plan.length })
+        : t('bulkPartial', { done: plan.length - failed, failed })
+    );
+    if (firstError && failed > 0) setError(firstError);
+    router.refresh();
   };
 
-  const formatPhones = (phones?: Array<{ type: string; number: string }>): string => {
-    if (!phones || phones.length === 0) return '';
-    return phones.map(p => `${p.number} (${p.type})`).join(', ');
-  };
-
-  const formatEmails = (emails?: Array<{ type: string; email: string }>): string => {
-    if (!emails || emails.length === 0) return '';
-    return emails.map(e => `${e.email} (${e.type})`).join(', ');
-  };
-
-  const formatAddresses = (addresses?: PersonData['addresses']): string => {
-    if (!addresses || addresses.length === 0) return '';
-    return addresses.map(a => {
-      const parts = [a.streetLine1, a.streetLine2, a.locality, a.region, a.postalCode, a.country].filter(Boolean);
-      return `${parts.join(', ')} (${a.type})`;
-    }).join(' | ');
-  };
-
-  const formatUrls = (urls?: Array<{ type: string; url: string }>): string => {
-    if (!urls || urls.length === 0) return '';
-    return urls.map(u => `${u.url} (${u.type})`).join(', ');
-  };
-
-  const formatImHandles = (handles?: Array<{ protocol: string; handle: string }>): string => {
-    if (!handles || handles.length === 0) return '';
-    return handles.map(h => `${h.handle} (${h.protocol})`).join(', ');
-  };
-
-  const formatLocations = (locations?: Array<{ type: string; latitude: number; longitude: number }>): string => {
-    if (!locations || locations.length === 0) return '';
-    return locations.map(l => `${l.latitude}, ${l.longitude} (${l.type})`).join(', ');
-  };
-
-  const formatCustomFields = (fields?: Array<{ key: string; value: string }>): string => {
-    if (!fields || fields.length === 0) return '';
-    return fields.map(f => `${f.key}: ${f.value}`).join(', ');
-  };
-
-  type MultiValueField = {
-    label: string;
-    format: (data: PersonData) => string;
-  };
-
-  const MULTI_VALUE_FIELDS: MultiValueField[] = [
-    { label: 'phones', format: (d) => formatPhones(d.phoneNumbers) },
-    { label: 'emails', format: (d) => formatEmails(d.emails) },
-    { label: 'addresses', format: (d) => formatAddresses(d.addresses) },
-    { label: 'urls', format: (d) => formatUrls(d.urls) },
-    { label: 'imHandles', format: (d) => formatImHandles(d.imHandles) },
-    { label: 'locations', format: (d) => formatLocations(d.locations) },
-    { label: 'customFields', format: (d) => formatCustomFields(d.customFields) },
-  ];
-
-  const renderFieldRow = (
-    label: string,
-    localValue: string,
-    remoteValue: string,
-  ) => {
-    // Skip rows where both sides are empty
-    if (!localValue && !remoteValue) return null;
-
-    const isDifferent = localValue !== remoteValue;
-
+  const renderValues = (diff: FieldDiff, side: 'local' | 'remote') => {
+    const values = side === 'local' ? diff.local : diff.remote;
+    const unique = new Set(side === 'local' ? diff.onlyLocal : diff.onlyRemote);
+    if (values.length === 0) return <span className="text-muted">{t('empty')}</span>;
     return (
-      <tr key={label} className={isDifferent ? 'bg-amber-50 dark:bg-amber-900/10' : ''}>
-        <td className="px-3 py-2 text-sm font-medium text-muted whitespace-nowrap border-r border-border">
-          {t(label)}
-          {isDifferent && (
-            <span className="ml-1.5 inline-block w-2 h-2 bg-amber-500 rounded-full" title={t('changed')} />
-          )}
-        </td>
-        <td className="px-3 py-2 text-sm text-foreground border-r border-border break-words">
-          {localValue || <span className="text-muted">{t('empty')}</span>}
-        </td>
-        <td className="px-3 py-2 text-sm text-foreground break-words">
-          {remoteValue || <span className="text-muted">{t('empty')}</span>}
-        </td>
-      </tr>
+      <ul className="space-y-1">
+        {values.map((value, i) => {
+          const differs = diff.kind === 'scalar' || unique.has(value);
+          return (
+            <li
+              key={`${value}-${i}`}
+              className={`break-words whitespace-pre-line ${differs ? 'font-medium text-foreground' : 'text-muted'}`}
+            >
+              {formatValue(diff.key, value)}
+            </li>
+          );
+        })}
+      </ul>
     );
   };
 
+  const bulkBusy = bulk !== null;
+  const confirmCount = confirmMode ? planBulkResolution(conflicts, confirmMode).length : 0;
+
   return (
     <div className="space-y-6">
+      {/* Resolve many at once */}
+      <div className="border border-border rounded-lg p-4 space-y-3">
+        <p className="text-sm text-muted">{t('bulkIntro')}</p>
+        <div className="flex flex-col sm:flex-row sm:flex-wrap gap-3">
+          {safePlan.length > 0 && (
+            <Button onClick={() => handleBulk('safe')} disabled={bulkBusy}>
+              {t('applySafe', { count: safePlan.length })}
+            </Button>
+          )}
+          <Button variant="secondary" onClick={() => setConfirmMode('keep_local')} disabled={bulkBusy}>
+            {t('keepAllLocal')}
+          </Button>
+          <Button variant="secondary" onClick={() => setConfirmMode('keep_remote')} disabled={bulkBusy}>
+            {t('keepAllRemote')}
+          </Button>
+        </div>
+        {safePlan.length > 0 && <p className="text-xs text-muted">{t('applySafeHelp')}</p>}
+      </div>
+
+      {bulk && (
+        <BatchProgress
+          done={bulk.done}
+          total={bulk.total}
+          label={t('resolving')}
+          detail={t('bulkProgress', { done: bulk.done, total: bulk.total })}
+        />
+      )}
+
+      {bulkMessage && (
+        <div role="status" className="p-4 bg-primary/10 text-primary rounded-lg">
+          {bulkMessage}
+        </div>
+      )}
+
       {error && (
-        <div className="p-4 bg-red-50 dark:bg-red-900/20 text-red-800 dark:text-red-200 rounded-lg">
+        <div role="alert" className="p-4 bg-red-50 dark:bg-red-900/20 text-red-800 dark:text-red-200 rounded-lg">
           {error}
         </div>
       )}
 
-      {conflicts.map((conflict) => {
-        const local = parseVersion(conflict.localVersion);
-        const remote = parseVersion(conflict.remoteVersion);
+      {analysed.map(({ conflict, comparison, recommendation }) => {
         const isResolving = resolving === conflict.id;
+        const disabled = isResolving || bulkBusy;
+        const personName = [conflict.mapping.person.name, conflict.mapping.person.surname].filter(Boolean).join(' ');
 
         return (
-          <div
-            key={conflict.id}
-            className="border border-border rounded-lg overflow-hidden"
-          >
-            <div className="bg-surface-elevated px-6 py-4 border-b border-border">
-              <h3 className="font-semibold text-foreground">
-                {conflict.mapping.person.name} {conflict.mapping.person.surname}
-              </h3>
+          <div key={conflict.id} className="border border-border rounded-lg overflow-hidden">
+            <div className="bg-surface-elevated px-4 sm:px-6 py-4 border-b border-border">
+              <h3 className="font-semibold text-foreground break-words">{personName}</h3>
               <p className="text-sm text-muted">
-                {t('conflictDetected', {
-                  date: new Date(conflict.createdAt).toLocaleString(),
-                })}
+                {t('conflictDetected', { date: new Date(conflict.createdAt).toLocaleString() })}
               </p>
             </div>
 
-            <div className="overflow-x-auto max-w-full">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b border-border">
-                    <th className="px-3 py-2 text-left text-xs font-medium text-muted uppercase border-r border-border w-36"></th>
-                    <th className="px-3 py-2 text-left text-xs font-medium border-r border-border w-1/2">
-                      <div className="flex items-center gap-2">
-                        <div className="w-2.5 h-2.5 bg-blue-500 rounded-full"></div>
-                        <span className="text-blue-700 dark:text-blue-300">{t('localVersion')}</span>
-                      </div>
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-medium w-1/2">
-                      <div className="flex items-center gap-2">
-                        <div className="w-2.5 h-2.5 bg-green-500 rounded-full"></div>
-                        <span className="text-green-700 dark:text-green-300">{t('remoteVersion')}</span>
-                      </div>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border">
-                  {SCALAR_FIELDS.map(({ key, label }) =>
-                    renderFieldRow(
-                      label,
-                      formatScalar(local[key]),
-                      formatScalar(remote[key]),
-                    )
-                  )}
-                  {MULTI_VALUE_FIELDS.map(({ label, format }) =>
-                    renderFieldRow(
-                      label,
-                      format(local),
-                      format(remote),
-                    )
-                  )}
-                </tbody>
-              </table>
+            <div className="px-4 sm:px-6 py-4 space-y-4">
+              <p className={`text-sm ${recommendation.safe ? 'text-foreground' : 'text-muted'}`}>
+                {t(recommendationKey[recommendation.reason])}
+              </p>
+
+              {comparison.different.map((diff) => (
+                <div key={diff.key} className="rounded-lg bg-amber-50 dark:bg-amber-900/10 p-3">
+                  <p className="text-sm font-medium text-muted mb-2">{t(diff.key)}</p>
+                  <div className="grid gap-3 sm:grid-cols-2 text-sm">
+                    <div>
+                      <p className="flex items-center gap-2 text-xs font-medium text-blue-700 dark:text-blue-300 mb-1">
+                        <span className="w-2.5 h-2.5 bg-blue-500 rounded-full" aria-hidden="true" />
+                        {t('localVersion')}
+                      </p>
+                      {renderValues(diff, 'local')}
+                    </div>
+                    <div>
+                      <p className="flex items-center gap-2 text-xs font-medium text-green-700 dark:text-green-300 mb-1">
+                        <span className="w-2.5 h-2.5 bg-green-500 rounded-full" aria-hidden="true" />
+                        {t('remoteVersion')}
+                      </p>
+                      {renderValues(diff, 'remote')}
+                    </div>
+                  </div>
+                </div>
+              ))}
+
+              {comparison.sameKeys.length > 0 && (
+                <details className="text-sm">
+                  <summary className="cursor-pointer text-muted min-h-11 sm:min-h-0 flex items-center">
+                    {t('unchangedFields', { count: comparison.sameKeys.length })}
+                  </summary>
+                  <p className="mt-1 text-muted">{comparison.sameKeys.map((key) => t(key)).join(', ')}</p>
+                </details>
+              )}
             </div>
 
             {/* Action Buttons */}
-            <div className="bg-surface-elevated px-6 py-4 border-t border-border">
-              <p className="text-sm text-muted mb-4">{t('chooseVersion')}</p>
-              <div className="flex gap-3">
-                <button
-                  onClick={() => handleResolve(conflict.id, 'keep_local')}
-                  disabled={isResolving}
-                  className="px-4 py-2 bg-primary text-on-primary rounded-lg hover:bg-primary-dark disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                >
-                  {isResolving ? t('resolving') : t('keepLocal')}
-                </button>
-
-                <button
-                  onClick={() => handleResolve(conflict.id, 'keep_remote')}
-                  disabled={isResolving}
-                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                >
-                  {isResolving ? t('resolving') : t('keepRemote')}
-                </button>
+            <div className="bg-surface-elevated px-4 sm:px-6 py-4 border-t border-border space-y-4">
+              <p className="text-sm text-muted">{t('chooseVersion')}</p>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="space-y-2">
+                  <Button onClick={() => handleResolve(conflict.id, 'keep_local')} disabled={disabled} fullWidth>
+                    {isResolving ? t('resolving') : t('keepLocal')}
+                    {recommendation.choice === 'keep_local' && ` (${t('recommended')})`}
+                  </Button>
+                  <p className="text-xs text-muted">{t('keepLocalHelp')}</p>
+                </div>
+                <div className="space-y-2">
+                  <Button
+                    onClick={() => handleResolve(conflict.id, 'keep_remote')}
+                    disabled={disabled}
+                    fullWidth
+                    variant={recommendation.choice === 'keep_remote' ? 'primary' : 'secondary'}
+                  >
+                    {isResolving ? t('resolving') : t('keepRemote')}
+                    {recommendation.choice === 'keep_remote' && ` (${t('recommended')})`}
+                  </Button>
+                  <p className="text-xs text-muted">{t('keepRemoteHelp')}</p>
+                </div>
               </div>
             </div>
           </div>
         );
       })}
+
+      <ConfirmationModal
+        isOpen={confirmMode !== null}
+        onClose={() => setConfirmMode(null)}
+        onConfirm={() => confirmMode && handleBulk(confirmMode)}
+        title={confirmMode === 'keep_local' ? t('confirmAllLocalTitle') : t('confirmAllRemoteTitle')}
+        confirmText={t('confirmAll', { count: confirmCount })}
+        cancelText={t('cancel')}
+        variant="warning"
+      >
+        <p className="text-muted">
+          {confirmMode === 'keep_local'
+            ? t('confirmAllLocalBody', { count: confirmCount })
+            : t('confirmAllRemoteBody', { count: confirmCount })}
+        </p>
+      </ConfirmationModal>
     </div>
   );
 }

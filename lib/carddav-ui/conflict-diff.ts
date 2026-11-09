@@ -210,3 +210,29 @@ export function recommendResolution(comparison: ConflictComparison): Recommendat
   if (localLosesNothing) return { choice: 'keep_local', reason: 'localAdds', safe: true };
   return { choice: null, reason: 'differs', safe: false };
 }
+
+export type BulkMode = 'safe' | 'keep_local' | 'keep_remote';
+
+export interface BulkPlanItem {
+  id: string;
+  resolution: ResolutionChoice;
+}
+
+/**
+ * Which resolution to send for each conflict. "safe" only includes conflicts
+ * where one side loses nothing by being kept; the others are left for the person.
+ */
+export function planBulkResolution(
+  conflicts: ReadonlyArray<{ id: string; localVersion: string; remoteVersion: string }>,
+  mode: BulkMode,
+): BulkPlanItem[] {
+  if (mode !== 'safe') {
+    return conflicts.map((c) => ({ id: c.id, resolution: mode }));
+  }
+  const plan: BulkPlanItem[] = [];
+  for (const c of conflicts) {
+    const rec = recommendResolution(compareVersions(parseVersion(c.localVersion), parseVersion(c.remoteVersion)));
+    if (rec.safe && rec.choice) plan.push({ id: c.id, resolution: rec.choice });
+  }
+  return plan;
+}

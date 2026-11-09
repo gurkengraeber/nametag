@@ -3,6 +3,7 @@ import {
   compareVersions,
   recommendResolution,
   parseVersion,
+  planBulkResolution,
   type ConflictPersonData,
 } from '@/lib/carddav-ui/conflict-diff';
 
@@ -108,5 +109,25 @@ describe('recommendResolution', () => {
       compareVersions({ ...base, jobTitle: 'Programmer' }, { ...base, nickname: 'Countess' }),
     );
     expect(rec.choice).toBeNull();
+  });
+});
+
+describe('planBulkResolution', () => {
+  const conflicts = [
+    { id: 'same', localVersion: JSON.stringify(base), remoteVersion: JSON.stringify(base) },
+    { id: 'adds', localVersion: JSON.stringify(base), remoteVersion: JSON.stringify({ ...base, jobTitle: 'Programmer' }) },
+    { id: 'clash', localVersion: JSON.stringify(base), remoteVersion: JSON.stringify({ ...base, organization: 'Other' }) },
+  ];
+
+  it('safe mode skips real conflicts', () => {
+    expect(planBulkResolution(conflicts, 'safe')).toEqual([
+      { id: 'same', resolution: 'keep_local' },
+      { id: 'adds', resolution: 'keep_remote' },
+    ]);
+  });
+
+  it('keep all modes include every conflict', () => {
+    expect(planBulkResolution(conflicts, 'keep_remote').map((p) => p.resolution)).toEqual(['keep_remote', 'keep_remote', 'keep_remote']);
+    expect(planBulkResolution(conflicts, 'keep_local')).toHaveLength(3);
   });
 });
