@@ -1424,6 +1424,17 @@
           "github": "GitHub profiel",
           "custom": "Aangepast veld"
         }
+      },
+      "moreNameFields": "Meer naamvelden",
+      "moreDetails": "Meer gegevens",
+      "fewerDetails": "Minder gegevens",
+      "errorCheckFields": "Controleer de gemarkeerde velden.",
+      "fieldErrors": {
+        "required": "Dit veld is verplicht.",
+        "tooLong": "Gebruik maximaal {max} tekens.",
+        "tooShort": "Gebruik minimaal {min} tekens.",
+        "invalidFormat": "Deze waarde heeft een ongeldig formaat.",
+        "invalidValue": "Deze waarde is ongeldig."
       }
     },
     "exportVcf": "VCF exporteren",
@@ -1559,7 +1570,31 @@
       "dropzoneActive": "Afbeelding hier neerzetten",
       "close": "Sluiten"
     },
-    "viewPhoto": "Foto bekijken"
+    "viewPhoto": "Foto bekijken",
+    "callAction": "Bellen",
+    "emailAction": "E-mail",
+    "unknownType": "Onbekend",
+    "summary": {
+      "nextDateToday": "{title} vandaag",
+      "nextDateTomorrow": "{title} morgen",
+      "nextDateIn": "{title} over {days} dagen"
+    },
+    "quickActions": {
+      "relationshipLabel": "Relatie met jou",
+      "relationshipNone": "Niet ingesteld",
+      "relationshipError": "De relatie kon niet worden bijgewerkt",
+      "groupsLabel": "Groepen",
+      "groupsSaved": "Groepen bijgewerkt",
+      "groupsError": "De groepen konden niet worden bijgewerkt",
+      "addNote": "Notitie toevoegen",
+      "noteLabel": "Nieuwe notitie",
+      "notePlaceholder": "Schrijf iets op om te onthouden",
+      "noteSave": "Aan notities toevoegen",
+      "noteSaved": "Notitie toegevoegd",
+      "noteError": "De notitie kon niet worden opgeslagen",
+      "noteEmpty": "Schrijf eerst een notitie",
+      "noteTooLong": "De notities zouden langer zijn dan {max} tekens"
+    }
   },
   "groups": {
     "title": "Groepen",

@@ -147,3 +147,47 @@ export function getImHandleHref(protocol: string, handle: string): string | null
   const build = IM_URL_BUILDERS[protocol.trim().toLowerCase()];
   return build ? build(encodeURI(trimmed)) : null;
 }
+
+export interface GroupableRelationship {
+  relationshipType: { id: string; label: string; color: string | null } | null;
+  person: { name: string; surname?: string | null };
+}
+
+export interface RelationshipGroup<T extends GroupableRelationship> {
+  key: string;
+  label: string | null;
+  color: string | null;
+  items: T[];
+}
+
+/**
+ * Groups a person's connections by relationship type, groups sorted by type
+ * label (connections without a type last) and members sorted by name.
+ */
+export function groupRelationshipsByType<T extends GroupableRelationship>(
+  relationships: readonly T[]
+): RelationshipGroup<T>[] {
+  const groups = new Map<string, RelationshipGroup<T>>();
+  for (const rel of relationships) {
+    const type = rel.relationshipType;
+    const key = type?.id ?? '__none__';
+    let group = groups.get(key);
+    if (!group) {
+      group = { key, label: type?.label ?? null, color: type?.color ?? null, items: [] };
+      groups.set(key, group);
+    }
+    group.items.push(rel);
+  }
+
+  const fullName = (rel: T) => `${rel.person.name} ${rel.person.surname ?? ''}`.trim();
+  const result = Array.from(groups.values());
+  for (const group of result) {
+    group.items.sort((a, b) => fullName(a).localeCompare(fullName(b)));
+  }
+  result.sort((a, b) => {
+    if (a.label === null) return b.label === null ? 0 : 1;
+    if (b.label === null) return -1;
+    return a.label.localeCompare(b.label);
+  });
+  return result;
+}

@@ -9,7 +9,7 @@ import UnifiedNetworkGraph from '@/components/UnifiedNetworkGraph';
 import Navigation from '@/components/Navigation';
 import PersonVCardRawView from '@/components/PersonVCardRawView';
 import PersonActionsMenu from '@/components/PersonActionsMenu';
-import LastContactQuickUpdate from '@/components/LastContactQuickUpdate';
+import PersonQuickActions from '@/components/PersonQuickActions';
 import RetryGeocodeButton from '@/components/RetryGeocodeButton';
 import { formatDate, formatDateWithoutYear, parseCalendarDate, YEAR_UNKNOWN_SENTINEL, type DateFormat } from '@/lib/date-format';
 import { getCountryName } from '@/lib/countries';
@@ -22,6 +22,7 @@ import { getDateDisplayTitle } from '@/lib/important-date-types';
 import JournalSection from '@/components/JournalSection';
 import MessagingLinks from '@/components/MessagingLinks';
 import { customFieldValuesInclude } from '@/lib/prisma-queries';
+import { getImHandleHref, getNextImportantDate } from '@/lib/person-profile';
 
 function isSafeUrl(url: string): boolean {
   try {
@@ -121,7 +122,7 @@ export default async function PersonDetailsPage({
   const nameOrder = user?.nameOrder;
   const nameDisplayFormat: NameDisplayFormat = user?.nameDisplayFormat || 'FULL';
 
-  const [person, allPeople, relationshipTypes, cardDavConnection, latestJournalEntry] = await Promise.all([
+  const [person, allPeople, relationshipTypes, allGroups, cardDavConnection, latestJournalEntry] = await Promise.all([
     prisma.person.findUnique({
       where: {
         id,
@@ -227,6 +228,11 @@ export default async function PersonDetailsPage({
       },
       orderBy: { name: 'asc' },
     }),
+    prisma.group.findMany({
+      where: { userId: session.user.id, deletedAt: null },
+      select: { id: true, name: true, color: true },
+      orderBy: { name: 'asc' },
+    }),
     prisma.cardDavConnection.findUnique({
       where: { userId: session.user.id },
       select: { id: true },
@@ -290,6 +296,34 @@ export default async function PersonDetailsPage({
   // (e.g., if Peter is my child, it stores "Child"). Use it directly.
   const relationshipToUser = person.relationshipToUser;
 
+  // Summary shown under the name: where they live, what is coming up, and the
+  // quickest ways to reach them.
+  const placeSource = person.addresses.find((a) => a.locality || a.country);
+  const place = placeSource
+    ? [
+        placeSource.locality,
+        placeSource.country ? getCountryName(placeSource.country) || placeSource.country : null,
+      ]
+        .filter(Boolean)
+        .join(', ')
+    : '';
+  const nextDate = getNextImportantDate(person.importantDates);
+  let nextDateText = '';
+  if (nextDate) {
+    const title = getDateDisplayTitle(nextDate.item, (key: string) => t(`form.importantDates.${key}`));
+    nextDateText =
+      nextDate.daysUntil === 0
+        ? t('summary.nextDateToday', { title })
+        : nextDate.daysUntil === 1
+          ? t('summary.nextDateTomorrow', { title })
+          : t('summary.nextDateIn', { title, days: nextDate.daysUntil });
+  }
+  const primaryPhone =
+    person.phoneNumbers.find((p) => p.type === 'Mobile') ?? person.phoneNumbers[0] ?? null;
+  const primaryEmail = person.emails[0] ?? null;
+  const contactActionClass =
+    'inline-flex items-center justify-center min-h-11 sm:min-h-0 px-4 py-1.5 text-sm font-semibold rounded-lg border border-border bg-surface text-muted hover:bg-surface-elevated transition-colors focus:outline-none focus:ring-2 focus:ring-primary';
+
   return (
     <div className="min-h-screen bg-background">
       <Navigation
@@ -331,24 +365,47 @@ export default async function PersonDetailsPage({
                   <h1 className="text-2xl sm:text-3xl font-bold text-foreground break-words">
                     {formatGraphName(person, nameOrder, nameDisplayFormat)}
                   </h1>
-                {person.groups.length > 0 && (
-                  <div className="flex flex-wrap gap-2 mt-2">
-                    {person.groups.map((pg) => (
-                      <span
-                        key={pg.groupId}
-                        className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium"
-                        style={{
-                          backgroundColor: pg.group.color
-                            ? `${pg.group.color}20`
-                            : 'var(--badge-bg)',
-                          color: pg.group.color || 'var(--badge-text)',
-                        }}
-                      >
-                        {pg.group.name}
-                      </span>
-                    ))}
-                  </div>
-                )}
+                  {(person.jobTitle || person.organization) && (
+                    <p className="text-muted mt-1 break-words">
+                      {[person.jobTitle, person.organization].filter(Boolean).join(' - ')}
+                    </p>
+                  )}
+                  {(place || nextDate) && (
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2 text-sm text-muted">
+                      {place && (
+                        <span className="inline-flex items-center gap-1.5">
+                          <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24" aria-hidden="true">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
+                          </svg>
+                          {place}
+                        </span>
+                      )}
+                      {nextDate && (
+                        <span className="inline-flex items-center gap-1.5">
+                          <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24" aria-hidden="true">
+                            <rect x="3" y="4" width="18" height="18" rx="2" strokeLinecap="round" strokeLinejoin="round" />
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M16 2v4M8 2v4M3 10h18" />
+                          </svg>
+                          {nextDateText}
+                        </span>
+                      )}
+                    </div>
+                  )}
+                  {(primaryPhone || primaryEmail) && (
+                    <div className="flex flex-wrap gap-2 mt-3">
+                      {primaryPhone && (
+                        <a href={`tel:${primaryPhone.number}`} className={contactActionClass}>
+                          {t('callAction')}
+                        </a>
+                      )}
+                      {primaryEmail && (
+                        <a href={`mailto:${primaryEmail.email}`} className={contactActionClass}>
+                          {t('emailAction')}
+                        </a>
+                      )}
+                    </div>
+                  )}
                 {cardDavConnection && (
                   <div className="flex items-center gap-1.5 mt-2" title={person.cardDavSyncEnabled ? t('cardDavSynced') : t('cardDavNotSynced')}>
                     {person.cardDavSyncEnabled ? (
@@ -370,7 +427,7 @@ export default async function PersonDetailsPage({
               <div className="flex flex-shrink-0 space-x-3 w-full sm:w-auto">
                 <Link
                   href={`/people/${person.id}/edit`}
-                  className="flex-1 sm:flex-none px-4 py-2 bg-primary text-on-primary rounded-lg font-semibold hover:bg-primary-dark transition-colors text-center"
+                  className="flex-1 sm:flex-none px-4 py-2 min-h-11 sm:min-h-0 inline-flex items-center justify-center bg-primary text-on-primary rounded-lg font-semibold hover:bg-primary-dark transition-colors text-center"
                 >
                   {t('edit')}
                 </Link>
@@ -385,6 +442,18 @@ export default async function PersonDetailsPage({
                 />
               </div>
             </div>
+
+            <PersonQuickActions
+              personId={person.id}
+              relationshipToUserId={person.relationshipToUserId}
+              relationshipTypes={relationshipTypes.map((type) => ({ id: type.id, label: type.label }))}
+              groups={allGroups}
+              selectedGroupIds={person.groups.map((pg) => pg.groupId)}
+              notes={person.notes}
+              currentLastContact={person.lastContact ? new Date(person.lastContact).toISOString() : null}
+              dateFormat={dateFormat as DateFormat}
+              contactReminderDescription={getContactReminderDescription(person, t)}
+            />
 
             <div className="px-6 py-6 space-y-8">
               {/* Personal Details */}
@@ -456,13 +525,6 @@ export default async function PersonDetailsPage({
                       </div>
                     );
                   })()}
-
-                  <LastContactQuickUpdate
-                    personId={person.id}
-                    currentLastContact={person.lastContact ? new Date(person.lastContact).toISOString() : null}
-                    dateFormat={dateFormat as DateFormat}
-                    contactReminderDescription={getContactReminderDescription(person, t)}
-                  />
                 </div>
               </div>
 
@@ -507,13 +569,13 @@ export default async function PersonDetailsPage({
                         </h4>
                         <div className="space-y-2">
                           {person.phoneNumbers.map((phone) => (
-                            <div key={phone.id} className="flex items-center gap-2">
+                            <div key={phone.id} className="flex flex-wrap items-center gap-2">
                               <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-surface-elevated text-muted capitalize">
                                 {phone.type}
                               </span>
                               <a
                                 href={`tel:${phone.number}`}
-                                className="text-primary hover:underline"
+                                className="text-primary hover:underline inline-flex items-center min-h-11 sm:min-h-0"
                               >
                                 {phone.number}
                               </a>
@@ -533,13 +595,13 @@ export default async function PersonDetailsPage({
                         </h4>
                         <div className="space-y-2">
                           {person.emails.map((email) => (
-                            <div key={email.id} className="flex items-center gap-2">
+                            <div key={email.id} className="flex flex-wrap items-center gap-2">
                               <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-surface-elevated text-muted capitalize">
                                 {email.type}
                               </span>
                               <a
                                 href={`mailto:${email.email}`}
-                                className="text-primary hover:underline"
+                                className="text-primary hover:underline inline-flex items-center min-h-11 sm:min-h-0 break-all"
                               >
                                 {email.email}
                               </a>
@@ -622,7 +684,7 @@ export default async function PersonDetailsPage({
                                   href={url.url}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="text-primary hover:underline flex items-center gap-1"
+                                  className="text-primary hover:underline flex items-center gap-1 min-h-11 sm:min-h-0 break-all"
                                 >
                                   {url.url}
                                   <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -646,14 +708,28 @@ export default async function PersonDetailsPage({
                           {t('instantMessaging')}
                         </h4>
                         <div className="space-y-2">
-                          {person.imHandles.map((im) => (
-                            <div key={im.id} className="flex items-center gap-2">
-                              <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-surface-elevated text-muted capitalize">
-                                {im.protocol}
-                              </span>
-                              <span className="text-foreground">{im.handle}</span>
-                            </div>
-                          ))}
+                          {person.imHandles.map((im) => {
+                            const imHref = getImHandleHref(im.protocol, im.handle);
+                            return (
+                              <div key={im.id} className="flex flex-wrap items-center gap-2">
+                                <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-surface-elevated text-muted capitalize">
+                                  {im.protocol}
+                                </span>
+                                {imHref ? (
+                                  <a
+                                    href={imHref}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-primary hover:underline inline-flex items-center min-h-11 sm:min-h-0 break-all"
+                                  >
+                                    {im.handle}
+                                  </a>
+                                ) : (
+                                  <span className="text-foreground break-all">{im.handle}</span>
+                                )}
+                              </div>
+                            );
+                          })}
                         </div>
                       </div>
                     )}

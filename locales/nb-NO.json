@@ -1424,6 +1424,17 @@
           "github": "GitHub-profil",
           "custom": "Egendefinert felt"
         }
+      },
+      "moreNameFields": "Flere navnefelt",
+      "moreDetails": "Flere detaljer",
+      "fewerDetails": "Færre detaljer",
+      "errorCheckFields": "Sjekk de markerte feltene.",
+      "fieldErrors": {
+        "required": "Dette feltet er obligatorisk.",
+        "tooLong": "Bruk høyst {max} tegn.",
+        "tooShort": "Bruk minst {min} tegn.",
+        "invalidFormat": "Denne verdien har ugyldig format.",
+        "invalidValue": "Denne verdien er ugyldig."
       }
     },
     "exportVcf": "Eksporter VCF",
@@ -1559,7 +1570,31 @@
       "dropzoneActive": "Slipp bildet her",
       "close": "Lukk"
     },
-    "viewPhoto": "Vis bilde"
+    "viewPhoto": "Vis bilde",
+    "callAction": "Ring",
+    "emailAction": "E-post",
+    "unknownType": "Ukjent",
+    "summary": {
+      "nextDateToday": "{title} i dag",
+      "nextDateTomorrow": "{title} i morgen",
+      "nextDateIn": "{title} om {days} dager"
+    },
+    "quickActions": {
+      "relationshipLabel": "Forhold til deg",
+      "relationshipNone": "Ikke satt",
+      "relationshipError": "Kunne ikke oppdatere forholdet",
+      "groupsLabel": "Grupper",
+      "groupsSaved": "Grupper oppdatert",
+      "groupsError": "Kunne ikke oppdatere gruppene",
+      "addNote": "Legg til notat",
+      "noteLabel": "Nytt notat",
+      "notePlaceholder": "Skriv noe du vil huske",
+      "noteSave": "Legg til i notatene",
+      "noteSaved": "Notat lagt til",
+      "noteError": "Kunne ikke lagre notatet",
+      "noteEmpty": "Skriv et notat først",
+      "noteTooLong": "Notatene ville overstige {max} tegn"
+    }
   },
   "groups": {
     "title": "Grupper",

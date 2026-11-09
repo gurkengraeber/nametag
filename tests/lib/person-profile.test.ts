@@ -6,6 +6,7 @@ import {
   diffIds,
   getImHandleHref,
   MAX_NOTES_LENGTH,
+  groupRelationshipsByType,
 } from '@/lib/person-profile';
 
 const NOW = new Date(2026, 10, 9, 15, 30); // 9 Nov 2026, local time
@@ -130,5 +131,27 @@ describe('getImHandleHref', () => {
     expect(getImHandleHref('WhatsApp', 'max')).toBeNull();
     expect(getImHandleHref('Telegram', '  ')).toBeNull();
     expect(getImHandleHref('Telegram', 'max example')).toBeNull();
+  });
+});
+
+describe('groupRelationshipsByType', () => {
+  const friend = { id: 't1', label: 'Friend', color: '#00f' };
+  const colleague = { id: 't2', label: 'Colleague', color: null };
+  const rels = [
+    { id: 1, relationshipType: friend, person: { name: 'Zoe', surname: 'Test' } },
+    { id: 2, relationshipType: null, person: { name: 'Nobody' } },
+    { id: 3, relationshipType: colleague, person: { name: 'Mia' } },
+    { id: 4, relationshipType: friend, person: { name: 'Anna' } },
+  ];
+
+  it('sorts groups by label with untyped last and members by name', () => {
+    const groups = groupRelationshipsByType(rels);
+    expect(groups.map((g) => g.label)).toEqual(['Colleague', 'Friend', null]);
+    expect(groups[1].items.map((r) => r.id)).toEqual([4, 1]);
+    expect(groups[1].color).toBe('#00f');
+  });
+
+  it('returns no groups for an empty list', () => {
+    expect(groupRelationshipsByType([])).toEqual([]);
   });
 });

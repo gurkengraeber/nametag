@@ -1424,6 +1424,17 @@
           "github": "Профиль GitHub",
           "custom": "Пользовательское поле"
         }
+      },
+      "moreNameFields": "Другие поля имени",
+      "moreDetails": "Больше сведений",
+      "fewerDetails": "Меньше сведений",
+      "errorCheckFields": "Проверьте отмеченные поля.",
+      "fieldErrors": {
+        "required": "Это поле обязательно.",
+        "tooLong": "Используйте не более {max} символов.",
+        "tooShort": "Используйте не менее {min} символов.",
+        "invalidFormat": "Значение имеет неверный формат.",
+        "invalidValue": "Значение недопустимо."
       }
     },
     "exportVcf": "Экспорт VCF",
@@ -1559,7 +1570,31 @@
       "dropzoneActive": "Отпустите изображение здесь",
       "close": "Закрыть"
     },
-    "viewPhoto": "Посмотреть фото"
+    "viewPhoto": "Посмотреть фото",
+    "callAction": "Позвонить",
+    "emailAction": "Эл. почта",
+    "unknownType": "Неизвестно",
+    "summary": {
+      "nextDateToday": "{title} сегодня",
+      "nextDateTomorrow": "{title} завтра",
+      "nextDateIn": "{title} через {days} дн."
+    },
+    "quickActions": {
+      "relationshipLabel": "Отношение к вам",
+      "relationshipNone": "Не указано",
+      "relationshipError": "Не удалось обновить отношение",
+      "groupsLabel": "Группы",
+      "groupsSaved": "Группы обновлены",
+      "groupsError": "Не удалось обновить группы",
+      "addNote": "Добавить заметку",
+      "noteLabel": "Новая заметка",
+      "notePlaceholder": "Напишите, что хотите запомнить",
+      "noteSave": "Добавить к заметкам",
+      "noteSaved": "Заметка добавлена",
+      "noteError": "Не удалось сохранить заметку",
+      "noteEmpty": "Сначала напишите заметку",
+      "noteTooLong": "Заметки превысят {max} символов"
+    }
   },
   "groups": {
     "title": "Группы",

@@ -1424,6 +1424,17 @@
           "github": "GitHub Profile",
           "custom": "Custom Field"
         }
+      },
+      "moreNameFields": "More name fields",
+      "moreDetails": "More details",
+      "fewerDetails": "Fewer details",
+      "errorCheckFields": "Please check the marked fields.",
+      "fieldErrors": {
+        "required": "This field is required.",
+        "tooLong": "Please use at most {max} characters.",
+        "tooShort": "Please use at least {min} characters.",
+        "invalidFormat": "This value has an invalid format.",
+        "invalidValue": "This value is not valid."
       }
     },
     "exportVcf": "Export VCF",
@@ -1559,7 +1570,31 @@
       "dropzoneActive": "Drop image here",
       "close": "Close"
     },
-    "viewPhoto": "View photo"
+    "viewPhoto": "View photo",
+    "callAction": "Call",
+    "emailAction": "Email",
+    "unknownType": "Unknown",
+    "summary": {
+      "nextDateToday": "{title} today",
+      "nextDateTomorrow": "{title} tomorrow",
+      "nextDateIn": "{title} in {days} days"
+    },
+    "quickActions": {
+      "relationshipLabel": "Relationship to you",
+      "relationshipNone": "Not set",
+      "relationshipError": "Could not update the relationship",
+      "groupsLabel": "Groups",
+      "groupsSaved": "Groups updated",
+      "groupsError": "Could not update the groups",
+      "addNote": "Add note",
+      "noteLabel": "New note",
+      "notePlaceholder": "Write something to remember",
+      "noteSave": "Add to notes",
+      "noteSaved": "Note added",
+      "noteError": "Could not save the note",
+      "noteEmpty": "Write a note first",
+      "noteTooLong": "The notes would exceed {max} characters"
+    }
   },
   "groups": {
     "title": "Groups",

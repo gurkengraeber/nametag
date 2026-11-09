@@ -10,6 +10,10 @@ import { formatGraphName, type NameDisplayFormat } from '@/lib/nameUtils';
 import { Button } from './ui/Button';
 import PersonAvatar from './PersonPhoto';
 import { useSearchIndex } from './SearchIndexProvider';
+import { groupRelationshipsByType } from '@/lib/person-profile';
+
+// From this many connections on, they are shown under one heading per type.
+const GROUP_BY_TYPE_THRESHOLD = 6;
 
 interface Person {
   id: string;
@@ -265,6 +269,82 @@ export default function RelationshipManager({
     router.push(`/people/new?${params.toString()}`);
   };
 
+  const renderRelationship = (rel: Relationship, grouped: boolean) => (
+    <div
+      key={rel.id}
+      className="flex items-center justify-between p-3 bg-surface-elevated rounded-lg"
+    >
+      <div className="flex-1">
+        {grouped ? (
+          <span className="inline-flex items-center gap-1.5">
+            <PersonAvatar personId={rel.personId} name={formatGraphName(rel.person, nameOrder, nameDisplayFormat)} photo={rel.person.photo} size={24} />
+            <Link
+              href={`/people/${rel.personId}`}
+              className="text-primary hover:underline font-medium"
+            >
+              {formatGraphName(rel.person, nameOrder, nameDisplayFormat)}
+            </Link>
+          </span>
+        ) : (
+          <div className="flex items-center gap-1 flex-wrap text-foreground">
+            {t.rich('isRelationshipOf', {
+              name: () => (
+                <span className="inline-flex items-center gap-1.5">
+                  <PersonAvatar personId={rel.personId} name={formatGraphName(rel.person, nameOrder, nameDisplayFormat)} photo={rel.person.photo} size={24} />
+                  <Link
+                    href={`/people/${rel.personId}`}
+                    className="text-primary hover:underline font-medium"
+                  >
+                    {formatGraphName(rel.person, nameOrder, nameDisplayFormat)}
+                  </Link>
+                </span>
+              ),
+              personName: personName,
+              type: () => (
+                <span
+                  className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium"
+                  style={{
+                    backgroundColor: rel.relationshipType?.color
+                      ? `${rel.relationshipType.color}20`
+                      : 'var(--badge-bg)',
+                    color: rel.relationshipType?.color || 'var(--badge-text)',
+                  }}
+                >
+                  {rel.relationshipType?.label || t('unknownType')}
+                </span>
+              ),
+            })}
+          </div>
+        )}
+        {rel.notes && (
+          <p className="text-sm text-muted mt-1">
+            {rel.notes}
+          </p>
+        )}
+      </div>
+      <div className="flex gap-1 sm:gap-3">
+        <button
+          onClick={() => openEditModal(rel)}
+          className="inline-flex items-center justify-center min-w-11 min-h-11 sm:min-w-0 sm:min-h-0 text-primary hover:text-primary-dark transition-colors"
+          aria-label={t('edit')}
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+          </svg>
+        </button>
+        <button
+          onClick={() => openDeleteModal(rel)}
+          className="inline-flex items-center justify-center min-w-11 min-h-11 sm:min-w-0 sm:min-h-0 text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 transition-colors"
+          aria-label={t('delete')}
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  );
+
   return (
     <div>
       <div className="flex justify-between items-center mb-3">
@@ -273,7 +353,7 @@ export default function RelationshipManager({
         </h4>
         <button
           onClick={() => setShowAddModal(true)}
-          className="px-3 py-1 bg-primary text-on-primary rounded-lg text-sm font-semibold hover:bg-primary-dark transition-colors"
+          className="px-3 py-1 min-h-11 sm:min-h-0 bg-primary text-on-primary rounded-lg text-sm font-semibold hover:bg-primary-dark transition-colors"
         >
           {t('addRelationship')}
         </button>
@@ -285,69 +365,16 @@ export default function RelationshipManager({
         </p>
       ) : (
         <div className="space-y-2">
-          {relationships.map((rel) => (
-            <div
-              key={rel.id}
-              className="flex items-center justify-between p-3 bg-surface-elevated rounded-lg"
-            >
-              <div className="flex-1">
-                <div className="flex items-center gap-1 flex-wrap text-foreground">
-                  {t.rich('isRelationshipOf', {
-                    name: () => (
-                      <span className="inline-flex items-center gap-1.5">
-                        <PersonAvatar personId={rel.personId} name={formatGraphName(rel.person, nameOrder, nameDisplayFormat)} photo={rel.person.photo} size={24} />
-                        <Link
-                          href={`/people/${rel.personId}`}
-                          className="text-primary hover:underline font-medium"
-                        >
-                          {formatGraphName(rel.person, nameOrder, nameDisplayFormat)}
-                        </Link>
-                      </span>
-                    ),
-                    personName: personName,
-                    type: () => (
-                      <span
-                        className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium"
-                        style={{
-                          backgroundColor: rel.relationshipType?.color
-                            ? `${rel.relationshipType.color}20`
-                            : 'var(--badge-bg)',
-                          color: rel.relationshipType?.color || 'var(--badge-text)',
-                        }}
-                      >
-                        {rel.relationshipType?.label || 'Unknown'}
-                      </span>
-                    ),
-                  })}
-                </div>
-                {rel.notes && (
-                  <p className="text-sm text-muted mt-1">
-                    {rel.notes}
-                  </p>
-                )}
-              </div>
-              <div className="flex gap-3">
-                <button
-                  onClick={() => openEditModal(rel)}
-                  className="text-primary hover:text-primary-dark transition-colors"
-                  aria-label={t('edit')}
-                >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                  </svg>
-                </button>
-                <button
-                  onClick={() => openDeleteModal(rel)}
-                  className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 transition-colors"
-                  aria-label={t('delete')}
-                >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                  </svg>
-                </button>
-              </div>
-            </div>
-          ))}
+          {relationships.length >= GROUP_BY_TYPE_THRESHOLD
+            ? groupRelationshipsByType(relationships).map((group) => (
+                <section key={group.key} className="space-y-2 pt-2 first:pt-0">
+                  <h5 className="text-sm font-medium text-muted">
+                    {group.label ?? t('unknownType')} ({group.items.length})
+                  </h5>
+                  {group.items.map((rel) => renderRelationship(rel, true))}
+                </section>
+              ))
+            : relationships.map((rel) => renderRelationship(rel, false))}
         </div>
       )}
 
