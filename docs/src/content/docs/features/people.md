@@ -9,7 +9,17 @@ People are the heart of Nametag. Everything else, groups, relationships, the net
 
 ## Creating a contact
 
-The only required field is a full name. Everything else is optional, so you can jot down a name in a few seconds and come back to fill in the rest whenever you have time (or never, if you don't need to).
+The only thing you have to type is a name. Everything else is optional, so you can jot down a name in a few seconds and come back to fill in the rest whenever you have time (or never, if you don't need to).
+
+The form for a new person opens with the cursor in the name field and shows just the essentials: name, surname, nickname, your relationship to the person and their groups. Press Enter in the name field to save. Everything else (photo, phones and emails, last contact, important dates, notes, work info, addresses, websites, custom fields) sits behind **More details**, in sections you can unfold one by one. Rarely used name parts (prefix, middle name, second last name, suffix, display name override) are folded under **More name fields**.
+
+**Create and add another** saves the person and opens a fresh form, which is the quickest way to enter several people in a row.
+
+Nametag remembers the relationship and groups you used last for a new person and preselects them the next time. Only the IDs are kept, in your browser, per account, and they are discarded after 30 days. A relationship type is still needed to save, because it is what connects the new person to you.
+
+Press Enter inside a phone, email, address or website entry to add that entry. It does not save the whole person.
+
+When the server rejects a value (for example a name that is too long), the message appears directly at that field and the form scrolls to it.
 
 ### Name fields
 
@@ -49,7 +59,7 @@ Notes support markdown with a live preview, so you can format lists, links, and 
 
 ## Last contact
 
-Nametag tracks the date you last spoke with or saw someone. On the person detail page, a quick-update button lets you mark "contacted today" in a single click, without opening the edit form.
+Nametag tracks the date you last spoke with or saw someone. On the person detail page, a quick-update button lets you mark "contacted today" in a single click, without opening the edit form. The date is shown with how long ago it was, for example "3 months ago".
 
 ## Photos
 
@@ -86,11 +96,19 @@ Select multiple people from the list to delete them, assign them to a group, or 
 
 ## Unsaved changes protection
 
-When editing a person, Nametag warns you before navigating away if you have unsaved changes. This applies to the browser back button, the "Back to person" link, the Cancel button, page refresh, and closing the tab. If nothing has changed, navigation proceeds without a prompt.
+When creating or editing a person, Nametag warns you before navigating away if you have unsaved changes. This applies to the browser back button, links, the Cancel button, page refresh, and closing the tab. If nothing has changed (preselected remembered values do not count), navigation proceeds without a prompt. In the edit form, Cancel returns to the person.
 
 ## The person detail page
 
-The detail page for a person brings every section together in one place: name and photo, work info, contact information, addresses, important dates, notes, custom field values, group memberships, your relationship to them, their relationships to other people, and a journal timeline of entries linked to them. It's designed to give you the full picture of a person at a glance, with editing just one click away.
+The detail page for a person brings every section together in one place: name and photo, work info, contact information, addresses, important dates, notes, custom field values, group memberships, your relationship to them, their relationships to other people, and a journal timeline of entries linked to them. It's designed to give you the full picture of a person at a glance.
+
+**Summary under the name.** Job title and organization, where they live (from their first address), their next important date ("Birthday in 12 days") and **Call** and **Email** buttons for their first phone number and email address.
+
+**Quick actions without the edit form.** Directly below the header you can change your relationship to the person, set the last contact to today, add or remove groups (or create a new group on the spot) and append a note. Every change is saved immediately and confirmed with a short message. A new note is added to the end of the existing notes, separated by a blank line.
+
+**Tappable contact details.** Phone numbers and email addresses open your phone or mail app. Telegram and Skype handles are links, and mobile numbers offer WhatsApp, Telegram and Signal. Touch targets are larger on phones.
+
+**Connections.** A person with six or more connections shows them grouped under one heading per relationship type, otherwise they are listed as sentences ("Anna is Max's friend").
 
 ## Field limits
 
