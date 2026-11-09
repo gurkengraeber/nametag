@@ -4,6 +4,8 @@ const mocks = vi.hoisted(() => ({
   personFindMany: vi.fn(),
   userFindUnique: vi.fn(),
   addressCount: vi.fn(),
+  groupFindMany: vi.fn(),
+  relationshipTypeFindMany: vi.fn(),
 }));
 
 vi.mock('../../lib/prisma', () => ({
@@ -11,6 +13,8 @@ vi.mock('../../lib/prisma', () => ({
     person: { findMany: mocks.personFindMany },
     user: { findUnique: mocks.userFindUnique },
     personAddress: { count: mocks.addressCount },
+    group: { findMany: mocks.groupFindMany },
+    relationshipType: { findMany: mocks.relationshipTypeFindMany },
   },
 }));
 
@@ -29,6 +33,8 @@ describe('GET /api/map/markers', () => {
     vi.clearAllMocks();
     mocks.userFindUnique.mockResolvedValue({ nameOrder: 'WESTERN', nameDisplayFormat: 'FULL', geocodingEnabled: true });
     mocks.addressCount.mockResolvedValue(0);
+    mocks.groupFindMany.mockResolvedValue([]);
+    mocks.relationshipTypeFindMany.mockResolvedValue([]);
   });
 
   it('returns markers for geocoded addresses and GEO locations', async () => {
@@ -470,5 +476,153 @@ describe('GET /api/map/markers', () => {
     const body = await response.json();
 
     expect(body.markers[0].personName).toBe('Alice Smith');
+  });
+  describe('quick-assign data', () => {
+    const basePerson = {
+      middleName: null,
+      secondLastName: null,
+      nickname: null,
+      displayNameOverride: null,
+      photo: null,
+      locations: [],
+      groups: [],
+    };
+
+    it('returns all people with relationship, last contact and groups', async () => {
+      mocks.personFindMany.mockResolvedValue([
+        {
+          ...basePerson,
+          id: 'person-1',
+          name: 'Alice',
+          surname: 'Smith',
+          lastContact: new Date('2026-03-15T00:00:00.000Z'),
+          relationshipToUserId: 'rel-1',
+          addresses: [],
+          groups: [{ group: { id: 'group-1', name: 'Friends', color: null } }],
+        },
+        {
+          ...basePerson,
+          id: 'person-2',
+          name: 'Bob',
+          surname: 'Jones',
+          lastContact: null,
+          relationshipToUserId: null,
+          addresses: [],
+        },
+      ]);
+
+      const response = await GET(new Request('http://localhost/api/map/markers'));
+      const body = await response.json();
+
+      expect(body.people).toEqual([
+        {
+          personId: 'person-1',
+          personName: 'Alice Smith',
+          groupIds: ['group-1'],
+          relationshipTypeId: 'rel-1',
+          lastContact: '2026-03-15',
+        },
+        {
+          personId: 'person-2',
+          personName: 'Bob Jones',
+          groupIds: [],
+          relationshipTypeId: null,
+          lastContact: null,
+        },
+      ]);
+    });
+
+    it('returns every group and relationship type of the user, scoped and without deleted ones', async () => {
+      mocks.personFindMany.mockResolvedValue([]);
+      mocks.groupFindMany.mockResolvedValue([{ id: 'g1', name: 'Family', color: '#111111' }]);
+      mocks.relationshipTypeFindMany.mockResolvedValue([{ id: 'r1', label: 'Friend', color: null }]);
+
+      const response = await GET(new Request('http://localhost/api/map/markers'));
+      const body = await response.json();
+
+      expect(body.allGroups).toEqual([{ id: 'g1', name: 'Family', color: '#111111' }]);
+      expect(body.relationshipTypes).toEqual([{ id: 'r1', label: 'Friend', color: null }]);
+      expect(mocks.groupFindMany).toHaveBeenCalledWith(
+        expect.objectContaining({ where: { userId: 'user-123', deletedAt: null } })
+      );
+      expect(mocks.relationshipTypeFindMany).toHaveBeenCalledWith(
+        expect.objectContaining({ where: { userId: 'user-123', deletedAt: null } })
+      );
+    });
+
+    it('lists people without any marker as unplaced, with the reason and their addresses', async () => {
+      const address = {
+        type: 'home',
+        streetLine1: 'Nowhere Road 1',
+        streetLine2: null,
+        locality: 'Nowhere',
+        region: null,
+        postalCode: null,
+        country: 'ES',
+      };
+      mocks.personFindMany.mockResolvedValue([
+        { ...basePerson, id: 'p-none', name: 'Zed', surname: null, lastContact: null, relationshipToUserId: null, addresses: [] },
+        {
+          ...basePerson,
+          id: 'p-failed',
+          name: 'Yan',
+          surname: null,
+          lastContact: null,
+          relationshipToUserId: null,
+          addresses: [{ ...address, id: 'a1', latitude: null, longitude: null, geocodeStatus: 'failed' }],
+        },
+        {
+          ...basePerson,
+          id: 'p-pending',
+          name: 'Xia',
+          surname: null,
+          lastContact: null,
+          relationshipToUserId: null,
+          addresses: [{ ...address, id: 'a2', latitude: null, longitude: null, geocodeStatus: 'pending' }],
+        },
+        {
+          ...basePerson,
+          id: 'p-placed',
+          name: 'Wes',
+          surname: null,
+          lastContact: null,
+          relationshipToUserId: null,
+          addresses: [{ ...address, id: 'a3', latitude: '41.1', longitude: '2.1', geocodeStatus: 'success' }],
+        },
+      ]);
+
+      const response = await GET(new Request('http://localhost/api/map/markers'));
+      const body = await response.json();
+
+      expect(body.unplacedPeople.map((p: { personId: string; reason: string }) => [p.personId, p.reason])).toEqual([
+        ['p-pending', 'pending'],
+        ['p-failed', 'failed'],
+        ['p-none', 'noAddress'],
+      ]);
+      expect(body.unplacedPeople[1].addresses).toEqual([address]);
+      expect(body.unplacedPeople[2].addresses).toEqual([]);
+    });
+
+    it('reports unplaced people as disabled when the user turned geocoding off', async () => {
+      mocks.userFindUnique.mockResolvedValue({ nameOrder: 'WESTERN', nameDisplayFormat: 'FULL', geocodingEnabled: false });
+      mocks.personFindMany.mockResolvedValue([
+        {
+          ...basePerson,
+          id: 'p1',
+          name: 'Una',
+          surname: null,
+          lastContact: null,
+          relationshipToUserId: null,
+          addresses: [
+            { id: 'a1', type: 'home', locality: 'Oslo', latitude: null, longitude: null, geocodeStatus: null },
+          ],
+        },
+      ]);
+
+      const response = await GET(new Request('http://localhost/api/map/markers'));
+      const body = await response.json();
+
+      expect(body.unplacedPeople[0].reason).toBe('disabled');
+    });
   });
 });

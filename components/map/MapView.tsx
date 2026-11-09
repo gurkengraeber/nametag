@@ -1,11 +1,14 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { useTranslations } from 'next-intl';
 import type { MapMarker } from '@/lib/map/types';
 import { groupByCoordinates } from '@/lib/map/colocation';
+import { isFrameBigEnough, personIdsInRect, type ScreenRect } from '@/lib/map/selection';
+import type { StoredMapView } from '@/lib/map/view-storage';
+import type { MapSelectMode } from './MapToolbar';
 
 // OpenFreeMap hosted styles: free, no API key, commercial use permitted.
 const DARK_STYLE = 'https://tiles.openfreemap.org/styles/dark';
@@ -74,6 +77,11 @@ function compositeIcon(image: HTMLImageElement, ringColor: string): ImageData | 
   return ctx.getImageData(0, 0, ICON_BITMAP_SIZE, ICON_BITMAP_SIZE);
 }
 
+/** Asks the map to move to a marker, e.g. when a person is picked in the list. A new object each time. */
+export interface MapFlyToRequest {
+  markerId: string;
+}
+
 interface MapViewProps {
   markers: MapMarker[];
   focusId: string | null;
@@ -84,6 +92,19 @@ interface MapViewProps {
    * filter state keeps the world view.
    */
   filtersKey: string;
+  /** Camera remembered from the last visit; when set, the map opens there and skips the arrival fit. */
+  initialView: StoredMapView | null;
+  /** Called after every camera move so the page can remember the view. */
+  onViewChange: (view: StoredMapView) => void;
+  selectMode: MapSelectMode;
+  selectedPersonIds: ReadonlySet<string>;
+  flyTo: MapFlyToRequest | null;
+  /** A marker (or all markers of a shared address) was clicked outside selection mode. */
+  onActivate: (markerIds: string[]) => void;
+  /** In selection mode a click toggles these people. */
+  onTogglePersons: (personIds: string[]) => void;
+  /** A frame was dragged in frame mode; these people are inside it. */
+  onFrameSelect: (personIds: string[]) => void;
 }
 
 /** True when every segment of the "|"-joined filter key is empty. */
@@ -102,6 +123,8 @@ interface MarkerProperties {
   /** First group's color, used for the plain dot when there is no photo icon yet */
   dotColor?: string;
   colocatedCount: number;
+  /** Number of selected people at this point (0 or more), used for the selection ring */
+  selected: number;
 }
 
 function useIsDarkTheme(): boolean {
@@ -134,7 +157,8 @@ function isWebGLAvailable(): boolean {
 
 function toGeoJSON(
   markers: MapMarker[],
-  registeredIconPersonIds: ReadonlySet<string>
+  registeredIconPersonIds: ReadonlySet<string>,
+  selectedPersonIds: ReadonlySet<string>
 ): GeoJSON.FeatureCollection<GeoJSON.Point, MarkerProperties> {
   const groups = groupByCoordinates(markers);
   const features: GeoJSON.Feature<GeoJSON.Point, MarkerProperties>[] = [];
@@ -160,6 +184,7 @@ function toGeoJSON(
           : {}),
         ...(representative.groupColor ? { dotColor: representative.groupColor } : {}),
         colocatedCount: count,
+        selected: groupMarkers.filter((m) => selectedPersonIds.has(m.personId)).length,
       },
     });
   }
@@ -167,7 +192,19 @@ function toGeoJSON(
   return { type: 'FeatureCollection', features };
 }
 
-export default function MapView({ markers, focusId, filtersKey }: MapViewProps) {
+export default function MapView({
+  markers,
+  focusId,
+  filtersKey,
+  initialView,
+  onViewChange,
+  selectMode,
+  selectedPersonIds,
+  flyTo,
+  onActivate,
+  onTogglePersons,
+  onFrameSelect,
+}: MapViewProps) {
   const t = useTranslations('map');
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
@@ -177,11 +214,15 @@ export default function MapView({ markers, focusId, filtersKey }: MapViewProps) 
   const appliedFiltersKeyRef = useRef<string | null>(null);
   const isDark = useIsDarkTheme();
   const isDarkRef = useRef(isDark);
-  const translationsRef = useRef({
-    viewContact: t('viewContact'),
-    directions: t('directions'),
-    colocatedTitle: (count: number) => t('colocatedTitle', { count }),
-  });
+  const selectedRef = useRef<ReadonlySet<string>>(selectedPersonIds);
+  // Event handlers are registered once with the map; they read the latest
+  // callbacks and mode through this ref instead of being re-registered.
+  const handlersRef = useRef({ selectMode, onActivate, onTogglePersons });
+  // The remembered camera is only read once, when the map is created.
+  const initialViewRef = useRef(initialView);
+  const onViewChangeRef = useRef(onViewChange);
+  const [frame, setFrame] = useState<ScreenRect | null>(null);
+  const frameStartRef = useRef<{ x: number; y: number } | null>(null);
   const [webglUnavailable, setWebglUnavailable] = useState(false);
 
   // Photo marker icon caches. These live for the component's lifetime (not
@@ -204,12 +245,13 @@ export default function MapView({ markers, focusId, filtersKey }: MapViewProps) 
   }, [markers]);
 
   useEffect(() => {
-    translationsRef.current = {
-      viewContact: t('viewContact'),
-      directions: t('directions'),
-      colocatedTitle: (count: number) => t('colocatedTitle', { count }),
-    };
-  }, [t]);
+    selectedRef.current = selectedPersonIds;
+  }, [selectedPersonIds]);
+
+  useEffect(() => {
+    handlersRef.current = { selectMode, onActivate, onTogglePersons };
+    onViewChangeRef.current = onViewChange;
+  }, [selectMode, onActivate, onTogglePersons, onViewChange]);
 
   useEffect(() => {
     isDarkRef.current = isDark;
@@ -239,8 +281,10 @@ export default function MapView({ markers, focusId, filtersKey }: MapViewProps) 
       map = new maplibregl.Map({
         container: containerRef.current,
         style: initialStyle,
-        center: [0, 20],
-        zoom: 1.5,
+        center: initialViewRef.current
+          ? [initialViewRef.current.longitude, initialViewRef.current.latitude]
+          : [0, 20],
+        zoom: initialViewRef.current?.zoom ?? 1.5,
         attributionControl: { compact: true },
       });
     } catch {
@@ -252,6 +296,11 @@ export default function MapView({ markers, focusId, filtersKey }: MapViewProps) 
     mapRef.current = map;
 
     map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
+
+    map.on('moveend', () => {
+      const center = map.getCenter();
+      onViewChangeRef.current({ longitude: center.lng, latitude: center.lat, zoom: map.getZoom() });
+    });
 
     map.once('idle', () => {
       containerRef.current
@@ -269,7 +318,7 @@ export default function MapView({ markers, focusId, filtersKey }: MapViewProps) 
         if (mapDisposed) return;
         const source = map.getSource(SOURCE_ID) as maplibregl.GeoJSONSource | undefined;
         if (!source) return;
-        source.setData(toGeoJSON(markersRef.current, new Set(registeredColorRef.current.keys())));
+        source.setData(toGeoJSON(markersRef.current, new Set(registeredColorRef.current.keys()), selectedRef.current));
       });
     };
 
@@ -355,10 +404,11 @@ export default function MapView({ markers, focusId, filtersKey }: MapViewProps) 
 
       map.addSource(SOURCE_ID, {
         type: 'geojson',
-        data: toGeoJSON(markersRef.current, new Set(registeredColorRef.current.keys())),
+        data: toGeoJSON(markersRef.current, new Set(registeredColorRef.current.keys()), selectedRef.current),
         cluster: true,
         clusterMaxZoom: 14,
         clusterRadius: 50,
+        clusterProperties: { selectedCount: ['+', ['get', 'selected']] },
       });
 
       map.addLayer({
@@ -440,6 +490,41 @@ export default function MapView({ markers, focusId, filtersKey }: MapViewProps) 
         },
         paint: { 'text-color': '#ffffff' },
       });
+
+      // Selection rings: an outline around selected markers and around
+      // clusters that contain selected people.
+      map.addLayer({
+        id: 'selected-ring',
+        type: 'circle',
+        source: SOURCE_ID,
+        filter: ['all', ['!', ['has', 'point_count']], ['>', ['get', 'selected'], 0]],
+        paint: {
+          'circle-color': 'rgba(0,0,0,0)',
+          'circle-radius': [
+            'case',
+            ['>', ['get', 'colocatedCount'], 1],
+            19,
+            ['has', 'iconId'],
+            16,
+            12,
+          ],
+          'circle-stroke-width': 3,
+          'circle-stroke-color': primary,
+        },
+      });
+
+      map.addLayer({
+        id: 'cluster-selected-ring',
+        type: 'circle',
+        source: SOURCE_ID,
+        filter: ['all', ['has', 'point_count'], ['>', ['get', 'selectedCount'], 0]],
+        paint: {
+          'circle-color': 'rgba(0,0,0,0)',
+          'circle-radius': ['step', ['get', 'point_count'], 21, 10, 27, 50, 33],
+          'circle-stroke-width': 3,
+          'circle-stroke-color': primary,
+        },
+      });
     };
 
     // Fires after initial style load AND after every setStyle (theme switch)
@@ -471,8 +556,14 @@ export default function MapView({ markers, focusId, filtersKey }: MapViewProps) 
       const feature = event.features?.[0];
       if (!feature) return;
       const props = feature.properties as unknown as MarkerProperties;
-      const geometry = feature.geometry as GeoJSON.Point;
-      openPopup(map, geometry.coordinates as [number, number], props, translationsRef.current);
+      const marker = markersRef.current.find((m) => m.id === props.id);
+      if (!marker) return;
+      const handlers = handlersRef.current;
+      if (handlers.selectMode !== 'off') {
+        handlers.onTogglePersons([marker.personId]);
+      } else {
+        handlers.onActivate([marker.id]);
+      }
     };
 
     map.on('click', 'unclustered-point', handleUnclusteredClick);
@@ -488,12 +579,12 @@ export default function MapView({ markers, focusId, filtersKey }: MapViewProps) 
         (m) => m.latitude === representative.latitude && m.longitude === representative.longitude
       );
       if (colocated.length === 0) return;
-      openColocatedPopup(
-        map,
-        [representative.longitude, representative.latitude],
-        colocated,
-        translationsRef.current
-      );
+      const handlers = handlersRef.current;
+      if (handlers.selectMode !== 'off') {
+        handlers.onTogglePersons([...new Set(colocated.map((m) => m.personId))]);
+      } else {
+        handlers.onActivate(colocated.map((m) => m.id));
+      }
     };
 
     map.on('click', 'colocated-circle', handleColocatedClick);
@@ -549,9 +640,24 @@ export default function MapView({ markers, focusId, filtersKey }: MapViewProps) 
     ensureIconsRef.current?.();
     const source = map.getSource(SOURCE_ID) as maplibregl.GeoJSONSource | undefined;
     if (source) {
-      source.setData(toGeoJSON(markers, new Set(registeredColorRef.current.keys())));
+      source.setData(toGeoJSON(markers, new Set(registeredColorRef.current.keys()), selectedPersonIds));
     }
-  }, [markers]);
+  }, [markers, selectedPersonIds]);
+
+  // Move to a marker picked in the people list
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !flyTo) return;
+    const target = markersRef.current.find((marker) => marker.id === flyTo.markerId);
+    if (!target) return;
+    const center: [number, number] = [target.longitude, target.latitude];
+    const zoom = Math.max(map.getZoom(), 13);
+    if (prefersReducedMotion()) {
+      map.jumpTo({ center, zoom });
+    } else {
+      map.easeTo({ center, zoom, duration: CAMERA_ANIMATION_MS });
+    }
+  }, [flyTo]);
 
   // Handle the ?focus= deep link once, after the map and data exist
   useEffect(() => {
@@ -561,24 +667,12 @@ export default function MapView({ markers, focusId, filtersKey }: MapViewProps) 
     if (!target) return;
     focusHandledRef.current = focusId;
 
-    // Camera moves and popups do not depend on the style being loaded, so
-    // apply immediately. Waiting for style.load here is a race: MapLibre's
+    // Camera moves do not depend on the style being loaded, so apply
+    // immediately. Waiting for style.load here is a race: MapLibre's
     // isStyleLoaded() can still report false after the event already fired,
-    // in which case a once('style.load') listener never runs.
+    // in which case a once('style.load') listener never runs. The marker's
+    // card is opened by the page, which knows the same ?focus= id.
     map.jumpTo({ center: [target.longitude, target.latitude], zoom: FOCUS_ZOOM });
-    openPopup(
-      map,
-      [target.longitude, target.latitude],
-      {
-        id: target.id,
-        personId: target.personId,
-        personName: target.personName,
-        label: target.label,
-        ...(target.addressText ? { addressText: target.addressText } : {}),
-        colocatedCount: 1,
-      },
-      translationsRef.current
-    );
   }, [focusId, markers]);
 
   // Fit the camera to the visible markers whenever the user changes filters,
@@ -594,7 +688,7 @@ export default function MapView({ markers, focusId, filtersKey }: MapViewProps) 
     const previous = appliedFiltersKeyRef.current;
     appliedFiltersKeyRef.current = filtersKey;
     if (previous === filtersKey) return;
-    if (previous === null && isEmptyFiltersKey(filtersKey)) return;
+    if (previous === null && (isEmptyFiltersKey(filtersKey) || initialViewRef.current)) return;
     if (markers.length === 0) return;
     const bounds = new maplibregl.LngLatBounds();
     for (const marker of markers) {
@@ -618,6 +712,43 @@ export default function MapView({ markers, focusId, filtersKey }: MapViewProps) 
     );
   }
 
+  // Frame selection: an overlay above the map turns a drag (mouse or finger)
+  // into a rectangle; markers are tested in screen space on release.
+  const localPoint = (event: ReactPointerEvent<HTMLDivElement>) => {
+    const rect = event.currentTarget.getBoundingClientRect();
+    return { x: event.clientX - rect.left, y: event.clientY - rect.top };
+  };
+
+  const handleFrameDown = (event: ReactPointerEvent<HTMLDivElement>) => {
+    event.currentTarget.setPointerCapture(event.pointerId);
+    const point = localPoint(event);
+    frameStartRef.current = point;
+    setFrame({ x1: point.x, y1: point.y, x2: point.x, y2: point.y });
+  };
+
+  const handleFrameMove = (event: ReactPointerEvent<HTMLDivElement>) => {
+    const start = frameStartRef.current;
+    if (!start) return;
+    const point = localPoint(event);
+    setFrame({ x1: start.x, y1: start.y, x2: point.x, y2: point.y });
+  };
+
+  const handleFrameUp = (event: ReactPointerEvent<HTMLDivElement>) => {
+    const start = frameStartRef.current;
+    frameStartRef.current = null;
+    setFrame(null);
+    const map = mapRef.current;
+    if (!start || !map) return;
+    const point = localPoint(event);
+    const rect: ScreenRect = { x1: start.x, y1: start.y, x2: point.x, y2: point.y };
+    if (!isFrameBigEnough(rect)) return;
+    const points = markersRef.current.map((marker) => {
+      const projected = map.project([marker.longitude, marker.latitude]);
+      return { personId: marker.personId, x: projected.x, y: projected.y };
+    });
+    onFrameSelect(personIdsInRect(points, rect));
+  };
+
   // MapLibre's stylesheet forces position: relative on its container, which
   // would override Tailwind's `absolute` and collapse the element to zero
   // height. Positioning lives on an outer div we own; MapLibre gets a child
@@ -625,125 +756,30 @@ export default function MapView({ markers, focusId, filtersKey }: MapViewProps) 
   return (
     <div className="absolute inset-0" aria-label={t('title')} role="application">
       <div ref={containerRef} className="h-full w-full" />
+      {selectMode === 'frame' && (
+        <div
+          className="absolute inset-0 z-[1] cursor-crosshair touch-none"
+          onPointerDown={handleFrameDown}
+          onPointerMove={handleFrameMove}
+          onPointerUp={handleFrameUp}
+          onPointerCancel={() => {
+            frameStartRef.current = null;
+            setFrame(null);
+          }}
+        >
+          {frame && (
+            <div
+              className="absolute border-2 border-primary bg-primary/10 pointer-events-none"
+              style={{
+                left: Math.min(frame.x1, frame.x2),
+                top: Math.min(frame.y1, frame.y2),
+                width: Math.abs(frame.x2 - frame.x1),
+                height: Math.abs(frame.y2 - frame.y1),
+              }}
+            />
+          )}
+        </div>
+      )}
     </div>
   );
-}
-
-// Popup content is built with DOM APIs and textContent (never innerHTML with
-// user data) so person names cannot inject markup.
-function openPopup(
-  map: maplibregl.Map,
-  coordinates: [number, number],
-  props: MarkerProperties,
-  labels: { viewContact: string; directions: string }
-): void {
-  const container = document.createElement('div');
-  // MapLibre popups have a white background regardless of app theme, so the
-  // text color must be explicit; inheriting the dark theme's light text
-  // would render white-on-white.
-  container.className = 'space-y-1 text-gray-900';
-
-  const name = document.createElement('div');
-  name.className = 'font-semibold text-sm';
-  name.textContent = props.personName;
-  container.appendChild(name);
-
-  const label = document.createElement('div');
-  label.className = 'text-xs opacity-70 capitalize';
-  label.textContent = props.label;
-  container.appendChild(label);
-
-  if (typeof props.addressText === 'string' && props.addressText.length > 0) {
-    const addressLine = document.createElement('div');
-    addressLine.className = 'text-xs max-w-56';
-    addressLine.textContent = props.addressText;
-    container.appendChild(addressLine);
-  }
-
-  const links = document.createElement('div');
-  links.className = 'flex gap-3 pt-1 text-xs';
-
-  const contactLink = document.createElement('a');
-  contactLink.href = `/people/${encodeURIComponent(props.personId)}`;
-  contactLink.textContent = labels.viewContact;
-  contactLink.className = 'underline text-blue-700';
-  links.appendChild(contactLink);
-
-  const directionsLink = document.createElement('a');
-  directionsLink.href = `https://www.google.com/maps?q=${coordinates[1]},${coordinates[0]}`;
-  directionsLink.target = '_blank';
-  directionsLink.rel = 'noopener noreferrer';
-  directionsLink.textContent = labels.directions;
-  directionsLink.className = 'underline text-blue-700';
-  links.appendChild(directionsLink);
-
-  container.appendChild(links);
-
-  new maplibregl.Popup({ closeButton: true, offset: 12 }).setLngLat(coordinates).setDOMContent(container).addTo(map);
-}
-
-// Popup for a location shared by multiple people (e.g. partners or family
-// members living together), listing everyone at that address instead of a
-// single person's details.
-function openColocatedPopup(
-  map: maplibregl.Map,
-  coordinates: [number, number],
-  colocatedMarkers: MapMarker[],
-  labels: { viewContact: string; directions: string; colocatedTitle: (count: number) => string }
-): void {
-  const container = document.createElement('div');
-  container.className = 'space-y-1 text-gray-900';
-
-  const title = document.createElement('div');
-  title.className = 'font-semibold text-sm';
-  title.textContent = labels.colocatedTitle(colocatedMarkers.length);
-  container.appendChild(title);
-
-  const addressText = colocatedMarkers.find((m) => m.addressText)?.addressText;
-  if (addressText) {
-    const addressLine = document.createElement('div');
-    addressLine.className = 'text-xs max-w-56 opacity-70';
-    addressLine.textContent = addressText;
-    container.appendChild(addressLine);
-  }
-
-  const topDivider = document.createElement('div');
-  topDivider.className = 'border-t border-gray-200 my-1';
-  container.appendChild(topDivider);
-
-  for (const m of colocatedMarkers) {
-    const row = document.createElement('div');
-    row.className = 'flex items-center justify-between gap-3 py-0.5';
-
-    const nameEl = document.createElement('span');
-    nameEl.className = 'text-sm';
-    nameEl.textContent = m.personName;
-    row.appendChild(nameEl);
-
-    const link = document.createElement('a');
-    link.href = `/people/${encodeURIComponent(m.personId)}`;
-    link.textContent = labels.viewContact;
-    link.className = 'text-xs underline text-blue-700 whitespace-nowrap';
-    row.appendChild(link);
-
-    container.appendChild(row);
-  }
-
-  const bottomDivider = document.createElement('div');
-  bottomDivider.className = 'border-t border-gray-200 mt-1 pt-1';
-
-  const directionsLink = document.createElement('a');
-  directionsLink.href = `https://www.google.com/maps?q=${coordinates[1]},${coordinates[0]}`;
-  directionsLink.target = '_blank';
-  directionsLink.rel = 'noopener noreferrer';
-  directionsLink.textContent = labels.directions;
-  directionsLink.className = 'text-xs underline text-blue-700';
-  bottomDivider.appendChild(directionsLink);
-
-  container.appendChild(bottomDivider);
-
-  new maplibregl.Popup({ closeButton: true, offset: 12 })
-    .setLngLat(coordinates)
-    .setDOMContent(container)
-    .addTo(map);
 }
