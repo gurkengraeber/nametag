@@ -7,17 +7,27 @@ sidebar:
 
 Settings is where you shape Nametag around how you work. Here's what you'll find in each section.
 
+## Finding a setting
+
+The start page (**Settings** in the account menu) lists every area under four headings: *You* (profile, security, billing), *Preferences* (appearance, notifications, custom fields, map), *Connections* (CardDAV, API tokens) and *Data and help* (account, trash, about). Each row has a one line explanation. The search box above the list finds a setting by name or by everyday words, so typing "password", "language" or "reminders" takes you to the right place.
+
+On a phone the start page is the menu: tap an area, and use **All settings** at the top to come back. On a larger screen the same groups appear in the sidebar, with **Overview** at the top.
+
+## How changes are saved
+
+- **Choices that apply at once** (theme, date format, name style, graph display, language, reminder timing, channel switches) save the moment you pick them and confirm with a short message. If saving fails, the choice jumps back and the message says so.
+- **Forms with a Save button** (profile, password) show **You have unsaved changes** next to the button until you save, offer **Discard changes**, and ask before you leave the page with unsaved edits. Errors appear under the field they belong to, for example a taken email address or a wrong current password.
+
 ## Profile
 
-Your name, surname, nickname, email address, and profile photo. Photo uploads support cropping, so you can frame it the way you want before saving.
+Your name, surname, nickname, email address, and profile photo. Use **Upload photo** or **Change photo** under your picture (it works the same on a phone); you can crop it before saving, and the photo is stored when you press **Save changes**. Changing the email address signs you out until you confirm the new one, and the form tells you so while you type.
 
 ## Appearance
 
-- **Theme**: Light or Dark. Dark is the default.
+- **Theme**: Dark or Light, shown as two small previews. Dark is the default.
 - **Language**: choose from all of Nametag's supported languages, including English, Spanish, Japanese, Norwegian, German, Chinese, Italian, Russian, Dutch, French, and Polish.
 - **Date format**: MDY, DMY, or YMD.
-- **Name order**: Western (first name, then last name) or Eastern (last name, then first name).
-- **Name display format**: Full name, Nickname Preferred, or Short.
+- **Names**: name order (Western or Eastern) and name display format (Full name, Nickname Preferred, or Short) sit in one card. An example name ("Maria 'Mia' Garcia") above the choices updates as you choose, showing how a name reads on a person's page and in lists and the graph.
 
 ### Graph mode
 
@@ -29,7 +39,7 @@ Shows how to add Nametag to your home screen or desktop. On Android and desktop 
 
 ## Notifications
 
-At the top of this page, a delivery channels card lets you turn email and browser push on or off, and manage which devices receive push. See [Notifications](/features/notifications/) for how those channels work.
+At the very top, one line says where reminders will actually arrive (for example "email and push on 2 devices"), and warns you if no channel is on. Below it, a delivery channels card lets you turn email and browser push on or off, and manage which devices receive push. See [Notifications](/features/notifications/) for how those channels work.
 
 Below that, two settings, both about email.
 
@@ -58,7 +68,7 @@ Manage your connection to an external CardDAV server and configure sync behavior
 
 ## Custom Fields
 
-Define the field templates that appear on every person's profile. See [Custom Fields](/features/custom-fields/) for details.
+Define the field templates that appear on every person's profile. When you add a field you can start from an example (diet, allergies, has pets, shoe size, gift ideas) that fills in the name, type and options. Each type explains itself, and the arrows next to a field change the order. See [Custom Fields](/features/custom-fields/) for details.
 
 ## Map
 
@@ -66,13 +76,13 @@ A per-user toggle for geocoding, which controls whether Nametag looks up coordin
 
 ## API Tokens
 
-Create and manage tokens for accessing the Nametag API programmatically. See the API Tokens page for setup details.
+Create and manage tokens for accessing the Nametag API programmatically. Pick an expiry (never, 30 days, 90 days, 1 year, or a date), and choose read-only or read and write access; the form says in one sentence what each allows. A new token is shown once, with a Copy button, so store it right away. Revoking a token asks for confirmation. See the API Tokens page for setup details.
 
 ## Account
 
 - **Export data**: download your data as JSON or vCard. See [Import & Export](/features/import-export/).
 - **Import data**: upload a JSON or vCard file. See [Import & Export](/features/import-export/).
-- **Delete account**: permanently removes your account and data. This requires typing "DELETE" to confirm and entering your password, a deliberate double check before something irreversible happens.
+- **Delete account**: permanently removes your account and data. The page suggests exporting a copy first and tells you how many people and groups will go. It requires typing "DELETE" to confirm and entering your password, a deliberate double check before something irreversible happens.
 
 ## Billing
 
