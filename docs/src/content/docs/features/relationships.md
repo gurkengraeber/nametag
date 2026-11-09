@@ -32,6 +32,8 @@ Go to the Relationship Types page to manage them. Each type has:
 
 When a relationship type has an inverse configured, Nametag applies it automatically. If you set Alice as the parent of Bob, Bob is automatically shown as the child of Alice, you don't need to add both directions by hand. Symmetric types, like Sibling or Friend, use themselves as their own inverse.
 
+To link many people quickly, use the [Connect page](/features/connect-people/): drag one person's card onto another, or tap two cards, and pick the relationship type.
+
 ## Viewing relationships
 
 On a person's detail page, you'll see both their relationship to you (if any) and the full list of their connections to other people in your network, each shown with its relationship type.
