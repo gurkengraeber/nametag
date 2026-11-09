@@ -11,7 +11,7 @@ export default async function CardDavSettingsPage() {
   }
 
   // Fetch existing CardDAV connection if it exists
-  // Exclude encrypted password — it must never reach client components
+  // Exclude encrypted password, it must never reach client components
   const connection = await prisma.cardDavConnection.findUnique({
     where: {
       userId: session.user.id,
@@ -50,12 +50,23 @@ export default async function CardDavSettingsPage() {
       })
     : 0;
 
+  // Unresolved sync conflicts
+  const conflictsCount = connection
+    ? await prisma.cardDavConflict.count({
+        where: {
+          resolvedAt: null,
+          mapping: { connectionId: connection.id },
+        },
+      })
+    : 0;
+
   return (
     <CardDavSettings
       connection={connection}
       pendingImportsCount={pendingImportsCount}
       syncedContactsCount={syncedContactsCount}
       pendingUploadsCount={pendingUploadsCount}
+      conflictsCount={conflictsCount}
     />
   );
 }

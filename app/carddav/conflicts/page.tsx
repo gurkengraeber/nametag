@@ -115,7 +115,11 @@ export default async function ConflictsPage() {
 
         {conflicts.length === 0 ? (
           <div className="text-center py-12">
-            <div className="text-6xl mb-4">✓</div>
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
+              <svg className="h-8 w-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
             <h2 className="text-xl font-semibold text-foreground mb-2">
               {t('noConflicts')}
             </h2>
@@ -124,7 +128,7 @@ export default async function ConflictsPage() {
             </p>
             <Link
               href="/settings/carddav"
-              className="inline-block px-4 py-2 bg-muted text-white rounded-lg hover:bg-muted/80 transition-colors"
+              className="inline-flex items-center min-h-11 sm:min-h-0 px-4 py-2 bg-muted text-white rounded-lg hover:bg-muted/80 transition-colors"
             >
               {t('backToSettings')}
             </Link>
@@ -133,7 +137,7 @@ export default async function ConflictsPage() {
           <>
             <div className="mb-6 p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg">
               <p className="text-amber-800 dark:text-amber-200">
-                ⚠️ {t('conflictsFound', { count: conflicts.length })}
+                {t('conflictsFound', { count: conflicts.length })}
               </p>
             </div>
 
@@ -142,9 +146,9 @@ export default async function ConflictsPage() {
             <div className="mt-6 pt-4 border-t border-border">
               <Link
                 href="/settings/carddav"
-                className="inline-block px-4 py-2 bg-surface-elevated text-foreground rounded-lg hover:bg-surface-elevated/80 transition-colors"
+                className="inline-flex items-center min-h-11 sm:min-h-0 px-4 py-2 bg-surface-elevated text-foreground rounded-lg hover:bg-surface-elevated/80 transition-colors"
               >
-                {t('cancel')}
+                {t('backToSettings')}
               </Link>
             </div>
           </>

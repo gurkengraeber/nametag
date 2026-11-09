@@ -4,7 +4,7 @@ import { useTranslations } from 'next-intl';
 import EmptyState from '@/components/EmptyState';
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
-import { formatDateTime } from '@/lib/date-format';
+import RelativeTime from './RelativeTime';
 import type { CardDavConnectionResponse } from '@/lib/carddav/types';
 
 interface ConnectionStatusProps {
@@ -12,6 +12,7 @@ interface ConnectionStatusProps {
   pendingImportsCount: number;
   syncedContactsCount: number;
   pendingUploadsCount: number;
+  conflictsCount: number;
   onConnectClick: () => void;
   onEditClick: () => void;
   onSettingsClick: () => void;
@@ -23,6 +24,7 @@ export default function ConnectionStatus({
   pendingImportsCount,
   syncedContactsCount,
   pendingUploadsCount,
+  conflictsCount,
   onConnectClick,
   onEditClick,
   onSettingsClick,
@@ -122,26 +124,46 @@ export default function ConnectionStatus({
             {connection.lastSyncAt ? t('lastSyncedAt') : t('neverSynced')}
           </p>
           {connection.lastSyncAt && (
-            <p className="text-sm text-foreground">
-              {formatDateTime(connection.lastSyncAt)}
+            <p className="text-lg font-semibold text-foreground">
+              <RelativeTime date={connection.lastSyncAt} />
             </p>
           )}
+          <p className="text-xs text-muted mt-1">
+            {connection.syncEnabled ? t('autoSyncOn') : t('autoSyncOff')}
+          </p>
         </div>
       </div>
 
-      {/* Pending imports notice */}
-      {pendingImportsCount > 0 && (
-        <div className="p-4 bg-primary/10 rounded-lg border border-primary/20">
-          <p className="text-sm text-primary">
-            {t('pendingImportsLink', { count: pendingImportsCount })}
-          </p>
-          <Link
-            href="/carddav/import"
-            className="text-sm text-primary hover:underline font-medium mt-1 inline-block"
-          >
-            {t('viewPendingImports')} →
-          </Link>
-        </div>
+      {/* Things waiting for the user */}
+      {(pendingImportsCount > 0 || conflictsCount > 0) && (
+        <ul className="space-y-2">
+          {pendingImportsCount > 0 && (
+            <li>
+              <Link
+                href="/carddav/import"
+                className="flex items-center justify-between gap-3 min-h-11 p-4 bg-primary/10 rounded-lg border border-primary/20 text-sm font-medium text-primary hover:bg-primary/20 transition-colors"
+              >
+                <span>{t('pendingImportsLink', { count: pendingImportsCount })}</span>
+                <span className="flex-shrink-0">{t('viewPendingImports')} →</span>
+              </Link>
+            </li>
+          )}
+          {conflictsCount > 0 && (
+            <li>
+              <Link
+                href="/carddav/conflicts"
+                className="flex items-center justify-between gap-3 min-h-11 p-4 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-800 text-sm font-medium text-amber-900 dark:text-amber-100 hover:bg-amber-100 dark:hover:bg-amber-900/30 transition-colors"
+              >
+                <span>{t('conflictsLink', { count: conflictsCount })}</span>
+                <span className="flex-shrink-0">{t('viewConflictsButton')} →</span>
+              </Link>
+            </li>
+          )}
+        </ul>
+      )}
+
+      {pendingImportsCount === 0 && conflictsCount === 0 && pendingUploadsCount === 0 && !connection.lastError && connection.lastSyncAt && (
+        <p className="text-sm text-muted">{t('allUpToDate')}</p>
       )}
 
       {/* Error notice */}
@@ -150,9 +172,10 @@ export default function ConnectionStatus({
           <p className="text-sm font-medium text-red-900 dark:text-red-100 mb-1">
             {t('statusError')}
           </p>
-          <p className="text-sm text-red-700 dark:text-red-300">
+          <p className="text-sm text-red-700 dark:text-red-300 break-words">
             {connection.lastError}
           </p>
+          <p className="text-xs text-red-700 dark:text-red-300 mt-2">{t('errorHint')}</p>
         </div>
       )}
 
@@ -175,6 +198,9 @@ export default function ConnectionStatus({
           variant="secondary"
         >
           {t('editConnection')}
+        </Button>
+        <Button href="/carddav/export" variant="secondary">
+          {t('exportLink')}
         </Button>
       </div>
 

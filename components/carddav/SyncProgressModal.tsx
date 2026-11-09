@@ -239,6 +239,11 @@ export default function SyncProgressModal({
               </h3>
 
               <div className="space-y-3">
+                {syncResult.imported + syncResult.exported + syncResult.updatedLocally + syncResult.updatedRemotely +
+                  syncResult.conflicts + syncResult.errors + syncResult.pendingImports === 0 && (
+                  <p className="p-3 bg-primary/10 text-primary rounded-lg text-sm font-medium">{t('syncNothingNew')}</p>
+                )}
+
                 {/* Imported */}
                 <div className="flex justify-between items-start p-3 bg-surface-elevated rounded-lg">
                   <div>

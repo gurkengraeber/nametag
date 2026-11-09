@@ -96,6 +96,17 @@ export default function CompactContactRow({
   };
 
   const fullName = formatFullName(parsedData);
+  const secondary = [
+    parsedData?.organization,
+    parsedData?.emails?.[0]?.email,
+    parsedData?.phoneNumbers?.[0]?.number,
+  ]
+    .filter(Boolean)
+    .join(' · ');
+  const relType =
+    selectedRelationshipTypeId && selectedRelationshipTypeId !== '__none__'
+      ? relationshipTypes.find((rt) => rt.id === selectedRelationshipTypeId)
+      : undefined;
 
   return (
     <div
@@ -105,22 +116,63 @@ export default function CompactContactRow({
           : 'border-border hover:border-border'
       }`}
     >
-      {/* Compact row */}
-      <div className="flex items-center gap-3 p-3">
-        {/* Checkbox */}
-        <input
-          type="checkbox"
-          checked={isSelected}
-          onChange={() => onToggle(pendingImport.id)}
-          className="w-4 h-4 rounded border-border text-primary focus:ring-primary flex-shrink-0"
-          aria-label={`Select ${fullName}`}
-        />
+      {/* Compact row: the whole name area is the touch target for selecting */}
+      <div className="flex items-stretch">
+        <label className="flex flex-1 min-w-0 items-start gap-3 p-3 min-h-11 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={isSelected}
+            onChange={() => onToggle(pendingImport.id)}
+            className="mt-1 w-4 h-4 rounded border-border text-primary focus:ring-primary flex-shrink-0"
+            aria-label={t('selectContact', { name: fullName })}
+          />
+          <span className="flex-1 min-w-0">
+            <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
+              <span className="font-semibold text-foreground break-words">{fullName}</span>
+              {isExisting && (
+                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300 flex-shrink-0">
+                  {t('alreadyExists')}
+                </span>
+              )}
+            </span>
+            {secondary && <span className="block text-sm text-muted break-words">{secondary}</span>}
+            {(selectedGroupIds.length > 0 || relType) && (
+              <span className="mt-1 flex flex-wrap gap-1">
+                {selectedGroupIds.map((groupId) => {
+                  const group = availableGroups.find((g) => g.id === groupId);
+                  if (!group) return null;
+                  return (
+                    <span
+                      key={groupId}
+                      className="inline-flex items-center gap-1 px-2 py-0.5 bg-surface-elevated rounded-full text-xs font-medium text-foreground"
+                    >
+                      <span
+                        className="w-2 h-2 rounded-full flex-shrink-0"
+                        style={{ backgroundColor: group.color || 'var(--badge-bg)' }}
+                      />
+                      {group.name}
+                    </span>
+                  );
+                })}
+                {relType && (
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-surface-elevated rounded-full text-xs font-medium text-foreground">
+                    <span
+                      className="w-2 h-2 rounded-full flex-shrink-0"
+                      style={{ backgroundColor: relType.color || 'var(--badge-bg)' }}
+                    />
+                    {relType.label}
+                  </span>
+                )}
+              </span>
+            )}
+          </span>
+        </label>
 
         {/* Expand/Collapse button */}
         <button
           type="button"
           onClick={() => setIsExpanded(!isExpanded)}
-          className="text-muted hover:text-foreground transition-colors flex-shrink-0"
+          className="text-muted hover:text-foreground transition-colors flex-shrink-0 min-h-11 min-w-11 flex items-center justify-center"
           aria-label={isExpanded ? t('collapseDetails') : t('expandDetails')}
           aria-expanded={isExpanded}
         >
@@ -133,63 +185,13 @@ export default function CompactContactRow({
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
           </svg>
         </button>
-
-        {/* Full name + existing badge */}
-        <div
-          className="flex-1 flex items-center gap-2 cursor-pointer"
-          onClick={() => onToggle(pendingImport.id)}
-        >
-          <span className="font-semibold text-foreground">{fullName}</span>
-          {isExisting && (
-            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300 flex-shrink-0">
-              {t('alreadyExists')}
-            </span>
-          )}
-        </div>
-
-        {/* Group pills (read-only display) */}
-        {selectedGroupIds.length > 0 && (
-          <div className="flex flex-wrap gap-1 flex-shrink-0">
-            {selectedGroupIds.map((groupId) => {
-              const group = availableGroups.find((g) => g.id === groupId);
-              if (!group) return null;
-              return (
-                <span
-                  key={groupId}
-                  className="inline-flex items-center gap-1 px-2 py-0.5 bg-surface-elevated rounded-full text-xs font-medium text-foreground"
-                >
-                  <span
-                    className="w-2 h-2 rounded-full flex-shrink-0"
-                    style={{ backgroundColor: group.color || 'var(--badge-bg)' }}
-                  />
-                  {group.name}
-                </span>
-              );
-            })}
-          </div>
-        )}
-
-        {/* Relationship pill (read-only display) */}
-        {selectedRelationshipTypeId && selectedRelationshipTypeId !== '__none__' && (() => {
-          const relType = relationshipTypes.find((rt) => rt.id === selectedRelationshipTypeId);
-          if (!relType) return null;
-          return (
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-surface-elevated rounded-full text-xs font-medium text-foreground flex-shrink-0">
-              <span
-                className="w-2 h-2 rounded-full flex-shrink-0"
-                style={{ backgroundColor: relType.color || 'var(--badge-bg)' }}
-              />
-              {relType.label}
-            </span>
-          );
-        })()}
       </div>
 
       {/* Expanded details */}
       {isExpanded && (
         <div className="px-3 pb-3 pt-0 border-t border-border mt-2">
           {isExisting && onToggleUpdate && (
-            <label className="flex items-center gap-2 mt-2 cursor-pointer">
+            <label className="flex items-center gap-3 mt-2 min-h-11 cursor-pointer">
               <input
                 type="checkbox"
                 checked={willUpdate}
@@ -203,28 +205,10 @@ export default function CompactContactRow({
           )}
           {parsedData && (
             <div className="mt-2 space-y-1 text-sm text-muted">
-              {parsedData.organization && (
-                <p>
-                  <span className="font-medium">{t('organization')}:</span>{' '}
-                  {parsedData.organization}
-                </p>
-              )}
               {parsedData.jobTitle && (
                 <p>
                   <span className="font-medium">{t('jobTitle')}:</span>{' '}
                   {parsedData.jobTitle}
-                </p>
-              )}
-              {parsedData.emails && parsedData.emails.length > 0 && (
-                <p>
-                  <span className="font-medium">{t('email')}:</span>{' '}
-                  {parsedData.emails[0].email}
-                </p>
-              )}
-              {parsedData.phoneNumbers && parsedData.phoneNumbers.length > 0 && (
-                <p>
-                  <span className="font-medium">{t('phone')}:</span>{' '}
-                  {parsedData.phoneNumbers[0].number}
                 </p>
               )}
             </div>

@@ -1,8 +1,27 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { Button } from '@/components/ui/Button';
+import BatchProgress from '@/components/carddav/BatchProgress';
+import ListToolbar from '@/components/carddav/ListToolbar';
+import ResultSummary from '@/components/carddav/ResultSummary';
+import {
+  EXPORT_BATCH_SIZE,
+  addExportResult,
+  emptyExportTotals,
+  type ExportTotals,
+} from '@/lib/carddav-ui/import-batch';
+import {
+  areAllSelected,
+  filterBySearch,
+  pruneSelection,
+  runInBatches,
+  selectionStats,
+  toggleOne,
+  toggleVisible,
+} from '@/lib/carddav-ui/selection';
 
 interface Person {
   id: string;
@@ -33,233 +52,216 @@ interface BulkExportListProps {
   people: Person[];
 }
 
+type Phase = 'select' | 'running' | 'done';
+
+function displayNameOf(person: Person): string {
+  return person.displayNameOverride || [person.name, person.surname].filter(Boolean).join(' ');
+}
+
 export default function BulkExportList({ people }: BulkExportListProps) {
-  const t = useTranslations('carddav.export');
+  const t = useTranslations('settings.carddav.export');
   const router = useRouter();
+  const [query, setQuery] = useState('');
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
-  const [exporting, setExporting] = useState(false);
+  const [phase, setPhase] = useState<Phase>('select');
+  const [progress, setProgress] = useState({ done: 0, total: 0 });
+  const [totals, setTotals] = useState<ExportTotals>(emptyExportTotals());
+  const [notSent, setNotSent] = useState(0);
   const [error, setError] = useState<string | null>(null);
-  const [result, setResult] = useState<{
-    exported: number;
-    skipped: number;
-    errors: number;
-    errorMessages: string[];
-  } | null>(null);
 
-  const handleTogglePerson = (id: string) => {
-    const newSelected = new Set(selectedIds);
-    if (newSelected.has(id)) {
-      newSelected.delete(id);
-    } else {
-      newSelected.add(id);
-    }
-    setSelectedIds(newSelected);
-  };
-
-  const handleSelectAll = () => {
-    if (selectedIds.size === people.length) {
-      setSelectedIds(new Set());
-    } else {
-      setSelectedIds(new Set(people.map((p) => p.id)));
-    }
-  };
+  const visiblePeople = useMemo(
+    () =>
+      filterBySearch(people, query, (p) => [
+        displayNameOf(p),
+        p.name,
+        p.surname,
+        p.nickname,
+        p.organization,
+        ...p.emails.map((e) => e.email),
+        ...p.phoneNumbers.map((n) => n.number),
+      ]),
+    [people, query],
+  );
+  const visibleIds = useMemo(() => visiblePeople.map((p) => p.id), [visiblePeople]);
+  // The list shrinks after a refresh; forget people who are no longer in it.
+  const validSelected = useMemo(
+    () => pruneSelection(selectedIds, people.map((p) => p.id)),
+    [selectedIds, people],
+  );
+  const stats = selectionStats(validSelected, visibleIds);
 
   const handleExport = async () => {
-    if (selectedIds.size === 0) {
+    const ids = Array.from(validSelected);
+    if (ids.length === 0) {
       setError(t('noContactsSelected'));
       return;
     }
 
-    setExporting(true);
+    setPhase('running');
     setError(null);
-    setResult(null);
+    setTotals(emptyExportTotals());
+    setNotSent(0);
 
-    try {
-      const response = await fetch('/api/carddav/export-bulk', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          personIds: Array.from(selectedIds),
-        }),
-      });
+    let running = emptyExportTotals();
+    const run = await runInBatches(
+      ids,
+      EXPORT_BATCH_SIZE,
+      async (batch) => {
+        const response = await fetch('/api/carddav/export-bulk', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ personIds: batch }),
+        });
+        const data: unknown = await response.json().catch(() => ({}));
+        if (!response.ok) {
+          const body = (data ?? {}) as { error?: string; code?: string };
+          throw new Error(body.code === 'feature_disabled' ? t('syncDisabled') : body.error || t('exportFailed'));
+        }
+        running = addExportResult(running, data);
+        setTotals(running);
+        return data;
+      },
+      (done, total) => setProgress({ done, total }),
+    );
 
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || t('exportFailed'));
-      }
-
-      const data = await response.json();
-      setResult(data);
-
-      // Refresh after successful export
-      if (data.exported > 0) {
-        setTimeout(() => {
-          router.refresh();
-        }, 2000);
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : t('exportFailed'));
-    } finally {
-      setExporting(false);
+    setNotSent(ids.length - run.processed);
+    if (run.error) {
+      setError(run.error instanceof Error ? run.error.message : t('exportFailed'));
     }
+    setPhase('done');
   };
 
-  const allSelected = selectedIds.size === people.length;
+  const handleExportMore = () => {
+    setSelectedIds(new Set());
+    setPhase('select');
+    setError(null);
+    router.refresh();
+  };
+
+  if (phase === 'running') {
+    return (
+      <BatchProgress
+        done={progress.done}
+        total={progress.total}
+        label={t('exporting')}
+        detail={t('progress', { done: progress.done, total: progress.total })}
+      />
+    );
+  }
+
+  if (phase === 'done') {
+    const remaining = people.length - totals.exported - totals.skipped;
+    return (
+      <div className="space-y-4">
+        {error && (
+          <div role="alert" className="p-4 bg-red-50 dark:bg-red-900/20 text-red-800 dark:text-red-200 rounded-lg border border-red-200 dark:border-red-800">
+            <p>{error}</p>
+            {notSent > 0 && <p className="text-sm mt-1">{t('notSent', { count: notSent })}</p>}
+          </div>
+        )}
+        <ResultSummary
+          title={t('exportComplete')}
+          stats={[
+            { label: t('statExported'), value: totals.exported },
+            { label: t('statAlready'), value: totals.skipped },
+            { label: t('statErrors'), value: totals.errors, tone: totals.errors > 0 ? 'error' : 'default' },
+          ]}
+          errorTitle={t('errorDetails')}
+          errorMessages={totals.errorMessages}
+        >
+          <Button href="/settings/carddav">{t('backToSettings')}</Button>
+          {remaining > 0 && (
+            <Button variant="secondary" onClick={handleExportMore}>
+              {t('exportMore')}
+            </Button>
+          )}
+        </ResultSummary>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
-      {/* Progress */}
-      {exporting && (
-        <div className="p-4 bg-primary/10 text-primary rounded-lg">
-          <p className="font-medium mb-2">{t('exporting')}</p>
-          <div className="w-full bg-primary/20 rounded-full h-2 overflow-hidden">
-            <div
-              className="bg-primary h-2 rounded-full animate-pulse w-full"
-            />
-          </div>
-          <p className="text-sm mt-2">
-            {selectedIds.size} {t('selected')}
-          </p>
-        </div>
-      )}
+      <p className="text-sm text-muted">{t('intro')}</p>
 
-      {/* Results */}
-      {result && (
-        <div className="p-4 bg-primary/10 text-primary rounded-lg">
-          <p className="font-medium mb-2">{t('exportComplete')}</p>
-          <ul className="text-sm space-y-1">
-            <li>✓ {t('exported', { count: result.exported })}</li>
-            {result.skipped > 0 && (
-              <li>⊘ {t('skipped', { count: result.skipped })}</li>
-            )}
-            {result.errors > 0 && (
-              <li>✗ {t('errors', { count: result.errors })}</li>
-            )}
-          </ul>
-          {result.errorMessages.length > 0 && (
-            <div className="mt-2 text-sm">
-              <p className="font-medium">{t('errorDetails')}:</p>
-              <ul className="list-disc list-inside">
-                {result.errorMessages.map((msg, i) => (
-                  <li key={i}>{msg}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Error */}
       {error && (
-        <div className="p-4 bg-red-50 dark:bg-red-900/20 text-red-800 dark:text-red-200 rounded-lg">
+        <div role="alert" className="p-4 bg-red-50 dark:bg-red-900/20 text-red-800 dark:text-red-200 rounded-lg">
           {error}
         </div>
       )}
 
-      {/* People List */}
-      <div className="space-y-3">
-        <div className="flex items-center justify-between pb-3 border-b border-border">
-          <label className="flex items-center gap-2 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={allSelected}
-              onChange={handleSelectAll}
-              className="w-4 h-4 rounded border-border text-primary focus:ring-primary"
-            />
-            <span className="font-medium text-foreground">
-              {allSelected ? t('deselectAll') : t('selectAll')}
-            </span>
-          </label>
-          <span className="text-sm text-muted">
-            {selectedIds.size} {t('selected')}
-          </span>
+      <ListToolbar
+        query={query}
+        onQueryChange={setQuery}
+        visibleCount={visiblePeople.length}
+        totalCount={people.length}
+        allVisibleSelected={areAllSelected(validSelected, visibleIds)}
+        onToggleVisible={() => setSelectedIds(toggleVisible(validSelected, visibleIds))}
+        stats={stats}
+      />
+
+      {visiblePeople.length === 0 ? (
+        <div className="text-center py-8">
+          <p className="text-muted mb-3">{t('noMatches')}</p>
+          <Button variant="secondary" onClick={() => setQuery('')}>
+            {t('clearSearch')}
+          </Button>
         </div>
+      ) : (
+        <ul className="space-y-2">
+          {visiblePeople.map((person) => {
+            const isSelected = validSelected.has(person.id);
+            const name = displayNameOf(person);
+            const details = [person.organization, person.emails[0]?.email, person.phoneNumbers[0]?.number]
+              .filter(Boolean)
+              .join(' · ');
 
-        {people.map((person) => {
-          const isSelected = selectedIds.has(person.id);
-          const displayName = person.displayNameOverride || [person.name, person.surname].filter(Boolean).join(' ');
-
-          return (
-            <div
-              key={person.id}
-              className={`border rounded-lg p-4 cursor-pointer transition-colors ${
-                isSelected
-                  ? 'border-primary bg-primary/5 dark:bg-primary/10'
-                  : 'border-border hover:border-border'
-              }`}
-              onClick={() => handleTogglePerson(person.id)}
-            >
-              <div className="flex items-start gap-3">
-                <input
-                  type="checkbox"
-                  checked={isSelected}
-                  onChange={() => handleTogglePerson(person.id)}
-                  onClick={(e) => e.stopPropagation()}
-                  className="mt-1 w-4 h-4 rounded border-border text-primary focus:ring-primary"
-                />
-
-                <div className="flex-1">
-                  <h4 className="font-semibold text-foreground">
-                    {displayName}
-                  </h4>
-
-                  <div className="mt-2 space-y-1 text-sm text-muted">
-                    {person.organization && (
-                      <p>
-                        <span className="font-medium">{t('organization')}:</span>{' '}
-                        {person.organization}
-                      </p>
+            return (
+              <li key={person.id}>
+                <label
+                  className={`flex items-start gap-3 border rounded-lg p-3 min-h-11 cursor-pointer transition-colors ${
+                    isSelected
+                      ? 'border-primary bg-primary/5 dark:bg-primary/10'
+                      : 'border-border hover:border-border'
+                  }`}
+                >
+                  <input
+                    type="checkbox"
+                    checked={isSelected}
+                    onChange={() => setSelectedIds(toggleOne(validSelected, person.id))}
+                    className="mt-1 w-4 h-4 rounded border-border text-primary focus:ring-primary flex-shrink-0"
+                  />
+                  <span className="flex-1 min-w-0">
+                    <span className="block font-semibold text-foreground break-words">{name}</span>
+                    {details && <span className="block text-sm text-muted break-words">{details}</span>}
+                    {person.groups.length > 0 && (
+                      <span className="mt-1 flex flex-wrap gap-1">
+                        {person.groups.map((pg) => (
+                          <span
+                            key={pg.group.id}
+                            className="px-2 py-0.5 text-xs rounded-full bg-surface-elevated text-foreground"
+                          >
+                            {pg.group.name}
+                          </span>
+                        ))}
+                      </span>
                     )}
-                    {person.jobTitle && (
-                      <p>
-                        <span className="font-medium">{t('jobTitle')}:</span>{' '}
-                        {person.jobTitle}
-                      </p>
-                    )}
-                    {person.emails.length > 0 && (
-                      <p>
-                        <span className="font-medium">{t('email')}:</span>{' '}
-                        {person.emails[0].email}
-                      </p>
-                    )}
-                    {person.phoneNumbers.length > 0 && (
-                      <p>
-                        <span className="font-medium">{t('phone')}:</span>{' '}
-                        {person.phoneNumbers[0].number}
-                      </p>
-                    )}
-                  </div>
+                  </span>
+                </label>
+              </li>
+            );
+          })}
+        </ul>
+      )}
 
-                  {person.groups.length > 0 && (
-                    <div className="mt-2 flex flex-wrap gap-1">
-                      {person.groups.map((pg) => (
-                        <span
-                          key={pg.group.id}
-                          className="px-2 py-0.5 text-xs rounded-full bg-surface-elevated text-foreground"
-                        >
-                          {pg.group.name}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-      {/* Export Button */}
-      <div className="flex gap-3 pt-4 border-t border-border">
-        <button
-          onClick={handleExport}
-          disabled={exporting || selectedIds.size === 0}
-          className="px-6 py-2 bg-primary text-on-primary rounded-lg hover:bg-primary-dark disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-        >
-          {exporting
-            ? t('exporting')
-            : t('exportSelected', { count: selectedIds.size })}
-        </button>
+      {/* Stays in view while scrolling a long list, also on a phone */}
+      <div className="sticky bottom-0 -mx-6 px-6 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] bg-surface border-t border-border flex flex-wrap items-center gap-3">
+        <Button onClick={handleExport} disabled={validSelected.size === 0}>
+          {t('exportSelected', { count: validSelected.size })}
+        </Button>
+        <Button href="/settings/carddav" variant="secondary">
+          {t('cancel')}
+        </Button>
       </div>
     </div>
   );
