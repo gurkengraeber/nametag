@@ -13,7 +13,15 @@ A group needs a name. Description and color are optional:
 
 - **Name**: required
 - **Description**: optional, a short note about what the group is for
-- **Color**: optional, picked from a hex color picker, used throughout the app to visually distinguish the group in lists and the network graph
+- **Color**: optional, picked from a row of suggested colors or a free color field, used throughout the app to visually distinguish the group in lists and the network graph. New groups start with a suggested color that no other group uses yet.
+
+The form warns you when a group with the same or a very similar name already exists, so typos such as "Friend" and "Friends" do not create a second group by accident. Pressing Enter in the name field saves the form.
+
+## The groups overview
+
+The Groups page shows every group as a card with its color, member count and a preview of its first members. Use the search field to find a group by name or description, and the sort menu to order groups by name or by size (most members first).
+
+To create a group without leaving the page, type a name into the quick add field at the top, tap the color dot to cycle through the suggested colors if you like, and press Enter. When you have no groups yet, one tap on a starter group such as Family, Friends, Work or Neighbors creates it.
 
 ## Assigning members
 

@@ -38,11 +38,23 @@ On a person's detail page, you'll see both their relationship to you (if any) an
 
 ## Managing relationship types
 
-From the Relationship Types page you can create, edit, and soft-delete types. Each type displays a usage count, how many relationships (both person-to-person and to you) currently use it, so you can see the impact before removing one. Soft-deleted types can be restored; see [Trash & Restore](/features/trash/) for details.
+From the Relationship Types page you can create, edit, and soft-delete types. Each type shows how many people you have that relationship with and how many connections between two people use it, so you can see the impact before removing one. Soft-deleted types can be restored; see [Trash & Restore](/features/trash/) for details.
+
+When the list is empty, **Add standard types** creates the usual ones (Parent, Child, Sibling, Spouse, Partner, Friend, Colleague, Acquaintance, Relative, Other) with matching inverse types, named in your language.
+
+### Creating a type
+
+A type needs a label. The form explains the inverse relationship with a live example: if Alex is your Mentor, the inverse is what you are to Alex, for example Student. New types start as symmetric (the same label in both directions, like Friend), which you can switch off to choose a different inverse. The form warns when a type with the same or a very similar label already exists.
+
+### Deleting a type
+
+A type that is still used by connections between two people cannot be deleted until those are changed or removed. If only your own relationships to people use it, the dialog tells you how many people are affected: they are not deleted, but no longer show the relationship, and you can bring the type back from the trash.
 
 ### Adding people to a relationship type
 
-Click a type's name on the Relationship Types page to open its own page. It lists everyone you have that relationship with. Type a name to add a person, or click the × on a person to remove them. If the person already has a different relationship to you, it is replaced by this one. This is the quickest way to set the same relationship for many people without opening each profile. See [Bulk Actions](/features/bulk-actions/) for doing it from the people list instead.
+Click a type's name on the Relationship Types page to open its own page. It lists everyone you have that relationship with, showing their groups and when you last contacted them, and a × removes a person (with an Undo in the confirmation message). Type a name to add a person. If the person already has a different relationship to you, it is replaced by this one.
+
+Below that, a checklist shows all people who have no relationship to you yet. Tick the ones you want, or select all of them, and add them in one step. This is the quickest way to set the same relationship for many people without opening each profile. See [Bulk Actions](/features/bulk-actions/) for doing it from the people list instead.
 
 ## Relationships in the network graph
 
