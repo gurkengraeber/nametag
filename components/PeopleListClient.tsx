@@ -356,52 +356,52 @@ export default function PeopleListClient({
                 {/* Narrow screens have no room for the separate name parts, so
                     they get a single combined column instead (see the Name,
                     Surname and Nickname headers below). */}
-                <th className="md:hidden px-6 py-3 text-left text-xs font-medium text-muted uppercase tracking-wider">
+                <th className="md:hidden px-3 py-3 text-left text-xs font-medium text-muted uppercase tracking-wider">
                   <Link href={buildSortUrl(fullNameSortKey)} className="flex items-center gap-1 hover:text-foreground py-2 -my-2 min-h-11 sm:min-h-0">
                     {tt.fullName}
                     {sortBy === fullNameSortKey && <span className="text-primary">{order === 'asc' ? '\u2191' : '\u2193'}</span>}
                   </Link>
                 </th>
-                <th className="hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-muted uppercase tracking-wider">
+                <th className="hidden md:table-cell px-3 py-3 text-left text-xs font-medium text-muted uppercase tracking-wider">
                   <Link href={buildSortUrl('name')} className="flex items-center gap-1 hover:text-foreground py-2 -my-2 min-h-11 sm:min-h-0">
                     {tc.name}
                     {sortBy === 'name' && <span className="text-primary">{order === 'asc' ? '\u2191' : '\u2193'}</span>}
                   </Link>
                 </th>
-                <th className="hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-muted uppercase tracking-wider">
+                <th className="hidden md:table-cell px-3 py-3 text-left text-xs font-medium text-muted uppercase tracking-wider">
                   <Link href={buildSortUrl('surname')} className="flex items-center gap-1 hover:text-foreground py-2 -my-2 min-h-11 sm:min-h-0">
                     {tt.surname}
                     {sortBy === 'surname' && <span className="text-primary">{order === 'asc' ? '\u2191' : '\u2193'}</span>}
                   </Link>
                 </th>
-                <th className="hidden lg:table-cell px-6 py-3 text-left text-xs font-medium text-muted uppercase tracking-wider">
+                <th className="hidden xl:table-cell px-3 py-3 text-left text-xs font-medium text-muted uppercase tracking-wider">
                   <Link href={buildSortUrl('nickname')} className="flex items-center gap-1 hover:text-foreground py-2 -my-2 min-h-11 sm:min-h-0">
                     {tt.nickname}
                     {sortBy === 'nickname' && <span className="text-primary">{order === 'asc' ? '\u2191' : '\u2193'}</span>}
                   </Link>
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-muted uppercase tracking-wider">
+                <th className="px-3 py-3 text-left text-xs font-medium text-muted uppercase tracking-wider">
                   <Link href={buildSortUrl('relationship')} className="flex items-center gap-1 hover:text-foreground py-2 -my-2 min-h-11 sm:min-h-0">
                     {tt.relationshipToUser}
                     {sortBy === 'relationship' && <span className="text-primary">{order === 'asc' ? '\u2191' : '\u2193'}</span>}
                   </Link>
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-muted uppercase tracking-wider">
+                <th className="px-3 py-3 text-left text-xs font-medium text-muted uppercase tracking-wider">
                   <Link href={buildSortUrl('group')} className="flex items-center gap-1 hover:text-foreground py-2 -my-2 min-h-11 sm:min-h-0">
                     {tt.groups}
                     {sortBy === 'group' && <span className="text-primary">{order === 'asc' ? '\u2191' : '\u2193'}</span>}
                   </Link>
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-muted uppercase tracking-wider">
+                <th className="px-3 py-3 text-left text-xs font-medium text-muted uppercase tracking-wider">
                   <Link href={buildSortUrl('lastContact')} className="flex items-center gap-1 hover:text-foreground py-2 -my-2 min-h-11 sm:min-h-0">
                     {tt.lastContact}
                     {sortBy === 'lastContact' && <span className="text-primary">{order === 'asc' ? '\u2191' : '\u2193'}</span>}
                   </Link>
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-muted uppercase tracking-wider">
+                <th className="px-3 py-3 text-left text-xs font-medium text-muted uppercase tracking-wider">
                   {tt.location}
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-muted uppercase tracking-wider">
+                <th className="sticky right-0 bg-surface-elevated px-3 py-3 text-right text-xs font-medium text-muted uppercase tracking-wider">
                   {tt.actions}
                 </th>
               </tr>
@@ -437,7 +437,7 @@ export default function PeopleListClient({
                         size={32}
                       />
                     </td>
-                    <td className="md:hidden px-6 py-4 whitespace-nowrap">
+                    <td className="md:hidden px-3 py-4 whitespace-nowrap">
                       <NameCell
                         href={`/people/${person.id}`}
                         label={combinedName}
@@ -446,7 +446,7 @@ export default function PeopleListClient({
                         displayNameOverride={person.displayNameOverride}
                       />
                     </td>
-                    <td className="hidden md:table-cell px-6 py-4 whitespace-nowrap">
+                    <td className="hidden md:table-cell px-3 py-4 whitespace-nowrap">
                       <NameCell
                         href={`/people/${person.id}`}
                         label={person.name}
@@ -455,13 +455,13 @@ export default function PeopleListClient({
                         displayNameOverride={person.displayNameOverride}
                       />
                     </td>
-                    <td className="hidden md:table-cell px-6 py-4 whitespace-nowrap text-sm text-foreground">
+                    <td className="hidden md:table-cell px-3 py-4 whitespace-nowrap text-sm text-foreground">
                       {person.surname || '\u2014'}
                     </td>
-                    <td className="hidden lg:table-cell px-6 py-4 whitespace-nowrap text-sm text-muted">
+                    <td className="hidden xl:table-cell px-3 py-4 whitespace-nowrap text-sm text-muted">
                       {person.nickname ? `'${person.nickname}'` : '\u2014'}
                     </td>
-                    <td className="px-4 py-3 whitespace-nowrap">
+                    <td className="px-3 py-3 whitespace-nowrap">
                       <RelationshipCell
                         personId={person.id}
                         value={person.relationshipToUserId}
@@ -469,7 +469,7 @@ export default function PeopleListClient({
                         onSaved={() => router.refresh()}
                       />
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-3 py-4 whitespace-nowrap">
                       <div className="flex flex-wrap gap-1">
                         {person.groups.map((pg) => (
                           <span
@@ -486,17 +486,17 @@ export default function PeopleListClient({
                         {person.groups.length === 0 && <span className="text-sm text-muted">{'\u2014'}</span>}
                       </div>
                     </td>
-                    <td className="px-4 py-3 whitespace-nowrap">
+                    <td className="px-3 py-3 whitespace-nowrap">
                       <LastContactCell personId={person.id} value={toDateInputValue(person.lastContact)} />
                     </td>
-                    <td className="px-4 py-3 whitespace-nowrap">
+                    <td className="px-3 py-3 whitespace-nowrap">
                       <LocationCell
                         personId={person.id}
                         city={person.addresses[0]?.locality ?? null}
                         country={person.addresses[0]?.country ?? null}
                       />
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right">
+                    <td className="sticky right-0 bg-surface px-3 py-4 whitespace-nowrap text-right">
                       <div className="flex justify-end gap-3">
                         <Link href={`/people/${person.id}/edit`} className="text-primary hover:text-primary-dark transition-colors" title={tc.edit}>
                           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
