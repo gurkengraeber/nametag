@@ -1,58 +1,26 @@
 'use client';
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { getPhotoUrl } from '@/lib/photo-url';
+import MergeSummaryList from '@/components/MergeSummaryList';
+import {
+  buildDefaultOverrides,
+  compareRelationshipToUser,
+  compareScalarFields,
+  formatFieldValue,
+  formatPersonLabel,
+  isSecondarySelected,
+  pickInitialPrimaryId,
+  REL_TO_USER_OVERRIDE_KEY,
+  summarizeMerge,
+  getScalarValue,
+  type MergeSelections,
+  type PersonForCompare,
+  type ScalarFieldKey,
+} from '@/lib/merge-compare';
 
-export interface PersonForCompare {
-  id: string;
-  name: string;
-  surname: string | null;
-  middleName: string | null;
-  secondLastName: string | null;
-  nickname: string | null;
-  displayNameOverride?: string | null;
-  prefix: string | null;
-  suffix: string | null;
-  organization: string | null;
-  jobTitle: string | null;
-  gender: string | null;
-  anniversary: string | Date | null;
-  lastContact: string | Date | null;
-  photo: string | null;
-  notes: string | null;
-  relationshipToUserId: string | null;
-  relationshipToUser: { id: string; name: string } | null;
-  phoneNumbers: Array<{ type: string; number: string }>;
-  emails: Array<{ type: string; email: string }>;
-  addresses: Array<{
-    type: string;
-    streetLine1?: string | null;
-    streetLine2?: string | null;
-    locality?: string | null;
-    region?: string | null;
-    postalCode?: string | null;
-    country?: string | null;
-  }>;
-  urls: Array<{ type: string; url: string }>;
-  imHandles: Array<{ protocol: string; handle: string }>;
-  locations: Array<{ type: string; latitude: number; longitude: number }>;
-  customFields: Array<{ key: string; value: string }>;
-  customFieldValues: Array<{
-    templateId: string;
-    value: string;
-    template: { id: string; name: string };
-  }>;
-  importantDates: Array<{ title: string; date: string | Date }>;
-  groups: Array<{ group: { id: string; name: string } }>;
-  relationshipsFrom?: Array<{ id: string }>;
-  relationshipsTo?: Array<{ id: string }>;
-}
-
-export interface MergeSelections {
-  primaryId: string;
-  fieldOverrides: Record<string, string | null>;
-}
+export type { MergeSelections, PersonForCompare };
 
 interface PersonCompareProps {
   personA: PersonForCompare;
@@ -60,104 +28,41 @@ interface PersonCompareProps {
   onSelectionsChange: (selections: MergeSelections) => void;
 }
 
-type ScalarFieldKey =
-  | 'name'
-  | 'surname'
-  | 'middleName'
-  | 'secondLastName'
-  | 'nickname'
-  | 'displayNameOverride'
-  | 'prefix'
-  | 'suffix'
-  | 'organization'
-  | 'jobTitle'
-  | 'gender'
-  | 'anniversary'
-  | 'lastContact'
-  | 'photo'
-  | 'notes';
-
-interface ScalarFieldDef {
-  key: ScalarFieldKey;
-  labelKey: string;
+interface OptionCardProps {
+  name: string;
+  groupName: string;
+  checked: boolean;
+  onSelect: () => void;
+  children: React.ReactNode;
 }
 
-const SCALAR_FIELDS: ScalarFieldDef[] = [
-  { key: 'name', labelKey: 'fieldName' },
-  { key: 'surname', labelKey: 'fieldSurname' },
-  { key: 'middleName', labelKey: 'fieldMiddleName' },
-  { key: 'secondLastName', labelKey: 'fieldSecondLastName' },
-  { key: 'nickname', labelKey: 'fieldNickname' },
-  { key: 'displayNameOverride', labelKey: 'fieldDisplayNameOverride' },
-  { key: 'prefix', labelKey: 'fieldPrefix' },
-  { key: 'suffix', labelKey: 'fieldSuffix' },
-  { key: 'organization', labelKey: 'fieldOrganization' },
-  { key: 'jobTitle', labelKey: 'fieldJobTitle' },
-  { key: 'gender', labelKey: 'fieldGender' },
-  { key: 'anniversary', labelKey: 'fieldAnniversary' },
-  { key: 'lastContact', labelKey: 'fieldLastContact' },
-  { key: 'photo', labelKey: 'fieldPhoto' },
-  { key: 'notes', labelKey: 'fieldNotes' },
-];
-
-function getScalarValue(
-  person: PersonForCompare,
-  key: ScalarFieldKey
-): string | null {
-  const raw = person[key];
-  if (raw === null || raw === undefined) return null;
-  if (raw instanceof Date) {
-    return raw.toISOString().split('T')[0];
-  }
-  if (typeof raw === 'string' && raw.trim() === '') return null;
-  return String(raw);
-}
-
-function formatDisplayValue(value: string | null, key: ScalarFieldKey): string {
-  if (value === null) return '';
-  if (
-    (key === 'anniversary' || key === 'lastContact') &&
-    /^\d{4}-\d{2}-\d{2}/.test(value)
-  ) {
-    try {
-      return new Date(value).toLocaleDateString();
-    } catch {
-      return value;
-    }
-  }
-  if (key === 'photo') {
-    // For photos, just indicate presence rather than showing the full URL
-    return value ? '***' : '';
-  }
-  return value;
-}
-
-function countNonEmptyFields(person: PersonForCompare): number {
-  let count = 0;
-  for (const { key } of SCALAR_FIELDS) {
-    if (getScalarValue(person, key) !== null) count++;
-  }
-  if (person.relationshipToUserId) count++;
-  count += person.phoneNumbers.length;
-  count += person.emails.length;
-  count += person.addresses.length;
-  count += person.urls.length;
-  count += person.imHandles.length;
-  count += person.locations.length;
-  count += person.customFields.length;
-  count += person.customFieldValues.length;
-  count += person.importantDates.length;
-  count += person.groups.length;
-  return count;
-}
-
-function formatPersonLabel(person: PersonForCompare): string {
-  return [person.name, person.surname].filter(Boolean).join(' ');
-}
-
-/** Whether a person's relationship-to-user value is currently selected (via primary default or field override). */
-function isRelToUserSelected(personId: string, currentPrimaryId: string, hasOverride: boolean): boolean {
-  return hasOverride ? personId !== currentPrimaryId : personId === currentPrimaryId;
+/** One tappable value of a conflicting field. */
+function OptionCard({ name, groupName, checked, onSelect, children }: OptionCardProps) {
+  return (
+    <label
+      className={`flex items-start gap-3 p-3 min-h-11 rounded-lg border-2 cursor-pointer transition-colors ${
+        checked ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'
+      }`}
+    >
+      <input
+        type="radio"
+        name={groupName}
+        checked={checked}
+        onChange={onSelect}
+        className="mt-1 accent-primary"
+      />
+      <span className="min-w-0 flex-1">
+        <span className="block text-xs text-muted truncate">{name}</span>
+        <span
+          className={`block text-sm break-words ${
+            checked ? 'text-foreground font-medium' : 'text-muted'
+          }`}
+        >
+          {children}
+        </span>
+      </span>
+    </label>
+  );
 }
 
 export default function PersonCompare({
@@ -167,174 +72,102 @@ export default function PersonCompare({
 }: PersonCompareProps) {
   const t = useTranslations('people.merge');
 
-  // Determine initial primary based on field count
-  const initialPrimaryId = useMemo(() => {
-    const countA = countNonEmptyFields(personA);
-    const countB = countNonEmptyFields(personB);
-    return countA >= countB ? personA.id : personB.id;
-  }, [personA, personB]);
-
-  const [primaryId, setPrimaryId] = useState(initialPrimaryId);
-  const [fieldOverrides, setFieldOverrides] = useState<
-    Record<string, string | null>
-  >({});
-
+  const [primaryId, setPrimaryId] = useState(() => pickInitialPrimaryId(personA, personB));
   const primary = primaryId === personA.id ? personA : personB;
   const secondary = primaryId === personA.id ? personB : personA;
 
-  // Notify parent of selection changes
-  const notifyChange = useCallback(
-    (newPrimaryId: string, newOverrides: Record<string, string | null>) => {
-      onSelectionsChange({
-        primaryId: newPrimaryId,
-        fieldOverrides: newOverrides,
-      });
-    },
-    [onSelectionsChange]
+  // Conflicts are preselected (newer value wins) so the common case needs no taps.
+  const [fieldOverrides, setFieldOverrides] = useState<Record<string, string | null>>(
+    () => {
+      const initialPrimary = pickInitialPrimaryId(personA, personB);
+      return initialPrimary === personA.id
+        ? buildDefaultOverrides(personA, personB)
+        : buildDefaultOverrides(personB, personA);
+    }
   );
 
-  // Notify on mount and whenever selections change
+  // Notify parent on mount and whenever selections change
   useEffect(() => {
-    notifyChange(primaryId, fieldOverrides);
-  }, [primaryId, fieldOverrides, notifyChange]);
+    onSelectionsChange({ primaryId, fieldOverrides });
+  }, [primaryId, fieldOverrides, onSelectionsChange]);
 
   const handlePrimaryChange = (newPrimaryId: string) => {
+    if (newPrimaryId === primaryId) return;
+    const newPrimary = newPrimaryId === personA.id ? personA : personB;
+    const newSecondary = newPrimaryId === personA.id ? personB : personA;
     setPrimaryId(newPrimaryId);
-    setFieldOverrides({});
+    setFieldOverrides(buildDefaultOverrides(newPrimary, newSecondary));
   };
 
   const handleFieldOverride = (fieldKey: string, fromPersonId: string) => {
     setFieldOverrides((prev) => {
       const next = { ...prev };
+      const overrideKey = fieldKey === 'relationshipToUser' ? REL_TO_USER_OVERRIDE_KEY : fieldKey;
       if (fromPersonId === primaryId) {
-        // User chose primary's value, remove override
-        if (fieldKey === 'relationshipToUser') {
-          delete next['relationshipToUserId'];
-        } else {
-          delete next[fieldKey];
-        }
+        delete next[overrideKey];
+      } else if (fieldKey === 'relationshipToUser') {
+        next[overrideKey] = secondary.relationshipToUserId;
       } else {
-        // User chose secondary's value, store as override
-        if (fieldKey === 'relationshipToUser') {
-          // For relationshipToUser, store as relationshipToUserId (matching the API schema)
-          next['relationshipToUserId'] = secondary.relationshipToUserId;
-        } else {
-          next[fieldKey] = getScalarValue(
-            secondary,
-            fieldKey as ScalarFieldKey
-          );
-        }
+        next[overrideKey] = getScalarValue(secondary, fieldKey as ScalarFieldKey);
       }
       return next;
     });
   };
 
-  // Compute which scalar fields have conflicts (both different non-empty values)
-  const scalarFieldStates = useMemo(() => {
-    return SCALAR_FIELDS.map(({ key, labelKey }) => {
-      const valA = getScalarValue(personA, key);
-      const valB = getScalarValue(personB, key);
-      const bothEmpty = valA === null && valB === null;
-      const bothSame = valA === valB;
-      const onlyOneHasValue =
-        (valA !== null && valB === null) || (valA === null && valB !== null);
-      const hasConflict =
-        !bothEmpty && !bothSame && valA !== null && valB !== null;
+  const scalarStates = useMemo(() => compareScalarFields(personA, personB), [personA, personB]);
+  const relState = useMemo(() => compareRelationshipToUser(personA, personB), [personA, personB]);
 
-      return {
-        key,
-        labelKey,
-        valA,
-        valB,
-        bothEmpty,
-        bothSame,
-        onlyOneHasValue,
-        hasConflict,
-      };
-    });
-  }, [personA, personB]);
+  const conflicts = scalarStates.filter((f) => f.status === 'conflict');
+  const unchanged = scalarStates.filter((f) => f.status === 'same' || f.status === 'oneSide');
+  const relConflict = relState.status === 'conflict';
+  const relUnchanged = relState.status === 'same' || relState.status === 'oneSide';
+  const conflictCount = conflicts.length + (relConflict ? 1 : 0);
+  const unchangedCount = unchanged.length + (relUnchanged ? 1 : 0);
 
-  // Relationship to user field state
-  const relFieldState = useMemo(() => {
-    const valA = personA.relationshipToUser?.name ?? null;
-    const valB = personB.relationshipToUser?.name ?? null;
-    const idA = personA.relationshipToUserId;
-    const idB = personB.relationshipToUserId;
-    const bothEmpty = valA === null && valB === null;
-    const bothSame = idA === idB;
-    const onlyOneHasValue =
-      (valA !== null && valB === null) || (valA === null && valB !== null);
-    const hasConflict =
-      !bothEmpty && !bothSame && valA !== null && valB !== null;
+  const summary = useMemo(
+    () => summarizeMerge(primary, secondary, fieldOverrides),
+    [primary, secondary, fieldOverrides]
+  );
 
-    return { valA, valB, idA, idB, bothEmpty, bothSame, onlyOneHasValue, hasConflict };
-  }, [personA, personB]);
+  const renderPrimaryOption = (person: PersonForCompare) => {
+    const isPrimary = primaryId === person.id;
+    return (
+      <label
+        key={person.id}
+        className={`flex items-center gap-3 p-3 min-h-11 rounded-lg border-2 cursor-pointer transition-colors flex-1 ${
+          isPrimary ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'
+        }`}
+      >
+        <input
+          type="radio"
+          name="primary"
+          value={person.id}
+          checked={isPrimary}
+          onChange={() => handlePrimaryChange(person.id)}
+          className="accent-primary"
+        />
+        <div className="min-w-0">
+          <span className="font-semibold text-foreground break-words">
+            {formatPersonLabel(person)}
+          </span>
+          <span className={`ml-2 text-xs ${isPrimary ? 'font-medium text-primary' : 'text-muted'}`}>
+            {isPrimary ? t('primary') : t('secondary')}
+          </span>
+        </div>
+      </label>
+    );
+  };
 
-  const hasAnyConflict =
-    scalarFieldStates.some((f) => f.hasConflict) || relFieldState.hasConflict;
-
-  // Multi-value field counts (deduplicated, matching merge API logic)
-  const multiValueFields = useMemo(() => {
-    const primaryPhones = new Set(primary.phoneNumbers.map((p) => p.number));
-    const primaryEmails = new Set(primary.emails.map((e) => e.email.toLowerCase()));
-    const primaryUrls = new Set(primary.urls.map((u) => u.url.toLowerCase()));
-    const primaryIm = new Set(primary.imHandles.map((im) => `${im.protocol}:${im.handle}`.toLowerCase()));
-    const primaryAddrs = new Set(primary.addresses.map((a) =>
-      [a.streetLine1, a.streetLine2, a.locality, a.region, a.postalCode, a.country]
-        .map((v) => (v ?? '').toLowerCase().trim()).join('|')
-    ));
-    const primaryLocs = new Set(primary.locations.map((l) => `${l.latitude},${l.longitude}`));
-    const primaryCf = new Set(primary.customFields.map((f) => `${f.key}:${f.value}`));
-    const primaryCfvIds = new Set(primary.customFieldValues.map((v) => v.templateId));
-    const primaryDates = new Set(primary.importantDates.map((d) =>
-      `${d.title}:${d.date instanceof Date ? d.date.toISOString() : d.date}`
-    ));
-
-    const fields: Array<{ labelKey: string; fieldKey: string; mergedCount: number }> = [
-      { labelKey: 'phones', fieldKey: 'phoneNumbers',
-        mergedCount: primary.phoneNumbers.length + secondary.phoneNumbers.filter((p) => !primaryPhones.has(p.number)).length },
-      { labelKey: 'emails', fieldKey: 'emails',
-        mergedCount: primary.emails.length + secondary.emails.filter((e) => !primaryEmails.has(e.email.toLowerCase())).length },
-      { labelKey: 'addresses', fieldKey: 'addresses',
-        mergedCount: primary.addresses.length + secondary.addresses.filter((a) => {
-          const key = [a.streetLine1, a.streetLine2, a.locality, a.region, a.postalCode, a.country]
-            .map((v) => (v ?? '').toLowerCase().trim()).join('|');
-          return !primaryAddrs.has(key);
-        }).length },
-      { labelKey: 'urls', fieldKey: 'urls',
-        mergedCount: primary.urls.length + secondary.urls.filter((u) => !primaryUrls.has(u.url.toLowerCase())).length },
-      { labelKey: 'imHandles', fieldKey: 'imHandles',
-        mergedCount: primary.imHandles.length + secondary.imHandles.filter((im) => !primaryIm.has(`${im.protocol}:${im.handle}`.toLowerCase())).length },
-      { labelKey: 'locations', fieldKey: 'locations',
-        mergedCount: primary.locations.length + secondary.locations.filter((l) => !primaryLocs.has(`${l.latitude},${l.longitude}`)).length },
-      { labelKey: 'customFields', fieldKey: 'customFields',
-        mergedCount: primary.customFields.length + secondary.customFields.filter((f) => !primaryCf.has(`${f.key}:${f.value}`)).length },
-      // Template-backed custom field values are deduped by templateId because
-      // PersonCustomFieldValue has @@unique([personId, templateId]) — when both
-      // people have a value for the same template, the primary's value wins
-      // (matching mergePersonInto's transfer logic in lib/services/person.ts).
-      { labelKey: 'customFieldValues', fieldKey: 'customFieldValues',
-        mergedCount: primary.customFieldValues.length + secondary.customFieldValues.filter((v) => !primaryCfvIds.has(v.templateId)).length },
-      { labelKey: 'importantDates', fieldKey: 'importantDates',
-        mergedCount: primary.importantDates.length + secondary.importantDates.filter((d) => {
-          const key = `${d.title}:${d.date instanceof Date ? d.date.toISOString() : d.date}`;
-          return !primaryDates.has(key);
-        }).length },
-    ];
-    return fields.filter((f) => f.mergedCount > 0);
-  }, [primary, secondary]);
-
-  // Groups count (deduplicated)
-  const mergedGroupCount = useMemo(() => {
-    const primaryGroupIds = new Set(primary.groups.map((g) => g.group.id));
-    const uniqueFromSecondary = secondary.groups.filter((g) => !primaryGroupIds.has(g.group.id)).length;
-    return primary.groups.length + uniqueFromSecondary;
-  }, [primary, secondary]);
-
-  // Relationships count (both directions)
-  const totalRelCount =
-    (primary.relationshipsFrom?.length ?? 0) + (primary.relationshipsTo?.length ?? 0) +
-    (secondary.relationshipsFrom?.length ?? 0) + (secondary.relationshipsTo?.length ?? 0);
+  const renderScalarValue = (
+    person: PersonForCompare,
+    key: ScalarFieldKey,
+    value: string | null
+  ) =>
+    key === 'photo' && value ? (
+      <PhotoPreview personId={person.id} photo={value} name={formatPersonLabel(person)} />
+    ) : (
+      formatFieldValue(value, key) || t('empty')
+    );
 
   return (
     <div className="space-y-6">
@@ -344,342 +177,129 @@ export default function PersonCompare({
           {t('selectPrimary')}
         </p>
         <div className="flex flex-col sm:flex-row gap-3">
-          <label
-            className={`flex items-center gap-3 p-3 rounded-lg border-2 cursor-pointer transition-colors flex-1 ${
-              primaryId === personA.id
-                ? 'border-primary bg-primary/5'
-                : 'border-border hover:border-primary/50'
-            }`}
-          >
-            <input
-              type="radio"
-              name="primary"
-              value={personA.id}
-              checked={primaryId === personA.id}
-              onChange={() => handlePrimaryChange(personA.id)}
-              className="accent-primary"
-            />
-            <div>
-              <span className="font-semibold text-foreground">
-                {formatPersonLabel(personA)}
-              </span>
-              {primaryId === personA.id && (
-                <span className="ml-2 text-xs font-medium text-primary">
-                  {t('primary')}
-                </span>
-              )}
-              {primaryId !== personA.id && (
-                <span className="ml-2 text-xs text-muted">
-                  {t('secondary')}
-                </span>
-              )}
-            </div>
-          </label>
-
-          <label
-            className={`flex items-center gap-3 p-3 rounded-lg border-2 cursor-pointer transition-colors flex-1 ${
-              primaryId === personB.id
-                ? 'border-primary bg-primary/5'
-                : 'border-border hover:border-primary/50'
-            }`}
-          >
-            <input
-              type="radio"
-              name="primary"
-              value={personB.id}
-              checked={primaryId === personB.id}
-              onChange={() => handlePrimaryChange(personB.id)}
-              className="accent-primary"
-            />
-            <div>
-              <span className="font-semibold text-foreground">
-                {formatPersonLabel(personB)}
-              </span>
-              {primaryId === personB.id && (
-                <span className="ml-2 text-xs font-medium text-primary">
-                  {t('primary')}
-                </span>
-              )}
-              {primaryId !== personB.id && (
-                <span className="ml-2 text-xs text-muted">
-                  {t('secondary')}
-                </span>
-              )}
-            </div>
-          </label>
+          {renderPrimaryOption(personA)}
+          {renderPrimaryOption(personB)}
         </div>
       </div>
 
       {/* Conflicting Fields */}
-      {hasAnyConflict && (
+      {conflictCount > 0 ? (
         <div className="bg-surface border border-border rounded-lg overflow-hidden">
-          <div className="bg-surface px-4 py-3 border-b border-border">
+          <div className="px-4 py-3 border-b border-border">
             <h3 className="text-sm font-semibold text-foreground">
               {t('conflictingFields')}
             </h3>
+            <p className="text-xs text-muted mt-1">{t('preselectedHint')}</p>
           </div>
 
-          <div className="overflow-x-auto max-w-full">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-border">
-                  <th className="px-3 py-2 text-left text-xs font-medium text-muted uppercase w-40 border-r border-border" />
-                  <th className="px-3 py-2 text-left text-xs font-medium border-r border-border w-1/2">
-                    <div className="flex items-center gap-2">
-                      <div
-                        className={`w-2.5 h-2.5 rounded-full ${
-                          primaryId === personA.id
-                            ? 'bg-primary'
-                            : 'bg-muted'
-                        }`}
-                      />
-                      <span
-                        className={
-                          primaryId === personA.id
-                            ? 'text-primary font-semibold'
-                            : 'text-muted'
-                        }
+          <ul className="divide-y divide-border">
+            {conflicts.map((field) => {
+              const selectedId = field.key in fieldOverrides ? secondary.id : primary.id;
+              return (
+                <li key={field.key} className="p-4 bg-warning/5">
+                  <p className="text-sm font-medium text-foreground mb-2">{t(field.labelKey)}</p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    {[
+                      { person: personA, value: field.valA },
+                      { person: personB, value: field.valB },
+                    ].map(({ person, value }) => (
+                      <OptionCard
+                        key={person.id}
+                        name={formatPersonLabel(person)}
+                        groupName={`field-${field.key}`}
+                        checked={selectedId === person.id}
+                        onSelect={() => handleFieldOverride(field.key, person.id)}
                       >
-                        {formatPersonLabel(personA)}
-                        {primaryId === personA.id && (
-                          <span className="ml-1 text-[10px]">
-                            ({t('primary')})
-                          </span>
-                        )}
-                      </span>
-                    </div>
-                  </th>
-                  <th className="px-3 py-2 text-left text-xs font-medium w-1/2">
-                    <div className="flex items-center gap-2">
-                      <div
-                        className={`w-2.5 h-2.5 rounded-full ${
-                          primaryId === personB.id
-                            ? 'bg-primary'
-                            : 'bg-muted'
-                        }`}
-                      />
-                      <span
-                        className={
-                          primaryId === personB.id
-                            ? 'text-primary font-semibold'
-                            : 'text-muted'
-                        }
-                      >
-                        {formatPersonLabel(personB)}
-                        {primaryId === personB.id && (
-                          <span className="ml-1 text-[10px]">
-                            ({t('primary')})
-                          </span>
-                        )}
-                      </span>
-                    </div>
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
-                {scalarFieldStates
-                  .filter((f) => f.hasConflict)
-                  .map((field) => {
-                    const selectedId =
-                      field.key in fieldOverrides
-                        ? secondary.id
-                        : primary.id;
-                    const displayA = formatDisplayValue(field.valA, field.key);
-                    const displayB = formatDisplayValue(field.valB, field.key);
+                        {renderScalarValue(person, field.key, value)}
+                      </OptionCard>
+                    ))}
+                  </div>
+                </li>
+              );
+            })}
 
+            {relConflict && (
+              <li className="p-4 bg-warning/5">
+                <p className="text-sm font-medium text-foreground mb-2">
+                  {t('fieldRelationshipToUser')}
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {[
+                    { person: personA, value: relState.valA },
+                    { person: personB, value: relState.valB },
+                  ].map(({ person, value }) => {
+                    const secondaryChosen = isSecondarySelected('relationshipToUser', fieldOverrides);
+                    const checked = secondaryChosen ? person.id !== primaryId : person.id === primaryId;
                     return (
-                      <tr
-                        key={field.key}
-                        className="bg-amber-50/50 dark:bg-amber-900/5"
+                      <OptionCard
+                        key={person.id}
+                        name={formatPersonLabel(person)}
+                        groupName="field-relationshipToUser"
+                        checked={checked}
+                        onSelect={() => handleFieldOverride('relationshipToUser', person.id)}
                       >
-                        <td className="px-3 py-2 text-sm font-medium text-muted whitespace-nowrap border-r border-border">
-                          {t(field.labelKey)}
-                        </td>
-                        <td className="px-3 py-2 text-sm border-r border-border">
-                          <label className="flex items-start gap-2 cursor-pointer">
-                            <input
-                              type="radio"
-                              name={`field-${field.key}`}
-                              checked={selectedId === personA.id}
-                              onChange={() =>
-                                handleFieldOverride(field.key, personA.id)
-                              }
-                              className="mt-0.5 accent-primary"
-                            />
-                            <span
-                              className={`break-words ${
-                                selectedId === personA.id
-                                  ? 'text-foreground font-medium'
-                                  : 'text-muted'
-                              }`}
-                            >
-                              {field.key === 'photo' && field.valA ? (
-                                <PhotoPreview
-                                  personId={personA.id}
-                                  photo={field.valA}
-                                  name={formatPersonLabel(personA)}
-                                />
-                              ) : (
-                                displayA
-                              )}
-                            </span>
-                          </label>
-                        </td>
-                        <td className="px-3 py-2 text-sm">
-                          <label className="flex items-start gap-2 cursor-pointer">
-                            <input
-                              type="radio"
-                              name={`field-${field.key}`}
-                              checked={selectedId === personB.id}
-                              onChange={() =>
-                                handleFieldOverride(field.key, personB.id)
-                              }
-                              className="mt-0.5 accent-primary"
-                            />
-                            <span
-                              className={`break-words ${
-                                selectedId === personB.id
-                                  ? 'text-foreground font-medium'
-                                  : 'text-muted'
-                              }`}
-                            >
-                              {field.key === 'photo' && field.valB ? (
-                                <PhotoPreview
-                                  personId={personB.id}
-                                  photo={field.valB}
-                                  name={formatPersonLabel(personB)}
-                                />
-                              ) : (
-                                displayB
-                              )}
-                            </span>
-                          </label>
-                        </td>
-                      </tr>
+                        {value || t('empty')}
+                      </OptionCard>
                     );
                   })}
-
-                {/* Relationship to User */}
-                {relFieldState.hasConflict && (
-                  <tr className="bg-amber-50/50 dark:bg-amber-900/5">
-                    <td className="px-3 py-2 text-sm font-medium text-muted whitespace-nowrap border-r border-border">
-                      {t('fieldRelationshipToUser')}
-                    </td>
-                    <td className="px-3 py-2 text-sm border-r border-border">
-                      <label className="flex items-start gap-2 cursor-pointer">
-                        <input
-                          type="radio"
-                          name="field-relationshipToUser"
-                          checked={isRelToUserSelected(personA.id, primaryId, 'relationshipToUserId' in fieldOverrides)}
-                          onChange={() =>
-                            handleFieldOverride(
-                              'relationshipToUser',
-                              personA.id
-                            )
-                          }
-                          className="mt-0.5 accent-primary"
-                        />
-                        <span
-                          className={`break-words ${
-                            isRelToUserSelected(personA.id, primaryId, 'relationshipToUserId' in fieldOverrides)
-                              ? 'text-foreground font-medium'
-                              : 'text-muted'
-                          }`}
-                        >
-                          {relFieldState.valA || t('empty')}
-                        </span>
-                      </label>
-                    </td>
-                    <td className="px-3 py-2 text-sm">
-                      <label className="flex items-start gap-2 cursor-pointer">
-                        <input
-                          type="radio"
-                          name="field-relationshipToUser"
-                          checked={isRelToUserSelected(personB.id, primaryId, 'relationshipToUserId' in fieldOverrides)}
-                          onChange={() =>
-                            handleFieldOverride(
-                              'relationshipToUser',
-                              personB.id
-                            )
-                          }
-                          className="mt-0.5 accent-primary"
-                        />
-                        <span
-                          className={`break-words ${
-                            isRelToUserSelected(personB.id, primaryId, 'relationshipToUserId' in fieldOverrides)
-                              ? 'text-foreground font-medium'
-                              : 'text-muted'
-                          }`}
-                        >
-                          {relFieldState.valB || t('empty')}
-                        </span>
-                      </label>
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
+                </div>
+              </li>
+            )}
+          </ul>
         </div>
-      )}
-
-      {/* No conflicts message */}
-      {!hasAnyConflict && (
+      ) : (
         <div className="bg-surface border border-border rounded-lg p-4">
           <p className="text-sm text-muted">{t('noConflicts')}</p>
         </div>
       )}
 
-      {/* Non-conflicting scalar fields (same value or only one has a value) */}
-      {scalarFieldStates.some(
-        (f) => !f.bothEmpty && !f.hasConflict
-      ) && (
-        <div className="bg-surface border border-border rounded-lg overflow-hidden">
-          <div className="overflow-x-auto max-w-full">
-            <table className="w-full">
-              <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
-                {scalarFieldStates
-                  .filter((f) => !f.bothEmpty && !f.hasConflict)
-                  .map((field) => {
-                    const displayVal = formatDisplayValue(
-                      field.valA ?? field.valB,
-                      field.key
-                    );
-                    return (
-                      <tr key={field.key}>
-                        <td className="px-3 py-2 text-sm font-medium text-muted whitespace-nowrap border-r border-border w-40">
-                          {t(field.labelKey)}
-                        </td>
-                        <td className="px-3 py-2 text-sm text-foreground break-words">
-                          {field.key === 'photo' && (field.valA ?? field.valB) ? (
-                            <PhotoPreview
-                              personId={field.valA ? personA.id : personB.id}
-                              photo={(field.valA ?? field.valB) as string}
-                              name={formatPersonLabel(primary)}
-                            />
-                          ) : (
-                            displayVal || t('empty')
-                          )}
-                        </td>
-                      </tr>
-                    );
-                  })}
-
-                {/* Non-conflicting relationship to user */}
-                {!relFieldState.bothEmpty && !relFieldState.hasConflict && (
-                  <tr>
-                    <td className="px-3 py-2 text-sm font-medium text-muted whitespace-nowrap border-r border-border w-40">
-                      {t('fieldRelationshipToUser')}
-                    </td>
-                    <td className="px-3 py-2 text-sm text-foreground break-words">
-                      {relFieldState.valA ?? relFieldState.valB ?? t('empty')}
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
+      {/* Identical or one-sided fields stay collapsed */}
+      {unchangedCount > 0 && (
+        <details className="group bg-surface border border-border rounded-lg overflow-hidden">
+          <summary className="flex items-center justify-between gap-3 px-4 min-h-11 py-2 cursor-pointer text-sm font-medium text-foreground select-none">
+            <span>{t('unchangedFields', { count: unchangedCount })}</span>
+            <svg
+              className="w-4 h-4 text-muted transition-transform group-open:rotate-180"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </summary>
+          <dl className="divide-y divide-border border-t border-border">
+            {unchanged.map((field) => {
+              const owner = field.valA !== null ? personA : personB;
+              return (
+                <div key={field.key} className="px-4 py-3 sm:flex sm:gap-4">
+                  <dt className="text-xs font-medium text-muted sm:w-40 sm:flex-shrink-0">
+                    {t(field.labelKey)}
+                  </dt>
+                  <dd className="text-sm text-foreground break-words min-w-0">
+                    {renderScalarValue(owner, field.key, field.valA ?? field.valB)}
+                    <span className="block text-xs text-muted">
+                      {field.status === 'same' ? t('sameValue') : t('onlyOneHasValue')}
+                    </span>
+                  </dd>
+                </div>
+              );
+            })}
+            {relUnchanged && (
+              <div className="px-4 py-3 sm:flex sm:gap-4">
+                <dt className="text-xs font-medium text-muted sm:w-40 sm:flex-shrink-0">
+                  {t('fieldRelationshipToUser')}
+                </dt>
+                <dd className="text-sm text-foreground break-words min-w-0">
+                  {relState.valA ?? relState.valB ?? t('empty')}
+                  <span className="block text-xs text-muted">
+                    {relState.status === 'same' ? t('sameValue') : t('onlyOneHasValue')}
+                  </span>
+                </dd>
+              </div>
+            )}
+          </dl>
+        </details>
       )}
 
       {/* Summary Section */}
@@ -688,57 +308,7 @@ export default function PersonCompare({
           {t('summary')}
         </h3>
 
-        {/* Multi-value fields combined */}
-        {multiValueFields.length > 0 && (
-          <div>
-            <p className="text-xs font-medium text-muted mb-1.5">
-              {t('willCombine')}
-            </p>
-            <ul className="space-y-1">
-              {multiValueFields.map((field) => (
-                  <li key={field.fieldKey} className="text-sm text-foreground">
-                    {t('multiValueNote', {
-                      count: field.mergedCount,
-                      field: t(field.labelKey),
-                    })}
-                  </li>
-              ))}
-            </ul>
-          </div>
-        )}
-
-        {/* Groups transfer */}
-        {mergedGroupCount > 0 && (
-          <div>
-            <p className="text-xs font-medium text-muted mb-1.5">
-              {t('willTransfer')}
-            </p>
-            <p className="text-sm text-foreground">
-              {t('multiValueNote', {
-                count: mergedGroupCount,
-                field: t('groups'),
-              })}
-            </p>
-          </div>
-        )}
-
-        {/* Relationships transfer */}
-        {totalRelCount > 0 && (
-          <div>
-            <p className="text-xs font-medium text-muted mb-1.5">
-              {t('willCombine')}
-            </p>
-            <p className="text-sm text-foreground">
-              {t('multiValueNote', {
-                count: totalRelCount,
-                field: t('relationships'),
-              })}
-            </p>
-          </div>
-        )}
-
-        {/* Deletion warning */}
-        <p className="text-xs text-muted italic">{t('willDelete')}</p>
+        <MergeSummaryList primary={primary} secondary={secondary} summary={summary} />
       </div>
     </div>
   );

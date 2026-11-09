@@ -63,3 +63,31 @@ export const POST = withAuth(async (request, session) => {
     return handleApiError(error, 'people-duplicates-dismiss');
   }
 });
+
+// DELETE /api/people/duplicates/dismiss - Undo a dismissal so the pair is suggested again
+export const DELETE = withAuth(async (request, session) => {
+  try {
+    const body: unknown = await request.json();
+    const parsed = dismissSchema.safeParse(body);
+
+    if (!parsed.success) {
+      return validationFailed(parsed.error.issues, 'Invalid request body');
+    }
+
+    const { personAId, personBId } = parsed.data;
+    const [smallerId, largerId] =
+      personAId < personBId ? [personAId, personBId] : [personBId, personAId];
+
+    await prisma.duplicateDismissal.deleteMany({
+      where: {
+        userId: session.user.id,
+        personAId: smallerId,
+        personBId: largerId,
+      },
+    });
+
+    return apiResponse.ok({ dismissed: false });
+  } catch (error) {
+    return handleApiError(error, 'people-duplicates-undismiss');
+  }
+});
