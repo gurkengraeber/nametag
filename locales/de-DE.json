@@ -96,7 +96,12 @@
         "warning": "An deine neue Adresse wird eine Bestätigungs-E-Mail gesendet. Du wirst abgemeldet und kannst dich erst wieder anmelden, nachdem du deine neue E-Mail verifiziert hast.",
         "cancel": "Abbrechen",
         "confirm": "Bestätigen & Abmelden"
-      }
+      },
+      "nameRequired": "Bitte gib deinen Namen ein.",
+      "errorFields": "Bitte prüfe die markierten Felder.",
+      "photoHint": "JPG, PNG, GIF, WebP oder HEIC, bis 50 MB. Nach der Auswahl kannst du zuschneiden.",
+      "photoPending": "Das neue Foto wird gespeichert, wenn du auf Änderungen speichern tippst.",
+      "emailChangeHint": "Wenn du deine E-Mail-Adresse änderst, wirst du abgemeldet, bis du die neue Adresse bestätigt hast."
     },
     "appearance": {
       "title": "Darstellung",
@@ -322,7 +327,8 @@
         "signingOut": "Wird abgemeldet...",
         "loadError": "Deine Geräte konnten nicht geladen werden. Versuche es später erneut.",
         "signOutError": "Dieses Gerät konnte nicht abgemeldet werden. Versuche es erneut."
-      }
+      },
+      "showPasswords": "Passwörter anzeigen"
     },
     "carddav": {
       "title": "CardDAV-Synchronisation",
@@ -911,6 +917,12 @@
         "trash": "gelöscht wiederherstellen papierkorb",
         "about": "version lizenz hilfe über"
       }
+    },
+    "unsaved": {
+      "warning": "Du hast ungespeicherte Änderungen. Seite trotzdem verlassen?",
+      "indicator": "Ungespeicherte Änderungen",
+      "allSaved": "Alles gespeichert",
+      "discard": "Änderungen verwerfen"
     }
   },
   "customFields": {

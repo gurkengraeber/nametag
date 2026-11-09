@@ -96,7 +96,12 @@
         "warning": "验证邮件将发送到您的新地址。您将被登出，在验证新邮箱之前无法登入。",
         "cancel": "取消",
         "confirm": "确认并登出"
-      }
+      },
+      "nameRequired": "请输入你的姓名。",
+      "errorFields": "请检查标出的字段。",
+      "photoHint": "支持 JPG、PNG、GIF、WebP 或 HEIC,最大 50 MB。选择后可以裁剪。",
+      "photoPending": "新照片会在你点击\"保存更改\"时保存。",
+      "emailChangeHint": "更改邮箱后你会被退出登录,直到确认新地址。"
     },
     "appearance": {
       "title": "外观",
@@ -322,7 +327,8 @@
         "signingOut": "正在退出...",
         "loadError": "无法加载你的设备。请稍后再试。",
         "signOutError": "无法退出该设备。请重试。"
-      }
+      },
+      "showPasswords": "显示密码"
     },
     "carddav": {
       "title": "CardDAV 同步",
@@ -911,6 +917,12 @@
         "trash": "已删除 恢复 回收站",
         "about": "版本 许可 帮助 关于"
       }
+    },
+    "unsaved": {
+      "warning": "你有未保存的更改。不保存就离开此页面吗?",
+      "indicator": "有未保存的更改",
+      "allSaved": "已全部保存",
+      "discard": "放弃更改"
     }
   },
   "customFields": {

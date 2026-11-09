@@ -96,7 +96,12 @@
         "warning": "Se enviará un correo de verificación a tu nueva dirección. Se cerrará tu sesión y no podrás iniciar sesión hasta que verifiques tu nuevo correo.",
         "cancel": "Cancelar",
         "confirm": "Confirmar y cerrar sesión"
-      }
+      },
+      "nameRequired": "Introduce tu nombre.",
+      "errorFields": "Revisa los campos marcados.",
+      "photoHint": "JPG, PNG, GIF, WebP o HEIC, hasta 50 MB. Puedes recortarla después de elegirla.",
+      "photoPending": "La foto nueva se guarda al pulsar Guardar cambios.",
+      "emailChangeHint": "Si cambias tu correo, se cerrará tu sesión hasta que confirmes la nueva dirección."
     },
     "appearance": {
       "title": "Apariencia",
@@ -322,7 +327,8 @@
         "signingOut": "Cerrando sesión...",
         "loadError": "No se pudieron cargar tus dispositivos. Inténtalo más tarde.",
         "signOutError": "No se pudo cerrar la sesión de ese dispositivo. Inténtalo de nuevo."
-      }
+      },
+      "showPasswords": "Mostrar contraseñas"
     },
     "carddav": {
       "title": "Sincronización CardDAV",
@@ -911,6 +917,12 @@
         "trash": "eliminados recuperar restaurar papelera",
         "about": "versión licencia ayuda acerca"
       }
+    },
+    "unsaved": {
+      "warning": "Tienes cambios sin guardar. ¿Salir de esta página sin guardar?",
+      "indicator": "Cambios sin guardar",
+      "allSaved": "Todo guardado",
+      "discard": "Descartar cambios"
     }
   },
   "customFields": {

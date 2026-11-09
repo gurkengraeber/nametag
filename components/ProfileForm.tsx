@@ -10,6 +10,9 @@ import PersonAvatar from './PersonPhoto';
 import PhotoCropModal from './PhotoCropModal';
 import { getUserPhotoUrl } from '@/lib/photo-url';
 import { isHeicFile, convertHeicToJpeg } from '@/lib/photo-client';
+import SettingsSaveBar from '@/components/settings/SettingsSaveBar';
+import { useUnsavedChangesWarning } from '@/components/settings/useUnsavedChangesWarning';
+import { hasChanges, parseApiError } from '@/components/settings/formState';
 
 interface ProfileFormProps {
   userId: string;
@@ -26,8 +29,9 @@ export default function ProfileForm({ userId, currentName, currentSurname, curre
   const router = useRouter();
   const { update } = useSession();
   const [isLoading, setIsLoading] = useState(false);
+  const tUnsaved = useTranslations('settings.unsaved');
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [showEmailConfirm, setShowEmailConfirm] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -36,6 +40,9 @@ export default function ProfileForm({ userId, currentName, currentSurname, curre
     nickname: currentNickname,
     email: currentEmail,
   });
+  // What the server has right now. The props only change after a refresh, so
+  // the form keeps its own copy to know what "unsaved" means after a save.
+  const [savedData, setSavedData] = useState(formData);
 
   // Photo state
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
@@ -47,7 +54,30 @@ export default function ProfileForm({ userId, currentName, currentSurname, curre
   const ALLOWED_PHOTO_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/heic', 'image/heif'];
   const MAX_PHOTO_SIZE = 50 * 1024 * 1024; // 50MB
 
-  const emailChanged = formData.email !== currentEmail;
+  const emailChanged = formData.email !== savedData.email;
+  const photoChanged = pendingPhotoBlob !== null || photoRemoved;
+  const isDirty = hasChanges(formData, savedData) || photoChanged;
+
+  useUnsavedChangesWarning(isDirty, tUnsaved('warning'));
+
+  const setField = (field: keyof typeof formData, value: string) => {
+    setFormData({ ...formData, [field]: value });
+    if (fieldErrors[field]) {
+      setFieldErrors({ ...fieldErrors, [field]: '' });
+    }
+  };
+
+  const handleDiscard = () => {
+    setFormData(savedData);
+    setFieldErrors({});
+    setError('');
+    if (photoPreview) {
+      URL.revokeObjectURL(photoPreview);
+    }
+    setPhotoPreview(null);
+    setPhotoRemoved(false);
+    setPendingPhotoBlob(null);
+  };
 
   const handlePhotoSelect = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -115,7 +145,12 @@ export default function ProfileForm({ userId, currentName, currentSurname, curre
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError('');
-    setSuccess('');
+    setFieldErrors({});
+
+    if (!formData.name.trim()) {
+      setFieldErrors({ name: t('nameRequired') });
+      return;
+    }
 
     // Show confirmation dialog if email is being changed
     if (emailChanged) {
@@ -142,7 +177,15 @@ export default function ProfileForm({ userId, currentName, currentSurname, curre
       const data = await response.json();
 
       if (!response.ok) {
-        setError(data.error || t('errorUpdate'));
+        const info = parseApiError(data);
+        if (info.code === 'email_in_use') {
+          setFieldErrors({ email: info.message ?? t('errorUpdate') });
+        } else if (Object.keys(info.fields).length > 0) {
+          setFieldErrors(info.fields);
+          setError(t('errorFields'));
+        } else {
+          setError(info.message ?? t('errorUpdate'));
+        }
         return;
       }
 
@@ -180,7 +223,8 @@ export default function ProfileForm({ userId, currentName, currentSurname, curre
         }
       }
 
-      setSuccess(t('successUpdate'));
+      toast.success(t('successUpdate'));
+      setSavedData(formData);
 
       // Update the session with new data (including photo if changed)
       await update({
@@ -192,9 +236,6 @@ export default function ProfileForm({ userId, currentName, currentSurname, curre
       });
 
       router.refresh();
-
-      // Clear success message after 3 seconds
-      setTimeout(() => setSuccess(''), 3000);
     } catch {
       setError(t('errorConnection'));
     } finally {
@@ -206,6 +247,7 @@ export default function ProfileForm({ userId, currentName, currentSurname, curre
   // because it routes through getPhotoUrl which builds /api/photos/{personId})
   const hasExistingPhoto = currentPhoto && !photoRemoved;
   const userPhotoUrl = hasExistingPhoto ? getUserPhotoUrl(currentPhoto) : null;
+  const hasPhoto = Boolean(photoPreview || hasExistingPhoto);
 
   return (
     <>
@@ -216,78 +258,50 @@ export default function ProfileForm({ userId, currentName, currentSurname, curre
           </div>
         )}
 
-        {success && (
-          <div className="bg-green-50 dark:bg-green-900/20 border border-green-400 dark:border-green-800 text-green-700 dark:text-green-400 px-4 py-3 rounded">
-            {success}
-          </div>
-        )}
-
         {/* Photo Section */}
         <div className="flex flex-col items-center gap-3 mb-6">
-          <div className="relative group">
-            {photoPreview ? (
-              /* eslint-disable-next-line @next/next/no-img-element */
-              <img src={photoPreview} alt="" className="w-20 h-20 rounded-full object-cover bg-white dark:bg-black" />
-            ) : userPhotoUrl ? (
-              /* eslint-disable-next-line @next/next/no-img-element */
-              <img src={userPhotoUrl} alt="" className="w-20 h-20 rounded-full object-cover bg-white dark:bg-black" />
-            ) : (
-              <PersonAvatar
-                personId={userId}
-                name={formData.name || formData.surname || '?'}
-                photo={null}
-                size={80}
-                loading="eager"
-              />
-            )}
+          {/* eslint-disable @next/next/no-img-element */}
+          {photoPreview ? (
+            <img src={photoPreview} alt="" className="w-20 h-20 rounded-full object-cover bg-white dark:bg-black" />
+          ) : userPhotoUrl ? (
+            <img src={userPhotoUrl} alt="" className="w-20 h-20 rounded-full object-cover bg-white dark:bg-black" />
+          ) : (
+            <PersonAvatar
+              personId={userId}
+              name={formData.name || formData.surname || '?'}
+              photo={null}
+              size={80}
+              loading="eager"
+            />
+          )}
+          {/* eslint-enable @next/next/no-img-element */}
 
-            {/* Upload overlay on hover */}
-            <label className="absolute inset-0 rounded-full flex items-center justify-center bg-black/0 group-hover:bg-black/40 cursor-pointer transition-colors">
-              <svg
-                className="w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
-                />
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"
-                />
-              </svg>
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/jpeg,image/png,image/gif,image/webp,.heic,.heif"
-                onChange={handlePhotoSelect}
-                className="hidden"
-              />
-            </label>
-
-            {/* Remove button (top-right, visible on hover) */}
-            {(photoPreview || (currentPhoto && !photoRemoved)) && (
-              <button
-                type="button"
-                onClick={handlePhotoRemove}
-                className="absolute -top-1 -right-1 w-5 h-5 bg-warning text-white rounded-full flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
-                title={tPhoto('removeLabel')}
-              >
-                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/jpeg,image/png,image/gif,image/webp,.heic,.heif"
+            onChange={handlePhotoSelect}
+            className="hidden"
+            aria-label={hasPhoto ? tPhoto('changeLabel') : tPhoto('uploadLabel')}
+          />
+          <div className="flex flex-wrap justify-center gap-2">
+            <Button
+              type="button"
+              variant="secondary"
+              size="sm"
+              onClick={() => fileInputRef.current?.click()}
+            >
+              {hasPhoto ? tPhoto('changeLabel') : tPhoto('uploadLabel')}
+            </Button>
+            {hasPhoto && (
+              <Button type="button" variant="ghost" size="sm" onClick={handlePhotoRemove}>
+                {tPhoto('removeLabel')}
+              </Button>
             )}
           </div>
-          <span className="text-xs text-muted">
-            {(currentPhoto && !photoRemoved) || photoPreview ? tPhoto('changeLabel') : tPhoto('uploadLabel')}
-          </span>
+          <p className="text-xs text-muted text-center max-w-sm">
+            {photoChanged ? t('photoPending') : t('photoHint')}
+          </p>
         </div>
 
         {/* Crop modal */}
@@ -317,9 +331,12 @@ export default function ProfileForm({ userId, currentName, currentSurname, curre
               id="name"
               required
               value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="w-full px-3 py-2 border border-border rounded-lg bg-surface text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+              onChange={(e) => setField('name', e.target.value)}
+              aria-invalid={fieldErrors.name ? true : undefined}
+              aria-describedby={fieldErrors.name ? 'name-error' : undefined}
+              className="w-full min-h-11 px-3 py-2 border border-border rounded-lg bg-surface text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
             />
+            {fieldErrors.name && <p id="name-error" className="mt-1 text-sm text-warning">{fieldErrors.name}</p>}
           </div>
 
           <div>
@@ -333,9 +350,12 @@ export default function ProfileForm({ userId, currentName, currentSurname, curre
               type="text"
               id="surname"
               value={formData.surname}
-              onChange={(e) => setFormData({ ...formData, surname: e.target.value })}
-              className="w-full px-3 py-2 border border-border rounded-lg bg-surface text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+              onChange={(e) => setField('surname', e.target.value)}
+              aria-invalid={fieldErrors.surname ? true : undefined}
+              aria-describedby={fieldErrors.surname ? 'surname-error' : undefined}
+              className="w-full min-h-11 px-3 py-2 border border-border rounded-lg bg-surface text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
             />
+            {fieldErrors.surname && <p id="surname-error" className="mt-1 text-sm text-warning">{fieldErrors.surname}</p>}
           </div>
 
           <div>
@@ -349,9 +369,12 @@ export default function ProfileForm({ userId, currentName, currentSurname, curre
               type="text"
               id="nickname"
               value={formData.nickname}
-              onChange={(e) => setFormData({ ...formData, nickname: e.target.value })}
-              className="w-full px-3 py-2 border border-border rounded-lg bg-surface text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+              onChange={(e) => setField('nickname', e.target.value)}
+              aria-invalid={fieldErrors.nickname ? true : undefined}
+              aria-describedby={fieldErrors.nickname ? 'nickname-error' : undefined}
+              className="w-full min-h-11 px-3 py-2 border border-border rounded-lg bg-surface text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
             />
+            {fieldErrors.nickname && <p id="nickname-error" className="mt-1 text-sm text-warning">{fieldErrors.nickname}</p>}
           </div>
         </div>
 
@@ -367,16 +390,24 @@ export default function ProfileForm({ userId, currentName, currentSurname, curre
             id="email"
             required
             value={formData.email}
-            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-            className="w-full px-3 py-2 border border-border rounded-lg bg-surface text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+            onChange={(e) => setField('email', e.target.value)}
+            aria-invalid={fieldErrors.email ? true : undefined}
+            aria-describedby={fieldErrors.email ? 'email-error' : emailChanged ? 'email-hint' : undefined}
+            className="w-full min-h-11 px-3 py-2 border border-border rounded-lg bg-surface text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
           />
+          {fieldErrors.email && <p id="email-error" className="mt-1 text-sm text-warning">{fieldErrors.email}</p>}
+          {!fieldErrors.email && emailChanged && (
+            <p id="email-hint" className="mt-1 text-sm text-muted">{t('emailChangeHint')}</p>
+          )}
         </div>
 
-        <div className="flex justify-end pt-4">
-          <Button type="submit" disabled={isLoading}>
-            {isLoading ? t('saving') : t('saveChanges')}
-          </Button>
-        </div>
+        <SettingsSaveBar
+          dirty={isDirty}
+          isSaving={isLoading}
+          saveLabel={t('saveChanges')}
+          savingLabel={t('saving')}
+          onDiscard={handleDiscard}
+        />
       </form>
 
       {/* Email Change Confirmation Dialog */}

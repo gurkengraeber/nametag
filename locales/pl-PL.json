@@ -96,7 +96,12 @@
         "warning": "Na nowy adres zostanie wysłana wiadomość weryfikacyjna. Zostaniesz wylogowany i nie zalogujesz się, dopóki nie potwierdzisz nowego adresu.",
         "cancel": "Anuluj",
         "confirm": "Potwierdź i wyloguj"
-      }
+      },
+      "nameRequired": "Wpisz swoje imię.",
+      "errorFields": "Sprawdź zaznaczone pola.",
+      "photoHint": "JPG, PNG, GIF, WebP lub HEIC, do 50 MB. Po wybraniu możesz przyciąć zdjęcie.",
+      "photoPending": "Nowe zdjęcie zostanie zapisane po naciśnięciu Zapisz zmiany.",
+      "emailChangeHint": "Zmiana adresu e-mail wyloguje Cię do czasu potwierdzenia nowego adresu."
     },
     "appearance": {
       "title": "Wygląd",
@@ -322,7 +327,8 @@
         "signingOut": "Wylogowywanie...",
         "loadError": "Nie udało się wczytać Twoich urządzeń. Spróbuj ponownie później.",
         "signOutError": "Nie udało się wylogować tego urządzenia. Spróbuj ponownie."
-      }
+      },
+      "showPasswords": "Pokaż hasła"
     },
     "carddav": {
       "title": "Synchronizacja CardDAV",
@@ -911,6 +917,12 @@
         "trash": "usunięte przywróć kosz",
         "about": "wersja licencja pomoc o aplikacji"
       }
+    },
+    "unsaved": {
+      "warning": "Masz niezapisane zmiany. Opuścić stronę bez zapisywania?",
+      "indicator": "Niezapisane zmiany",
+      "allSaved": "Wszystko zapisane",
+      "discard": "Odrzuć zmiany"
     }
   },
   "customFields": {

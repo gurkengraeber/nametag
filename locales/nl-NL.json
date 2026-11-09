@@ -96,7 +96,12 @@
         "warning": "Er wordt een verificatie-e-mail verzonden naar uw nieuwe adres. U wordt uitgelogd en kunt niet inloggen totdat u uw nieuwe e-mail bevestigt.",
         "cancel": "Annuleren",
         "confirm": "Bevestigen & Uitloggen"
-      }
+      },
+      "nameRequired": "Vul je naam in.",
+      "errorFields": "Controleer de gemarkeerde velden.",
+      "photoHint": "JPG, PNG, GIF, WebP of HEIC, tot 50 MB. Na het kiezen kun je bijsnijden.",
+      "photoPending": "De nieuwe foto wordt opgeslagen wanneer je op Wijzigingen opslaan drukt.",
+      "emailChangeHint": "Als je je e-mailadres wijzigt, word je uitgelogd tot je het nieuwe adres bevestigt."
     },
     "appearance": {
       "title": "Uiterlijk",
@@ -322,7 +327,8 @@
         "signingOut": "Uitloggen...",
         "loadError": "Je apparaten konden niet worden geladen. Probeer het later opnieuw.",
         "signOutError": "Dat apparaat kon niet worden uitgelogd. Probeer het opnieuw."
-      }
+      },
+      "showPasswords": "Wachtwoorden tonen"
     },
     "carddav": {
       "title": "CardDAV Synchronisatie",
@@ -911,6 +917,12 @@
         "trash": "verwijderd herstellen prullenbak",
         "about": "versie licentie help over"
       }
+    },
+    "unsaved": {
+      "warning": "Je hebt niet-opgeslagen wijzigingen. Deze pagina verlaten zonder op te slaan?",
+      "indicator": "Niet-opgeslagen wijzigingen",
+      "allSaved": "Alles opgeslagen",
+      "discard": "Wijzigingen verwerpen"
     }
   },
   "customFields": {

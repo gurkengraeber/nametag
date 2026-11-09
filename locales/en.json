@@ -96,7 +96,12 @@
         "warning": "A verification email will be sent to your new address. You will be logged out and won't be able to log in until you verify your new email.",
         "cancel": "Cancel",
         "confirm": "Confirm & Log Out"
-      }
+      },
+      "nameRequired": "Please enter your name.",
+      "errorFields": "Please check the highlighted fields.",
+      "photoHint": "JPG, PNG, GIF, WebP or HEIC, up to 50 MB. You can crop it after choosing.",
+      "photoPending": "The new photo is saved when you press Save changes.",
+      "emailChangeHint": "Changing your email signs you out until you confirm the new address."
     },
     "appearance": {
       "title": "Appearance",
@@ -322,7 +327,8 @@
         "signingOut": "Signing out...",
         "loadError": "Couldn't load your devices. Try again later.",
         "signOutError": "Couldn't sign out that device. Try again."
-      }
+      },
+      "showPasswords": "Show passwords"
     },
     "carddav": {
       "title": "CardDAV Sync",
@@ -911,6 +917,12 @@
         "trash": "deleted recover restore bin",
         "about": "version license help about"
       }
+    },
+    "unsaved": {
+      "warning": "You have unsaved changes. Leave this page without saving?",
+      "indicator": "You have unsaved changes",
+      "allSaved": "All changes saved",
+      "discard": "Discard changes"
     }
   },
   "customFields": {

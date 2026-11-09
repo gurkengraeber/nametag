@@ -96,7 +96,12 @@
         "warning": "En bekreftelses-e-post vil bli sendt til den nye adressen. Du blir logget ut og kan ikke logge inn igjen før du har bekreftet din nye e-post.",
         "cancel": "Avbryt",
         "confirm": "Bekreft og logg ut"
-      }
+      },
+      "nameRequired": "Skriv inn navnet ditt.",
+      "errorFields": "Sjekk de markerte feltene.",
+      "photoHint": "JPG, PNG, GIF, WebP eller HEIC, opptil 50 MB. Du kan beskjære etter at du har valgt.",
+      "photoPending": "Det nye bildet lagres når du trykker Lagre endringer.",
+      "emailChangeHint": "Hvis du endrer e-posten, logges du ut til du har bekreftet den nye adressen."
     },
     "appearance": {
       "title": "Utseende",
@@ -322,7 +327,8 @@
         "signingOut": "Logger ut...",
         "loadError": "Kunne ikke laste enhetene dine. Prøv igjen senere.",
         "signOutError": "Kunne ikke logge ut den enheten. Prøv igjen."
-      }
+      },
+      "showPasswords": "Vis passord"
     },
     "carddav": {
       "title": "CardDAV-synkronisering",
@@ -911,6 +917,12 @@
         "trash": "slettet gjenopprett papirkurv",
         "about": "versjon lisens hjelp om"
       }
+    },
+    "unsaved": {
+      "warning": "Du har ulagrede endringer. Forlate siden uten å lagre?",
+      "indicator": "Ulagrede endringer",
+      "allSaved": "Alt er lagret",
+      "discard": "Forkast endringer"
     }
   },
   "customFields": {

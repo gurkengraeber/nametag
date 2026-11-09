@@ -96,7 +96,12 @@
         "warning": "Un e-mail de vérification sera envoyé à votre nouvelle adresse. Vous serez déconnecté et ne pourrez pas vous reconnecter avant de l'avoir vérifiée.",
         "cancel": "Annuler",
         "confirm": "Confirmer et se déconnecter"
-      }
+      },
+      "nameRequired": "Veuillez saisir votre nom.",
+      "errorFields": "Veuillez vérifier les champs signalés.",
+      "photoHint": "JPG, PNG, GIF, WebP ou HEIC, jusqu'à 50 Mo. Vous pourrez la recadrer après l'avoir choisie.",
+      "photoPending": "La nouvelle photo est enregistrée quand vous appuyez sur Enregistrer.",
+      "emailChangeHint": "Changer votre e-mail vous déconnecte jusqu'à la confirmation de la nouvelle adresse."
     },
     "appearance": {
       "title": "Apparence",
@@ -322,7 +327,8 @@
         "signingOut": "Déconnexion...",
         "loadError": "Impossible de charger vos appareils. Réessayez plus tard.",
         "signOutError": "Impossible de déconnecter cet appareil. Réessayez."
-      }
+      },
+      "showPasswords": "Afficher les mots de passe"
     },
     "carddav": {
       "title": "Synchronisation CardDAV",
@@ -911,6 +917,12 @@
         "trash": "supprimés récupérer restaurer corbeille",
         "about": "version licence aide à propos"
       }
+    },
+    "unsaved": {
+      "warning": "Vous avez des modifications non enregistrées. Quitter cette page sans enregistrer ?",
+      "indicator": "Modifications non enregistrées",
+      "allSaved": "Tout est enregistré",
+      "discard": "Annuler les modifications"
     }
   },
   "customFields": {
