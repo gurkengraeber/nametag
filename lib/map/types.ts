@@ -94,7 +94,7 @@ export interface MapMarkersResponse {
   unplacedPeople: UnplacedPerson[];
   pendingCount: number;
   failedCount: number;
-  /** Contacts with failed addresses, name-sorted, for the map's unlocated drawer */
+  /** Contacts with at least one failed address, name-sorted (kept for API clients; the map uses unplacedPeople) */
   unlocatedPeople: UnlocatedPerson[];
   /** The user's geocoding privacy toggle, used by the map's empty state */
   geocodingEnabled: boolean;

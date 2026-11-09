@@ -8,7 +8,7 @@ export function mapPaths(): Record<string, Record<string, unknown>> {
         tags: ['Map'],
         summary: 'Get map markers',
         description:
-          'Returns all plottable points for the current user: successfully geocoded addresses and vCard GEO locations, plus the groups they belong to and counts of addresses still pending or failed geocoding.',
+          'Returns all plottable points for the current user: successfully geocoded addresses and vCard GEO locations, plus the groups they belong to and counts of addresses still pending or failed geocoding. Also returns what the map needs to edit contacts in place: all contacts with group ids, relationship and last contact date, every group and relationship type of the user, and the contacts that have no marker (with the reason and their addresses).',
         security: sessionOrToken(),
         responses: {
           '200': jsonResponse('Map markers', {
@@ -50,6 +50,79 @@ export function mapPaths(): Record<string, Record<string, unknown>> {
                     id: { type: 'string' },
                     name: { type: 'string' },
                     color: { type: ['string', 'null'] },
+                  },
+                },
+              },
+              allGroups: {
+                type: 'array',
+                description: 'Every group of the user, not only those with people on the map',
+                items: {
+                  type: 'object',
+                  properties: {
+                    id: { type: 'string' },
+                    name: { type: 'string' },
+                    color: { type: ['string', 'null'] },
+                  },
+                },
+              },
+              relationshipTypes: {
+                type: 'array',
+                items: {
+                  type: 'object',
+                  properties: {
+                    id: { type: 'string' },
+                    label: { type: 'string' },
+                    color: { type: ['string', 'null'] },
+                  },
+                },
+              },
+              people: {
+                type: 'array',
+                description: 'All contacts (located or not), sorted by name',
+                items: {
+                  type: 'object',
+                  properties: {
+                    personId: { type: 'string' },
+                    personName: { type: 'string' },
+                    groupIds: { type: 'array', items: { type: 'string' } },
+                    relationshipTypeId: { type: ['string', 'null'] },
+                    lastContact: {
+                      type: ['string', 'null'],
+                      description: 'Calendar date YYYY-MM-DD, null when never recorded',
+                    },
+                  },
+                },
+              },
+              unplacedPeople: {
+                type: 'array',
+                description: 'Contacts without any marker on the map, sorted by name',
+                items: {
+                  type: 'object',
+                  properties: {
+                    personId: { type: 'string' },
+                    personName: { type: 'string' },
+                    reason: {
+                      type: 'string',
+                      enum: ['noAddress', 'pending', 'failed', 'disabled'],
+                      description:
+                        'noAddress: no address at all. pending: waiting for the geocoder. failed: could not be located. disabled: the user turned address locating off.',
+                    },
+                    addresses: {
+                      type: 'array',
+                      description: 'Existing addresses, in the shape the person update route accepts',
+                      items: {
+                        type: 'object',
+                        properties: {
+                          type: { type: 'string' },
+                          streetLine1: { type: ['string', 'null'] },
+                          streetLine2: { type: ['string', 'null'] },
+                          locality: { type: ['string', 'null'] },
+                          region: { type: ['string', 'null'] },
+                          postalCode: { type: ['string', 'null'] },
+                          country: { type: ['string', 'null'] },
+                        },
+                      },
+                    },
                   },
                 },
               },
