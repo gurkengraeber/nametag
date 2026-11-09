@@ -5,6 +5,8 @@ import {
   findDuplicates,
   findAllDuplicateGroups,
   compositeSimilarity,
+  getDuplicateReasons,
+  getDuplicateConfidence,
 } from '@/lib/duplicate-detection';
 import type { PersonForComparison } from '@/lib/duplicate-detection';
 import { TIMEZONES, setProcessTimezone, restoreTimezoneAfterEach } from '../helpers/timezone';
@@ -232,5 +234,60 @@ describe('compositeSimilarity', () => {
     // Without sparsity bypass this would be capped at 0.6
     expect(result.score).toBeGreaterThan(0.6);
     expect(result.score).toBeLessThanOrEqual(1.0);
+  });
+});
+
+describe('getDuplicateReasons', () => {
+  it('names the signals that match, strongest first', () => {
+    const a = person({ id: '1', name: 'Maria', surname: 'Garcia', emails: ['m@test.com'], phones: ['5551234567'] });
+    const b = person({ id: '2', name: 'María', surname: 'García', emails: ['m@test.com'], phones: ['5551234567'] });
+    expect(getDuplicateReasons(a, b)).toEqual(['sameName', 'sameEmail', 'samePhone']);
+  });
+
+  it('reports a similar name when it is not identical', () => {
+    const a = person({ id: '1', name: 'Jonathan', surname: 'Meyer' });
+    const b = person({ id: '2', name: 'Jonathon', surname: 'Meyer' });
+    expect(getDuplicateReasons(a, b)).toEqual(['similarName']);
+  });
+
+  it('distinguishes the same birthday from the same day in another year', () => {
+    const a = person({ id: '1', name: 'Ann', birthdays: [new Date(Date.UTC(1990, 4, 17))] });
+    const sameDate = person({ id: '2', name: 'Bo', birthdays: [new Date(Date.UTC(1990, 4, 17))] });
+    const sameDay = person({ id: '3', name: 'Cy', birthdays: [new Date(Date.UTC(1985, 4, 17))] });
+    expect(getDuplicateReasons(a, sameDate)).toContain('sameBirthday');
+    expect(getDuplicateReasons(a, sameDay)).toContain('sameBirthdayDay');
+    expect(getDuplicateReasons(a, sameDay)).not.toContain('sameBirthday');
+  });
+
+  it('returns nothing for unrelated contacts', () => {
+    expect(getDuplicateReasons(person({ id: '1', name: 'Ann' }), person({ id: '2', name: 'Zed' }))).toEqual([]);
+  });
+});
+
+describe('getDuplicateConfidence', () => {
+  it('is high for a shared email or phone, or a near-identical score', () => {
+    expect(getDuplicateConfidence(0.86, ['sameEmail'])).toBe('high');
+    expect(getDuplicateConfidence(0.8, ['samePhone'])).toBe('high');
+    expect(getDuplicateConfidence(0.97, ['sameName'])).toBe('high');
+  });
+
+  it('falls to medium and low as the score drops without strong ids', () => {
+    expect(getDuplicateConfidence(0.9, ['similarName', 'sameBirthday'])).toBe('medium');
+    expect(getDuplicateConfidence(0.78, ['similarName'])).toBe('low');
+  });
+});
+
+describe('findAllDuplicateGroups pairs', () => {
+  it('lists each flagged pair with its reasons and leaves out dismissed pairs', () => {
+    const people: PersonForComparison[] = [
+      person({ id: '1', name: 'Bob', surname: 'A', emails: ['bob@test.com'] }),
+      person({ id: '2', name: 'Robert', surname: 'B', emails: ['bob@test.com'] }),
+      person({ id: '3', name: 'Bobby', surname: 'C', emails: ['bob@test.com'] }),
+    ];
+    const [group] = findAllDuplicateGroups(people, new Set(['1:3']));
+    expect(group.people).toHaveLength(3);
+    const keys = group.pairs.map((p) => `${p.personAId}:${p.personBId}`).sort();
+    expect(keys).toEqual(['1:2', '2:3']);
+    expect(group.pairs.every((p) => p.reasons.includes('sameEmail'))).toBe(true);
   });
 });

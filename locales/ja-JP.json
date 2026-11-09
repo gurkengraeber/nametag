@@ -774,10 +774,9 @@
         "groups": "グループ",
         "relationships": "関係",
         "relationshipTypes": "関係の種類",
-        "importantDates": "重要な日付"
+        "importantDates": "重要な日付",
+        "all": "すべて"
       },
-      "daysRemaining": "残り{days}日",
-      "lessThanOneDay": "残り1日未満",
       "empty": "削除された{type}は見つかりませんでした。",
       "emptyTypes": {
         "people": "人物",
@@ -795,14 +794,39 @@
         "message": "この項目は完全に失われます。この操作は元に戻せません。",
         "messagePerson": "この人物とすべての関連データ（関係、グループへの所属、写真、カスタムフィールド）が完全に削除されます。この操作は元に戻せません。",
         "confirm": "完全に削除",
-        "cancel": "キャンセル"
+        "cancel": "キャンセル",
+        "understand": "元に戻せないことを理解しました"
       },
       "restoreSuccess": "アイテムを復元しました",
       "deleteSuccess": "アイテムを完全に削除しました",
       "restoreError": "アイテムの復元に失敗しました",
       "deleteError": "アイテムの削除に失敗しました",
       "relationshipLabel": "{personA} - {type} - {personB}",
-      "importantDateLabel": "{person}の{title}（{date}）"
+      "importantDateLabel": "{person}の{title}（{date}）",
+      "searchLabel": "削除した項目を検索",
+      "searchPlaceholder": "名前やタイトルで検索",
+      "removalIn": "{days, plural, other {あと#日}}で完全に削除されます",
+      "removalSoon": "1日以内に完全に削除されます",
+      "itemTypes": {
+        "people": "人物",
+        "groups": "グループ",
+        "relationships": "関係",
+        "relationshipTypes": "関係の種類",
+        "importantDates": "大切な日"
+      },
+      "selectAll": "すべて選択({count})",
+      "selectItem": "{name}を選択",
+      "selectedCount": "{count}件を選択中",
+      "restoreSelected": "選択した項目を復元",
+      "clearSelection": "選択を解除",
+      "restoredCount": "{count, plural, other {#件を復元しました}}",
+      "restoreSomeFailed": "{count, plural, other {#件を復元できませんでした}}",
+      "noMatches": "「{query}」に一致する項目はごみ箱にありません。",
+      "clearSearch": "検索をクリア",
+      "emptyTitle": "ごみ箱は空です",
+      "emptyDescription": "削除した項目は{days}日間ここに残るので、気が変わっても大丈夫です。",
+      "loadError": "ごみ箱を完全には読み込めませんでした。",
+      "retry": "もう一度試す"
     },
     "about": {
       "title": "概要",
@@ -1478,11 +1502,35 @@
       "similarity": "{score}%一致",
       "merge": "統合",
       "scanAll": "すべての連絡先をスキャン",
-      "duplicateGroups": "{count, plural, other {#件のグループ}}の重複候補が見つかりました",
       "notDuplicate": "重複ではない",
       "dismissed": "ペアを除外しました。今後表示されません。",
       "dismissError": "このペアの除外に失敗しました。",
-      "error": "重複の検索中にエラーが発生しました。"
+      "error": "重複の検索中にエラーが発生しました。",
+      "noDuplicatesDescription": "すべて整っています。インポート後や似た連絡先を追加したときに、新しい候補がここに表示されます。",
+      "openSuggestions": "{count, plural, other {未対応の候補が#件}}",
+      "confidenceHigh": "同一人物の可能性がとても高い",
+      "confidenceMedium": "おそらく同一人物",
+      "confidenceLow": "同一人物かもしれません",
+      "reasonLine": "理由: {reasons}",
+      "reason": {
+        "sameName": "名前が同じ",
+        "similarName": "名前が似ている",
+        "sameEmail": "メールアドレスが同じ",
+        "samePhone": "電話番号が同じ",
+        "sameBirthday": "誕生日が同じ",
+        "sameBirthdayDay": "誕生日の月日が同じ"
+      },
+      "quickMerge": "今すぐ統合",
+      "review": "確認",
+      "undo": "元に戻す",
+      "undoError": "元に戻せませんでした。",
+      "quickMergeTitle": "この連絡先を統合しますか?",
+      "quickMergeSwap": "代わりに{name}を残す",
+      "quickMergeDifferences": "違いのある項目(新しい値を選択済み)",
+      "quickMergeFrom": "{name}の値",
+      "quickMergeReview": "すべての項目を確認",
+      "quickMergeConfirm": "今すぐ統合",
+      "hint": "{count, plural, other {確認する重複候補が#件}}"
     },
     "merge": {
       "title": "連絡先の統合",
@@ -1490,7 +1538,6 @@
       "primary": "メイン（保持）",
       "secondary": "統合される側",
       "conflictingFields": "以下のフィールドに異なる値があります。どちらを残すか選択してください：",
-      "multiValueNote": "{count}件の{field}が統合されます",
       "phones": "電話番号",
       "emails": "メールアドレス",
       "addresses": "住所",
@@ -1508,9 +1555,6 @@
       "success": "連絡先の統合が完了しました",
       "error": "連絡先の統合に失敗しました",
       "summary": "概要",
-      "willTransfer": "メインの連絡先に移行されます：",
-      "willCombine": "統合されます：",
-      "willDelete": "統合後、サブの連絡先は削除されます。",
       "noConflicts": "競合するフィールドはありません。メインの連絡先の値が保持されます。",
       "keepValue": "この値を保持",
       "fieldName": "名前",
@@ -1537,7 +1581,17 @@
       "missingParams": "連絡先のパラメータが不足しています。統合する2つの連絡先を選択してください。",
       "mergeWith": "統合...",
       "mergeWithDescription": "{name}と統合する連絡先を検索してください。",
-      "searchPerson": "連絡先を検索..."
+      "searchPerson": "連絡先を検索...",
+      "preselectedHint": "新しい方の値が選択されています。もう一方を使うには値をタップしてください。",
+      "unchangedFields": "{count, plural, other {#件の項目は同じか、片方にしか入力がありません}}",
+      "summaryKeep": "{name}が残ります。",
+      "summaryChosen": "{count, plural, other {#件の値}}が{name}から引き継がれます。",
+      "summaryAdopted": "{count, plural, other {空の項目#件}}が{name}の情報で補われます。",
+      "summaryAdded": "{field}を{count}件追加",
+      "summaryGroups": "{count, plural, other {グループへの所属#件}}を追加します。",
+      "summaryRelationships": "{name}の{count, plural, other {関係#件}}が{primary}に移ります。重複は取り除かれます。",
+      "summaryJournal": "{name}が登場する日記は、{primary}を指すようになります。",
+      "summaryRemove": "統合後、{name}は削除されます。統合は元に戻せません。"
     },
     "photo": {
       "cropTitle": "写真を切り抜き",
@@ -1559,7 +1613,14 @@
       "dropzoneActive": "ここに画像をドロップ",
       "close": "閉じる"
     },
-    "viewPhoto": "写真を表示"
+    "viewPhoto": "写真を表示",
+    "undoDelete": {
+      "deleted": "{name}をごみ箱に移動しました",
+      "deletedMany": "{count}人をごみ箱に移動しました",
+      "undo": "元に戻す",
+      "restored": "{count, plural, other {#人を復元しました}}",
+      "restoreFailed": "復元できませんでした。設定のごみ箱から行えます。"
+    }
   },
   "groups": {
     "title": "グループ",

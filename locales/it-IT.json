@@ -774,10 +774,9 @@
         "groups": "Gruppi",
         "relationships": "Relazioni",
         "relationshipTypes": "Tipi di relazione",
-        "importantDates": "Date importanti"
+        "importantDates": "Date importanti",
+        "all": "Tutti"
       },
-      "daysRemaining": "{days} giorni rimanenti",
-      "lessThanOneDay": "Meno di 1 giorno rimanente",
       "empty": "Nessun elemento eliminato trovato per {type}.",
       "emptyTypes": {
         "people": "persone",
@@ -795,14 +794,39 @@
         "message": "Questo elemento sarà perso per sempre. Questa azione non può essere annullata.",
         "messagePerson": "Questa persona e tutti i suoi dati associati (relazioni, appartenenze ai gruppi, foto, campi personalizzati) verranno eliminati definitivamente. Questa azione non può essere annullata.",
         "confirm": "Elimina definitivamente",
-        "cancel": "Annulla"
+        "cancel": "Annulla",
+        "understand": "So che non si può annullare"
       },
       "restoreSuccess": "Elemento ripristinato con successo",
       "deleteSuccess": "Elemento eliminato definitivamente",
       "restoreError": "Impossibile ripristinare l'elemento",
       "deleteError": "Impossibile eliminare l'elemento",
       "relationshipLabel": "{personA} - {type} - {personB}",
-      "importantDateLabel": "{title} ({date}) per {person}"
+      "importantDateLabel": "{title} ({date}) per {person}",
+      "searchLabel": "Cerca negli elementi eliminati",
+      "searchPlaceholder": "Cerca per nome o titolo",
+      "removalIn": "Eliminazione definitiva tra {days, plural, one {# giorno} other {# giorni}}",
+      "removalSoon": "Eliminazione definitiva entro un giorno",
+      "itemTypes": {
+        "people": "Persona",
+        "groups": "Gruppo",
+        "relationships": "Relazione",
+        "relationshipTypes": "Tipo di relazione",
+        "importantDates": "Data importante"
+      },
+      "selectAll": "Seleziona tutto ({count})",
+      "selectItem": "Seleziona {name}",
+      "selectedCount": "{count} selezionati",
+      "restoreSelected": "Ripristina selezionati",
+      "clearSelection": "Annulla selezione",
+      "restoredCount": "{count, plural, one {# elemento ripristinato} other {# elementi ripristinati}}",
+      "restoreSomeFailed": "{count, plural, one {# elemento non è stato ripristinato} other {# elementi non sono stati ripristinati}}",
+      "noMatches": "Nel cestino nulla corrisponde a \"{query}\".",
+      "clearSearch": "Cancella ricerca",
+      "emptyTitle": "Il cestino è vuoto",
+      "emptyDescription": "Ciò che elimini resta qui per {days} giorni, così puoi ripensarci.",
+      "loadError": "Non è stato possibile caricare tutto il cestino.",
+      "retry": "Riprova"
     },
     "about": {
       "title": "Informazioni",
@@ -1478,11 +1502,35 @@
       "similarity": "{score}% corrispondenza",
       "merge": "Unisci",
       "scanAll": "Scansiona tutti i contatti",
-      "duplicateGroups": "{count, plural, one {# gruppo} other {# gruppi}} di potenziali duplicati trovati",
       "notDuplicate": "Non sono duplicati",
       "dismissed": "Coppia ignorata. Non apparirà più.",
       "dismissError": "Ignoramento coppia fallito.",
-      "error": "Si è verificato un errore durante la ricerca di duplicati."
+      "error": "Si è verificato un errore durante la ricerca di duplicati.",
+      "noDuplicatesDescription": "Tutto in ordine. Nuovi suggerimenti compaiono qui dopo le importazioni o quando aggiungi contatti simili.",
+      "openSuggestions": "{count, plural, one {# suggerimento aperto} other {# suggerimenti aperti}}",
+      "confidenceHigh": "Molto probabilmente la stessa persona",
+      "confidenceMedium": "Probabilmente la stessa persona",
+      "confidenceLow": "Forse la stessa persona",
+      "reasonLine": "Motivo: {reasons}",
+      "reason": {
+        "sameName": "stesso nome",
+        "similarName": "nome simile",
+        "sameEmail": "stesso indirizzo e-mail",
+        "samePhone": "stesso numero di telefono",
+        "sameBirthday": "stesso compleanno",
+        "sameBirthdayDay": "compleanno nello stesso giorno"
+      },
+      "quickMerge": "Unisci ora",
+      "review": "Controlla",
+      "undo": "Annulla",
+      "undoError": "Impossibile annullare.",
+      "quickMergeTitle": "Unire questi contatti?",
+      "quickMergeSwap": "Mantieni invece {name}",
+      "quickMergeDifferences": "Dove differiscono (valore più recente preselezionato)",
+      "quickMergeFrom": "da {name}",
+      "quickMergeReview": "Controlla ogni campo",
+      "quickMergeConfirm": "Unisci ora",
+      "hint": "{count, plural, one {# possibile duplicato da controllare} other {# possibili duplicati da controllare}}"
     },
     "merge": {
       "title": "Unisci contatti",
@@ -1490,7 +1538,6 @@
       "primary": "Primario (mantiene)",
       "secondary": "Verrà unito in",
       "conflictingFields": "Questi campi hanno valori diversi. Scegli quali mantenere:",
-      "multiValueNote": "{count} {field} verranno combinati",
       "phones": "telefoni",
       "emails": "email",
       "addresses": "indirizzi",
@@ -1508,9 +1555,6 @@
       "success": "Contatti uniti con successo",
       "error": "Unione contatti fallita",
       "summary": "Riepilogo",
-      "willTransfer": "Verrà trasferito al contatto primario:",
-      "willCombine": "Verrà combinato:",
-      "willDelete": "Il contatto secondario verrà eliminato dopo l'unione.",
       "noConflicts": "Nessun campo in conflitto. Verranno mantenuti i valori del contatto primario.",
       "keepValue": "Mantieni questo valore",
       "fieldName": "Nome",
@@ -1537,7 +1581,17 @@
       "missingParams": "Parametri contatto mancanti. Seleziona due contatti da unire.",
       "mergeWith": "Unisci con...",
       "mergeWithDescription": "Cerca una persona con cui unire {name}.",
-      "searchPerson": "Cerca una persona..."
+      "searchPerson": "Cerca una persona...",
+      "preselectedHint": "Il valore più recente è preselezionato. Tocca un valore per scegliere l'altro.",
+      "unchangedFields": "{count, plural, one {# campo è uguale o compilato una sola volta} other {# campi sono uguali o compilati una sola volta}}",
+      "summaryKeep": "{name} viene mantenuto.",
+      "summaryChosen": "{count, plural, one {# valore viene preso} other {# valori vengono presi}} da {name}.",
+      "summaryAdopted": "{count, plural, one {# campo vuoto viene completato} other {# campi vuoti vengono completati}} con i dati di {name}.",
+      "summaryAdded": "Aggiunti ({field}): {count}",
+      "summaryGroups": "{count, plural, one {# appartenenza a un gruppo aggiunta} other {# appartenenze a gruppi aggiunte}}.",
+      "summaryRelationships": "{count, plural, one {# relazione di {name} passa} other {# relazioni di {name} passano}} a {primary}. I duplicati vengono scartati.",
+      "summaryJournal": "Le voci del diario che menzionano {name} menzioneranno {primary}.",
+      "summaryRemove": "{name} viene rimosso dopo. Un'unione non può essere annullata."
     },
     "photo": {
       "cropTitle": "Ritaglia foto",
@@ -1559,7 +1613,14 @@
       "dropzoneActive": "Rilascia immagine qui",
       "close": "Chiudi"
     },
-    "viewPhoto": "Vedi foto"
+    "viewPhoto": "Vedi foto",
+    "undoDelete": {
+      "deleted": "{name} è stato spostato nel cestino",
+      "deletedMany": "{count} persone sono state spostate nel cestino",
+      "undo": "Annulla",
+      "restored": "{count, plural, one {Persona ripristinata} other {# persone ripristinate}}",
+      "restoreFailed": "Ripristino non riuscito. Puoi ancora farlo da Impostazioni, Cestino."
+    }
   },
   "groups": {
     "title": "Gruppi",

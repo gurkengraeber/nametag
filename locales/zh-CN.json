@@ -774,10 +774,9 @@
         "groups": "群组",
         "relationships": "关系",
         "relationshipTypes": "关系类型",
-        "importantDates": "重要日期"
+        "importantDates": "重要日期",
+        "all": "全部"
       },
-      "daysRemaining": "剩余 {days} 天",
-      "lessThanOneDay": "剩余不到 1 天",
       "empty": "未找到已删除的{type}。",
       "emptyTypes": {
         "people": "联系人",
@@ -795,14 +794,39 @@
         "message": "此项目将永久消失，此操作无法撤销。",
         "messagePerson": "此联系人及其所有关联数据（关系、群组成员身份、照片、自定义字段）都将被永久删除。此操作无法撤销。",
         "confirm": "永久删除",
-        "cancel": "取消"
+        "cancel": "取消",
+        "understand": "我明白此操作无法撤销"
       },
       "restoreSuccess": "项目已成功恢复",
       "deleteSuccess": "项目已永久删除",
       "restoreError": "恢复项目失败",
       "deleteError": "删除项目失败",
       "relationshipLabel": "{personA} - {type} - {personB}",
-      "importantDateLabel": "为{person}设置的{title}（{date}）"
+      "importantDateLabel": "为{person}设置的{title}（{date}）",
+      "searchLabel": "搜索已删除的项目",
+      "searchPlaceholder": "按姓名或标题搜索",
+      "removalIn": "将在 {days, plural, other {# 天}}后永久删除",
+      "removalSoon": "将在一天内永久删除",
+      "itemTypes": {
+        "people": "联系人",
+        "groups": "分组",
+        "relationships": "关系",
+        "relationshipTypes": "关系类型",
+        "importantDates": "重要日期"
+      },
+      "selectAll": "全选({count})",
+      "selectItem": "选择 {name}",
+      "selectedCount": "已选择 {count} 项",
+      "restoreSelected": "恢复所选项目",
+      "clearSelection": "取消选择",
+      "restoredCount": "{count, plural, other {已恢复 # 项}}",
+      "restoreSomeFailed": "{count, plural, other {# 项}}无法恢复",
+      "noMatches": "回收站中没有与“{query}”匹配的内容。",
+      "clearSearch": "清除搜索",
+      "emptyTitle": "回收站是空的",
+      "emptyDescription": "删除的内容会在这里保留 {days} 天,你还可以改变主意。",
+      "loadError": "回收站未能完整加载。",
+      "retry": "重试"
     },
     "about": {
       "title": "关于",
@@ -1478,11 +1502,35 @@
       "similarity": "{score}% 匹配",
       "merge": "合并",
       "scanAll": "扫描所有联系人",
-      "duplicateGroups": "{count, plural, one {# 个分组} other {# 个分组}}的潜在重复项已找到",
       "notDuplicate": "不是重复项",
       "dismissed": "已忽略此配对，不会再次显示。",
       "dismissError": "忽略此配对失败。",
-      "error": "搜索重复项时发生错误。"
+      "error": "搜索重复项时发生错误。",
+      "noDuplicatesDescription": "一切井然有序。导入之后或添加相似联系人时,新的建议会显示在这里。",
+      "openSuggestions": "{count, plural, other {# 条待处理建议}}",
+      "confidenceHigh": "极有可能是同一个人",
+      "confidenceMedium": "很可能是同一个人",
+      "confidenceLow": "可能是同一个人",
+      "reasonLine": "原因:{reasons}",
+      "reason": {
+        "sameName": "姓名相同",
+        "similarName": "姓名相似",
+        "sameEmail": "电子邮件地址相同",
+        "samePhone": "电话号码相同",
+        "sameBirthday": "生日相同",
+        "sameBirthdayDay": "生日在同一天"
+      },
+      "quickMerge": "立即合并",
+      "review": "查看",
+      "undo": "撤销",
+      "undoError": "无法撤销。",
+      "quickMergeTitle": "合并这些联系人?",
+      "quickMergeSwap": "改为保留 {name}",
+      "quickMergeDifferences": "不同之处(已预选较新的值)",
+      "quickMergeFrom": "来自 {name}",
+      "quickMergeReview": "逐项查看",
+      "quickMergeConfirm": "立即合并",
+      "hint": "{count, plural, other {# 个可能的重复项待查看}}"
     },
     "merge": {
       "title": "合并联系人",
@@ -1490,7 +1538,6 @@
       "primary": "主要(保留)",
       "secondary": "将被合并",
       "conflictingFields": "这些字段的值不同。选择要保留的：",
-      "multiValueNote": "{count} 个 {field} 将被合并",
       "phones": "电话",
       "emails": "邮箱",
       "addresses": "地址",
@@ -1508,9 +1555,6 @@
       "success": "联系人已成功合并",
       "error": "合并联系人失败",
       "summary": "摘要",
-      "willTransfer": "将转移到主要联系人：",
-      "willCombine": "将被合并：",
-      "willDelete": "合并后，辅助联系人将被删除。",
       "noConflicts": "没有冲突的字段。将保留主要联系人的值。",
       "keepValue": "保留此值",
       "fieldName": "名称",
@@ -1537,7 +1581,17 @@
       "missingParams": "缺少联系人参数。请选择两个要合并的联系人。",
       "mergeWith": "合并...",
       "mergeWithDescription": "搜索要与 {name} 合并的联系人。",
-      "searchPerson": "搜索联系人..."
+      "searchPerson": "搜索联系人...",
+      "preselectedHint": "已预选较新的值。点按某个值即可改选另一个。",
+      "unchangedFields": "{count, plural, other {# 个字段相同或只有一方填写}}",
+      "summaryKeep": "保留 {name}。",
+      "summaryChosen": "{count, plural, other {# 个值}}将取自 {name}。",
+      "summaryAdopted": "{count, plural, other {# 个空字段}}将用 {name} 的内容补全。",
+      "summaryAdded": "已添加 {count} 个{field}",
+      "summaryGroups": "已添加 {count, plural, other {# 个分组成员关系}}。",
+      "summaryRelationships": "{name} 的 {count, plural, other {# 条关系}}将转移到 {primary}。重复的会被舍弃。",
+      "summaryJournal": "提到 {name} 的日记条目将改为提到 {primary}。",
+      "summaryRemove": "合并后会移除 {name}。合并无法撤销。"
     },
     "photo": {
       "cropTitle": "裁剪照片",
@@ -1559,7 +1613,14 @@
       "dropzoneActive": "在此处放置图像",
       "close": "关闭"
     },
-    "viewPhoto": "查看照片"
+    "viewPhoto": "查看照片",
+    "undoDelete": {
+      "deleted": "{name} 已移入回收站",
+      "deletedMany": "{count} 位联系人已移入回收站",
+      "undo": "撤销",
+      "restored": "{count, plural, other {已恢复 # 位联系人}}",
+      "restoreFailed": "无法恢复。你仍可以在“设置”的“回收站”中恢复。"
+    }
   },
   "groups": {
     "title": "分组",

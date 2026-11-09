@@ -29,6 +29,7 @@ interface PersonCompareProps {
 }
 
 interface OptionCardProps {
+  personId: string;
   name: string;
   groupName: string;
   checked: boolean;
@@ -37,7 +38,7 @@ interface OptionCardProps {
 }
 
 /** One tappable value of a conflicting field. */
-function OptionCard({ name, groupName, checked, onSelect, children }: OptionCardProps) {
+function OptionCard({ personId, name, groupName, checked, onSelect, children }: OptionCardProps) {
   return (
     <label
       className={`flex items-start gap-3 p-3 min-h-11 rounded-lg border-2 cursor-pointer transition-colors ${
@@ -47,6 +48,7 @@ function OptionCard({ name, groupName, checked, onSelect, children }: OptionCard
       <input
         type="radio"
         name={groupName}
+        value={personId}
         checked={checked}
         onChange={onSelect}
         className="mt-1 accent-primary"
@@ -205,6 +207,7 @@ export default function PersonCompare({
                     ].map(({ person, value }) => (
                       <OptionCard
                         key={person.id}
+                        personId={person.id}
                         name={formatPersonLabel(person)}
                         groupName={`field-${field.key}`}
                         checked={selectedId === person.id}
@@ -233,6 +236,7 @@ export default function PersonCompare({
                     return (
                       <OptionCard
                         key={person.id}
+                        personId={person.id}
                         name={formatPersonLabel(person)}
                         groupName="field-relationshipToUser"
                         checked={checked}
