@@ -303,10 +303,18 @@ export interface JournalDraft {
   personIds: string[];
 }
 
-export const NEW_ENTRY_DRAFT_KEY = 'nametag:journal-draft:new';
+export const JOURNAL_DRAFT_PREFIX = 'nametag:journal-draft:';
 
-export function editEntryDraftKey(entryId: string): string {
-  return `nametag:journal-draft:edit:${entryId}`;
+/** Drafts older than this are dropped when they are next looked at. */
+export const DRAFT_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000;
+
+/** Drafts are keyed by account, so another account on the same browser never sees them. */
+export function newEntryDraftKey(userId: string): string {
+  return `${JOURNAL_DRAFT_PREFIX}${userId}:new`;
+}
+
+export function editEntryDraftKey(userId: string, entryId: string): string {
+  return `${JOURNAL_DRAFT_PREFIX}${userId}:edit:${entryId}`;
 }
 
 /** A draft with no text carries nothing worth restoring. */
@@ -314,12 +322,22 @@ export function isDraftEmpty(draft: JournalDraft): boolean {
   return draft.title.trim() === '' && draft.body.trim() === '';
 }
 
-export function parseDraft(raw: string | null): JournalDraft | null {
+/**
+ * Read a stored draft. Returns null for anything that is not a usable draft of
+ * this account: bad JSON, no owner or timestamp, another account, or too old.
+ */
+export function parseDraft(
+  raw: string | null,
+  userId: string,
+  now: number = Date.now(),
+): JournalDraft | null {
   if (!raw) return null;
   try {
     const value: unknown = JSON.parse(raw);
     if (typeof value !== 'object' || value === null) return null;
     const v = value as Record<string, unknown>;
+    if (typeof v.userId !== 'string' || v.userId !== userId) return null;
+    if (typeof v.savedAt !== 'number' || now - v.savedAt > DRAFT_MAX_AGE_MS) return null;
     if (typeof v.title !== 'string' || typeof v.body !== 'string') return null;
 
     const date = typeof v.date === 'string' ? parseDateParam(v.date) : null;
@@ -343,21 +361,30 @@ export function parseDraft(raw: string | null): JournalDraft | null {
 }
 
 /** Read a draft; storage can be missing or blocked, in which case there is none. */
-export function readDraft(key: string): JournalDraft | null {
+export function readDraft(key: string, userId: string, now: number = Date.now()): JournalDraft | null {
   try {
-    return parseDraft(window.localStorage.getItem(key));
+    const raw = window.localStorage.getItem(key);
+    const draft = parseDraft(raw, userId, now);
+    // An unusable entry (expired, foreign, damaged) is not worth keeping around.
+    if (raw && !draft) window.localStorage.removeItem(key);
+    return draft;
   } catch {
     return null;
   }
 }
 
 /** Store a draft, or drop it when it is empty. Returns whether storage worked. */
-export function writeDraft(key: string, draft: JournalDraft): boolean {
+export function writeDraft(
+  key: string,
+  userId: string,
+  draft: JournalDraft,
+  now: number = Date.now(),
+): boolean {
   try {
     if (isDraftEmpty(draft)) {
       window.localStorage.removeItem(key);
     } else {
-      window.localStorage.setItem(key, JSON.stringify(draft));
+      window.localStorage.setItem(key, JSON.stringify({ ...draft, userId, savedAt: now }));
     }
     return true;
   } catch {
@@ -370,5 +397,43 @@ export function clearDraft(key: string): void {
     window.localStorage.removeItem(key);
   } catch {
     // Storage unavailable: nothing to clear.
+  }
+}
+
+function journalDraftKeys(): string[] {
+  const keys: string[] = [];
+  for (let i = 0; i < window.localStorage.length; i++) {
+    const key = window.localStorage.key(i);
+    if (key && key.startsWith(JOURNAL_DRAFT_PREFIX)) keys.push(key);
+  }
+  return keys;
+}
+
+/** Remove every journal draft of every account. Call on sign out. */
+export function clearAllJournalDrafts(): void {
+  try {
+    journalDraftKeys().forEach((key) => window.localStorage.removeItem(key));
+  } catch {
+    // Storage unavailable: nothing was stored.
+  }
+}
+
+/** Remove drafts that have expired or cannot be read, whoever they belong to. */
+export function purgeStaleJournalDrafts(now: number = Date.now()): void {
+  try {
+    for (const key of journalDraftKeys()) {
+      let stale = true;
+      try {
+        const value: unknown = JSON.parse(window.localStorage.getItem(key) ?? '');
+        if (typeof value === 'object' && value !== null && 'savedAt' in value) {
+          stale = typeof value.savedAt !== 'number' || now - value.savedAt > DRAFT_MAX_AGE_MS;
+        }
+      } catch {
+        stale = true;
+      }
+      if (stale) window.localStorage.removeItem(key);
+    }
+  } catch {
+    // Storage unavailable: nothing to purge.
   }
 }

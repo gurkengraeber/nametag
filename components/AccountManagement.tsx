@@ -3,6 +3,7 @@
 import { useState, useRef, ChangeEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { signOut } from 'next-auth/react';
+import { clearAllJournalDrafts } from '@/lib/journal';
 import GroupsSelector from './GroupsSelector';
 import { Button } from './ui/Button';
 import { useTranslations } from 'next-intl';
@@ -411,6 +412,7 @@ export default function AccountManagement({ groups, peopleCount }: AccountManage
       }
 
       // Sign out and redirect to login
+      clearAllJournalDrafts();
       await signOut({ redirect: true, callbackUrl: '/login' });
     } catch {
       setDeleteError(t('deleteFailed'));

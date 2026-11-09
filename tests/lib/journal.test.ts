@@ -17,7 +17,11 @@ import {
   clearDraft,
   isDraftEmpty,
   editEntryDraftKey,
-  NEW_ENTRY_DRAFT_KEY,
+  newEntryDraftKey,
+  clearAllJournalDrafts,
+  purgeStaleJournalDrafts,
+  DRAFT_MAX_AGE_MS,
+  JOURNAL_DRAFT_PREFIX,
   type JournalDraft,
 } from '../../lib/journal';
 
@@ -217,6 +221,9 @@ describe('recentPersonIds', () => {
   });
 });
 
+const USER = 'user-1';
+const NOW = 1_800_000_000_000;
+
 describe('draft parsing', () => {
   const draft: JournalDraft = {
     title: '',
@@ -226,21 +233,38 @@ describe('draft parsing', () => {
     hasTime: true,
     personIds: ['p1'],
   };
+  const stored = (extra: Record<string, unknown> = {}) =>
+    JSON.stringify({ ...draft, userId: USER, savedAt: NOW, ...extra });
 
   it('round trips a draft', () => {
-    expect(parseDraft(JSON.stringify(draft))).toEqual(draft);
+    expect(parseDraft(stored(), USER, NOW)).toEqual(draft);
+  });
+
+  it('ignores a draft that belongs to another account', () => {
+    expect(parseDraft(stored({ userId: 'user-2' }), USER, NOW)).toBeNull();
+  });
+
+  it('ignores drafts without an owner or a timestamp', () => {
+    expect(parseDraft(JSON.stringify(draft), USER, NOW)).toBeNull();
+    expect(parseDraft(stored({ savedAt: 'yesterday' }), USER, NOW)).toBeNull();
+  });
+
+  it('drops drafts older than seven days but keeps younger ones', () => {
+    expect(DRAFT_MAX_AGE_MS).toBe(7 * 24 * 60 * 60 * 1000);
+    expect(parseDraft(stored(), USER, NOW + DRAFT_MAX_AGE_MS)).toEqual(draft);
+    expect(parseDraft(stored(), USER, NOW + DRAFT_MAX_AGE_MS + 1)).toBeNull();
   });
 
   it('rejects garbage, empty drafts and wrong shapes', () => {
-    expect(parseDraft(null)).toBeNull();
-    expect(parseDraft('not json')).toBeNull();
-    expect(parseDraft('[]')).toBeNull();
-    expect(parseDraft(JSON.stringify({ title: 1, body: 'x' }))).toBeNull();
-    expect(parseDraft(JSON.stringify({ ...draft, title: ' ', body: '  ' }))).toBeNull();
+    expect(parseDraft(null, USER, NOW)).toBeNull();
+    expect(parseDraft('not json', USER, NOW)).toBeNull();
+    expect(parseDraft('[]', USER, NOW)).toBeNull();
+    expect(parseDraft(stored({ title: 1 }), USER, NOW)).toBeNull();
+    expect(parseDraft(stored({ title: ' ', body: '  ' }), USER, NOW)).toBeNull();
   });
 
   it('drops invalid optional fields instead of failing', () => {
-    const parsed = parseDraft(JSON.stringify({ ...draft, date: '2026-99-99', time: 'late', personIds: ['a', 3] }));
+    const parsed = parseDraft(stored({ date: '2026-99-99', time: 'late', personIds: ['a', 3] }), USER, NOW);
     expect(parsed).toMatchObject({ date: null, time: null, hasTime: false, personIds: ['a'] });
   });
 
@@ -268,25 +292,68 @@ describe('draft storage', () => {
     vi.restoreAllMocks();
   });
 
+  it('puts the account id into every key', () => {
+    expect(newEntryDraftKey('user-1')).toContain('user-1');
+    expect(editEntryDraftKey('user-1', 'e1')).toContain('user-1');
+    expect(newEntryDraftKey('user-1')).not.toBe(newEntryDraftKey('user-2'));
+    expect(editEntryDraftKey('user-1', 'e1')).not.toBe(editEntryDraftKey('user-1', 'e2'));
+    expect(editEntryDraftKey('user-1', 'e1')).not.toBe(newEntryDraftKey('user-1'));
+    expect(newEntryDraftKey('user-1').startsWith(JOURNAL_DRAFT_PREFIX)).toBe(true);
+  });
+
   it('stores, reads and clears a draft', () => {
-    expect(writeDraft(NEW_ENTRY_DRAFT_KEY, draft)).toBe(true);
-    expect(readDraft(NEW_ENTRY_DRAFT_KEY)).toEqual(draft);
-    clearDraft(NEW_ENTRY_DRAFT_KEY);
-    expect(readDraft(NEW_ENTRY_DRAFT_KEY)).toBeNull();
+    const key = newEntryDraftKey(USER);
+    expect(writeDraft(key, USER, draft, NOW)).toBe(true);
+    expect(readDraft(key, USER, NOW)).toEqual(draft);
+    clearDraft(key);
+    expect(readDraft(key, USER, NOW)).toBeNull();
+  });
+
+  it('does not hand a draft to another account, even under the same key', () => {
+    const key = newEntryDraftKey(USER);
+    writeDraft(key, USER, draft, NOW);
+    expect(readDraft(key, 'user-2', NOW)).toBeNull();
+    // The foreign entry is removed rather than left lying around.
+    expect(window.localStorage.getItem(key)).toBeNull();
+  });
+
+  it('discards and removes an expired draft when it is read', () => {
+    const key = newEntryDraftKey(USER);
+    writeDraft(key, USER, draft, NOW);
+    expect(readDraft(key, USER, NOW + DRAFT_MAX_AGE_MS + 1)).toBeNull();
+    expect(window.localStorage.getItem(key)).toBeNull();
   });
 
   it('removes the stored draft when the text is emptied', () => {
-    writeDraft(NEW_ENTRY_DRAFT_KEY, draft);
-    writeDraft(NEW_ENTRY_DRAFT_KEY, { ...draft, title: '', body: '' });
-    expect(window.localStorage.getItem(NEW_ENTRY_DRAFT_KEY)).toBeNull();
+    const key = newEntryDraftKey(USER);
+    writeDraft(key, USER, draft, NOW);
+    writeDraft(key, USER, { ...draft, title: '', body: '' }, NOW);
+    expect(window.localStorage.getItem(key)).toBeNull();
   });
 
-  it('keeps edit drafts apart per entry', () => {
-    expect(editEntryDraftKey('e1')).not.toBe(editEntryDraftKey('e2'));
-    expect(editEntryDraftKey('e1')).not.toBe(NEW_ENTRY_DRAFT_KEY);
+  it('clears all journal drafts of every account and nothing else', () => {
+    writeDraft(newEntryDraftKey('user-1'), 'user-1', draft, NOW);
+    writeDraft(editEntryDraftKey('user-2', 'e1'), 'user-2', draft, NOW);
+    window.localStorage.setItem('theme', 'dark');
+    clearAllJournalDrafts();
+    expect(window.localStorage.length).toBe(1);
+    expect(window.localStorage.getItem('theme')).toBe('dark');
+  });
+
+  it('purges expired and unreadable drafts but keeps fresh ones', () => {
+    const fresh = newEntryDraftKey('user-1');
+    const old = newEntryDraftKey('user-2');
+    writeDraft(fresh, 'user-1', draft, NOW);
+    writeDraft(old, 'user-2', draft, NOW - DRAFT_MAX_AGE_MS - 1);
+    window.localStorage.setItem(`${JOURNAL_DRAFT_PREFIX}user-3:new`, 'garbage');
+    purgeStaleJournalDrafts(NOW);
+    expect(window.localStorage.getItem(fresh)).not.toBeNull();
+    expect(window.localStorage.getItem(old)).toBeNull();
+    expect(window.localStorage.getItem(`${JOURNAL_DRAFT_PREFIX}user-3:new`)).toBeNull();
   });
 
   it('does not throw when storage is blocked', () => {
+    const key = newEntryDraftKey(USER);
     vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
       throw new Error('blocked');
     });
@@ -296,8 +363,13 @@ describe('draft storage', () => {
     vi.spyOn(Storage.prototype, 'removeItem').mockImplementation(() => {
       throw new Error('blocked');
     });
-    expect(readDraft(NEW_ENTRY_DRAFT_KEY)).toBeNull();
-    expect(writeDraft(NEW_ENTRY_DRAFT_KEY, draft)).toBe(false);
-    expect(() => clearDraft(NEW_ENTRY_DRAFT_KEY)).not.toThrow();
+    vi.spyOn(Storage.prototype, 'key').mockImplementation(() => {
+      throw new Error('blocked');
+    });
+    expect(readDraft(key, USER)).toBeNull();
+    expect(writeDraft(key, USER, draft)).toBe(false);
+    expect(() => clearDraft(key)).not.toThrow();
+    expect(() => clearAllJournalDrafts()).not.toThrow();
+    expect(() => purgeStaleJournalDrafts()).not.toThrow();
   });
 });
