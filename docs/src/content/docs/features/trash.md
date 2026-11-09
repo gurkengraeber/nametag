@@ -17,13 +17,15 @@ Trashed items stay recoverable for 30 days from the moment they're deleted. Duri
 
 ## Viewing and restoring trash
 
-Go to **Settings > Trash** to see all deleted items. Items are organized by type using tabs: People, Groups, Relationships, Relationship Types, and Important Dates. Each tab shows a count of deleted items.
+Go to **Settings > Trash** to see all deleted items. The **All** tab lists everything, most recently deleted first; the other tabs filter by type: People, Groups, Relationships, Relationship Types, and Important Dates. Each tab shows a count, and the search field filters the list by name or title, ignoring case and accents.
 
-For each item, you can see how many days remain before it's automatically purged. Click **Restore** to bring it back into your active data.
+Every item says when it will be removed for good, for example "Permanently deleted in 12 days". Items with a week or less left are highlighted. Click **Restore** to bring an item back into your active data.
+
+To restore several items at once, tick them (or use **Select all**) and choose **Restore selected**.
 
 ## Permanent delete
 
-If you don't want to wait 30 days, you can permanently delete individual items from the Trash page. Click **Delete permanently** on any item and confirm the action. This is irreversible.
+If you don't want to wait 30 days, you can permanently delete individual items from the Trash page. Click **Delete permanently** on any item, tick "I understand this cannot be undone" and confirm. This is irreversible.
 
 When a person is permanently deleted, their associated data goes with them: relationships, group memberships, custom field values, and photos.
 

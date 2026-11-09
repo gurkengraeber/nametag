@@ -798,10 +798,9 @@
         "groups": "Groupes",
         "relationships": "Relations",
         "relationshipTypes": "Types de relation",
-        "importantDates": "Dates importantes"
+        "importantDates": "Dates importantes",
+        "all": "Tout"
       },
-      "daysRemaining": "{days} jours restants",
-      "lessThanOneDay": "Moins d'1 jour restant",
       "empty": "Aucun élément de type \"{type}\" supprimé.",
       "emptyTypes": {
         "people": "personne",
@@ -819,14 +818,39 @@
         "message": "Cet élément sera perdu pour toujours. Cette action est irréversible.",
         "messagePerson": "Cette personne et toutes les données associées (relations, appartenances aux groupes, photos, champs personnalisés) seront définitivement supprimées. Cette action est irréversible.",
         "confirm": "Supprimer définitivement",
-        "cancel": "Annuler"
+        "cancel": "Annuler",
+        "understand": "Je comprends que cette action est irréversible"
       },
       "restoreSuccess": "Élément restauré",
       "deleteSuccess": "Élément supprimé définitivement",
       "restoreError": "Échec de la restauration de l'élément",
       "deleteError": "Échec de la suppression de l'élément",
       "relationshipLabel": "{personA} - {type} - {personB}",
-      "importantDateLabel": "{title} ({date}) pour {person}"
+      "importantDateLabel": "{title} ({date}) pour {person}",
+      "searchLabel": "Rechercher dans les éléments supprimés",
+      "searchPlaceholder": "Rechercher par nom ou titre",
+      "removalIn": "Suppression définitive dans {days, plural, one {# jour} other {# jours}}",
+      "removalSoon": "Suppression définitive dans moins d'un jour",
+      "itemTypes": {
+        "people": "Personne",
+        "groups": "Groupe",
+        "relationships": "Relation",
+        "relationshipTypes": "Type de relation",
+        "importantDates": "Date importante"
+      },
+      "selectAll": "Tout sélectionner ({count})",
+      "selectItem": "Sélectionner {name}",
+      "selectedCount": "{count} sélectionné(s)",
+      "restoreSelected": "Restaurer la sélection",
+      "clearSelection": "Effacer la sélection",
+      "restoredCount": "{count, plural, one {# élément restauré} other {# éléments restaurés}}",
+      "restoreSomeFailed": "{count, plural, one {# élément n'a pas pu être restauré} other {# éléments n'ont pas pu être restaurés}}",
+      "noMatches": "Rien dans la corbeille ne correspond à \"{query}\".",
+      "clearSearch": "Effacer la recherche",
+      "emptyTitle": "La corbeille est vide",
+      "emptyDescription": "Ce que vous supprimez reste ici {days} jours, au cas où vous changeriez d'avis.",
+      "loadError": "La corbeille n'a pas pu être chargée entièrement.",
+      "retry": "Réessayer"
     },
     "about": {
       "title": "À propos",
@@ -1630,11 +1654,35 @@
       "similarity": "{score} % de correspondance",
       "merge": "Fusionner",
       "scanAll": "Analyser tous les contacts",
-      "duplicateGroups": "{count, plural, one {# groupe} other {# groupes}} de doublons potentiels trouvés",
       "notDuplicate": "Pas des doublons",
       "dismissed": "Paire ignorée. Elle n'apparaîtra plus.",
       "dismissError": "Échec de l'exclusion de cette paire.",
-      "error": "Une erreur est survenue pendant la recherche de doublons."
+      "error": "Une erreur est survenue pendant la recherche de doublons.",
+      "noDuplicatesDescription": "Tout est en ordre. De nouvelles suggestions apparaîtront ici après des imports ou quand vous ajouterez des contacts similaires.",
+      "openSuggestions": "{count, plural, one {# suggestion en attente} other {# suggestions en attente}}",
+      "confidenceHigh": "Très probablement la même personne",
+      "confidenceMedium": "Probablement la même personne",
+      "confidenceLow": "Peut-être la même personne",
+      "reasonLine": "Raison : {reasons}",
+      "reason": {
+        "sameName": "même nom",
+        "similarName": "nom similaire",
+        "sameEmail": "même adresse e-mail",
+        "samePhone": "même numéro de téléphone",
+        "sameBirthday": "même date de naissance",
+        "sameBirthdayDay": "anniversaire le même jour"
+      },
+      "quickMerge": "Fusionner maintenant",
+      "review": "Examiner",
+      "undo": "Annuler",
+      "undoError": "Impossible d'annuler.",
+      "quickMergeTitle": "Fusionner ces contacts ?",
+      "quickMergeSwap": "Garder {name} à la place",
+      "quickMergeDifferences": "Où ils diffèrent (valeur la plus récente présélectionnée)",
+      "quickMergeFrom": "de {name}",
+      "quickMergeReview": "Examiner chaque champ",
+      "quickMergeConfirm": "Fusionner maintenant",
+      "hint": "{count, plural, one {# doublon possible à examiner} other {# doublons possibles à examiner}}"
     },
     "merge": {
       "title": "Fusionner les contacts",
@@ -1642,7 +1690,6 @@
       "primary": "Principal (conservé)",
       "secondary": "Sera fusionné",
       "conflictingFields": "Ces champs ont des valeurs différentes. Choisissez celles à conserver :",
-      "multiValueNote": "{count} {field} seront regroupés",
       "phones": "téléphones",
       "emails": "e-mails",
       "addresses": "adresses",
@@ -1660,9 +1707,6 @@
       "success": "Contacts fusionnés",
       "error": "Échec de la fusion des contacts",
       "summary": "Récapitulatif",
-      "willTransfer": "Sera transféré vers le contact principal :",
-      "willCombine": "Sera combiné :",
-      "willDelete": "Le contact secondaire sera supprimé après la fusion.",
       "noConflicts": "Aucun champ en conflit. Les valeurs du contact principal seront conservées.",
       "keepValue": "Conserver cette valeur",
       "fieldName": "Prénom",
@@ -1689,7 +1733,17 @@
       "missingParams": "Paramètres de contact manquants. Sélectionnez deux contacts à fusionner.",
       "mergeWith": "Fusionner avec...",
       "mergeWithDescription": "Recherchez une personne à fusionner avec {name}.",
-      "searchPerson": "Rechercher une personne..."
+      "searchPerson": "Rechercher une personne...",
+      "preselectedHint": "La valeur la plus récente est présélectionnée. Touchez une valeur pour choisir l'autre.",
+      "unchangedFields": "{count, plural, one {# champ est identique ou renseigné une seule fois} other {# champs sont identiques ou renseignés une seule fois}}",
+      "summaryKeep": "{name} est conservé.",
+      "summaryChosen": "{count, plural, one {# valeur est reprise} other {# valeurs sont reprises}} de {name}.",
+      "summaryAdopted": "{count, plural, one {# champ vide est complété} other {# champs vides sont complétés}} avec les données de {name}.",
+      "summaryAdded": "Ajouts ({field}) : {count}",
+      "summaryGroups": "{count, plural, one {# appartenance à un groupe ajoutée} other {# appartenances à des groupes ajoutées}}.",
+      "summaryRelationships": "{count, plural, one {# relation de {name} passe} other {# relations de {name} passent}} à {primary}. Les doublons sont ignorés.",
+      "summaryJournal": "Les entrées du journal qui mentionnent {name} mentionneront {primary}.",
+      "summaryRemove": "{name} est supprimé ensuite. Une fusion ne peut pas être annulée."
     },
     "photo": {
       "cropTitle": "Recadrer la photo",
@@ -1717,6 +1771,13 @@
       "cityPlaceholder": "Ville",
       "countryPlaceholder": "Pays",
       "saveError": "Impossible d'enregistrer la modification"
+    },
+    "undoDelete": {
+      "deleted": "{name} a été placé dans la corbeille",
+      "deletedMany": "{count} personnes ont été placées dans la corbeille",
+      "undo": "Annuler",
+      "restored": "{count, plural, one {Personne restaurée} other {# personnes restaurées}}",
+      "restoreFailed": "Restauration impossible. Vous pouvez encore le faire dans Paramètres, Corbeille."
     }
   },
   "groups": {

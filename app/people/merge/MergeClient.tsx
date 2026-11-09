@@ -5,52 +5,18 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { toast } from 'sonner';
-import PersonCompare, {
-  MergeSelections,
-  PersonForCompare,
-} from '@/components/PersonCompare';
-
-interface ApiRelationshipToUser {
-  id: string;
-  name: string;
-  label: string;
-  color: string | null;
-}
-
-interface ApiRelationshipFrom {
-  id: string;
-  relatedPerson: { id: string; name: string };
-}
-
-interface ApiPersonResponse {
-  person: Omit<PersonForCompare, 'relationshipToUser' | 'relationshipsFrom' | 'relationshipsTo'> & {
-    relationshipToUser: ApiRelationshipToUser | null;
-    relationshipsFrom?: ApiRelationshipFrom[];
-    relationshipsTo?: Array<{ id: string }>;
-  };
-}
-
-function mapApiPersonToCompare(
-  apiPerson: ApiPersonResponse['person']
-): PersonForCompare {
-  return {
-    ...apiPerson,
-    relationshipToUser: apiPerson.relationshipToUser
-      ? {
-          id: apiPerson.relationshipToUser.id,
-          name: apiPerson.relationshipToUser.label,
-        }
-      : null,
-    relationshipsFrom: apiPerson.relationshipsFrom?.map((r) => ({ id: r.id })),
-    relationshipsTo: apiPerson.relationshipsTo,
-  };
-}
+import { Button } from '@/components/ui/Button';
+import PersonCompare from '@/components/PersonCompare';
+import { useSearchIndex } from '@/components/SearchIndexProvider';
+import type { MergeSelections, PersonForCompare } from '@/lib/merge-compare';
+import { fetchPersonForCompare, requestMerge } from '@/lib/merge-client';
 
 function MergePageContent() {
   const t = useTranslations('people.merge');
   const tCommon = useTranslations('common');
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { refreshIndex } = useSearchIndex();
 
   const primaryParam = searchParams.get('primary');
   const secondaryParam = searchParams.get('secondary');
@@ -71,22 +37,19 @@ function MergePageContent() {
 
     async function fetchPeople() {
       try {
-        const [resA, resB] = await Promise.all([
-          fetch(`/api/people/${primaryParam}`),
-          fetch(`/api/people/${secondaryParam}`),
+        const [loadedA, loadedB] = await Promise.all([
+          fetchPersonForCompare(primaryParam as string),
+          fetchPersonForCompare(secondaryParam as string),
         ]);
 
-        if (!resA.ok || !resB.ok) {
+        if (!loadedA || !loadedB) {
           setError(t('personNotFound'));
           setLoading(false);
           return;
         }
 
-        const dataA: ApiPersonResponse = await resA.json();
-        const dataB: ApiPersonResponse = await resB.json();
-
-        setPersonA(mapApiPersonToCompare(dataA.person));
-        setPersonB(mapApiPersonToCompare(dataB.person));
+        setPersonA(loadedA);
+        setPersonB(loadedB);
       } catch {
         setError(t('error'));
       } finally {
@@ -108,37 +71,18 @@ function MergePageContent() {
     if (!selections || !personA || !personB) return;
 
     setMerging(true);
-    try {
-      const secondaryId =
-        selections.primaryId === personA.id ? personB.id : personA.id;
+    const secondaryId = selections.primaryId === personA.id ? personB.id : personA.id;
+    const result = await requestMerge(selections.primaryId, secondaryId, selections.fieldOverrides);
+    setMerging(false);
 
-      const res = await fetch('/api/people/merge', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          primaryId: selections.primaryId,
-          secondaryId,
-          fieldOverrides:
-            Object.keys(selections.fieldOverrides).length > 0
-              ? selections.fieldOverrides
-              : undefined,
-        }),
-      });
-
-      if (!res.ok) {
-        const data: { error?: string } = await res.json();
-        throw new Error(data.error || t('error'));
-      }
-
-      toast.success(t('success'));
-      router.push(`/people/${selections.primaryId}`);
-    } catch (err) {
-      const message =
-        err instanceof Error ? err.message : t('error');
-      toast.error(message);
-    } finally {
-      setMerging(false);
+    if (!result.ok) {
+      toast.error(result.error ?? t('error'));
+      return;
     }
+
+    toast.success(t('success'));
+    refreshIndex();
+    router.push(`/people/${selections.primaryId}`);
   };
 
   return (
@@ -175,20 +119,13 @@ function MergePageContent() {
               onSelectionsChange={handleSelectionsChange}
             />
 
-            <div className="mt-6 flex justify-end space-x-3">
-              <Link
-                href="/people"
-                className="px-4 py-2 border border-border text-foreground rounded-lg font-semibold hover:bg-surface transition-colors"
-              >
+            <div className="mt-6 flex flex-col-reverse sm:flex-row sm:justify-end gap-3">
+              <Button href="/people" variant="secondary">
                 {t('cancel')}
-              </Link>
-              <button
-                onClick={handleMerge}
-                disabled={merging}
-                className="px-4 py-2 bg-primary text-on-primary rounded-lg font-semibold hover:bg-primary-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
+              </Button>
+              <Button onClick={handleMerge} disabled={merging || !selections}>
                 {merging ? t('merging') : t('confirmMerge')}
-              </button>
+              </Button>
             </div>
           </>
         )}

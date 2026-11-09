@@ -18,9 +18,30 @@ export interface DuplicateCandidate {
   similarity: number;
 }
 
+/** Why two contacts were flagged as possible duplicates. */
+export type DuplicateReason =
+  | 'sameName'
+  | 'similarName'
+  | 'sameEmail'
+  | 'samePhone'
+  | 'sameBirthday'
+  | 'sameBirthdayDay';
+
+/** How sure the detection is about a pair, derived from score and signals. */
+export type DuplicateConfidence = 'high' | 'medium' | 'low';
+
+export interface DuplicatePair {
+  personAId: string;
+  personBId: string;
+  similarity: number;
+  reasons: DuplicateReason[];
+}
+
 export interface DuplicateGroup {
   people: Array<{ id: string; name: string; surname: string | null }>;
   similarity: number;
+  /** Flagged pairs inside the group, most similar first. */
+  pairs: DuplicatePair[];
 }
 
 export interface PersonForComparison {
@@ -190,6 +211,50 @@ function birthdaySignal(a: PersonForComparison, b: PersonForComparison): { compa
   // Only treat birthday as comparable when there is at least a partial match
   // (same month and day). Completely different dates provide no useful signal.
   return { comparable: best > 0, score: best };
+}
+
+/**
+ * Explain which signals make two contacts look alike, strongest first.
+ * Used by the duplicates page to show a human-readable reason per pair.
+ */
+export function getDuplicateReasons(a: PersonForComparison, b: PersonForComparison): DuplicateReason[] {
+  const reasons: DuplicateReason[] = [];
+
+  const fullA = normalizePart([a.name, a.surname].filter(Boolean).join(' '));
+  const fullB = normalizePart([b.name, b.surname].filter(Boolean).join(' '));
+  if (fullA !== '' && fullA === fullB) {
+    reasons.push('sameName');
+  } else if (nameSimilarity(a, b) >= SIMILARITY_THRESHOLD) {
+    reasons.push('similarName');
+  }
+
+  if (emailSignal(a, b).exactMatch) reasons.push('sameEmail');
+  if (phoneSignal(a, b).exactMatch) reasons.push('samePhone');
+
+  const birthday = birthdaySignal(a, b);
+  if (birthday.score === 1) {
+    reasons.push('sameBirthday');
+  } else if (birthday.score > 0) {
+    reasons.push('sameBirthdayDay');
+  }
+
+  return reasons;
+}
+
+/**
+ * Bucket a pair into high, medium or low confidence.
+ *
+ * High: a shared email or phone, or a near-identical name backed by a second
+ * signal. Low: only a similar (not identical) name with nothing to back it up.
+ */
+export function getDuplicateConfidence(
+  similarity: number,
+  reasons: DuplicateReason[]
+): DuplicateConfidence {
+  const hasStrongId = reasons.includes('sameEmail') || reasons.includes('samePhone');
+  if (hasStrongId || similarity >= 0.95) return 'high';
+  if (similarity >= 0.85) return 'medium';
+  return 'low';
 }
 
 export function compositeSimilarity(a: PersonForComparison, b: PersonForComparison): SimilarityResult {
@@ -383,12 +448,23 @@ export function findAllDuplicateGroups(
     if (members.length < 2) continue;
 
     let maxSim = SIMILARITY_THRESHOLD;
+    const pairs: DuplicatePair[] = [];
     for (let i = 0; i < members.length; i++) {
       for (let j = i + 1; j < members.length; j++) {
-        const { score } = compositeSimilarity(members[i], members[j]);
+        if (dismissedPairs?.has(buildDismissalKey(members[i].id, members[j].id))) continue;
+        const { score, autoFlagged } = compositeSimilarity(members[i], members[j]);
         if (score > maxSim) maxSim = score;
+        if (score >= SIMILARITY_THRESHOLD || autoFlagged) {
+          pairs.push({
+            personAId: members[i].id,
+            personBId: members[j].id,
+            similarity: score,
+            reasons: getDuplicateReasons(members[i], members[j]),
+          });
+        }
       }
     }
+    pairs.sort((a, b) => b.similarity - a.similarity);
 
     result.push({
       people: members.map((p) => ({
@@ -397,6 +473,7 @@ export function findAllDuplicateGroups(
         surname: p.surname,
       })),
       similarity: maxSim,
+      pairs,
     });
   }
 

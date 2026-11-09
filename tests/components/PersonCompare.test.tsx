@@ -225,6 +225,7 @@ describe('PersonCompare', () => {
       );
 
       expect(screen.getByText(/these fields have different values/i)).toBeInTheDocument();
+      expect(screen.getByText(/newer value is preselected/i)).toBeInTheDocument();
     });
 
     it('displays conflicting field values side by side', () => {
@@ -395,9 +396,8 @@ describe('PersonCompare', () => {
         </Wrapper>
       );
 
-      expect(
-        screen.getByText(/secondary contact will be deleted after merging/i)
-      ).toBeInTheDocument();
+      expect(screen.getByText(/is removed afterwards/i)).toBeInTheDocument();
+      expect(screen.getByText(/cannot be undone/i)).toBeInTheDocument();
     });
 
     it('shows combined phone count when people have phones', () => {
@@ -424,8 +424,8 @@ describe('PersonCompare', () => {
         </Wrapper>
       );
 
-      // Should show "2 phones will be combined"
-      expect(screen.getByText(/2 phones will be combined/i)).toBeInTheDocument();
+      // The primary keeps its phone, the other one is added
+      expect(screen.getByText('Added phones: 1')).toBeInTheDocument();
     });
 
     it('shows group count when people are in groups', () => {
@@ -452,8 +452,8 @@ describe('PersonCompare', () => {
         </Wrapper>
       );
 
-      // Combined groups count
-      expect(screen.getByText(/2 groups/i)).toBeInTheDocument();
+      // The group of the merged-in contact is added
+      expect(screen.getByText(/1 group membership added/i)).toBeInTheDocument();
     });
   });
 
@@ -472,7 +472,55 @@ describe('PersonCompare', () => {
         </Wrapper>
       );
 
+      // Fields that are not in conflict are collapsed but present
+      expect(screen.getByText(/2 fields are the same or only filled in once/i)).toBeInTheDocument();
       expect(screen.getByText('Acme')).toBeInTheDocument();
+    });
+  });
+
+  describe('Preselection', () => {
+    it('preselects the value of the more recently edited contact', async () => {
+      const personA = makePerson({
+        id: 'a', name: 'Alice', surname: 'Smith', organization: 'Acme',
+        updatedAt: '2024-01-01T00:00:00.000Z',
+      });
+      const personB = makePerson({
+        id: 'b', name: 'Alice', surname: 'Jones',
+        updatedAt: '2025-06-01T00:00:00.000Z',
+      });
+
+      render(
+        <Wrapper>
+          <PersonCompare personA={personA} personB={personB} onSelectionsChange={onSelectionsChange} />
+        </Wrapper>
+      );
+
+      // A has more data and is kept, but B was edited later so its surname is preselected
+      await waitFor(() => {
+        const lastCall: MergeSelections =
+          onSelectionsChange.mock.calls[onSelectionsChange.mock.calls.length - 1][0];
+        expect(lastCall.primaryId).toBe('a');
+        expect(lastCall.fieldOverrides).toEqual({ surname: 'Jones' });
+      });
+      const radioB = document.querySelector('input[name="field-surname"][value="b"]') as HTMLInputElement;
+      expect(radioB).toBeChecked();
+    });
+
+    it('lists what happens with relationships and the journal in the summary', () => {
+      const personA = makePerson({ id: 'a', name: 'Alice', surname: null, organization: 'Acme' });
+      const personB = makePerson({
+        id: 'b', name: 'Bob', surname: null,
+        relationshipsFrom: [{ id: 'r1' }, { id: 'r2' }],
+      });
+
+      render(
+        <Wrapper>
+          <PersonCompare personA={personA} personB={personB} onSelectionsChange={onSelectionsChange} />
+        </Wrapper>
+      );
+
+      expect(screen.getByText(/2 relationships of Bob move to Alice/i)).toBeInTheDocument();
+      expect(screen.getByText(/Journal entries mentioning Bob will mention Alice instead/i)).toBeInTheDocument();
     });
   });
 });

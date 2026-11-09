@@ -798,10 +798,9 @@
         "groups": "Groepen",
         "relationships": "Relaties",
         "relationshipTypes": "Relatietypes",
-        "importantDates": "Belangrijke datums"
+        "importantDates": "Belangrijke datums",
+        "all": "Alles"
       },
-      "daysRemaining": "Nog {days} dagen",
-      "lessThanOneDay": "Minder dan 1 dag over",
       "empty": "Geen verwijderde {type} gevonden.",
       "emptyTypes": {
         "people": "personen",
@@ -819,14 +818,39 @@
         "message": "Dit item is dan voorgoed verdwenen. Deze actie kan niet ongedaan worden gemaakt.",
         "messagePerson": "Deze persoon en alle bijbehorende gegevens (relaties, groepslidmaatschappen, foto's, aangepaste velden) worden definitief verwijderd. Deze actie kan niet ongedaan worden gemaakt.",
         "confirm": "Definitief verwijderen",
-        "cancel": "Annuleren"
+        "cancel": "Annuleren",
+        "understand": "Ik begrijp dat dit niet ongedaan kan worden gemaakt"
       },
       "restoreSuccess": "Item succesvol hersteld",
       "deleteSuccess": "Item definitief verwijderd",
       "restoreError": "Item herstellen mislukt",
       "deleteError": "Item verwijderen mislukt",
       "relationshipLabel": "{personA} - {type} - {personB}",
-      "importantDateLabel": "{title} ({date}) voor {person}"
+      "importantDateLabel": "{title} ({date}) voor {person}",
+      "searchLabel": "Verwijderde items zoeken",
+      "searchPlaceholder": "Zoek op naam of titel",
+      "removalIn": "Wordt over {days, plural, one {# dag} other {# dagen}} definitief verwijderd",
+      "removalSoon": "Wordt binnen een dag definitief verwijderd",
+      "itemTypes": {
+        "people": "Persoon",
+        "groups": "Groep",
+        "relationships": "Relatie",
+        "relationshipTypes": "Relatietype",
+        "importantDates": "Belangrijke datum"
+      },
+      "selectAll": "Alles selecteren ({count})",
+      "selectItem": "{name} selecteren",
+      "selectedCount": "{count} geselecteerd",
+      "restoreSelected": "Selectie herstellen",
+      "clearSelection": "Selectie wissen",
+      "restoredCount": "{count, plural, one {# item hersteld} other {# items hersteld}}",
+      "restoreSomeFailed": "{count, plural, one {# item kon} other {# items konden}} niet worden hersteld",
+      "noMatches": "Niets in de prullenbak past bij \"{query}\".",
+      "clearSearch": "Zoekopdracht wissen",
+      "emptyTitle": "De prullenbak is leeg",
+      "emptyDescription": "Wat je verwijdert blijft hier {days} dagen staan, zodat je nog van gedachten kunt veranderen.",
+      "loadError": "De prullenbak kon niet volledig worden geladen.",
+      "retry": "Opnieuw proberen"
     },
     "about": {
       "title": "Over",
@@ -1630,11 +1654,35 @@
       "similarity": "{score}% overeenkomst",
       "merge": "Samenvoegen",
       "scanAll": "Alle contacten scannen",
-      "duplicateGroups": "{count, plural, one {# groep} other {# groepen}} van potentiële duplicaten gevonden",
       "notDuplicate": "Geen duplicaten",
       "dismissed": "Paar afgewezen. Het zal niet meer verschijnen.",
       "dismissError": "Dit paar afwijzen mislukt.",
-      "error": "Er is een fout opgetreden bij het zoeken naar duplicaten."
+      "error": "Er is een fout opgetreden bij het zoeken naar duplicaten.",
+      "noDuplicatesDescription": "Alles is netjes. Nieuwe suggesties verschijnen hier na een import of als je vergelijkbare contacten toevoegt.",
+      "openSuggestions": "{count, plural, one {# openstaande suggestie} other {# openstaande suggesties}}",
+      "confidenceHigh": "Zeer waarschijnlijk dezelfde persoon",
+      "confidenceMedium": "Waarschijnlijk dezelfde persoon",
+      "confidenceLow": "Mogelijk dezelfde persoon",
+      "reasonLine": "Reden: {reasons}",
+      "reason": {
+        "sameName": "dezelfde naam",
+        "similarName": "vergelijkbare naam",
+        "sameEmail": "hetzelfde e-mailadres",
+        "samePhone": "hetzelfde telefoonnummer",
+        "sameBirthday": "dezelfde verjaardag",
+        "sameBirthdayDay": "verjaardag op dezelfde dag"
+      },
+      "quickMerge": "Nu samenvoegen",
+      "review": "Bekijken",
+      "undo": "Ongedaan maken",
+      "undoError": "Dit kon niet ongedaan worden gemaakt.",
+      "quickMergeTitle": "Deze contacten samenvoegen?",
+      "quickMergeSwap": "Liever {name} behouden",
+      "quickMergeDifferences": "Waar ze verschillen (nieuwere waarde vooraf gekozen)",
+      "quickMergeFrom": "van {name}",
+      "quickMergeReview": "Elk veld bekijken",
+      "quickMergeConfirm": "Nu samenvoegen",
+      "hint": "{count, plural, one {# mogelijk duplicaat om te bekijken} other {# mogelijke duplicaten om te bekijken}}"
     },
     "merge": {
       "title": "Contacten samenvoegen",
@@ -1642,7 +1690,6 @@
       "primary": "Primair (behoudt)",
       "secondary": "Zal worden samengevoegd met",
       "conflictingFields": "Deze velden hebben verschillende waarden. Kies welke te behouden:",
-      "multiValueNote": "{count} {field} zullen worden gecombineerd",
       "phones": "telefoons",
       "emails": "e-mails",
       "addresses": "adressen",
@@ -1660,9 +1707,6 @@
       "success": "Contacten succesvol samengevoegd",
       "error": "Contacten samenvoegen mislukt",
       "summary": "Samenvatting",
-      "willTransfer": "Zal worden overgedragen naar het primaire contact:",
-      "willCombine": "Zal worden gecombineerd:",
-      "willDelete": "Het secundaire contact zal worden verwijderd na samenvoegen.",
       "noConflicts": "Geen conflicterende velden. De waarden van het primaire contact zullen worden behouden.",
       "keepValue": "Deze waarde behouden",
       "fieldName": "Naam",
@@ -1689,7 +1733,17 @@
       "missingParams": "Ontbrekende contactparameters. Selecteer twee contacten om samen te voegen.",
       "mergeWith": "Samenvoegen met...",
       "mergeWithDescription": "Zoek naar een persoon om samen te voegen met {name}.",
-      "searchPerson": "Zoek naar een persoon..."
+      "searchPerson": "Zoek naar een persoon...",
+      "preselectedHint": "De nieuwere waarde is vooraf gekozen. Tik op een waarde om de andere te kiezen.",
+      "unchangedFields": "{count, plural, one {# veld is gelijk of maar één keer ingevuld} other {# velden zijn gelijk of maar één keer ingevuld}}",
+      "summaryKeep": "{name} blijft behouden.",
+      "summaryChosen": "{count, plural, one {# waarde wordt} other {# waarden worden}} overgenomen van {name}.",
+      "summaryAdopted": "{count, plural, one {# leeg veld wordt} other {# lege velden worden}} aangevuld vanuit {name}.",
+      "summaryAdded": "Toegevoegd ({field}): {count}",
+      "summaryGroups": "{count, plural, one {# groepslidmaatschap} other {# groepslidmaatschappen}} toegevoegd.",
+      "summaryRelationships": "{count, plural, one {# relatie van {name} gaat} other {# relaties van {name} gaan}} naar {primary}. Dubbele worden weggelaten.",
+      "summaryJournal": "Dagboekberichten waarin {name} voorkomt, verwijzen daarna naar {primary}.",
+      "summaryRemove": "{name} wordt daarna verwijderd. Een samenvoeging kan niet ongedaan worden gemaakt."
     },
     "photo": {
       "cropTitle": "Foto bijsnijden",
@@ -1717,6 +1771,13 @@
       "cityPlaceholder": "Stad",
       "countryPlaceholder": "Land",
       "saveError": "De wijziging kon niet worden opgeslagen"
+    },
+    "undoDelete": {
+      "deleted": "{name} is naar de prullenbak verplaatst",
+      "deletedMany": "{count} personen zijn naar de prullenbak verplaatst",
+      "undo": "Ongedaan maken",
+      "restored": "{count, plural, one {Persoon hersteld} other {# personen hersteld}}",
+      "restoreFailed": "Herstellen mislukt. Je kunt het nog doen via Instellingen, Prullenbak."
     }
   },
   "groups": {

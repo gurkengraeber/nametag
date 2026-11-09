@@ -798,10 +798,9 @@
         "groups": "Grupper",
         "relationships": "Relasjoner",
         "relationshipTypes": "Relasjonstyper",
-        "importantDates": "Viktige datoer"
+        "importantDates": "Viktige datoer",
+        "all": "Alle"
       },
-      "daysRemaining": "{days} dager igjen",
-      "lessThanOneDay": "Mindre enn 1 dag igjen",
       "empty": "Ingen slettede {type} funnet.",
       "emptyTypes": {
         "people": "personer",
@@ -819,14 +818,39 @@
         "message": "Dette elementet vil være borte for alltid. Denne handlingen kan ikke angres.",
         "messagePerson": "Denne personen og alle tilhørende data (relasjoner, gruppemedlemskap, bilder, egendefinerte felt) vil bli slettet permanent. Denne handlingen kan ikke angres.",
         "confirm": "Slett permanent",
-        "cancel": "Avbryt"
+        "cancel": "Avbryt",
+        "understand": "Jeg forstår at dette ikke kan angres"
       },
       "restoreSuccess": "Elementet ble gjenopprettet",
       "deleteSuccess": "Elementet ble slettet permanent",
       "restoreError": "Kunne ikke gjenopprette elementet",
       "deleteError": "Kunne ikke slette elementet",
       "relationshipLabel": "{personA} - {type} - {personB}",
-      "importantDateLabel": "{title} ({date}) for {person}"
+      "importantDateLabel": "{title} ({date}) for {person}",
+      "searchLabel": "Søk i slettede elementer",
+      "searchPlaceholder": "Søk etter navn eller tittel",
+      "removalIn": "Slettes permanent om {days, plural, one {# dag} other {# dager}}",
+      "removalSoon": "Slettes permanent innen ett døgn",
+      "itemTypes": {
+        "people": "Person",
+        "groups": "Gruppe",
+        "relationships": "Relasjon",
+        "relationshipTypes": "Relasjonstype",
+        "importantDates": "Viktig dato"
+      },
+      "selectAll": "Velg alle ({count})",
+      "selectItem": "Velg {name}",
+      "selectedCount": "{count} valgt",
+      "restoreSelected": "Gjenopprett valgte",
+      "clearSelection": "Fjern valg",
+      "restoredCount": "{count, plural, one {# element gjenopprettet} other {# elementer gjenopprettet}}",
+      "restoreSomeFailed": "{count, plural, one {# element} other {# elementer}} kunne ikke gjenopprettes",
+      "noMatches": "Ingenting i papirkurven passer til \"{query}\".",
+      "clearSearch": "Tøm søk",
+      "emptyTitle": "Papirkurven er tom",
+      "emptyDescription": "Det du sletter, ligger her i {days} dager, så du kan ombestemme deg.",
+      "loadError": "Papirkurven kunne ikke lastes helt.",
+      "retry": "Prøv igjen"
     },
     "about": {
       "title": "Om",
@@ -1630,11 +1654,35 @@
       "similarity": "{score}% samsvar",
       "merge": "Slå sammen",
       "scanAll": "Skann alle kontakter",
-      "duplicateGroups": "{count, plural, one {# gruppe} other {# grupper}} med mulige duplikater funnet",
       "notDuplicate": "Ikke duplikater",
       "dismissed": "Paret er avvist. Det vises ikke igjen.",
       "dismissError": "Kunne ikke avvise dette paret.",
-      "error": "Det oppstod en feil under søk etter duplikater."
+      "error": "Det oppstod en feil under søk etter duplikater.",
+      "noDuplicatesDescription": "Alt er ryddig. Nye forslag vises her etter import eller når du legger til lignende kontakter.",
+      "openSuggestions": "{count, plural, one {# åpent forslag} other {# åpne forslag}}",
+      "confidenceHigh": "Svært sannsynlig samme person",
+      "confidenceMedium": "Sannsynligvis samme person",
+      "confidenceLow": "Kanskje samme person",
+      "reasonLine": "Grunn: {reasons}",
+      "reason": {
+        "sameName": "samme navn",
+        "similarName": "lignende navn",
+        "sameEmail": "samme e-postadresse",
+        "samePhone": "samme telefonnummer",
+        "sameBirthday": "samme bursdag",
+        "sameBirthdayDay": "bursdag på samme dag"
+      },
+      "quickMerge": "Slå sammen nå",
+      "review": "Se over",
+      "undo": "Angre",
+      "undoError": "Kunne ikke angre.",
+      "quickMergeTitle": "Slå sammen disse kontaktene?",
+      "quickMergeSwap": "Behold {name} i stedet",
+      "quickMergeDifferences": "Hvor de er forskjellige (nyere verdi er forhåndsvalgt)",
+      "quickMergeFrom": "fra {name}",
+      "quickMergeReview": "Se over hvert felt",
+      "quickMergeConfirm": "Slå sammen nå",
+      "hint": "{count, plural, one {# mulig duplikat å se over} other {# mulige duplikater å se over}}"
     },
     "merge": {
       "title": "Slå sammen kontakter",
@@ -1642,7 +1690,6 @@
       "primary": "Hovedkontakt (beholdes)",
       "secondary": "Blir slått sammen",
       "conflictingFields": "Disse feltene har ulike verdier. Velg hvilken du vil beholde:",
-      "multiValueNote": "{count} {field} vil bli kombinert",
       "phones": "telefonnumre",
       "emails": "e-postadresser",
       "addresses": "adresser",
@@ -1660,9 +1707,6 @@
       "success": "Kontaktene ble slått sammen",
       "error": "Kunne ikke slå sammen kontaktene",
       "summary": "Sammendrag",
-      "willTransfer": "Overføres til hovedkontakten:",
-      "willCombine": "Blir kombinert:",
-      "willDelete": "Den sekundære kontakten slettes etter sammenslåing.",
       "noConflicts": "Ingen motstridende felter. Verdiene fra hovedkontakten beholdes.",
       "keepValue": "Behold denne verdien",
       "fieldName": "Navn",
@@ -1689,7 +1733,17 @@
       "missingParams": "Manglende kontaktparametere. Velg to kontakter å slå sammen.",
       "mergeWith": "Slå sammen med...",
       "mergeWithDescription": "Søk etter en person å slå sammen med {name}.",
-      "searchPerson": "Søk etter en person..."
+      "searchPerson": "Søk etter en person...",
+      "preselectedHint": "Den nyeste verdien er forhåndsvalgt. Trykk på en verdi for å velge den andre.",
+      "unchangedFields": "{count, plural, one {# felt er likt eller bare fylt ut én gang} other {# felt er like eller bare fylt ut én gang}}",
+      "summaryKeep": "{name} beholdes.",
+      "summaryChosen": "{count, plural, one {# verdi hentes} other {# verdier hentes}} fra {name}.",
+      "summaryAdopted": "{count, plural, one {# tomt felt fylles} other {# tomme felt fylles}} ut fra {name}.",
+      "summaryAdded": "Lagt til ({field}): {count}",
+      "summaryGroups": "{count, plural, one {# gruppemedlemskap} other {# gruppemedlemskap}} lagt til.",
+      "summaryRelationships": "{count, plural, one {# relasjon fra {name} flyttes} other {# relasjoner fra {name} flyttes}} til {primary}. Duplikater droppes.",
+      "summaryJournal": "Dagboknotater som nevner {name}, vil i stedet nevne {primary}.",
+      "summaryRemove": "{name} fjernes etterpå. En sammenslåing kan ikke angres."
     },
     "photo": {
       "cropTitle": "Beskjær bilde",
@@ -1717,6 +1771,13 @@
       "cityPlaceholder": "By",
       "countryPlaceholder": "Land",
       "saveError": "Kunne ikke lagre endringen"
+    },
+    "undoDelete": {
+      "deleted": "{name} ble flyttet til papirkurven",
+      "deletedMany": "{count} personer ble flyttet til papirkurven",
+      "undo": "Angre",
+      "restored": "{count, plural, one {Person gjenopprettet} other {# personer gjenopprettet}}",
+      "restoreFailed": "Kunne ikke gjenopprette. Du kan fortsatt gjøre det under Innstillinger, Papirkurv."
     }
   },
   "groups": {

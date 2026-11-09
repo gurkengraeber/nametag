@@ -798,10 +798,9 @@
         "groups": "Grupy",
         "relationships": "Relacje",
         "relationshipTypes": "Typy relacji",
-        "importantDates": "Ważne daty"
+        "importantDates": "Ważne daty",
+        "all": "Wszystko"
       },
-      "daysRemaining": "Pozostało dni: {days}",
-      "lessThanOneDay": "Pozostało mniej niż 1 dzień",
       "empty": "Brak usuniętych {type}.",
       "emptyTypes": {
         "people": "osób",
@@ -819,14 +818,39 @@
         "message": "Ten element zostanie bezpowrotnie usunięty. Tej operacji nie można cofnąć.",
         "messagePerson": "Ta osoba i wszystkie powiązane z nią dane (relacje, przynależność do grup, zdjęcia, pola niestandardowe) zostaną trwale usunięte. Tej operacji nie można cofnąć.",
         "confirm": "Usuń trwale",
-        "cancel": "Anuluj"
+        "cancel": "Anuluj",
+        "understand": "Rozumiem, że tego nie można cofnąć"
       },
       "restoreSuccess": "Element został przywrócony",
       "deleteSuccess": "Element został trwale usunięty",
       "restoreError": "Nie udało się przywrócić elementu",
       "deleteError": "Nie udało się usunąć elementu",
       "relationshipLabel": "{personA} - {type} - {personB}",
-      "importantDateLabel": "{title} ({date}), osoba: {person}"
+      "importantDateLabel": "{title} ({date}), osoba: {person}",
+      "searchLabel": "Szukaj w usuniętych elementach",
+      "searchPlaceholder": "Szukaj według nazwy lub tytułu",
+      "removalIn": "Trwale usunięte za {days, plural, one {# dzień} other {# dni}}",
+      "removalSoon": "Trwale usunięte w ciągu doby",
+      "itemTypes": {
+        "people": "Osoba",
+        "groups": "Grupa",
+        "relationships": "Relacja",
+        "relationshipTypes": "Typ relacji",
+        "importantDates": "Ważna data"
+      },
+      "selectAll": "Zaznacz wszystko ({count})",
+      "selectItem": "Zaznacz: {name}",
+      "selectedCount": "Zaznaczono: {count}",
+      "restoreSelected": "Przywróć zaznaczone",
+      "clearSelection": "Wyczyść zaznaczenie",
+      "restoredCount": "{count, plural, one {Przywrócono # element} few {Przywrócono # elementy} many {Przywrócono # elementów} other {Przywrócono # elementu}}",
+      "restoreSomeFailed": "{count, plural, one {Nie udało się przywrócić # elementu} few {Nie udało się przywrócić # elementów} many {Nie udało się przywrócić # elementów} other {Nie udało się przywrócić # elementu}}",
+      "noMatches": "Nic w koszu nie pasuje do \"{query}\".",
+      "clearSearch": "Wyczyść wyszukiwanie",
+      "emptyTitle": "Kosz jest pusty",
+      "emptyDescription": "To, co usuniesz, zostaje tutaj na {days} dni, więc możesz jeszcze zmienić zdanie.",
+      "loadError": "Nie udało się w pełni wczytać kosza.",
+      "retry": "Spróbuj ponownie"
     },
     "about": {
       "title": "O aplikacji",
@@ -1630,11 +1654,35 @@
       "similarity": "Zgodność: {score}%",
       "merge": "Scal",
       "scanAll": "Przeskanuj wszystkie kontakty",
-      "duplicateGroups": "{count, plural, one {Znaleziono # grupę potencjalnych duplikatów} few {Znaleziono # grupy potencjalnych duplikatów} many {Znaleziono # grup potencjalnych duplikatów} other {Znaleziono # grupy potencjalnych duplikatów}}",
       "notDuplicate": "To nie duplikaty",
       "dismissed": "Para została odrzucona. Nie pojawi się ponownie.",
       "dismissError": "Nie udało się odrzucić tej pary.",
-      "error": "Podczas wyszukiwania duplikatów wystąpił błąd."
+      "error": "Podczas wyszukiwania duplikatów wystąpił błąd.",
+      "noDuplicatesDescription": "Wszystko w porządku. Nowe propozycje pojawią się tutaj po imporcie lub gdy dodasz podobne kontakty.",
+      "openSuggestions": "{count, plural, one {# otwarta propozycja} few {# otwarte propozycje} many {# otwartych propozycji} other {# otwartej propozycji}}",
+      "confidenceHigh": "Bardzo prawdopodobnie ta sama osoba",
+      "confidenceMedium": "Prawdopodobnie ta sama osoba",
+      "confidenceLow": "Możliwe, że ta sama osoba",
+      "reasonLine": "Powód: {reasons}",
+      "reason": {
+        "sameName": "to samo imię i nazwisko",
+        "similarName": "podobne imię i nazwisko",
+        "sameEmail": "ten sam adres e-mail",
+        "samePhone": "ten sam numer telefonu",
+        "sameBirthday": "te same urodziny",
+        "sameBirthdayDay": "urodziny tego samego dnia"
+      },
+      "quickMerge": "Połącz teraz",
+      "review": "Sprawdź",
+      "undo": "Cofnij",
+      "undoError": "Nie udało się cofnąć.",
+      "quickMergeTitle": "Połączyć te kontakty?",
+      "quickMergeSwap": "Zachowaj zamiast tego: {name}",
+      "quickMergeDifferences": "Czym się różnią (nowsza wartość jest wybrana)",
+      "quickMergeFrom": "od: {name}",
+      "quickMergeReview": "Sprawdź każde pole",
+      "quickMergeConfirm": "Połącz teraz",
+      "hint": "{count, plural, one {# możliwy duplikat do sprawdzenia} few {# możliwe duplikaty do sprawdzenia} many {# możliwych duplikatów do sprawdzenia} other {# możliwego duplikatu do sprawdzenia}}"
     },
     "merge": {
       "title": "Scal kontakty",
@@ -1642,7 +1690,6 @@
       "primary": "Główny (zostaje)",
       "secondary": "Zostanie scalony",
       "conflictingFields": "Te pola mają różne wartości. Wybierz, którą zachować:",
-      "multiValueNote": "Zostaną połączone: {field} ({count})",
       "phones": "telefony",
       "emails": "adresy e-mail",
       "addresses": "adresy",
@@ -1660,9 +1707,6 @@
       "success": "Kontakty zostały scalone",
       "error": "Nie udało się scalić kontaktów",
       "summary": "Podsumowanie",
-      "willTransfer": "Zostanie przeniesione do kontaktu głównego:",
-      "willCombine": "Zostanie połączone:",
-      "willDelete": "Kontakt dodatkowy zostanie usunięty po scaleniu.",
       "noConflicts": "Brak konfliktów między polami. Wartości kontaktu głównego zostaną zachowane.",
       "keepValue": "Zachowaj tę wartość",
       "fieldName": "Imię",
@@ -1689,7 +1733,17 @@
       "missingParams": "Brak parametrów kontaktów. Wybierz dwa kontakty do scalenia.",
       "mergeWith": "Scal z...",
       "mergeWithDescription": "Wyszukaj osobę, z którą chcesz scalić: {name}.",
-      "searchPerson": "Szukaj osoby..."
+      "searchPerson": "Szukaj osoby...",
+      "preselectedHint": "Nowsza wartość jest wybrana. Stuknij wartość, aby wybrać drugą.",
+      "unchangedFields": "{count, plural, one {# pole jest takie samo lub wypełnione tylko raz} few {# pola są takie same lub wypełnione tylko raz} many {# pól jest takich samych lub wypełnionych tylko raz} other {# pola jest takie samo lub wypełnione tylko raz}}",
+      "summaryKeep": "Kontakt {name} zostaje.",
+      "summaryChosen": "{count, plural, one {# wartość zostanie} few {# wartości zostaną} many {# wartości zostanie} other {# wartości zostanie}} przejęta od: {name}.",
+      "summaryAdopted": "{count, plural, one {# puste pole zostanie uzupełnione} few {# puste pola zostaną uzupełnione} many {# pustych pól zostanie uzupełnionych} other {# pustego pola zostanie uzupełnione}} danymi z: {name}.",
+      "summaryAdded": "Dodano {field}: {count}",
+      "summaryGroups": "{count, plural, one {Dodano # członkostwo w grupie} few {Dodano # członkostwa w grupach} many {Dodano # członkostw w grupach} other {Dodano # członkostwa w grupach}}.",
+      "summaryRelationships": "{count, plural, one {# relacja kontaktu {name} przejdzie} few {# relacje kontaktu {name} przejdą} many {# relacji kontaktu {name} przejdzie} other {# relacji kontaktu {name} przejdzie}} do: {primary}. Duplikaty zostaną pominięte.",
+      "summaryJournal": "Wpisy w dzienniku wspominające {name} będą wspominać {primary}.",
+      "summaryRemove": "Kontakt {name} zostanie potem usunięty. Połączenia nie można cofnąć."
     },
     "photo": {
       "cropTitle": "Przytnij zdjęcie",
@@ -1717,6 +1771,13 @@
       "cityPlaceholder": "Miasto",
       "countryPlaceholder": "Kraj",
       "saveError": "Nie udało się zapisać zmiany"
+    },
+    "undoDelete": {
+      "deleted": "{name} przeniesiono do kosza",
+      "deletedMany": "Przeniesiono do kosza osób: {count}",
+      "undo": "Cofnij",
+      "restored": "{count, plural, one {Przywrócono osobę} few {Przywrócono # osoby} many {Przywrócono # osób} other {Przywrócono # osoby}}",
+      "restoreFailed": "Nie udało się przywrócić. Nadal możesz to zrobić w Ustawieniach, w Koszu."
     }
   },
   "groups": {

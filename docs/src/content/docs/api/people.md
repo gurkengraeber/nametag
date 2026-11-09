@@ -413,7 +413,7 @@ curl https://your-instance.example.com/api/people/clx1/graph \
 GET /api/people/duplicates
 ```
 
-Scans all contacts and groups likely duplicates by name, email, phone, and birthday similarity. Dismissed pairs are excluded.
+Scans all contacts and groups likely duplicates by name, email, phone, and birthday similarity. Dismissed pairs are excluded. Each group lists its flagged `pairs`, most similar first. `reasons` names the signals that matched: `sameName`, `similarName`, `sameEmail`, `samePhone`, `sameBirthday`, `sameBirthdayDay`.
 
 ```bash
 curl https://your-instance.example.com/api/people/duplicates \
@@ -425,7 +425,10 @@ curl https://your-instance.example.com/api/people/duplicates \
   "groups": [
     {
       "people": [ { "id": "clx1", "name": "Ada" }, { "id": "clx4", "name": "Ada" } ],
-      "similarity": 0.92
+      "similarity": 0.92,
+      "pairs": [
+        { "personAId": "clx1", "personBId": "clx4", "similarity": 0.92, "reasons": ["sameName", "sameEmail"] }
+      ]
     }
   ]
 }
@@ -461,6 +464,25 @@ curl -X POST https://your-instance.example.com/api/people/duplicates/dismiss \
 
 ```json
 { "dismissed": true }
+```
+
+### Undo a dismissal
+
+```
+DELETE /api/people/duplicates/dismiss
+```
+
+Takes the same body as the dismiss call and removes the dismissal, so the pair can be suggested again. It also succeeds when the pair was not dismissed.
+
+```bash
+curl -X DELETE https://your-instance.example.com/api/people/duplicates/dismiss \
+  -H "Authorization: Bearer ntag_xxx" \
+  -H "Content-Type: application/json" \
+  -d '{ "personAId": "clx1", "personBId": "clx4" }'
+```
+
+```json
+{ "dismissed": false }
 ```
 
 ### Merge two contacts

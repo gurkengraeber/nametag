@@ -798,10 +798,9 @@
         "groups": "Groups",
         "relationships": "Relationships",
         "relationshipTypes": "Relationship Types",
-        "importantDates": "Important Dates"
+        "importantDates": "Important Dates",
+        "all": "All"
       },
-      "daysRemaining": "{days} days left",
-      "lessThanOneDay": "Less than 1 day left",
       "empty": "No deleted {type} found.",
       "emptyTypes": {
         "people": "people",
@@ -819,14 +818,39 @@
         "message": "This item will be gone forever. This action cannot be undone.",
         "messagePerson": "This person and all their associated data (relationships, group memberships, photos, custom fields) will be permanently deleted. This action cannot be undone.",
         "confirm": "Delete permanently",
-        "cancel": "Cancel"
+        "cancel": "Cancel",
+        "understand": "I understand this cannot be undone"
       },
       "restoreSuccess": "Item restored successfully",
       "deleteSuccess": "Item permanently deleted",
       "restoreError": "Failed to restore item",
       "deleteError": "Failed to delete item",
       "relationshipLabel": "{personA} - {type} - {personB}",
-      "importantDateLabel": "{title} ({date}) for {person}"
+      "importantDateLabel": "{title} ({date}) for {person}",
+      "searchLabel": "Search deleted items",
+      "searchPlaceholder": "Search by name or title",
+      "removalIn": "Permanently deleted in {days, plural, one {# day} other {# days}}",
+      "removalSoon": "Permanently deleted within a day",
+      "itemTypes": {
+        "people": "Person",
+        "groups": "Group",
+        "relationships": "Relationship",
+        "relationshipTypes": "Relationship type",
+        "importantDates": "Important date"
+      },
+      "selectAll": "Select all ({count})",
+      "selectItem": "Select {name}",
+      "selectedCount": "{count} selected",
+      "restoreSelected": "Restore selected",
+      "clearSelection": "Clear selection",
+      "restoredCount": "{count, plural, one {# item restored} other {# items restored}}",
+      "restoreSomeFailed": "{count, plural, one {# item} other {# items}} could not be restored",
+      "noMatches": "Nothing in the trash matches \"{query}\".",
+      "clearSearch": "Clear search",
+      "emptyTitle": "The trash is empty",
+      "emptyDescription": "Anything you delete stays here for {days} days, so you can still change your mind.",
+      "loadError": "The trash could not be loaded completely.",
+      "retry": "Try again"
     },
     "about": {
       "title": "About",
@@ -1630,11 +1654,35 @@
       "similarity": "{score}% match",
       "merge": "Merge",
       "scanAll": "Scan All Contacts",
-      "duplicateGroups": "{count, plural, one {# group} other {# groups}} of potential duplicates found",
       "notDuplicate": "Not duplicates",
       "dismissed": "Pair dismissed. It won't appear again.",
       "dismissError": "Failed to dismiss this pair.",
-      "error": "An error occurred while searching for duplicates."
+      "error": "An error occurred while searching for duplicates.",
+      "noDuplicatesDescription": "Everything looks tidy. New suggestions show up here after imports or when you add similar contacts.",
+      "openSuggestions": "{count, plural, one {# open suggestion} other {# open suggestions}}",
+      "confidenceHigh": "Very likely the same person",
+      "confidenceMedium": "Probably the same person",
+      "confidenceLow": "Possibly the same person",
+      "reasonLine": "Why: {reasons}",
+      "reason": {
+        "sameName": "same name",
+        "similarName": "similar name",
+        "sameEmail": "same email address",
+        "samePhone": "same phone number",
+        "sameBirthday": "same birthday",
+        "sameBirthdayDay": "birthday on the same day"
+      },
+      "quickMerge": "Merge now",
+      "review": "Review",
+      "undo": "Undo",
+      "undoError": "Could not undo this.",
+      "quickMergeTitle": "Merge these contacts?",
+      "quickMergeSwap": "Keep {name} instead",
+      "quickMergeDifferences": "Where they differ (newer value preselected)",
+      "quickMergeFrom": "from {name}",
+      "quickMergeReview": "Review every field",
+      "quickMergeConfirm": "Merge now",
+      "hint": "{count, plural, one {# possible duplicate to review} other {# possible duplicates to review}}"
     },
     "merge": {
       "title": "Merge Contacts",
@@ -1642,7 +1690,6 @@
       "primary": "Primary (keeps)",
       "secondary": "Will be merged in",
       "conflictingFields": "These fields have different values. Choose which to keep:",
-      "multiValueNote": "{count} {field} will be combined",
       "phones": "phones",
       "emails": "emails",
       "addresses": "addresses",
@@ -1660,9 +1707,6 @@
       "success": "Contacts merged successfully",
       "error": "Failed to merge contacts",
       "summary": "Summary",
-      "willTransfer": "Will be transferred to the primary contact:",
-      "willCombine": "Will be combined:",
-      "willDelete": "The secondary contact will be deleted after merging.",
       "noConflicts": "No conflicting fields. The primary contact's values will be kept.",
       "keepValue": "Keep this value",
       "fieldName": "Name",
@@ -1689,7 +1733,17 @@
       "missingParams": "Missing contact parameters. Please select two contacts to merge.",
       "mergeWith": "Merge with...",
       "mergeWithDescription": "Search for a person to merge with {name}.",
-      "searchPerson": "Search for a person..."
+      "searchPerson": "Search for a person...",
+      "preselectedHint": "The newer value is preselected. Tap a value to choose the other one.",
+      "unchangedFields": "{count, plural, one {# field is the same or only filled in once} other {# fields are the same or only filled in once}}",
+      "summaryKeep": "{name} is kept.",
+      "summaryChosen": "{count, plural, one {# value is} other {# values are}} taken from {name}.",
+      "summaryAdopted": "{count, plural, one {# empty field is} other {# empty fields are}} filled in from {name}.",
+      "summaryAdded": "Added {field}: {count}",
+      "summaryGroups": "{count, plural, one {# group membership} other {# group memberships}} added.",
+      "summaryRelationships": "{count, plural, one {# relationship of {name} moves} other {# relationships of {name} move}} to {primary}. Duplicates are dropped.",
+      "summaryJournal": "Journal entries mentioning {name} will mention {primary} instead.",
+      "summaryRemove": "{name} is removed afterwards. A merge cannot be undone."
     },
     "photo": {
       "cropTitle": "Crop Photo",
@@ -1717,6 +1771,13 @@
       "cityPlaceholder": "City",
       "countryPlaceholder": "Country",
       "saveError": "Could not save the change"
+    },
+    "undoDelete": {
+      "deleted": "{name} was moved to the trash",
+      "deletedMany": "{count} people were moved to the trash",
+      "undo": "Undo",
+      "restored": "{count, plural, one {Person restored} other {# people restored}}",
+      "restoreFailed": "Could not restore. You can still do it under Settings, Trash."
     }
   },
   "groups": {

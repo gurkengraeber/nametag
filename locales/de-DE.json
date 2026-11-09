@@ -798,10 +798,9 @@
         "groups": "Gruppen",
         "relationships": "Beziehungen",
         "relationshipTypes": "Beziehungstypen",
-        "importantDates": "Wichtige Daten"
+        "importantDates": "Wichtige Daten",
+        "all": "Alle"
       },
-      "daysRemaining": "Noch {days} Tage",
-      "lessThanOneDay": "Weniger als 1 Tag verbleibend",
       "empty": "Keine gelöschten {type} gefunden.",
       "emptyTypes": {
         "people": "Personen",
@@ -819,14 +818,39 @@
         "message": "Dieses Element ist dann für immer weg. Diese Aktion kann nicht rückgängig gemacht werden.",
         "messagePerson": "Diese Person und alle zugehörigen Daten (Beziehungen, Gruppenmitgliedschaften, Fotos, benutzerdefinierte Felder) werden endgültig gelöscht. Diese Aktion kann nicht rückgängig gemacht werden.",
         "confirm": "Endgültig löschen",
-        "cancel": "Abbrechen"
+        "cancel": "Abbrechen",
+        "understand": "Ich weiß, dass sich das nicht rückgängig machen lässt"
       },
       "restoreSuccess": "Element erfolgreich wiederhergestellt",
       "deleteSuccess": "Element endgültig gelöscht",
       "restoreError": "Element konnte nicht wiederhergestellt werden",
       "deleteError": "Element konnte nicht gelöscht werden",
       "relationshipLabel": "{personA} - {type} - {personB}",
-      "importantDateLabel": "{title} ({date}) für {person}"
+      "importantDateLabel": "{title} ({date}) für {person}",
+      "searchLabel": "Gelöschte Einträge durchsuchen",
+      "searchPlaceholder": "Nach Name oder Titel suchen",
+      "removalIn": "Wird in {days, plural, one {# Tag} other {# Tagen}} endgültig gelöscht",
+      "removalSoon": "Wird innerhalb eines Tages endgültig gelöscht",
+      "itemTypes": {
+        "people": "Person",
+        "groups": "Gruppe",
+        "relationships": "Beziehung",
+        "relationshipTypes": "Beziehungstyp",
+        "importantDates": "Wichtiges Datum"
+      },
+      "selectAll": "Alle auswählen ({count})",
+      "selectItem": "{name} auswählen",
+      "selectedCount": "{count} ausgewählt",
+      "restoreSelected": "Auswahl wiederherstellen",
+      "clearSelection": "Auswahl aufheben",
+      "restoredCount": "{count, plural, one {# Eintrag wiederhergestellt} other {# Einträge wiederhergestellt}}",
+      "restoreSomeFailed": "{count, plural, one {# Eintrag konnte} other {# Einträge konnten}} nicht wiederhergestellt werden",
+      "noMatches": "Im Papierkorb passt nichts zu \"{query}\".",
+      "clearSearch": "Suche zurücksetzen",
+      "emptyTitle": "Der Papierkorb ist leer",
+      "emptyDescription": "Was du löschst, bleibt hier {days} Tage lang, damit du es dir noch anders überlegen kannst.",
+      "loadError": "Der Papierkorb konnte nicht vollständig geladen werden.",
+      "retry": "Erneut versuchen"
     },
     "about": {
       "title": "Über",
@@ -1630,11 +1654,35 @@
       "similarity": "{score}% Übereinstimmung",
       "merge": "Zusammenführen",
       "scanAll": "Alle Kontakte prüfen",
-      "duplicateGroups": "{count, plural, one {# Gruppe} other {# Gruppen}} möglicher Duplikate gefunden",
       "notDuplicate": "Keine Duplikate",
       "dismissed": "Paar verworfen. Es wird nicht mehr angezeigt.",
       "dismissError": "Fehler beim Verwerfen dieses Paares.",
-      "error": "Beim Suchen nach Duplikaten ist ein Fehler aufgetreten."
+      "error": "Beim Suchen nach Duplikaten ist ein Fehler aufgetreten.",
+      "noDuplicatesDescription": "Alles aufgeräumt. Neue Vorschläge erscheinen hier nach Importen oder wenn du ähnliche Kontakte anlegst.",
+      "openSuggestions": "{count, plural, one {# offener Vorschlag} other {# offene Vorschläge}}",
+      "confidenceHigh": "Sehr wahrscheinlich dieselbe Person",
+      "confidenceMedium": "Wahrscheinlich dieselbe Person",
+      "confidenceLow": "Möglicherweise dieselbe Person",
+      "reasonLine": "Grund: {reasons}",
+      "reason": {
+        "sameName": "gleicher Name",
+        "similarName": "ähnlicher Name",
+        "sameEmail": "gleiche E-Mail-Adresse",
+        "samePhone": "gleiche Telefonnummer",
+        "sameBirthday": "gleicher Geburtstag",
+        "sameBirthdayDay": "Geburtstag am selben Tag"
+      },
+      "quickMerge": "Jetzt zusammenführen",
+      "review": "Prüfen",
+      "undo": "Rückgängig",
+      "undoError": "Das ließ sich nicht rückgängig machen.",
+      "quickMergeTitle": "Diese Kontakte zusammenführen?",
+      "quickMergeSwap": "Stattdessen {name} behalten",
+      "quickMergeDifferences": "Wo sie sich unterscheiden (neuerer Wert vorausgewählt)",
+      "quickMergeFrom": "von {name}",
+      "quickMergeReview": "Jedes Feld prüfen",
+      "quickMergeConfirm": "Jetzt zusammenführen",
+      "hint": "{count, plural, one {# mögliches Duplikat zu prüfen} other {# mögliche Duplikate zu prüfen}}"
     },
     "merge": {
       "title": "Kontakte zusammenführen",
@@ -1642,7 +1690,6 @@
       "primary": "Hauptkontakt (bleibt erhalten)",
       "secondary": "Wird zusammengeführt",
       "conflictingFields": "Diese Felder haben unterschiedliche Werte. Wähle aus, welcher beibehalten werden soll:",
-      "multiValueNote": "{count} {field} werden zusammengeführt",
       "phones": "Telefonnummern",
       "emails": "E-Mail-Adressen",
       "addresses": "Adressen",
@@ -1660,9 +1707,6 @@
       "success": "Kontakte erfolgreich zusammengeführt",
       "error": "Kontakte konnten nicht zusammengeführt werden",
       "summary": "Zusammenfassung",
-      "willTransfer": "Wird auf den Hauptkontakt übertragen:",
-      "willCombine": "Wird zusammengeführt:",
-      "willDelete": "Der sekundäre Kontakt wird nach dem Zusammenführen gelöscht.",
       "noConflicts": "Keine widersprüchlichen Felder. Die Werte des Hauptkontakts werden beibehalten.",
       "keepValue": "Diesen Wert behalten",
       "fieldName": "Name",
@@ -1689,7 +1733,17 @@
       "missingParams": "Fehlende Kontaktparameter. Bitte wählen Sie zwei Kontakte zum Zusammenführen aus.",
       "mergeWith": "Zusammenführen mit...",
       "mergeWithDescription": "Suche eine Person, um sie mit {name} zusammenzuführen.",
-      "searchPerson": "Person suchen..."
+      "searchPerson": "Person suchen...",
+      "preselectedHint": "Der neuere Wert ist vorausgewählt. Tippe auf einen Wert, um den anderen zu wählen.",
+      "unchangedFields": "{count, plural, one {# Feld ist gleich oder nur einmal ausgefüllt} other {# Felder sind gleich oder nur einmal ausgefüllt}}",
+      "summaryKeep": "{name} bleibt erhalten.",
+      "summaryChosen": "{count, plural, one {# Wert wird} other {# Werte werden}} von {name} übernommen.",
+      "summaryAdopted": "{count, plural, one {# leeres Feld wird} other {# leere Felder werden}} aus {name} ergänzt.",
+      "summaryAdded": "Hinzugefügt ({field}): {count}",
+      "summaryGroups": "{count, plural, one {# Gruppenmitgliedschaft} other {# Gruppenmitgliedschaften}} hinzugefügt.",
+      "summaryRelationships": "{count, plural, one {# Beziehung von {name} wechselt} other {# Beziehungen von {name} wechseln}} zu {primary}. Doppelte werden verworfen.",
+      "summaryJournal": "Tagebucheinträge, in denen {name} vorkommt, verweisen danach auf {primary}.",
+      "summaryRemove": "{name} wird danach entfernt. Ein Zusammenführen lässt sich nicht rückgängig machen."
     },
     "photo": {
       "cropTitle": "Foto zuschneiden",
@@ -1717,6 +1771,13 @@
       "cityPlaceholder": "Stadt",
       "countryPlaceholder": "Land",
       "saveError": "Die Änderung konnte nicht gespeichert werden"
+    },
+    "undoDelete": {
+      "deleted": "{name} wurde in den Papierkorb verschoben",
+      "deletedMany": "{count} Personen wurden in den Papierkorb verschoben",
+      "undo": "Rückgängig",
+      "restored": "{count, plural, one {Person wiederhergestellt} other {# Personen wiederhergestellt}}",
+      "restoreFailed": "Wiederherstellen nicht möglich. Du kannst es noch unter Einstellungen, Papierkorb tun."
     }
   },
   "groups": {
