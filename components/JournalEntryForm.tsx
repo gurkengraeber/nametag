@@ -61,14 +61,7 @@ interface PillPerson {
 
 type SaveIntent = 'done' | 'another';
 
-function getCurrentTimeString(): string {
-  const now = new Date();
-  const hh = String(now.getHours()).padStart(2, '0');
-  const mm = String(now.getMinutes()).padStart(2, '0');
-  return `${hh}:${mm}`;
-}
-
-function localTimeString(d: Date): string {
+function localTimeString(d: Date = new Date()): string {
   const hh = String(d.getHours()).padStart(2, '0');
   const mm = String(d.getMinutes()).padStart(2, '0');
   return `${hh}:${mm}`;
@@ -252,6 +245,7 @@ export default function JournalEntryForm({
   };
 
   const save = async (intent: SaveIntent) => {
+    if (isLoading) return;
     setError('');
 
     if (body.trim() === '') {
@@ -259,6 +253,10 @@ export default function JournalEntryForm({
       focusBody();
       return;
     }
+
+    // "Save and add another" is a plain button and skips the browser's own
+    // check, so a missing day or time would reach the server as an invalid date.
+    if (!formRef.current?.reportValidity()) return;
 
     setIsLoading(true);
 
@@ -482,7 +480,7 @@ export default function JournalEntryForm({
               type="button"
               onClick={() => {
                 setHasTime(true);
-                if (!time) setTime(getCurrentTimeString());
+                if (!time) setTime(localTimeString());
               }}
               className="text-sm text-primary hover:underline min-h-11 sm:min-h-0 px-1"
             >

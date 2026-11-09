@@ -100,6 +100,19 @@ describe('JournalEntryForm quick entry', () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
+  it('does not send an entry whose time was cleared when saving and adding another', () => {
+    renderForm();
+    const body = document.getElementById('journal-body') as HTMLTextAreaElement;
+    fireEvent.change(body, { target: { value: 'Late night walk' } });
+    fireEvent.click(screen.getByRole('button', { name: /Add time/ }));
+    fireEvent.change(screen.getByLabelText('Time'), { target: { value: '' } });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Save and add another' }));
+
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(screen.queryByRole('alert')).toBeNull();
+  });
+
   it('keeps the form open for the next entry after "Save and add another"', async () => {
     renderForm({ prefill: { personIds: ['p1'] } });
     const body = document.getElementById('journal-body') as HTMLTextAreaElement;

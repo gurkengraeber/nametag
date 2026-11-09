@@ -80,9 +80,10 @@ function groupByMonth(entries: TimelineEntry[], locale: string): MonthGroup[] {
   const map = new Map<string, TimelineEntry[]>();
 
   for (const entry of entries) {
-    // Parse as local date to avoid timezone shift
-    const [year, month] = entry.date.split('T')[0].split('-').map(Number);
-    const monthKey = `${year}-${String(month).padStart(2, '0')}`;
+    // The month comes from the same local day the card shows, so an entry just
+    // after midnight never sits under the previous month's heading.
+    const day = entryLocalDate(entry);
+    const monthKey = `${day.getFullYear()}-${String(day.getMonth() + 1).padStart(2, '0')}`;
 
     const existing = map.get(monthKey);
     if (existing) {
