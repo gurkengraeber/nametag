@@ -85,6 +85,7 @@ Die einzelnen Branches liegen zusätzlich getrennt auf dem Fork, damit sie bei B
 | `feat/carddav-flow-ux` | CardDAV: Anbietervorlagen, Verbindungstest, Import-Assistent, Export, Konflikte |
 | `feat/duplicates-merge-trash-ux` | Duplikate nach Sicherheit, Schnell-Zusammenführen, Papierkorb mit Suche und Mehrfachwiederherstellung |
 | `feat/graph-wheel-and-compact` | Mausrad scrollt die Seite (Zoom mit Strg/Cmd), kleines Netz auf der Personenseite |
+| `feat/relationship-builder` | Seite `/people/connect`: Personenkarten per Ziehen (Maus, Langdruck am Handy) oder Antippen verbinden, Pinsel-Modus, Rückgängig |
 | `showcase` | Vorzeigeseite mit Bildern (erfundene Daten) für den Ersteller, nur Bilder und Text |
 
 Nicht auf dem Fork enthalten und nicht gepusht: `feat/calendar-tab` (offener Pull Request beim Original) und `fix/carddav-fetch-by-url`
@@ -132,3 +133,10 @@ Nicht auf dem Fork enthalten und nicht gepusht: `feat/calendar-tab` (offener Pul
 Das Repository liegt auf GitHub unter `gurkengraeber/nametag`. Für Claude Code im Web oder auf dem Handy den Branch `fork-main` öffnen, diese Datei und `CLAUDE.md` lesen,
 dann auf einem eigenen Branch weiterarbeiten. Es gibt dort keinen Datenbank-Container, deshalb nur mit `vitest`, `eslint` und `tsc` prüfen, die Oberfläche lässt sich nur lokal ansehen.
 
+
+## Beziehungen knuepfen (`/people/connect`)
+
+- Ziehen laeuft mit Pointer Events, nicht mit HTML5 Drag and Drop (geht am Handy nicht). Touch: Langdruck 250 ms startet das Ziehen, ein nicht-passiver touchmove-Listener sperrt nur dann das Scrollen.
+- `DELETE /api/relationships/[id]` nimmt die Gegenrichtung als irgendeine Rueckrichtung des Paars mit, ohne auf die Art zu achten. Hatte das Paar schon eine, gibt es deshalb keinen Rueckgaengig-Knopf, sondern einen Hinweis.
+- `POST /api/relationships` liefert nur die ID der Hauptrichtung, die Gegenrichtung bekommt lokal eine `local:`-ID.
+- Im Browser geprueft (Chromium, Maus, Handy-Emulation mit Tippen): Anlegen, Pinsel, Rueckgaengig. Nicht geprueft: Langdruck-Ziehen auf einem echten Handy.
