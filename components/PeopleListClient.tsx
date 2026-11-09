@@ -401,7 +401,7 @@ export default function PeopleListClient({
                 <th className="px-3 py-3 text-left text-xs font-medium text-muted uppercase tracking-wider">
                   {tt.location}
                 </th>
-                <th className="sticky right-0 bg-surface-elevated px-3 py-3 text-right text-xs font-medium text-muted uppercase tracking-wider">
+                <th className="md:sticky md:right-0 bg-surface-elevated px-3 py-3 text-right text-xs font-medium text-muted uppercase tracking-wider">
                   {tt.actions}
                 </th>
               </tr>
@@ -496,7 +496,7 @@ export default function PeopleListClient({
                         country={person.addresses[0]?.country ?? null}
                       />
                     </td>
-                    <td className="sticky right-0 bg-surface px-3 py-4 whitespace-nowrap text-right">
+                    <td className="md:sticky md:right-0 bg-surface px-3 py-4 whitespace-nowrap text-right">
                       <div className="flex justify-end gap-3">
                         <Link href={`/people/${person.id}/edit`} className="text-primary hover:text-primary-dark transition-colors" title={tc.edit}>
                           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
