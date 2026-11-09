@@ -1,10 +1,11 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { NextIntlClientProvider } from 'next-intl';
 import PersonForm from '../../components/PersonForm';
 import enMessages from '../../locales/en.json';
 import { getPersonFormDefaultsKey } from '@/lib/person-form-support';
+import { restoreTimezoneAfterEach, setProcessTimezone } from '../helpers/timezone';
 
 const mockPush = vi.fn();
 vi.mock('next/navigation', () => ({
@@ -36,10 +37,74 @@ const baseProps = {
 };
 
 describe('PersonForm (create) flow', () => {
+  restoreTimezoneAfterEach();
+
   beforeEach(() => {
     vi.clearAllMocks();
     window.localStorage.clear();
     global.fetch = vi.fn();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('keeps the form locked after a successful save so it cannot be sent twice', async () => {
+    const user = userEvent.setup();
+    vi.mocked(global.fetch).mockResolvedValue({
+      ok: true,
+      json: async () => ({ person: { id: 'p-1' } }),
+    } as Response);
+    render(
+      <Wrapper>
+        <PersonForm {...baseProps} />
+      </Wrapper>
+    );
+
+    await user.type(screen.getByLabelText(/^name/i), 'Alex{Enter}');
+
+    await waitFor(() => expect(mockPush).toHaveBeenCalledWith('/people/p-1'));
+    expect(screen.getByRole('button', { name: 'Saving...' })).toBeDisabled();
+  });
+
+  it('accepts today as last contact shortly after local midnight east of UTC', async () => {
+    setProcessTimezone('Europe/Berlin');
+    // 00:30 on 2 March in Berlin, still 1 March in UTC.
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date('2026-03-01T23:30:00.000Z'));
+    vi.mocked(global.fetch).mockResolvedValue({
+      ok: true,
+      json: async () => ({ person: { id: 'p-1' } }),
+    } as Response);
+    render(
+      <Wrapper>
+        <PersonForm
+          {...baseProps}
+          mode="edit"
+          person={{
+            id: 'p-1',
+            name: 'Alex',
+            surname: null,
+            middleName: null,
+            secondLastName: null,
+            nickname: null,
+            prefix: null,
+            suffix: null,
+            organization: null,
+            jobTitle: null,
+            lastContact: new Date('2026-03-02T00:00:00.000Z'),
+            notes: null,
+            relationshipToUserId: null,
+            groups: [],
+          }}
+        />
+      </Wrapper>
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'Save' }));
+
+    await waitFor(() => expect(global.fetch).toHaveBeenCalledTimes(1));
+    expect(screen.queryByText(enMessages.people.form.errorFutureDate)).not.toBeInTheDocument();
   });
 
   it('puts the cursor in the name field and folds the extra sections away', () => {

@@ -59,6 +59,8 @@ export default function LastContactSection({
           <button
             type="button"
             id="contact-reminder-toggle"
+            role="switch"
+            aria-checked={formData.contactReminderEnabled}
             disabled={!canToggleContactReminder}
             onClick={() => {
               if (!canToggleContactReminder) return;

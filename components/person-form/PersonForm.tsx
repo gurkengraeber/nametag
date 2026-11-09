@@ -32,6 +32,7 @@ import {
   savePersonFormDefaults,
   sanitizePersonFormDefaults,
   mapServerFieldErrors,
+  isAfterToday,
   type PersonFormFieldErrors,
 } from '@/lib/person-form-support';
 
@@ -448,13 +449,10 @@ export default function PersonForm({
     setFieldErrors({});
     setClientErrors({});
 
-    if (formData.lastContact) {
-      const lastContactDate = new Date(formData.lastContact);
-      if (lastContactDate > new Date()) {
-        setClientErrors({ lastContact: t('errorFutureDate') });
-        setError(t('errorCheckFields'));
-        return;
-      }
+    if (formData.lastContact && isAfterToday(formData.lastContact)) {
+      setClientErrors({ lastContact: t('errorFutureDate') });
+      setError(t('errorCheckFields'));
+      return;
     }
 
     setIsLoading(true);
@@ -582,7 +580,9 @@ export default function PersonForm({
     } catch {
       setError(t('errorSomethingWrong'));
     } finally {
-      setIsLoading(false);
+      // After a save the form stays locked until the page changes, so a second
+      // tap on a slow connection cannot create the same person twice.
+      if (!isSubmittingRef.current) setIsLoading(false);
     }
   };
 
