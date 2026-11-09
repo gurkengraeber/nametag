@@ -156,15 +156,44 @@ describe('LocationCell', () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
-  it('sends null when the country is emptied', async () => {
+  it('sends the country code when a country is picked', async () => {
     render(
+      <Wrapper>
+        <LocationCell personId="p-1" city={null} country={null} />
+      </Wrapper>
+    );
+
+    await userEvent.selectOptions(screen.getByLabelText('Country'), 'DE');
+
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(1));
+    expect(lastRequest().body).toEqual({ country: 'DE' });
+  });
+
+  it('shows a known country name as its code and keeps unknown text selectable', () => {
+    const first = render(
       <Wrapper>
         <LocationCell personId="p-1" city="Berlin" country="Germany" />
       </Wrapper>
     );
+    expect(screen.getByLabelText('Country')).toHaveValue('DE');
 
-    await userEvent.clear(screen.getByLabelText('Country'));
-    await userEvent.tab();
+    first.unmount();
+    render(
+      <Wrapper>
+        <LocationCell personId="p-2" city="Berlin" country="Atlantis" />
+      </Wrapper>
+    );
+    expect(screen.getByLabelText('Country')).toHaveValue('Atlantis');
+  });
+
+  it('sends null when the country is emptied', async () => {
+    render(
+      <Wrapper>
+        <LocationCell personId="p-1" city="Berlin" country="DE" />
+      </Wrapper>
+    );
+
+    await userEvent.selectOptions(screen.getByLabelText('Country'), '');
 
     await waitFor(() => expect(fetchMock).toHaveBeenCalled());
     expect(lastRequest().body).toEqual({ country: null });
