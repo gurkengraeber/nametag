@@ -692,7 +692,7 @@ export default function PersonForm({
         </button>
       )}
 
-      <div className={moreVisible ? 'space-y-6' : 'hidden'}>
+      <div hidden={!moreVisible} className="space-y-6">
         {!isEdit && photoSection}
 
         <FormSection
