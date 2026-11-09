@@ -7,8 +7,11 @@ import Modal from '@/components/ui/Modal';
 import { Button } from '@/components/ui/Button';
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import { CARDDAV_PROVIDERS } from '@/lib/carddav/types';
+import { normalizeServerUrl } from '@/lib/carddav-ui/connection-test';
 import type { CardDavConnectionResponse } from '@/lib/carddav/types';
 import ConnectionWizard from './ConnectionWizard';
+import ConnectionFields from './ConnectionFields';
+import { useConnectionTest } from './useConnectionTest';
 
 interface ConnectionModalProps {
   isOpen: boolean;
@@ -52,9 +55,8 @@ function ConnectionEditModal({
   const [serverUrl, setServerUrl] = useState(existingConnection.serverUrl || '');
   const [username, setUsername] = useState(existingConnection.username || '');
   const [password, setPassword] = useState('');
-  const [isTesting, setIsTesting] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [testResult, setTestResult] = useState<{ success: boolean; message: string } | null>(null);
+  const { state: testState, run: runTest, reset: resetTest } = useConnectionTest();
   const [error, setError] = useState('');
   const [showDisconnectConfirm, setShowDisconnectConfirm] = useState(false);
   const [isDisconnecting, setIsDisconnecting] = useState(false);
@@ -67,70 +69,38 @@ function ConnectionEditModal({
       setServerUrl(existingConnection.serverUrl || '');
       setUsername(existingConnection.username || '');
       setPassword('');
-      setTestResult(null);
+      resetTest();
       setError('');
     }
-  }, [isOpen, existingConnection]);
+  }, [isOpen, existingConnection, resetTest]);
 
   const handleProviderChange = (newProvider: string) => {
     setProvider(newProvider);
     const providerConfig = CARDDAV_PROVIDERS[newProvider];
-    if (providerConfig && providerConfig.serverUrl) {
-      setServerUrl(providerConfig.serverUrl);
-    } else {
-      setServerUrl('');
-    }
-    setTestResult(null);
+    setServerUrl(providerConfig?.serverUrl || '');
+    resetTest();
     setError('');
   };
 
+  const handleFieldChange = (field: 'serverUrl' | 'username' | 'password', value: string) => {
+    if (field === 'serverUrl') setServerUrl(value);
+    if (field === 'username') setUsername(value);
+    if (field === 'password') setPassword(value);
+    resetTest();
+  };
+
   const handleTestConnection = async () => {
-    setIsTesting(true);
     setError('');
-    setTestResult(null);
-
-    const normalizedUrl = normalizeUrl(serverUrl);
+    const normalizedUrl = normalizeServerUrl(serverUrl);
     setServerUrl(normalizedUrl);
-
-    try {
-      const response = await fetch('/api/carddav/connection/test', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          serverUrl: normalizedUrl,
-          username,
-          password: password || undefined,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        setTestResult({
-          success: false,
-          message: data.error || t('testFailed'),
-        });
-      } else {
-        setTestResult({
-          success: true,
-          message: t('testSuccessMessage'),
-        });
-      }
-    } catch (_err) {
-      setTestResult({
-        success: false,
-        message: t('testError'),
-      });
-    } finally {
-      setIsTesting(false);
-    }
+    await runTest({ serverUrl: normalizedUrl, username, password });
   };
 
   const handleSave = async () => {
     setIsSaving(true);
     setError('');
 
-    const normalizedUrl = normalizeUrl(serverUrl);
+    const normalizedUrl = normalizeServerUrl(serverUrl);
 
     try {
       const response = await fetch('/api/carddav/connection', {
@@ -159,14 +129,6 @@ function ConnectionEditModal({
     }
   };
 
-  const normalizeUrl = (url: string) => {
-    const trimmed = url.trim();
-    if (trimmed && !/^https?:\/\//i.test(trimmed)) {
-      return `https://${trimmed}`;
-    }
-    return trimmed;
-  };
-
   const handleDisconnect = async () => {
     setIsDisconnecting(true);
     setDisconnectError(null);
@@ -192,7 +154,7 @@ function ConnectionEditModal({
   };
 
   const isFormComplete = serverUrl && username && (password || existingConnection);
-  const canSave = testResult?.success === true && !isSaving;
+  const canSave = testState.status === 'success' && !isSaving;
 
   return (
     <>
@@ -203,111 +165,15 @@ function ConnectionEditModal({
       size="lg"
     >
       <div className="space-y-6">
-        {/* Provider Selection */}
-        <div>
-          <label className="block text-sm font-medium text-foreground mb-2">
-            {t('providerLabel')}
-          </label>
-          <select
-            value={provider}
-            onChange={(e) => handleProviderChange(e.target.value)}
-            className="w-full px-4 py-2 border border-border rounded-lg bg-surface text-foreground focus:ring-2 focus:ring-primary focus:border-transparent"
-          >
-            {Object.entries(CARDDAV_PROVIDERS).map(([key, config]) => (
-              <option key={key} value={key}>
-                {config.name}
-              </option>
-            ))}
-            <option value="custom">{t('customProvider')}</option>
-          </select>
-        </div>
-
-        {/* Server URL */}
-        <div>
-          <label className="block text-sm font-medium text-foreground mb-2">
-            {t('serverUrlLabel')}
-          </label>
-          <input
-            type="url"
-            value={serverUrl}
-            onChange={(e) => {
-              setServerUrl(e.target.value);
-              setTestResult(null);
-            }}
-            placeholder="https://carddav.example.com"
-            required
-            disabled={provider !== 'custom'}
-            className="w-full px-4 py-2 border border-border rounded-lg bg-surface text-foreground focus:ring-2 focus:ring-primary focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
-          />
-        </div>
-
-        {/* Username */}
-        <div>
-          <label className="block text-sm font-medium text-foreground mb-2">
-            {t('usernameLabel')}
-          </label>
-          <input
-            type="text"
-            value={username}
-            onChange={(e) => {
-              setUsername(e.target.value);
-              setTestResult(null);
-            }}
-            placeholder={t('usernamePlaceholder')}
-            required
-            className="w-full px-4 py-2 border border-border rounded-lg bg-surface text-foreground focus:ring-2 focus:ring-primary focus:border-transparent"
-          />
-        </div>
-
-        {/* Password */}
-        <div>
-          <label className="block text-sm font-medium text-foreground mb-2">
-            {t('passwordLabel')}
-            <span className="ml-2 text-xs text-muted">
-              ({t('leaveBlankToKeep')})
-            </span>
-          </label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => {
-              setPassword(e.target.value);
-              setTestResult(null);
-            }}
-            placeholder={t('passwordPlaceholder')}
-            className="w-full px-4 py-2 border border-border rounded-lg bg-surface text-foreground focus:ring-2 focus:ring-primary focus:border-transparent"
-          />
-          {CARDDAV_PROVIDERS[provider]?.requiresAppPassword && (
-            <p className="mt-2 text-sm text-amber-600 dark:text-amber-400">
-              {t('appPasswordRequired')}{' '}
-              {CARDDAV_PROVIDERS[provider]?.appPasswordUrl && (
-                <a
-                  href={CARDDAV_PROVIDERS[provider].appPasswordUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="underline hover:text-amber-700 dark:hover:text-amber-300"
-                >
-                  {t('appPasswordCreateLink')}
-                </a>
-              )}
-            </p>
-          )}
-        </div>
-
-        {/* Test Result */}
-        {testResult && (
-          <div
-            className={`p-4 rounded-lg ${
-              testResult.success
-                ? 'bg-green-50 dark:bg-green-900/20 text-green-800 dark:text-green-200 border border-green-200 dark:border-green-800'
-                : 'bg-red-50 dark:bg-red-900/20 text-red-800 dark:text-red-200 border border-red-200 dark:border-red-800'
-            }`}
-          >
-            <p className="font-medium">
-              {testResult.success ? '\u2713' : '\u2717'} {testResult.message}
-            </p>
-          </div>
-        )}
+        <ConnectionFields
+          values={{ provider, serverUrl, username, password }}
+          onProviderChange={handleProviderChange}
+          onFieldChange={handleFieldChange}
+          passwordOptional
+          testState={testState}
+          onTest={handleTestConnection}
+          canTest={Boolean(isFormComplete)}
+        />
 
         {/* Form validation message */}
         {!isFormComplete && (
@@ -326,17 +192,7 @@ function ConnectionEditModal({
         )}
 
         {/* Action buttons */}
-        <div className="flex gap-3 pt-4 border-t border-border">
-          <Button
-            type="button"
-            onClick={handleTestConnection}
-            disabled={!isFormComplete || isTesting}
-            variant="custom"
-            className="bg-muted text-white hover:bg-muted/80 border-0"
-          >
-            {isTesting ? t('testing') : t('testConnection')}
-          </Button>
-
+        <div className="flex flex-col gap-3 sm:flex-row pt-4 border-t border-border">
           <Button
             type="button"
             onClick={handleSave}
@@ -353,6 +209,9 @@ function ConnectionEditModal({
             {t('cancel')}
           </Button>
         </div>
+        {testState.status !== 'success' && isFormComplete && (
+          <p className="text-sm text-muted -mt-3">{t('testBeforeSave')}</p>
+        )}
 
         {/* Disconnect section */}
         <div className="pt-4 border-t border-border">

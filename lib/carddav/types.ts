@@ -162,7 +162,12 @@ export interface CardDavProvider {
   serverUrl: string;
   help: string;
   requiresAppPassword?: boolean;
+  /** Only needed when two-factor sign-in is on; the page words its hint more softly. */
+  appPasswordWithTwoFactor?: boolean;
   appPasswordUrl?: string;
+  /** The server address depends on the user (self hosted), so the field stays editable. */
+  urlEditable?: boolean;
+  urlPlaceholder?: string;
 }
 
 export const CARDDAV_PROVIDERS: Record<string, CardDavProvider> = {
@@ -189,4 +194,44 @@ export const CARDDAV_PROVIDERS: Record<string, CardDavProvider> = {
     help: 'Use email and password',
     requiresAppPassword: false,
   },
+  mailbox: {
+    id: 'mailbox',
+    name: 'mailbox.org',
+    serverUrl: 'https://dav.mailbox.org/',
+    help: 'Use your mailbox.org address; with two-factor sign-in use an app password',
+    requiresAppPassword: false,
+    appPasswordWithTwoFactor: true,
+    appPasswordUrl: 'https://login.mailbox.org/',
+  },
+  fastmail: {
+    id: 'fastmail',
+    name: 'Fastmail',
+    serverUrl: 'https://carddav.fastmail.com/',
+    help: 'Use your Fastmail address and an app password',
+    requiresAppPassword: true,
+    appPasswordUrl: 'https://app.fastmail.com/settings/security/devicekeys/new',
+  },
+  posteo: {
+    id: 'posteo',
+    name: 'Posteo',
+    serverUrl: 'https://posteo.de:8843/',
+    help: 'Use your Posteo address and password',
+    requiresAppPassword: false,
+  },
+  nextcloud: {
+    id: 'nextcloud',
+    name: 'Nextcloud',
+    serverUrl: '',
+    help: 'Use your Nextcloud address followed by /remote.php/dav',
+    requiresAppPassword: false,
+    appPasswordWithTwoFactor: true,
+    urlEditable: true,
+    urlPlaceholder: 'https://cloud.example.com/remote.php/dav',
+  },
 };
+
+/** Whether the server address of this provider may be edited by hand. */
+export function isServerUrlEditable(providerId: string): boolean {
+  const provider = CARDDAV_PROVIDERS[providerId];
+  return !provider || provider.urlEditable === true;
+}

@@ -90,3 +90,24 @@ export function normalizeServerUrl(url: string): string {
   if (trimmed && !/^https?:\/\//i.test(trimmed)) return `https://${trimmed}`;
   return trimmed;
 }
+
+export type TestFailureKind =
+  | TestFailureReason
+  | 'rate_limited'
+  | 'password_required'
+  | 'invalid_input'
+  | 'network';
+
+/**
+ * What went wrong according to the response of the test route. `network` is
+ * for a request that never got an answer and is chosen by the caller.
+ */
+export function failureKindFromResponse(status: number, body: unknown): TestFailureKind {
+  if (status === 429) return 'rate_limited';
+  const code = typeof body === 'object' && body !== null ? (body as { code?: unknown }).code : undefined;
+  if (code === 'carddav_auth_failed' || code === 'carddav_unreachable') return reasonFromResponse(body);
+  if (code === 'password_required') return 'password_required';
+  // Bad address (blocked or malformed), missing password and similar input problems
+  if (status === 400) return 'invalid_input';
+  return 'unknown';
+}

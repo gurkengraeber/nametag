@@ -4,6 +4,7 @@ import {
   reasonFromResponse,
   summarizeAddressBooks,
   normalizeServerUrl,
+  failureKindFromResponse,
 } from '@/lib/carddav-ui/connection-test';
 
 describe('classifyTestFailure', () => {
@@ -77,5 +78,30 @@ describe('normalizeServerUrl', () => {
     expect(normalizeServerUrl('  dav.example.com ')).toBe('https://dav.example.com');
     expect(normalizeServerUrl('http://dav.example.com')).toBe('http://dav.example.com');
     expect(normalizeServerUrl('')).toBe('');
+  });
+});
+
+describe('failureKindFromResponse', () => {
+  it('uses the reason of a CardDAV error', () => {
+    expect(failureKindFromResponse(400, { code: 'carddav_auth_failed', params: { reason: 'auth' } })).toBe('auth');
+    expect(failureKindFromResponse(502, { code: 'carddav_unreachable', params: { reason: 'tls' } })).toBe('tls');
+  });
+
+  it('reports rate limiting', () => {
+    expect(failureKindFromResponse(429, { code: 'rate_limited' })).toBe('rate_limited');
+  });
+
+  it('asks for the password when the saved one cannot be used', () => {
+    expect(failureKindFromResponse(400, { code: 'password_required' })).toBe('password_required');
+  });
+
+  it('treats other bad requests as input problems', () => {
+    expect(failureKindFromResponse(400, { code: 'bad_request', error: 'Blocked address' })).toBe('invalid_input');
+    expect(failureKindFromResponse(400, { code: 'validation_failed' })).toBe('invalid_input');
+  });
+
+  it('falls back to unknown', () => {
+    expect(failureKindFromResponse(500, { code: 'internal_error' })).toBe('unknown');
+    expect(failureKindFromResponse(502, null)).toBe('unknown');
   });
 });
