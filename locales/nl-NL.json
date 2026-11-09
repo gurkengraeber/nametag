@@ -567,7 +567,19 @@
         "errors": "{count} fouten",
         "errorDetails": "Foutdetails",
         "noContactsSelected": "Selecteer ten minste één contact om te exporteren",
-        "exportFailed": "Contacten exporteren mislukt"
+        "exportFailed": "Contacten exporteren mislukt",
+        "intro": "Kies de contacten die naar je server worden gestuurd. Ze worden daar één keer aangemaakt en blijven daarna gesynchroniseerd.",
+        "progress": "{done} van {total} contacten verzonden",
+        "notSent": "{count, plural, =1 {1 contact is niet verzonden.} other {# contacten zijn niet verzonden.}} Selecteer ze opnieuw om het nog eens te proberen.",
+        "statExported": "Verzonden",
+        "statAlready": "Al op de server",
+        "statErrors": "Fouten",
+        "backToSettings": "Terug naar CardDAV-instellingen",
+        "exportMore": "Meer contacten sturen",
+        "noMatches": "Geen contacten komen overeen met je zoekopdracht.",
+        "clearSearch": "Zoekopdracht wissen",
+        "cancel": "Annuleren",
+        "syncDisabled": "Synchronisatie staat uit, dus contacten kunnen niet worden verzonden. Zet haar eerst aan in de synchronisatie-instellingen."
       },
       "wizard": {
         "step1Title": "Server configuratie",
@@ -605,6 +617,14 @@
         "malformedData": "Ongeldige gegevens ontvangen van server. Het contact kan beschadigd zijn.",
         "notFound": "De gevraagde bron is niet gevonden. Controleer uw server URL.",
         "unknown": "Er is een onverwachte fout opgetreden. Probeer het opnieuw of neem contact op met ondersteuning."
+      },
+      "list": {
+        "searchPlaceholder": "Zoeken op naam, bedrijf, e-mail of telefoon",
+        "selectVisible": "{count, plural, =1 {Dit contact selecteren} other {Alle # getoonde selecteren}}",
+        "deselectVisible": "{count, plural, =1 {Dit contact deselecteren} other {Alle # getoonde deselecteren}}",
+        "showing": "{shown} van {total} getoond",
+        "selectedCount": "{count} geselecteerd",
+        "selectedHidden": "waarvan {count} verborgen door de zoekopdracht"
       }
     },
     "billing": {

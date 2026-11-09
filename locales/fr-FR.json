@@ -567,7 +567,19 @@
         "errors": "{count} erreurs",
         "errorDetails": "Détails de l'erreur",
         "noContactsSelected": "Sélectionnez au moins un contact à exporter",
-        "exportFailed": "Échec de l'export des contacts"
+        "exportFailed": "Échec de l'export des contacts",
+        "intro": "Choisissez les contacts à envoyer à votre serveur. Ils y sont créés une fois, puis restent synchronisés.",
+        "progress": "{done} contacts sur {total} envoyés",
+        "notSent": "{count, plural, =1 {1 contact n'a pas été envoyé.} other {# contacts n'ont pas été envoyés.}} Sélectionnez-les à nouveau pour réessayer.",
+        "statExported": "Envoyés",
+        "statAlready": "Déjà sur le serveur",
+        "statErrors": "Erreurs",
+        "backToSettings": "Retour aux réglages CardDAV",
+        "exportMore": "Envoyer d'autres contacts",
+        "noMatches": "Aucun contact ne correspond à la recherche.",
+        "clearSearch": "Effacer la recherche",
+        "cancel": "Annuler",
+        "syncDisabled": "La synchronisation est désactivée, les contacts ne peuvent donc pas être envoyés. Activez-la d'abord dans les réglages de synchronisation."
       },
       "wizard": {
         "step1Title": "Configuration du serveur",
@@ -605,6 +617,14 @@
         "malformedData": "Données invalides reçues du serveur. Le contact est peut-être corrompu.",
         "notFound": "La ressource demandée est introuvable. Vérifiez l'URL de votre serveur.",
         "unknown": "Une erreur inattendue est survenue. Réessayez ou contactez le support."
+      },
+      "list": {
+        "searchPlaceholder": "Rechercher par nom, société, e-mail ou téléphone",
+        "selectVisible": "{count, plural, =1 {Sélectionner ce contact} other {Sélectionner les # affichés}}",
+        "deselectVisible": "{count, plural, =1 {Désélectionner ce contact} other {Désélectionner les # affichés}}",
+        "showing": "{shown} sur {total} affichés",
+        "selectedCount": "{count} sélectionnés",
+        "selectedHidden": "dont {count} masqués par la recherche"
       }
     },
     "billing": {

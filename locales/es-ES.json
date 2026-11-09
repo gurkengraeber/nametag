@@ -567,7 +567,19 @@
         "errors": "{count} errores",
         "errorDetails": "Detalles del error",
         "noContactsSelected": "Por favor selecciona al menos un contacto para exportar",
-        "exportFailed": "Error al exportar los contactos"
+        "exportFailed": "Error al exportar los contactos",
+        "intro": "Elige los contactos que se enviarán a tu servidor. Se crean allí una vez y después se mantienen sincronizados.",
+        "progress": "{done} de {total} contactos enviados",
+        "notSent": "{count, plural, =1 {1 contacto no se envió.} other {# contactos no se enviaron.}} Vuelve a seleccionarlos para reintentar.",
+        "statExported": "Enviados",
+        "statAlready": "Ya en el servidor",
+        "statErrors": "Errores",
+        "backToSettings": "Volver a los ajustes de CardDAV",
+        "exportMore": "Enviar más contactos",
+        "noMatches": "Ningún contacto coincide con la búsqueda.",
+        "clearSearch": "Borrar búsqueda",
+        "cancel": "Cancelar",
+        "syncDisabled": "La sincronización está desactivada, por lo que no se pueden enviar contactos. Actívala antes en los ajustes de sincronización."
       },
       "wizard": {
         "step1Title": "Configuración del servidor",
@@ -605,6 +617,14 @@
         "malformedData": "Datos inválidos recibidos del servidor. El contacto puede estar corrupto.",
         "notFound": "El recurso solicitado no fue encontrado. Verifica la URL de tu servidor.",
         "unknown": "Ocurrió un error inesperado. Inténtalo de nuevo o contacta al soporte."
+      },
+      "list": {
+        "searchPlaceholder": "Buscar por nombre, empresa, correo o teléfono",
+        "selectVisible": "{count, plural, =1 {Seleccionar este contacto} other {Seleccionar los # mostrados}}",
+        "deselectVisible": "{count, plural, =1 {Quitar este contacto} other {Quitar los # mostrados}}",
+        "showing": "Mostrando {shown} de {total}",
+        "selectedCount": "{count} seleccionados",
+        "selectedHidden": "{count} ocultos por la búsqueda"
       }
     },
     "billing": {

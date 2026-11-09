@@ -567,7 +567,19 @@
         "errors": "{count} Fehler",
         "errorDetails": "Fehlerdetails",
         "noContactsSelected": "Bitte wähle mindestens einen Kontakt zum Exportieren aus",
-        "exportFailed": "Kontakte konnten nicht exportiert werden"
+        "exportFailed": "Kontakte konnten nicht exportiert werden",
+        "intro": "Wähle die Kontakte, die an deinen Server gesendet werden sollen. Sie werden dort einmal angelegt und bleiben danach synchron.",
+        "progress": "{done} von {total} Kontakten gesendet",
+        "notSent": "{count, plural, =1 {1 Kontakt wurde nicht gesendet.} other {# Kontakte wurden nicht gesendet.}} Wähle sie erneut aus, um es nochmal zu versuchen.",
+        "statExported": "Gesendet",
+        "statAlready": "Schon auf dem Server",
+        "statErrors": "Fehler",
+        "backToSettings": "Zurück zu den CardDAV-Einstellungen",
+        "exportMore": "Weitere Kontakte senden",
+        "noMatches": "Kein Kontakt passt zur Suche.",
+        "clearSearch": "Suche zurücksetzen",
+        "cancel": "Abbrechen",
+        "syncDisabled": "Die Synchronisierung ist ausgeschaltet, deshalb können keine Kontakte gesendet werden. Schalte sie zuerst in den Synchronisierungs-Einstellungen ein."
       },
       "wizard": {
         "step1Title": "Server-Konfiguration",
@@ -605,6 +617,14 @@
         "malformedData": "Ungültige Daten vom Server empfangen. Der Kontakt ist möglicherweise beschädigt.",
         "notFound": "Die angeforderte Ressource wurde nicht gefunden. Bitte überprüfe deine Server-URL.",
         "unknown": "Ein unerwarteter Fehler ist aufgetreten. Bitte versuche es erneut oder kontaktiere den Support."
+      },
+      "list": {
+        "searchPlaceholder": "Nach Name, Firma, E-Mail oder Telefon suchen",
+        "selectVisible": "{count, plural, =1 {Diesen Kontakt auswählen} other {Alle # angezeigten auswählen}}",
+        "deselectVisible": "{count, plural, =1 {Diesen Kontakt abwählen} other {Alle # angezeigten abwählen}}",
+        "showing": "{shown} von {total} angezeigt",
+        "selectedCount": "{count} ausgewählt",
+        "selectedHidden": "davon {count} durch die Suche ausgeblendet"
       }
     },
     "billing": {

@@ -567,7 +567,19 @@
         "errors": "Błędów: {count}",
         "errorDetails": "Szczegóły błędów",
         "noContactsSelected": "Zaznacz co najmniej jeden kontakt do wyeksportowania",
-        "exportFailed": "Nie udało się wyeksportować kontaktów"
+        "exportFailed": "Nie udało się wyeksportować kontaktów",
+        "intro": "Wybierz kontakty do wysłania na serwer. Zostaną tam utworzone raz i potem pozostaną zsynchronizowane.",
+        "progress": "Wysłano {done} z {total} kontaktów",
+        "notSent": "{count, plural, =1 {1 kontakt nie został wysłany.} other {Liczba niewysłanych kontaktów: #.}} Zaznacz je ponownie, aby spróbować jeszcze raz.",
+        "statExported": "Wysłane",
+        "statAlready": "Już na serwerze",
+        "statErrors": "Błędy",
+        "backToSettings": "Wróć do ustawień CardDAV",
+        "exportMore": "Wyślij więcej kontaktów",
+        "noMatches": "Żaden kontakt nie pasuje do wyszukiwania.",
+        "clearSearch": "Wyczyść wyszukiwanie",
+        "cancel": "Anuluj",
+        "syncDisabled": "Synchronizacja jest wyłączona, więc nie można wysłać kontaktów. Najpierw włącz ją w ustawieniach synchronizacji."
       },
       "wizard": {
         "step1Title": "Konfiguracja serwera",
@@ -605,6 +617,14 @@
         "malformedData": "Serwer zwrócił nieprawidłowe dane. Kontakt może być uszkodzony.",
         "notFound": "Nie znaleziono żądanego zasobu. Sprawdź adres URL serwera.",
         "unknown": "Wystąpił nieoczekiwany błąd. Spróbuj ponownie lub skontaktuj się z pomocą techniczną."
+      },
+      "list": {
+        "searchPlaceholder": "Szukaj po imieniu, firmie, e-mailu lub telefonie",
+        "selectVisible": "{count, plural, =1 {Zaznacz ten kontakt} other {Zaznacz wszystkie widoczne (#)}}",
+        "deselectVisible": "{count, plural, =1 {Odznacz ten kontakt} other {Odznacz wszystkie widoczne (#)}}",
+        "showing": "Widoczne: {shown} z {total}",
+        "selectedCount": "Zaznaczono: {count}",
+        "selectedHidden": "w tym {count} ukrytych przez wyszukiwanie"
       }
     },
     "billing": {

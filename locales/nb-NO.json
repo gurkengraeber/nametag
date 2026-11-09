@@ -567,7 +567,19 @@
         "errors": "{count} feil",
         "errorDetails": "Feildetaljer",
         "noContactsSelected": "Velg minst én kontakt å eksportere",
-        "exportFailed": "Kunne ikke eksportere kontakter"
+        "exportFailed": "Kunne ikke eksportere kontakter",
+        "intro": "Velg kontaktene som skal sendes til serveren din. De opprettes der én gang og holdes deretter synkronisert.",
+        "progress": "{done} av {total} kontakter sendt",
+        "notSent": "{count, plural, =1 {1 kontakt ble ikke sendt.} other {# kontakter ble ikke sendt.}} Velg dem på nytt for å prøve igjen.",
+        "statExported": "Sendt",
+        "statAlready": "Allerede på serveren",
+        "statErrors": "Feil",
+        "backToSettings": "Tilbake til CardDAV-innstillinger",
+        "exportMore": "Send flere kontakter",
+        "noMatches": "Ingen kontakter samsvarer med søket.",
+        "clearSearch": "Tøm søket",
+        "cancel": "Avbryt",
+        "syncDisabled": "Synkronisering er slått av, så kontakter kan ikke sendes. Slå den på i synkroniseringsinnstillingene først."
       },
       "wizard": {
         "step1Title": "Serverkonfigurasjon",
@@ -605,6 +617,14 @@
         "malformedData": "Invalid data received from server. The contact may be corrupted.",
         "notFound": "The requested resource was not found. Please check your server URL.",
         "unknown": "An unexpected error occurred. Please try again or contact support."
+      },
+      "list": {
+        "searchPlaceholder": "Søk etter navn, firma, e-post eller telefon",
+        "selectVisible": "{count, plural, =1 {Velg denne kontakten} other {Velg alle # viste}}",
+        "deselectVisible": "{count, plural, =1 {Fjern valg av denne kontakten} other {Fjern valg av alle # viste}}",
+        "showing": "Viser {shown} av {total}",
+        "selectedCount": "{count} valgt",
+        "selectedHidden": "{count} av dem skjult av søket"
       }
     },
     "billing": {

@@ -567,7 +567,19 @@
         "errors": "{count} errors",
         "errorDetails": "Error details",
         "noContactsSelected": "Please select at least one contact to export",
-        "exportFailed": "Failed to export contacts"
+        "exportFailed": "Failed to export contacts",
+        "intro": "Pick the contacts to send to your server. They are created there once and stay in sync afterwards.",
+        "progress": "{done} of {total} contacts sent",
+        "notSent": "{count, plural, =1 {1 contact was not sent.} other {# contacts were not sent.}} Select them again to retry.",
+        "statExported": "Sent",
+        "statAlready": "Already on server",
+        "statErrors": "Errors",
+        "backToSettings": "Back to CardDAV settings",
+        "exportMore": "Send more contacts",
+        "noMatches": "No contacts match your search.",
+        "clearSearch": "Clear search",
+        "cancel": "Cancel",
+        "syncDisabled": "Sync is switched off, so contacts cannot be sent. Turn it on in the sync settings first."
       },
       "wizard": {
         "step1Title": "Server Configuration",
@@ -605,6 +617,14 @@
         "malformedData": "Invalid data received from server. The contact may be corrupted.",
         "notFound": "The requested resource was not found. Please check your server URL.",
         "unknown": "An unexpected error occurred. Please try again or contact support."
+      },
+      "list": {
+        "searchPlaceholder": "Search by name, company, email or phone",
+        "selectVisible": "{count, plural, =1 {Select this contact} other {Select all # shown}}",
+        "deselectVisible": "{count, plural, =1 {Deselect this contact} other {Deselect all # shown}}",
+        "showing": "Showing {shown} of {total}",
+        "selectedCount": "{count} selected",
+        "selectedHidden": "{count} of them hidden by the search"
       }
     },
     "billing": {

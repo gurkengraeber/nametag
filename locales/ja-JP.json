@@ -567,7 +567,19 @@
         "errors": "{count}件のエラー",
         "errorDetails": "エラーの詳細",
         "noContactsSelected": "エクスポートする連絡先を少なくとも1つ選択してください",
-        "exportFailed": "連絡先のエクスポートに失敗しました"
+        "exportFailed": "連絡先のエクスポートに失敗しました",
+        "intro": "サーバーに送る連絡先を選んでください。サーバー上に一度作成され、その後は同期が保たれます。",
+        "progress": "{total}件中{done}件を送信済み",
+        "notSent": "{count, plural, =1 {1件が送信されませんでした。} other {#件が送信されませんでした。}}もう一度選択して再試行してください。",
+        "statExported": "送信済み",
+        "statAlready": "サーバーに登録済み",
+        "statErrors": "エラー",
+        "backToSettings": "CardDAV設定に戻る",
+        "exportMore": "さらに連絡先を送る",
+        "noMatches": "検索に一致する連絡先がありません。",
+        "clearSearch": "検索をクリア",
+        "cancel": "キャンセル",
+        "syncDisabled": "同期がオフのため、連絡先を送れません。先に同期設定でオンにしてください。"
       },
       "wizard": {
         "step1Title": "サーバー設定",
@@ -605,6 +617,14 @@
         "malformedData": "Invalid data received from server. The contact may be corrupted.",
         "notFound": "The requested resource was not found. Please check your server URL.",
         "unknown": "An unexpected error occurred. Please try again or contact support."
+      },
+      "list": {
+        "searchPlaceholder": "名前、会社、メール、電話で検索",
+        "selectVisible": "{count, plural, =1 {この連絡先を選択} other {表示中の#件をすべて選択}}",
+        "deselectVisible": "{count, plural, =1 {この連絡先の選択を解除} other {表示中の#件の選択を解除}}",
+        "showing": "{total}件中{shown}件を表示",
+        "selectedCount": "{count}件選択中",
+        "selectedHidden": "うち{count}件は検索で非表示"
       }
     },
     "billing": {
