@@ -1591,7 +1591,9 @@
       "errorSomethingWrong": "Etwas ist schiefgelaufen",
       "errorConnection": "Verbindung zum Server nicht möglich. Bitte prüfe deine Verbindung und versuche es erneut.",
       "successCreated": "Gruppe \"{name}\" wurde erstellt",
-      "successUpdated": "Gruppe \"{name}\" wurde aktualisiert"
+      "successUpdated": "Gruppe \"{name}\" wurde aktualisiert",
+      "nameExists": "Eine Gruppe namens \"{name}\" gibt es schon.",
+      "nameSimilar": "Sieht ähnlich aus wie die vorhandene Gruppe \"{name}\". Tippfehler?"
     },
     "members": {
       "label": "Mitglieder ({count})",
@@ -1635,7 +1637,34 @@
     "showing": "Zeige {start}-{end} von {total} Gruppen",
     "noMembersYet": "Noch keine Mitglieder",
     "oneMember": "1 Mitglied",
-    "membersCount": "{count} Mitglieder"
+    "membersCount": "{count} Mitglieder",
+    "quickAdd": {
+      "label": "Name einer neuen Gruppe",
+      "placeholder": "Schnell anlegen: Name der neuen Gruppe",
+      "add": "Hinzufügen",
+      "adding": "Wird hinzugefügt...",
+      "changeColor": "Farbe ändern",
+      "created": "Gruppe \"{name}\" wurde angelegt",
+      "error": "Gruppe konnte nicht angelegt werden",
+      "errorConnection": "Verbindung zum Server nicht möglich",
+      "nameExists": "Eine Gruppe namens \"{name}\" gibt es schon.",
+      "nameSimilar": "Sieht ähnlich aus wie die vorhandene Gruppe \"{name}\". Tippfehler?"
+    },
+    "suggestions": {
+      "intro": "Starte mit ein paar üblichen Gruppen, jeweils mit einem Tipp:",
+      "family": "Familie",
+      "friends": "Freunde",
+      "work": "Arbeit",
+      "neighbors": "Nachbarn"
+    },
+    "sort": {
+      "label": "Gruppen sortieren",
+      "name": "Name (A bis Z)",
+      "size": "Meiste Mitglieder zuerst"
+    },
+    "noSearchResults": "Keine Gruppe passt zu \"{query}\".",
+    "clearSearch": "Suche löschen",
+    "morePeople": "+{count} weitere"
   },
   "map": {
     "title": "Karte",
@@ -1677,7 +1706,6 @@
     "relationship": "Beziehung",
     "inverseRelationship": "Gegenbeziehung",
     "actions": "Aktionen",
-    "usedTimes": "{count}× verwendet",
     "edit": "Bearbeiten",
     "noRelationshipTypes": "Keine Beziehungsarten",
     "noRelationshipTypesDescription": "Erstelle Beziehungsarten, um Verbindungen in deinem Netzwerk zu kategorisieren.",
@@ -1685,15 +1713,16 @@
     "backToTypes": "← Zurück zu Beziehungsarten",
     "delete": {
       "button": "Löschen",
-      "confirmPrompt": "Löschen",
-      "usedCount": "{count}× verwendet",
-      "usedCount_plural": "{count}× verwendet",
       "confirmButton": "Bestätigen",
       "deleting": "Wird gelöscht...",
       "cancel": "Abbrechen",
-      "confirmTitle": "Löschen bestätigen",
-      "cancelTitle": "Abbrechen",
-      "errorDelete": "Beziehungsart konnte nicht gelöscht werden"
+      "errorDelete": "Beziehungsart konnte nicht gelöscht werden",
+      "title": "Beziehungsart löschen",
+      "confirmMessage": "Möchtest du wirklich löschen:",
+      "blockedByConnections": "{count, plural, one {# Verbindung zwischen zwei Personen nutzt diese Art noch.} other {# Verbindungen zwischen Personen nutzen diese Art noch.}} Ändere oder entferne sie zuerst, dann kannst du die Art löschen.",
+      "affectsPeople": "{count, plural, one {Du hast diese Beziehung zu # Person. Sie wird nicht gelöscht, zeigt die Beziehung aber nicht mehr an.} other {Du hast diese Beziehung zu # Personen. Sie werden nicht gelöscht, zeigen die Beziehung aber nicht mehr an.}}",
+      "unused": "Niemand nutzt diese Art gerade.",
+      "restoreHint": "Du kannst die Art in den Einstellungen aus dem Papierkorb zurückholen."
     },
     "form": {
       "labelRequired": "Beziehungsbezeichnung *",
@@ -1701,8 +1730,6 @@
       "labelHelp": "Der Name, der Nutzer:innen angezeigt wird",
       "inverseRelationship": "Gegenbeziehung",
       "symmetric": "Symmetrisch (wie Gegenbeziehung)",
-      "symmetricHelp": "Beide Richtungen verwenden dieselbe Bezeichnung (z. B. Freund ↔ Freund)",
-      "nonSymmetricHelp": "Die wechselseitige Beziehung (z. B. Eltern ↔ Kind, Mentor ↔ Schüler)",
       "inversePlaceholder": "Vorhandene suchen oder tippen, um neu zu erstellen...",
       "color": "Farbe",
       "customColor": "Oder wähle eine benutzerdefinierte Farbe:",
@@ -1713,7 +1740,15 @@
       "errorSomethingWrong": "Etwas ist schiefgelaufen",
       "errorConnection": "Verbindung zum Server nicht möglich. Bitte prüfe deine Verbindung und versuche es erneut.",
       "successCreated": "Beziehungsart \"{label}\" wurde erstellt",
-      "successUpdated": "Beziehungsart \"{label}\" wurde aktualisiert"
+      "successUpdated": "Beziehungsart \"{label}\" wurde aktualisiert",
+      "labelExists": "Eine Art namens \"{label}\" gibt es schon.",
+      "labelSimilar": "Sieht ähnlich aus wie die vorhandene Art \"{label}\". Tippfehler?",
+      "inverseIntro": "Die Gegenrichtung beschreibt, wie du aus Sicht der anderen Person erscheinst.",
+      "exampleLabelFallback": "diese Beziehung",
+      "exampleSymmetric": "Beispiel: Wenn Alex dein(e) {label} ist, bist du auch Alex' {label}.",
+      "exampleInverse": "Beispiel: Wenn Alex dein(e) {label} ist, bist du Alex' {inverse}.",
+      "exampleNoInverse": "Beispiel: Wenn Alex dein(e) {label} ist, wird für Alex' Seite nichts festgelegt.",
+      "generateRandomColor": "Zufällige Farbe erzeugen"
     },
     "autocomplete": {
       "placeholder": "Gegenbeziehung suchen oder erstellen...",
@@ -1724,7 +1759,7 @@
       "label": "Personen ({count})",
       "placeholder": "Namen eingeben, um Personen hinzuzufügen...",
       "emptyMessage": "Keine Personen gefunden passend zu",
-      "helpText": "Tippe, um nach Personen zu suchen, und drücke Enter, um sie hinzuzufügen. Wer bereits eine andere Beziehung hat, wird auf diese umgestellt. Klicke auf ×, um sie zu entfernen.",
+      "helpText": "Tippe, um nach Personen zu suchen, und drücke Enter, um sie hinzuzufügen. Wer bereits eine andere Beziehung hat, wird auf diese umgestellt.",
       "addedSuccess": "{name} zu {type} hinzugefügt",
       "removedSuccess": "{name} aus {type} entfernt",
       "errorAdd": "Mitglied konnte nicht hinzugefügt werden",
@@ -1732,7 +1767,49 @@
       "errorConnection": "Verbindung zum Server nicht möglich",
       "remove": "Entfernen",
       "clearAll": "Alles entfernen",
-      "allSelected": "Alle Elemente sind bereits ausgewählt"
+      "allSelected": "Alle Elemente sind bereits ausgewählt",
+      "empty": "Noch niemand ist dein(e) {type}. Füge unten Personen hinzu.",
+      "columnName": "Name",
+      "columnGroups": "Gruppen",
+      "columnLastContact": "Letzter Kontakt",
+      "lastContactLine": "Letzter Kontakt: {date}",
+      "never": "nie",
+      "undo": "Rückgängig",
+      "addTitle": "Personen hinzufügen",
+      "bulkAddedSuccess": "{count, plural, one {# Person zu {type} hinzugefügt} other {# Personen zu {type} hinzugefügt}}",
+      "withoutRelationshipTitle": "Personen ohne Beziehung zu dir ({count})",
+      "withoutRelationshipHelp": "Hake alle ab, die dein(e) {type} sind, und füge sie auf einmal hinzu.",
+      "searchChecklist": "Diese Personen durchsuchen",
+      "noChecklistMatches": "Niemand passt zur Suche.",
+      "selectAll": "Alle auswählen",
+      "selectAllMatching": "Alle Treffer auswählen",
+      "checklistTruncated": "Die ersten {count} werden angezeigt. Suche, um die anderen zu finden.",
+      "addSelected": "{count, plural, =0 {Auswahl hinzufügen} one {# Person als {type} hinzufügen} other {# Personen als {type} hinzufügen}}",
+      "clearSelection": "Auswahl aufheben"
+    },
+    "peopleColumn": "Personen",
+    "connectionsColumn": "Verbindungen",
+    "peopleCount": "{count, plural, one {# Person} other {# Personen}}",
+    "connectionsCount": "{count, plural, one {# Verbindung} other {# Verbindungen}}",
+    "defaults": {
+      "intro": "Starte mit den üblichen Arten wie Freund, Familie und Kollege, jeweils mit passender Gegenrichtung.",
+      "button": "Standardarten anlegen",
+      "creating": "Wird angelegt...",
+      "success": "{count, plural, one {# Art angelegt} other {# Arten angelegt}}",
+      "error": "Standardarten konnten nicht angelegt werden",
+      "errorConnection": "Verbindung zum Server nicht möglich",
+      "labels": {
+        "PARENT": "Elternteil",
+        "CHILD": "Kind",
+        "SIBLING": "Geschwister",
+        "SPOUSE": "Ehepartner",
+        "PARTNER": "Partner",
+        "FRIEND": "Freund",
+        "COLLEAGUE": "Kollege",
+        "ACQUAINTANCE": "Bekannter",
+        "RELATIVE": "Verwandter",
+        "OTHER": "Sonstige"
+      }
     }
   },
   "relationships": {

@@ -35,6 +35,11 @@ export default async function EditGroupPage({
 
   const { nameOrder } = await getUserDisplayPreferences(session.user.id);
 
+  const existingGroups = await prisma.group.findMany({
+    where: { userId: session.user.id, deletedAt: null },
+    select: { id: true, name: true, color: true },
+  });
+
   return (
     <div className="min-h-screen bg-background">
       <Navigation
@@ -65,6 +70,7 @@ export default async function EditGroupPage({
               group={group}
               mode="edit"
               nameOrder={nameOrder}
+              existingGroups={existingGroups}
             />
           </div>
         </div>

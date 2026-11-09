@@ -22,42 +22,54 @@ export default async function RelationshipTypeDetailsPage({
 
   const { id } = await params;
 
-  const personSelect = {
-    id: true,
-    name: true,
-    surname: true,
-    nickname: true,
-    displayNameOverride: true,
-    photo: true,
-  } as const;
-
-  const [relationshipType, allPeople, preferences] = await Promise.all([
+  const [relationshipType, people, preferences] = await Promise.all([
     prisma.relationshipType.findFirst({
       where: { id, userId: session.user.id, deletedAt: null },
       include: {
         inverse: { select: { id: true, label: true } },
-        peopleWithRelation: {
-          where: { deletedAt: null },
-          select: personSelect,
-          orderBy: { name: 'asc' },
-        },
       },
     }),
     prisma.person.findMany({
       where: { userId: session.user.id, deletedAt: null },
-      select: personSelect,
+      select: {
+        id: true,
+        name: true,
+        surname: true,
+        nickname: true,
+        displayNameOverride: true,
+        photo: true,
+        lastContact: true,
+        relationshipToUserId: true,
+        relationshipToUser: { select: { label: true } },
+        groups: {
+          where: { group: { deletedAt: null } },
+          select: { group: { select: { id: true, name: true, color: true } } },
+        },
+      },
       orderBy: { name: 'asc' },
     }),
     getUserDisplayPreferences(session.user.id),
   ]);
-  const { nameOrder, nameDisplayFormat } = preferences;
+  const { nameOrder, nameDisplayFormat, dateFormat } = preferences;
 
   if (!relationshipType) {
     notFound();
   }
 
-  const memberIds = new Set(relationshipType.peopleWithRelation.map((p) => p.id));
-  const availablePeople = allPeople.filter((p) => !memberIds.has(p.id));
+  const rows = people.map((person) => ({
+    id: person.id,
+    name: person.name,
+    surname: person.surname,
+    nickname: person.nickname,
+    displayNameOverride: person.displayNameOverride,
+    photo: person.photo,
+    lastContact: person.lastContact ? person.lastContact.toISOString() : null,
+    groups: person.groups.map((pg) => pg.group),
+    currentRelationship: person.relationshipToUser?.label ?? null,
+    isMember: person.relationshipToUserId === relationshipType.id,
+  }));
+  const currentMembers = rows.filter((row) => row.isMember);
+  const availablePeople = rows.filter((row) => !row.isMember);
 
   return (
     <div className="min-h-screen bg-background">
@@ -109,10 +121,11 @@ export default async function RelationshipTypeDetailsPage({
               <RelationshipTypeMembersManager
                 typeId={relationshipType.id}
                 typeLabel={relationshipType.label}
-                currentMembers={relationshipType.peopleWithRelation}
+                currentMembers={currentMembers}
                 availablePeople={availablePeople}
                 nameOrder={nameOrder}
                 nameDisplayFormat={nameDisplayFormat}
+                dateFormat={dateFormat}
               />
             </div>
           </div>

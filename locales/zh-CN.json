@@ -1591,7 +1591,9 @@
       "errorSomethingWrong": "出了问题",
       "errorConnection": "无法连接到服务器。请检查您的连接并重试。",
       "successCreated": "分组\"{name}\"已被创建",
-      "successUpdated": "分组\"{name}\"已被更新"
+      "successUpdated": "分组\"{name}\"已被更新",
+      "nameExists": "已存在名为“{name}”的分组。",
+      "nameSimilar": "与现有分组“{name}”很像。是不是输错了？"
     },
     "members": {
       "label": "成员({count})",
@@ -1635,7 +1637,34 @@
     "showing": "显示第 {start}-{end}，共 {total} 个分组",
     "noMembersYet": "还没有成员",
     "oneMember": "1 个成员",
-    "membersCount": "{count} 个成员"
+    "membersCount": "{count} 个成员",
+    "quickAdd": {
+      "label": "新分组的名称",
+      "placeholder": "快速添加：新分组名称",
+      "add": "添加",
+      "adding": "添加中...",
+      "changeColor": "更改颜色",
+      "created": "已创建分组“{name}”",
+      "error": "无法创建分组",
+      "errorConnection": "无法连接到服务器",
+      "nameExists": "已存在名为“{name}”的分组。",
+      "nameSimilar": "与现有分组“{name}”很像。是不是输错了？"
+    },
+    "suggestions": {
+      "intro": "从几个常用分组开始，每个只需点一下：",
+      "family": "家人",
+      "friends": "朋友",
+      "work": "工作",
+      "neighbors": "邻居"
+    },
+    "sort": {
+      "label": "分组排序",
+      "name": "名称（A 到 Z）",
+      "size": "成员多的在前"
+    },
+    "noSearchResults": "没有与“{query}”匹配的分组。",
+    "clearSearch": "清除搜索",
+    "morePeople": "另有 {count} 人"
   },
   "map": {
     "title": "地图",
@@ -1677,7 +1706,6 @@
     "relationship": "关系",
     "inverseRelationship": "反向关系",
     "actions": "操作",
-    "usedTimes": "使用 {count} 次",
     "edit": "编辑",
     "noRelationshipTypes": "无关系类型",
     "noRelationshipTypesDescription": "创建关系类型来对您网络中的连接进行分类。",
@@ -1685,15 +1713,16 @@
     "backToTypes": "← 返回关系类型",
     "delete": {
       "button": "删除",
-      "confirmPrompt": "删除",
-      "usedCount": "使用 {count} 次",
-      "usedCount_plural": "使用 {count} 次",
       "confirmButton": "确认",
       "deleting": "删除中...",
       "cancel": "取消",
-      "confirmTitle": "确认删除",
-      "cancelTitle": "取消",
-      "errorDelete": "删除关系类型失败"
+      "errorDelete": "删除关系类型失败",
+      "title": "删除关系类型",
+      "confirmMessage": "确定要删除",
+      "blockedByConnections": "{count, plural, other {仍有 # 条人与人之间的关联在使用此类型。}}请先修改或移除它们，再删除此类型。",
+      "affectsPeople": "{count, plural, other {你与 # 人有这种关系。他们不会被删除，但不再显示这种关系。}}",
+      "unused": "目前没有人使用此类型。",
+      "restoreHint": "你可以在设置的回收站中恢复此类型。"
     },
     "form": {
       "labelRequired": "关系标签 *",
@@ -1701,8 +1730,6 @@
       "labelHelp": "将向用户显示的名称",
       "inverseRelationship": "反向关系",
       "symmetric": "对称(与反向相同)",
-      "symmetricHelp": "两个方向都将使用相同的标签(例如：朋友 ↔ 朋友)",
-      "nonSymmetricHelp": "相互关系(例如：父母 ↔ 子女、导师 ↔ 学生)",
       "inversePlaceholder": "搜索现有的或输入以创建新的...",
       "color": "颜色",
       "customColor": "或选择自定义颜色：",
@@ -1713,7 +1740,15 @@
       "errorSomethingWrong": "出了问题",
       "errorConnection": "无法连接到服务器。请检查您的连接并重试。",
       "successCreated": "关系类型\"{label}\"已被创建",
-      "successUpdated": "关系类型\"{label}\"已被更新"
+      "successUpdated": "关系类型\"{label}\"已被更新",
+      "labelExists": "已存在名为“{label}”的类型。",
+      "labelSimilar": "与现有类型“{label}”很像。是不是输错了？",
+      "inverseIntro": "反向关系描述的是你在对方眼中的关系。",
+      "exampleLabelFallback": "这种关系",
+      "exampleSymmetric": "示例：如果 Alex 是你的{label}，你也是 Alex 的{label}。",
+      "exampleInverse": "示例：如果 Alex 是你的{label}，你就是 Alex 的{inverse}。",
+      "exampleNoInverse": "示例：如果 Alex 是你的{label}，Alex 一侧不会设置任何关系。",
+      "generateRandomColor": "生成随机颜色"
     },
     "autocomplete": {
       "placeholder": "搜索或创建反向关系...",
@@ -1724,7 +1759,7 @@
       "label": "联系人 ({count})",
       "placeholder": "输入姓名以添加联系人...",
       "emptyMessage": "未找到匹配的联系人",
-      "helpText": "输入以搜索联系人并按 Enter 键添加。已有其他关系的联系人将切换为此关系。单击 × 移除。",
+      "helpText": "输入姓名搜索人员，按 Enter 添加。已有其他关系的人会被切换为这种关系。",
       "addedSuccess": "{name} 已添加到 {type}",
       "removedSuccess": "{name} 已从 {type} 中移除",
       "errorAdd": "添加成员失败",
@@ -1732,7 +1767,49 @@
       "errorConnection": "无法连接到服务器",
       "remove": "移除",
       "clearAll": "全部清除",
-      "allSelected": "所有项目已被选择"
+      "allSelected": "所有项目已被选择",
+      "empty": "还没有人是你的{type}。请在下方添加人员。",
+      "columnName": "姓名",
+      "columnGroups": "分组",
+      "columnLastContact": "最近联系",
+      "lastContactLine": "最近联系：{date}",
+      "never": "从未",
+      "undo": "撤销",
+      "addTitle": "添加人员",
+      "bulkAddedSuccess": "{count, plural, other {已将 # 人添加为{type}}}",
+      "withoutRelationshipTitle": "与你没有关系的人员（{count}）",
+      "withoutRelationshipHelp": "勾选所有属于你的{type}的人，然后一次性添加。",
+      "searchChecklist": "在这些人员中搜索",
+      "noChecklistMatches": "没有人符合搜索条件。",
+      "selectAll": "全选",
+      "selectAllMatching": "全选匹配项",
+      "checklistTruncated": "显示前 {count} 人。请搜索以找到其他人。",
+      "addSelected": "{count, plural, =0 {添加所选} other {将 # 人添加为{type}}}",
+      "clearSelection": "清除选择"
+    },
+    "peopleColumn": "人员",
+    "connectionsColumn": "关联",
+    "peopleCount": "{count, plural, other {# 人}}",
+    "connectionsCount": "{count, plural, other {# 条关联}}",
+    "defaults": {
+      "intro": "从常用类型开始，例如朋友、家人和同事，每个都带有相应的反向关系。",
+      "button": "添加标准类型",
+      "creating": "添加中...",
+      "success": "{count, plural, other {已添加 # 个类型}}",
+      "error": "无法添加标准类型",
+      "errorConnection": "无法连接到服务器",
+      "labels": {
+        "PARENT": "父母",
+        "CHILD": "子女",
+        "SIBLING": "兄弟姐妹",
+        "SPOUSE": "配偶",
+        "PARTNER": "伴侣",
+        "FRIEND": "朋友",
+        "COLLEAGUE": "同事",
+        "ACQUAINTANCE": "熟人",
+        "RELATIVE": "亲戚",
+        "OTHER": "其他"
+      }
     }
   },
   "relationships": {

@@ -1591,7 +1591,9 @@
       "errorSomethingWrong": "Qualcosa è andato storto",
       "errorConnection": "Impossibile connettersi al server. Verifica la connessione e riprova.",
       "successCreated": "Gruppo \"{name}\" creato",
-      "successUpdated": "Gruppo \"{name}\" aggiornato"
+      "successUpdated": "Gruppo \"{name}\" aggiornato",
+      "nameExists": "Esiste già un gruppo chiamato \"{name}\".",
+      "nameSimilar": "Somiglia al gruppo esistente \"{name}\". Errore di battitura?"
     },
     "members": {
       "label": "Membri ({count})",
@@ -1635,7 +1637,34 @@
     "showing": "Visualizzazione {start}-{end} di {total} gruppi",
     "noMembersYet": "Ancora nessun membro",
     "oneMember": "1 membro",
-    "membersCount": "{count} membri"
+    "membersCount": "{count} membri",
+    "quickAdd": {
+      "label": "Nome di un nuovo gruppo",
+      "placeholder": "Aggiunta rapida: nome del nuovo gruppo",
+      "add": "Aggiungi",
+      "adding": "Aggiunta...",
+      "changeColor": "Cambia colore",
+      "created": "Il gruppo \"{name}\" è stato creato",
+      "error": "Impossibile creare il gruppo",
+      "errorConnection": "Impossibile connettersi al server",
+      "nameExists": "Esiste già un gruppo chiamato \"{name}\".",
+      "nameSimilar": "Somiglia al gruppo esistente \"{name}\". Errore di battitura?"
+    },
+    "suggestions": {
+      "intro": "Inizia con alcuni gruppi comuni, un tocco ciascuno:",
+      "family": "Famiglia",
+      "friends": "Amici",
+      "work": "Lavoro",
+      "neighbors": "Vicini"
+    },
+    "sort": {
+      "label": "Ordina i gruppi",
+      "name": "Nome (dalla A alla Z)",
+      "size": "Prima i più numerosi"
+    },
+    "noSearchResults": "Nessun gruppo corrisponde a \"{query}\".",
+    "clearSearch": "Cancella ricerca",
+    "morePeople": "+{count} altri"
   },
   "map": {
     "title": "Mappa",
@@ -1677,7 +1706,6 @@
     "relationship": "Relazione",
     "inverseRelationship": "Relazione inversa",
     "actions": "Azioni",
-    "usedTimes": "Usato {count} volta/e",
     "edit": "Modifica",
     "noRelationshipTypes": "Nessun tipo di relazione",
     "noRelationshipTypesDescription": "Crea tipi di relazione per categorizzare le connessioni nel tuo network.",
@@ -1685,15 +1713,16 @@
     "backToTypes": "← Torna ai tipi di relazione",
     "delete": {
       "button": "Elimina",
-      "confirmPrompt": "Elimina",
-      "usedCount": "usato {count} volta",
-      "usedCount_plural": "usato {count} volte",
       "confirmButton": "Conferma",
       "deleting": "Eliminazione in corso...",
       "cancel": "Annulla",
-      "confirmTitle": "Conferma eliminazione",
-      "cancelTitle": "Annulla",
-      "errorDelete": "Eliminazione tipo di relazione fallita"
+      "errorDelete": "Eliminazione tipo di relazione fallita",
+      "title": "Elimina tipo di relazione",
+      "confirmMessage": "Vuoi davvero eliminare",
+      "blockedByConnections": "{count, plural, one {# collegamento tra due persone usa ancora questo tipo.} other {# collegamenti tra persone usano ancora questo tipo.}} Modificali o rimuovili prima, poi elimina il tipo.",
+      "affectsPeople": "{count, plural, one {Hai questa relazione con # persona. Non viene eliminata, ma non la mostrerà più.} other {Hai questa relazione con # persone. Non vengono eliminate, ma non la mostreranno più.}}",
+      "unused": "Al momento nessuno usa questo tipo.",
+      "restoreHint": "Puoi recuperare il tipo dal cestino nelle impostazioni."
     },
     "form": {
       "labelRequired": "Etichetta relazione *",
@@ -1701,8 +1730,6 @@
       "labelHelp": "Il nome che verrà visualizzato agli utenti",
       "inverseRelationship": "Relazione inversa",
       "symmetric": "Simmetrica (uguale all'inversa)",
-      "symmetricHelp": "Entrambe le direzioni useranno la stessa etichetta (es. Amico ↔ Amico)",
-      "nonSymmetricHelp": "La relazione reciproca (es. Genitore ↔ Figlio, Mentore ↔ Studente)",
       "inversePlaceholder": "Cerca esistenti o digita per creare nuovi...",
       "color": "Colore",
       "customColor": "Oppure scegli un colore personalizzato:",
@@ -1713,7 +1740,15 @@
       "errorSomethingWrong": "Qualcosa è andato storto",
       "errorConnection": "Impossibile connettersi al server. Verifica la connessione e riprova.",
       "successCreated": "Tipo di relazione \"{label}\" creato",
-      "successUpdated": "Tipo di relazione \"{label}\" aggiornato"
+      "successUpdated": "Tipo di relazione \"{label}\" aggiornato",
+      "labelExists": "Esiste già un tipo chiamato \"{label}\".",
+      "labelSimilar": "Somiglia al tipo esistente \"{label}\". Errore di battitura?",
+      "inverseIntro": "La relazione inversa descrive come appari tu dal punto di vista dell'altra persona.",
+      "exampleLabelFallback": "questa relazione",
+      "exampleSymmetric": "Esempio: se Alex è il tuo {label}, anche tu sei {label} di Alex.",
+      "exampleInverse": "Esempio: se Alex è il tuo {label}, tu sei {inverse} di Alex.",
+      "exampleNoInverse": "Esempio: se Alex è il tuo {label}, per il lato di Alex non viene impostato nulla.",
+      "generateRandomColor": "Genera un colore casuale"
     },
     "autocomplete": {
       "placeholder": "Cerca o crea relazione inversa...",
@@ -1724,7 +1759,7 @@
       "label": "Persone ({count})",
       "placeholder": "Digita un nome per aggiungere persone...",
       "emptyMessage": "Nessuna persona trovata corrispondente a",
-      "helpText": "Digita per cercare persone e premi Invio per aggiungerle. Chi ha già un'altra relazione passa a questa. Clicca su × per rimuoverle.",
+      "helpText": "Scrivi per cercare persone e premi Invio per aggiungerle. Chi ha già un'altra relazione passa a questa.",
       "addedSuccess": "{name} aggiunto/a a {type}",
       "removedSuccess": "{name} rimosso/a da {type}",
       "errorAdd": "Aggiunta membro fallita",
@@ -1732,7 +1767,49 @@
       "errorConnection": "Impossibile connettersi al server",
       "remove": "Rimuovi",
       "clearAll": "Cancella tutti",
-      "allSelected": "Tutti gli elementi sono già selezionati"
+      "allSelected": "Tutti gli elementi sono già selezionati",
+      "empty": "Nessuno è ancora il tuo {type}. Aggiungi persone qui sotto.",
+      "columnName": "Nome",
+      "columnGroups": "Gruppi",
+      "columnLastContact": "Ultimo contatto",
+      "lastContactLine": "Ultimo contatto: {date}",
+      "never": "mai",
+      "undo": "Annulla",
+      "addTitle": "Aggiungi persone",
+      "bulkAddedSuccess": "{count, plural, one {# persona aggiunta a {type}} other {# persone aggiunte a {type}}}",
+      "withoutRelationshipTitle": "Persone senza relazione con te ({count})",
+      "withoutRelationshipHelp": "Spunta tutti quelli che sono il tuo {type}, poi aggiungili in un colpo solo.",
+      "searchChecklist": "Cerca tra queste persone",
+      "noChecklistMatches": "Nessuno corrisponde alla ricerca.",
+      "selectAll": "Seleziona tutto",
+      "selectAllMatching": "Seleziona tutti i risultati",
+      "checklistTruncated": "Vengono mostrati i primi {count}. Cerca per trovare gli altri.",
+      "addSelected": "{count, plural, =0 {Aggiungi selezione} one {Aggiungi # persona come {type}} other {Aggiungi # persone come {type}}}",
+      "clearSelection": "Annulla selezione"
+    },
+    "peopleColumn": "Persone",
+    "connectionsColumn": "Collegamenti",
+    "peopleCount": "{count, plural, one {# persona} other {# persone}}",
+    "connectionsCount": "{count, plural, one {# collegamento} other {# collegamenti}}",
+    "defaults": {
+      "intro": "Inizia con i tipi più comuni come Amico, Famiglia e Collega, ciascuno con il suo opposto.",
+      "button": "Aggiungi tipi standard",
+      "creating": "Aggiunta...",
+      "success": "{count, plural, one {# tipo aggiunto} other {# tipi aggiunti}}",
+      "error": "Impossibile aggiungere i tipi standard",
+      "errorConnection": "Impossibile connettersi al server",
+      "labels": {
+        "PARENT": "Genitore",
+        "CHILD": "Figlio/a",
+        "SIBLING": "Fratello/sorella",
+        "SPOUSE": "Coniuge",
+        "PARTNER": "Partner",
+        "FRIEND": "Amico",
+        "COLLEAGUE": "Collega",
+        "ACQUAINTANCE": "Conoscente",
+        "RELATIVE": "Parente",
+        "OTHER": "Altro"
+      }
     }
   },
   "relationships": {

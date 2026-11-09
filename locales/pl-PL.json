@@ -1591,7 +1591,9 @@
       "errorSomethingWrong": "Coś poszło nie tak",
       "errorConnection": "Nie można połączyć się z serwerem. Sprawdź połączenie i spróbuj ponownie.",
       "successCreated": "Grupa „{name}” została utworzona",
-      "successUpdated": "Grupa „{name}” została zaktualizowana"
+      "successUpdated": "Grupa „{name}” została zaktualizowana",
+      "nameExists": "Grupa o nazwie „{name}” już istnieje.",
+      "nameSimilar": "Wygląda podobnie do istniejącej grupy „{name}”. Literówka?"
     },
     "members": {
       "label": "Członkowie ({count})",
@@ -1635,7 +1637,34 @@
     "showing": "Wyświetlanie {start}-{end} z {total}",
     "noMembersYet": "Na razie brak członków",
     "oneMember": "1 członek",
-    "membersCount": "Członkowie: {count}"
+    "membersCount": "Członkowie: {count}",
+    "quickAdd": {
+      "label": "Nazwa nowej grupy",
+      "placeholder": "Szybkie dodawanie: nazwa nowej grupy",
+      "add": "Dodaj",
+      "adding": "Dodawanie...",
+      "changeColor": "Zmień kolor",
+      "created": "Grupa „{name}” została utworzona",
+      "error": "Nie udało się utworzyć grupy",
+      "errorConnection": "Nie można połączyć się z serwerem",
+      "nameExists": "Grupa o nazwie „{name}” już istnieje.",
+      "nameSimilar": "Wygląda podobnie do istniejącej grupy „{name}”. Literówka?"
+    },
+    "suggestions": {
+      "intro": "Zacznij od kilku typowych grup, każda jednym dotknięciem:",
+      "family": "Rodzina",
+      "friends": "Przyjaciele",
+      "work": "Praca",
+      "neighbors": "Sąsiedzi"
+    },
+    "sort": {
+      "label": "Sortuj grupy",
+      "name": "Nazwa (od A do Z)",
+      "size": "Najpierw najwięcej członków"
+    },
+    "noSearchResults": "Żadna grupa nie pasuje do „{query}”.",
+    "clearSearch": "Wyczyść wyszukiwanie",
+    "morePeople": "+{count} więcej"
   },
   "map": {
     "title": "Mapa",
@@ -1677,7 +1706,6 @@
     "relationship": "Relacja",
     "inverseRelationship": "Relacja odwrotna",
     "actions": "Akcje",
-    "usedTimes": "Użyto: {count}",
     "edit": "Edytuj",
     "noRelationshipTypes": "Brak typów relacji",
     "noRelationshipTypesDescription": "Utwórz typy relacji, aby kategoryzować powiązania w swojej sieci.",
@@ -1685,15 +1713,16 @@
     "backToTypes": "← Wróć do typów relacji",
     "delete": {
       "button": "Usuń",
-      "confirmPrompt": "Usuń",
-      "usedCount": "użyto: {count}",
-      "usedCount_plural": "użyto: {count}",
       "confirmButton": "Potwierdź",
       "deleting": "Usuwanie...",
       "cancel": "Anuluj",
-      "confirmTitle": "Potwierdź usunięcie",
-      "cancelTitle": "Anuluj",
-      "errorDelete": "Nie udało się usunąć typu relacji"
+      "errorDelete": "Nie udało się usunąć typu relacji",
+      "title": "Usuń rodzaj relacji",
+      "confirmMessage": "Czy na pewno chcesz usunąć",
+      "blockedByConnections": "{count, plural, one {# połączenie między dwiema osobami nadal używa tego rodzaju.} few {# połączenia między osobami nadal używają tego rodzaju.} many {# połączeń między osobami nadal używa tego rodzaju.} other {# połączenia między osobami nadal używa tego rodzaju.}} Najpierw zmień je lub usuń, a potem usuń rodzaj.",
+      "affectsPeople": "{count, plural, one {Masz tę relację z # osobą. Nie zostanie usunięta, ale przestanie ją pokazywać.} few {Masz tę relację z # osobami. Nie zostaną usunięte, ale przestaną ją pokazywać.} many {Masz tę relację z # osobami. Nie zostaną usunięte, ale przestaną ją pokazywać.} other {Masz tę relację z # osoby. Nie zostanie usunięta, ale przestanie ją pokazywać.}}",
+      "unused": "Obecnie nikt nie używa tego rodzaju.",
+      "restoreHint": "Możesz przywrócić ten rodzaj z kosza w ustawieniach."
     },
     "form": {
       "labelRequired": "Etykieta relacji *",
@@ -1701,8 +1730,6 @@
       "labelHelp": "Nazwa, która będzie wyświetlana użytkownikom",
       "inverseRelationship": "Relacja odwrotna",
       "symmetric": "Symetryczna (taka sama jak odwrotna)",
-      "symmetricHelp": "Oba kierunki będą używać tej samej etykiety (np. przyjaciel ↔ przyjaciel)",
-      "nonSymmetricHelp": "Relacja wzajemna (np. rodzic ↔ dziecko, mentor ↔ uczeń)",
       "inversePlaceholder": "Wyszukaj istniejącą lub wpisz, aby utworzyć nową...",
       "color": "Kolor",
       "customColor": "Lub wybierz własny kolor:",
@@ -1713,7 +1740,15 @@
       "errorSomethingWrong": "Coś poszło nie tak",
       "errorConnection": "Nie można połączyć się z serwerem. Sprawdź połączenie i spróbuj ponownie.",
       "successCreated": "Typ relacji „{label}” został utworzony",
-      "successUpdated": "Typ relacji „{label}” został zaktualizowany"
+      "successUpdated": "Typ relacji „{label}” został zaktualizowany",
+      "labelExists": "Rodzaj o nazwie „{label}” już istnieje.",
+      "labelSimilar": "Wygląda podobnie do istniejącego rodzaju „{label}”. Literówka?",
+      "inverseIntro": "Relacja odwrotna opisuje, jak ty wyglądasz z perspektywy drugiej osoby.",
+      "exampleLabelFallback": "ta relacja",
+      "exampleSymmetric": "Przykład: jeśli Alex jest twoim określeniem „{label}”, to ty też jesteś dla Alexa: {label}.",
+      "exampleInverse": "Przykład: jeśli Alex jest twoim określeniem „{label}”, to ty jesteś dla Alexa: {inverse}.",
+      "exampleNoInverse": "Przykład: jeśli Alex jest twoim określeniem „{label}”, po stronie Alexa nic nie jest ustawione.",
+      "generateRandomColor": "Wygeneruj losowy kolor"
     },
     "autocomplete": {
       "placeholder": "Wyszukaj lub utwórz relację odwrotną...",
@@ -1724,7 +1759,7 @@
       "label": "Osoby ({count})",
       "placeholder": "Wpisz imię, aby dodać osoby...",
       "emptyMessage": "Nie znaleziono osób pasujących do",
-      "helpText": "Wpisz, aby wyszukać osoby, i naciśnij Enter, aby je dodać. Osoba, która ma już inną relację, zostanie przełączona na tę. Kliknij ×, aby usunąć.",
+      "helpText": "Wpisz, aby wyszukać osoby, i naciśnij Enter, aby je dodać. Osoba, która ma już inną relację, zostanie przełączona na tę.",
       "addedSuccess": "Dodano {name} do grupy: {type}",
       "removedSuccess": "Usunięto {name} z grupy: {type}",
       "errorAdd": "Nie udało się dodać członka",
@@ -1732,7 +1767,49 @@
       "errorConnection": "Nie można połączyć się z serwerem",
       "remove": "Usuń",
       "clearAll": "Wyczyść wszystko",
-      "allSelected": "Wszystkie elementy są już zaznaczone"
+      "allSelected": "Wszystkie elementy są już zaznaczone",
+      "empty": "Nikt jeszcze nie jest twoim określeniem „{type}”. Dodaj osoby poniżej.",
+      "columnName": "Nazwa",
+      "columnGroups": "Grupy",
+      "columnLastContact": "Ostatni kontakt",
+      "lastContactLine": "Ostatni kontakt: {date}",
+      "never": "nigdy",
+      "undo": "Cofnij",
+      "addTitle": "Dodaj osoby",
+      "bulkAddedSuccess": "{count, plural, one {Dodano # osobę do: {type}} few {Dodano # osoby do: {type}} many {Dodano # osób do: {type}} other {Dodano # osoby do: {type}}}",
+      "withoutRelationshipTitle": "Osoby bez relacji z tobą ({count})",
+      "withoutRelationshipHelp": "Zaznacz wszystkich, którzy są twoim określeniem „{type}”, i dodaj ich naraz.",
+      "searchChecklist": "Szukaj wśród tych osób",
+      "noChecklistMatches": "Nikt nie pasuje do wyszukiwania.",
+      "selectAll": "Zaznacz wszystko",
+      "selectAllMatching": "Zaznacz wszystkie wyniki",
+      "checklistTruncated": "Wyświetlono pierwsze {count}. Wyszukaj, aby znaleźć pozostałe.",
+      "addSelected": "{count, plural, =0 {Dodaj zaznaczone} one {Dodaj # osobę jako: {type}} few {Dodaj # osoby jako: {type}} many {Dodaj # osób jako: {type}} other {Dodaj # osoby jako: {type}}}",
+      "clearSelection": "Wyczyść zaznaczenie"
+    },
+    "peopleColumn": "Osoby",
+    "connectionsColumn": "Połączenia",
+    "peopleCount": "{count, plural, one {# osoba} few {# osoby} many {# osób} other {# osoby}}",
+    "connectionsCount": "{count, plural, one {# połączenie} few {# połączenia} many {# połączeń} other {# połączenia}}",
+    "defaults": {
+      "intro": "Zacznij od typowych rodzajów, takich jak Przyjaciel, Rodzina i Współpracownik, każdy z odpowiednikiem przeciwnym.",
+      "button": "Dodaj standardowe rodzaje",
+      "creating": "Dodawanie...",
+      "success": "{count, plural, one {Dodano # rodzaj} few {Dodano # rodzaje} many {Dodano # rodzajów} other {Dodano # rodzaju}}",
+      "error": "Nie udało się dodać standardowych rodzajów",
+      "errorConnection": "Nie można połączyć się z serwerem",
+      "labels": {
+        "PARENT": "Rodzic",
+        "CHILD": "Dziecko",
+        "SIBLING": "Rodzeństwo",
+        "SPOUSE": "Małżonek",
+        "PARTNER": "Partner",
+        "FRIEND": "Przyjaciel",
+        "COLLEAGUE": "Współpracownik",
+        "ACQUAINTANCE": "Znajomy",
+        "RELATIVE": "Krewny",
+        "OTHER": "Inne"
+      }
     }
   },
   "relationships": {

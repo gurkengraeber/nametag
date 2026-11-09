@@ -1591,7 +1591,9 @@
       "errorSomethingWrong": "問題が発生しました",
       "errorConnection": "サーバーに接続できません。接続を確認して、もう一度お試しください。",
       "successCreated": "グループ\"{name}\"が作成されました",
-      "successUpdated": "グループ\"{name}\"が更新されました"
+      "successUpdated": "グループ\"{name}\"が更新されました",
+      "nameExists": "「{name}」というグループはすでにあります。",
+      "nameSimilar": "既存のグループ「{name}」に似ています。入力ミスではありませんか？"
     },
     "members": {
       "label": "メンバー（{count}）",
@@ -1635,7 +1637,34 @@
     "showing": "{total}グループ中{start}-{end}を表示",
     "noMembersYet": "まだメンバーはいません",
     "oneMember": "1人のメンバー",
-    "membersCount": "{count}人のメンバー"
+    "membersCount": "{count}人のメンバー",
+    "quickAdd": {
+      "label": "新しいグループの名前",
+      "placeholder": "クイック追加：新しいグループ名",
+      "add": "追加",
+      "adding": "追加中...",
+      "changeColor": "色を変更",
+      "created": "グループ「{name}」を作成しました",
+      "error": "グループを作成できませんでした",
+      "errorConnection": "サーバーに接続できません",
+      "nameExists": "「{name}」というグループはすでにあります。",
+      "nameSimilar": "既存のグループ「{name}」に似ています。入力ミスではありませんか？"
+    },
+    "suggestions": {
+      "intro": "よく使うグループから始めましょう。タップするだけで作成できます：",
+      "family": "家族",
+      "friends": "友人",
+      "work": "仕事",
+      "neighbors": "近所"
+    },
+    "sort": {
+      "label": "グループの並べ替え",
+      "name": "名前順（A〜Z）",
+      "size": "メンバーが多い順"
+    },
+    "noSearchResults": "「{query}」に一致するグループはありません。",
+    "clearSearch": "検索をクリア",
+    "morePeople": "ほか{count}人"
   },
   "map": {
     "title": "マップ",
@@ -1677,7 +1706,6 @@
     "relationship": "関係",
     "inverseRelationship": "逆関係",
     "actions": "アクション",
-    "usedTimes": "{count}回使用",
     "edit": "編集",
     "noRelationshipTypes": "関係の種類はありません",
     "noRelationshipTypesDescription": "関係の種類を作成してネットワーク内のつながりを分類します。",
@@ -1685,15 +1713,16 @@
     "backToTypes": "← 関係の種類に戻る",
     "delete": {
       "button": "削除",
-      "confirmPrompt": "削除",
-      "usedCount": "{count}回使用",
-      "usedCount_plural": "{count}回使用",
       "confirmButton": "確認",
       "deleting": "削除中...",
       "cancel": "キャンセル",
-      "confirmTitle": "削除の確認",
-      "cancelTitle": "キャンセル",
-      "errorDelete": "関係の種類の削除に失敗しました"
+      "errorDelete": "関係の種類の削除に失敗しました",
+      "title": "関係の種類を削除",
+      "confirmMessage": "次を削除してもよろしいですか：",
+      "blockedByConnections": "{count, plural, other {2人の間の#件のつながりがまだこの種類を使っています。}}先にそれらを変更または削除してから、この種類を削除してください。",
+      "affectsPeople": "{count, plural, other {あなたは#人とこの関係です。その人たちは削除されませんが、この関係は表示されなくなります。}}",
+      "unused": "現在この種類を使っている人はいません。",
+      "restoreHint": "この種類は設定のゴミ箱から元に戻せます。"
     },
     "form": {
       "labelRequired": "関係ラベル *",
@@ -1701,8 +1730,6 @@
       "labelHelp": "ユーザーに表示される名前",
       "inverseRelationship": "逆関係",
       "symmetric": "対称（逆と同じ）",
-      "symmetricHelp": "両方向で同じラベルを使用します（例：友人↔友人）",
-      "nonSymmetricHelp": "相互関係（例：親↔子、メンター↔生徒）",
       "inversePlaceholder": "既存のものを検索するか、入力して新しいものを作成...",
       "color": "色",
       "customColor": "またはカスタムカラーを選択：",
@@ -1713,7 +1740,15 @@
       "errorSomethingWrong": "問題が発生しました",
       "errorConnection": "サーバーに接続できません。接続を確認してもう一度お試しください。",
       "successCreated": "関係の種類\"{label}\"が作成されました",
-      "successUpdated": "関係の種類\"{label}\"が更新されました"
+      "successUpdated": "関係の種類\"{label}\"が更新されました",
+      "labelExists": "「{label}」という種類はすでにあります。",
+      "labelSimilar": "既存の種類「{label}」に似ています。入力ミスではありませんか？",
+      "inverseIntro": "逆関係は、相手から見たあなたの関係を表します。",
+      "exampleLabelFallback": "この関係",
+      "exampleSymmetric": "例：Alexがあなたの{label}なら、あなたもAlexの{label}です。",
+      "exampleInverse": "例：Alexがあなたの{label}なら、あなたはAlexの{inverse}です。",
+      "exampleNoInverse": "例：Alexがあなたの{label}でも、Alex側には何も設定されません。",
+      "generateRandomColor": "ランダムな色を生成"
     },
     "autocomplete": {
       "placeholder": "逆関係を検索または作成...",
@@ -1724,7 +1759,7 @@
       "label": "人物 ({count})",
       "placeholder": "名前を入力して人物を追加...",
       "emptyMessage": "一致する人物は見つかりませんでした",
-      "helpText": "名前を入力して人物を検索し、Enterキーを押して追加します。すでに別の関係が設定されている人物は、この関係に切り替わります。削除するには×をクリックします。",
+      "helpText": "名前を入力して人物を検索し、Enterキーを押して追加します。すでに別の関係が設定されている人物は、この関係に切り替わります。",
       "addedSuccess": "{name}が{type}に追加されました",
       "removedSuccess": "{name}が{type}から削除されました",
       "errorAdd": "メンバーの追加に失敗しました",
@@ -1732,7 +1767,49 @@
       "errorConnection": "サーバーに接続できません",
       "remove": "削除",
       "clearAll": "すべてクリア",
-      "allSelected": "すべてのアイテムがすでに選択されています"
+      "allSelected": "すべてのアイテムがすでに選択されています",
+      "empty": "まだ{type}の人はいません。下から人物を追加してください。",
+      "columnName": "名前",
+      "columnGroups": "グループ",
+      "columnLastContact": "最終連絡",
+      "lastContactLine": "最終連絡：{date}",
+      "never": "なし",
+      "undo": "元に戻す",
+      "addTitle": "人物を追加",
+      "bulkAddedSuccess": "{count, plural, other {#人を{type}に追加しました}}",
+      "withoutRelationshipTitle": "あなたとの関係が未設定の人物（{count}）",
+      "withoutRelationshipHelp": "{type}にあたる人にチェックを入れて、まとめて追加します。",
+      "searchChecklist": "この中から検索",
+      "noChecklistMatches": "検索に一致する人はいません。",
+      "selectAll": "すべて選択",
+      "selectAllMatching": "一致するものをすべて選択",
+      "checklistTruncated": "最初の{count}人を表示しています。検索して他の人を探してください。",
+      "addSelected": "{count, plural, =0 {選択した人を追加} other {#人を{type}として追加}}",
+      "clearSelection": "選択を解除"
+    },
+    "peopleColumn": "人物",
+    "connectionsColumn": "つながり",
+    "peopleCount": "{count, plural, other {#人}}",
+    "connectionsCount": "{count, plural, other {#件のつながり}}",
+    "defaults": {
+      "intro": "友人、家族、同僚など、よく使う関係を、それぞれ対になる関係とともに追加して始めましょう。",
+      "button": "標準の関係を追加",
+      "creating": "追加中...",
+      "success": "{count, plural, other {#件の関係を追加しました}}",
+      "error": "標準の関係を追加できませんでした",
+      "errorConnection": "サーバーに接続できません",
+      "labels": {
+        "PARENT": "親",
+        "CHILD": "子",
+        "SIBLING": "きょうだい",
+        "SPOUSE": "配偶者",
+        "PARTNER": "パートナー",
+        "FRIEND": "友人",
+        "COLLEAGUE": "同僚",
+        "ACQUAINTANCE": "知人",
+        "RELATIVE": "親戚",
+        "OTHER": "その他"
+      }
     }
   },
   "relationships": {
