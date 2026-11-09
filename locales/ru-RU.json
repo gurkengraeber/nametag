@@ -55,16 +55,69 @@
     "search": {
       "placeholder": "Поиск людей...",
       "searching": "Поиск...",
-      "noResults": "Не найдено людей по запросу \"{searchTerm}\""
+      "noResults": "Не найдено людей по запросу \"{searchTerm}\"",
+      "error": "Поиск сейчас недоступен. Проверьте подключение и попробуйте снова.",
+      "offline": "Вы не в сети. Пока контакты не загружены, поиску нужно подключение.",
+      "retry": "Повторить",
+      "recent": "Недавно открытые",
+      "emptyTitle": "Пока нет людей",
+      "emptyDescription": "Добавьте первого человека или импортируйте контакты через CardDAV.",
+      "addPerson": "Добавить человека",
+      "importContacts": "Импортировать контакты",
+      "noResultsHint": "Проверьте написание или поищите по группе, месту или заметке.",
+      "addAsNew": "Добавить «{searchTerm}» как нового человека",
+      "resultCount": "{count, plural, one {# результат} few {# результата} many {# результатов} other {# результата}}",
+      "keyHint": "Enter открывает профиль. Shift+Enter или Tab показывает быстрые действия.",
+      "actions": {
+        "title": "Быстрые действия",
+        "contactedToday": "Связались сегодня",
+        "alreadyContactedToday": "Связались сегодня",
+        "contactedDone": "{name}: отмечено, что связались сегодня",
+        "addToGroup": "Добавить в группу",
+        "addedToGroup": "{name} добавлен(а) в группу {group}",
+        "setRelationship": "Указать отношение",
+        "relationshipSet": "{name} теперь: {relationship}",
+        "back": "Назад",
+        "filter": "Фильтр...",
+        "noMatches": "Ничего не найдено",
+        "noGroups": "У вас пока нет групп.",
+        "createGroup": "Создать группу",
+        "noRelationshipTypes": "У вас пока нет типов отношений.",
+        "createRelationshipType": "Создать",
+        "failed": "Не удалось обновить: {name}. Попробуйте снова."
+      },
+      "matchedIn": {
+        "group": "Группа",
+        "relationship": "Отношение",
+        "locality": "Место",
+        "organization": "Организация",
+        "jobTitle": "Должность",
+        "notes": "В заметках",
+        "contact": "Контактные данные",
+        "other": "Другие данные"
+      }
     },
     "userMenu": {
       "settings": "Настройки",
       "documentation": "Документация",
-      "signOut": "Выйти"
+      "signOut": "Выйти",
+      "shortcuts": "Горячие клавиши"
     },
     "journal": "Журнал",
     "createJournal": "Новая запись",
-    "map": "Карта"
+    "map": "Карта",
+    "newPerson": "Новый контакт",
+    "shortcuts": {
+      "title": "Горячие клавиши",
+      "close": "Закрыть подсказку",
+      "description": "Клавиши работают везде, кроме момента, когда вы вводите текст в поле.",
+      "search": "Поиск",
+      "or": "или",
+      "newPerson": "Новый контакт",
+      "help": "Показать эту справку",
+      "goTo": "Перейти",
+      "then": "затем"
+    }
   },
   "notifications": {
     "push": {

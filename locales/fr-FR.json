@@ -55,16 +55,69 @@
     "search": {
       "placeholder": "Rechercher des personnes...",
       "searching": "Recherche en cours...",
-      "noResults": "Aucune personne ne correspond à \"{searchTerm}\""
+      "noResults": "Aucune personne ne correspond à \"{searchTerm}\"",
+      "error": "La recherche n'est pas disponible pour le moment. Vérifiez votre connexion et réessayez.",
+      "offline": "Vous êtes hors ligne. La recherche a besoin d'une connexion tant que vos contacts ne sont pas chargés.",
+      "retry": "Réessayer",
+      "recent": "Ouvertes récemment",
+      "emptyTitle": "Aucune personne pour l'instant",
+      "emptyDescription": "Ajoutez votre première personne ou importez vos contacts avec CardDAV.",
+      "addPerson": "Ajouter une personne",
+      "importContacts": "Importer des contacts",
+      "noResultsHint": "Vérifiez l'orthographe ou essayez un groupe, un lieu ou une note.",
+      "addAsNew": "Ajouter \"{searchTerm}\" comme nouvelle personne",
+      "resultCount": "{count, plural, one {# résultat} other {# résultats}}",
+      "keyHint": "Entrée ouvre la fiche. Maj+Entrée ou Tab affiche les actions rapides.",
+      "actions": {
+        "title": "Actions rapides",
+        "contactedToday": "Contacté aujourd'hui",
+        "alreadyContactedToday": "Contacté aujourd'hui",
+        "contactedDone": "{name} marqué comme contacté aujourd'hui",
+        "addToGroup": "Ajouter à un groupe",
+        "addedToGroup": "{name} ajouté à {group}",
+        "setRelationship": "Définir la relation",
+        "relationshipSet": "{name} est maintenant : {relationship}",
+        "back": "Retour",
+        "filter": "Filtrer...",
+        "noMatches": "Aucun résultat",
+        "noGroups": "Vous n'avez pas encore de groupes.",
+        "createGroup": "Créer un groupe",
+        "noRelationshipTypes": "Vous n'avez pas encore de types de relation.",
+        "createRelationshipType": "En créer un",
+        "failed": "Impossible de mettre à jour {name}. Veuillez réessayer."
+      },
+      "matchedIn": {
+        "group": "Groupe",
+        "relationship": "Relation",
+        "locality": "Lieu",
+        "organization": "Organisation",
+        "jobTitle": "Poste",
+        "notes": "Dans les notes",
+        "contact": "Coordonnées",
+        "other": "Autres informations"
+      }
     },
     "userMenu": {
       "settings": "Paramètres",
       "documentation": "Documentation",
-      "signOut": "Se déconnecter"
+      "signOut": "Se déconnecter",
+      "shortcuts": "Raccourcis clavier"
     },
     "journal": "Journal",
     "createJournal": "Nouvelle entrée",
-    "map": "Carte"
+    "map": "Carte",
+    "newPerson": "Nouvelle personne",
+    "shortcuts": {
+      "title": "Raccourcis clavier",
+      "close": "Fermer les raccourcis",
+      "description": "Les touches fonctionnent partout, sauf pendant que vous saisissez du texte dans un champ.",
+      "search": "Rechercher",
+      "or": "ou",
+      "newPerson": "Nouvelle personne",
+      "help": "Afficher cette aide",
+      "goTo": "Aller à",
+      "then": "puis"
+    }
   },
   "notifications": {
     "push": {

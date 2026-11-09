@@ -20,7 +20,14 @@ vi.mock('@/app/actions/auth', () => ({
 const searchIndex = vi.hoisted(() => ({
   search: (query: string) =>
     query.toLowerCase().startsWith('ana') ? [{ id: 'person-1', name: 'Ana', surname: 'Ruiz' }] : [],
+  getPerson: () => null,
   isReady: true,
+  version: 1,
+  userId: 'user-1',
+  hasError: false,
+  isEmpty: false,
+  groups: [],
+  relationshipTypes: [],
   refreshIndex: () => {},
 }));
 
@@ -119,6 +126,62 @@ describe('Navigation', () => {
     });
   });
 
+  describe('quick access', () => {
+    it('offers a New person shortcut in the phone header', () => {
+      renderNav();
+
+      const links = screen.getAllByRole('link', { name: enMessages.nav.newPerson });
+      expect(links[0]).toHaveAttribute('href', '/people/new');
+    });
+
+    it('names the current section in the phone header', () => {
+      renderNav();
+
+      expect(screen.getAllByText(enMessages.nav.dashboard).length).toBeGreaterThan(0);
+    });
+
+    it('marks the current page in the drawer', async () => {
+      const user = userEvent.setup();
+      renderNav();
+
+      await user.click(screen.getByRole('button', { name: enMessages.nav.openMenu }));
+      const dialog = within(screen.getByRole('dialog'));
+
+      expect(dialog.getByRole('link', { name: enMessages.nav.dashboard })).toHaveAttribute('aria-current', 'page');
+      expect(dialog.getByRole('link', { name: enMessages.nav.groups })).not.toHaveAttribute('aria-current');
+    });
+
+    it('closes the drawer with Escape', async () => {
+      const user = userEvent.setup();
+      renderNav();
+
+      await user.click(screen.getByRole('button', { name: enMessages.nav.openMenu }));
+      await user.keyboard('{Escape}');
+
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    });
+
+    it('opens the shortcut help from the keyboard', async () => {
+      const user = userEvent.setup();
+      renderNav();
+
+      await user.keyboard('?');
+
+      expect(await screen.findByRole('dialog', { name: enMessages.nav.shortcuts.title })).toBeInTheDocument();
+    });
+
+    it('remembers the profile page that was opened for the search suggestions', () => {
+      window.localStorage.clear();
+      window.history.pushState({}, '', '/people/abc123');
+
+      renderNav();
+
+      expect(window.localStorage.getItem('nametag:recent-people:user-1')).toContain('abc123');
+      window.history.pushState({}, '', '/');
+      window.localStorage.clear();
+    });
+  });
+
   describe('mobile menu', () => {
     it('no longer duplicates the search field inside the menu', async () => {
       const user = userEvent.setup();
@@ -159,6 +222,20 @@ describe('Navigation', () => {
       await user.click(within(screen.getByRole('dialog')).getByRole('button', { name: enMessages.nav.userMenu.signOut }));
 
       expect(handleSignOut).toHaveBeenCalledTimes(1);
+    });
+
+    it('wipes the account data kept in this browser when signing out', async () => {
+      const user = userEvent.setup();
+      window.localStorage.setItem('nametag:recent-people:user-1', '{}');
+      window.localStorage.setItem('unrelated', 'keep');
+      renderNav();
+
+      await user.click(screen.getByRole('button', { name: enMessages.nav.openMenu }));
+      await user.click(within(screen.getByRole('dialog')).getByRole('button', { name: enMessages.nav.userMenu.signOut }));
+
+      expect(window.localStorage.getItem('nametag:recent-people:user-1')).toBeNull();
+      expect(window.localStorage.getItem('unrelated')).toBe('keep');
+      window.localStorage.clear();
     });
 
     it('closes the menu when a nav item is followed', async () => {

@@ -8,7 +8,12 @@ import NavigationSearch from './NavigationSearch';
 import UserMenu from './UserMenu';
 import AccountMenuItems from './AccountMenuItems';
 import UserAvatar from './UserAvatar';
+import KeyboardShortcuts from './KeyboardShortcuts';
+import { Button } from '@/components/ui/Button';
+import { useFocusTrap } from '@/hooks/useFocusTrap';
 import { formatUserDisplayName } from '@/lib/nameUtils';
+import { personIdFromPath, rememberRecentPerson } from '@/lib/recent-people';
+import { useSearchIndex } from './SearchIndexProvider';
 
 interface NavigationProps {
   userEmail?: string;
@@ -62,8 +67,11 @@ const navItems = [
 ];
 
 export default function Navigation({ userEmail, userName, userNickname, userPhoto, currentPath }: NavigationProps) {
+  const { userId } = useSearchIndex();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
+  const [shortcutsOpen, setShortcutsOpen] = useState(false);
+  const drawerRef = useRef<HTMLDivElement>(null);
   const tNav = useTranslations('nav');
   const tCommon = useTranslations('common');
 
@@ -140,6 +148,24 @@ export default function Navigation({ userEmail, userName, userNickname, userPhot
     return () => window.removeEventListener('resize', handleResize);
   }, [mobileSearchOpen]);
 
+  // A profile page counts as "recently opened" however it was reached: from the
+  // search, a list, the graph or a link. Navigation mounts afresh on every page.
+  useEffect(() => {
+    const personId = personIdFromPath(window.location.pathname);
+    if (personId && userEmail) {
+      rememberRecentPerson(userId, personId);
+    }
+  }, [userEmail, userId]);
+
+  // Puts the cursor in whichever search field is on screen.
+  const focusSearch = () => {
+    if (desktopSearchVisible()) {
+      desktopSearchRef.current?.querySelector('input')?.focus();
+    } else {
+      openMobileSearch();
+    }
+  };
+
   // Cmd+K focuses the desktop field, which is display:none below the md
   // breakpoint, so the shortcut would otherwise do nothing on narrow screens.
   useEffect(() => {
@@ -153,6 +179,21 @@ export default function Navigation({ userEmail, userName, userNickname, userPhot
     document.addEventListener('keydown', handleShortcut);
     return () => document.removeEventListener('keydown', handleShortcut);
   }, []);
+
+  // The drawer is a modal dialog, so it takes Escape and keeps Tab inside it.
+  useFocusTrap(drawerRef, mobileMenuOpen);
+  useEffect(() => {
+    if (!mobileMenuOpen) return;
+
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setMobileMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [mobileMenuOpen]);
 
   // Lock body scroll when mobile menu is open
   useEffect(() => {
@@ -173,6 +214,14 @@ export default function Navigation({ userEmail, userName, userNickname, userPhot
     return currentPath === href || currentPath.startsWith(`${href}/`);
   };
 
+  // The phone header has no tab bar, so it names the section the user is in.
+  const activeItem = navItems.find((item) => isActive(item.href));
+  const sectionLabel = activeItem
+    ? tNav(activeItem.labelKey)
+    : isActive('/settings')
+      ? tNav('settings')
+      : null;
+
   return (
     <nav className="bg-surface border-b border-border pt-[env(safe-area-inset-top)]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -187,6 +236,12 @@ export default function Navigation({ userEmail, userName, userNickname, userPhot
               className="text-foreground"
             />
           </Link>
+
+          {sectionLabel && !mobileSearchOpen && (
+            <span aria-hidden="true" className="md:hidden flex-1 min-w-0 truncate px-2 text-base font-semibold text-foreground">
+              {sectionLabel}
+            </span>
+          )}
 
           {/* Desktop search, absolutely centered in the row */}
           <div ref={desktopSearchRef} className="hidden md:block absolute left-1/2 -translate-x-1/2 w-full max-w-md lg:max-w-lg px-20 lg:px-24">
@@ -224,8 +279,20 @@ export default function Navigation({ userEmail, userName, userNickname, userPhot
             </button>
 
             {userEmail && (
+              <Link
+                href="/people/new"
+                className="md:hidden p-3 rounded-md text-primary hover:bg-surface-elevated transition-colors"
+                aria-label={tNav('newPerson')}
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+                </svg>
+              </Link>
+            )}
+
+            {userEmail && (
               <div className="hidden md:block">
-                <UserMenu userEmail={userEmail} userName={userName} userNickname={userNickname} userPhoto={userPhoto} />
+                <UserMenu userEmail={userEmail} userName={userName} userNickname={userNickname} userPhoto={userPhoto} onShowShortcuts={() => setShortcutsOpen(true)} />
               </div>
             )}
 
@@ -289,6 +356,7 @@ export default function Navigation({ userEmail, userName, userNickname, userPhot
 
           {/* Mobile menu panel */}
           <div
+            ref={drawerRef}
             role="dialog"
             aria-modal="true"
             aria-label={tNav('menuLabel')}
@@ -318,6 +386,11 @@ export default function Navigation({ userEmail, userName, userNickname, userPhot
 
               {/* Mobile nav items */}
               <nav className="flex-1 overflow-y-auto p-4">
+                {userEmail && (
+                  <Button href="/people/new" fullWidth className="mb-4">
+                    {tNav('newPerson')}
+                  </Button>
+                )}
                 <div className="space-y-1">
                   {navItems.map((item) => (
                     <div key={item.href}>
@@ -330,6 +403,7 @@ export default function Navigation({ userEmail, userName, userNickname, userPhot
                           <Link
                             href={item.href}
                             onClick={() => setMobileMenuOpen(false)}
+                            aria-current={isActive(item.href) ? 'page' : undefined}
                             className={`flex-1 flex items-center gap-2 px-4 py-3 text-base font-medium ${
                               isActive(item.href)
                                 ? 'text-primary'
@@ -363,6 +437,7 @@ export default function Navigation({ userEmail, userName, userNickname, userPhot
                         <Link
                           href={item.href}
                           onClick={() => setMobileMenuOpen(false)}
+                          aria-current={isActive(item.href) ? 'page' : undefined}
                           className={`flex items-center gap-2 px-4 py-3 rounded-lg text-base font-medium border transition-colors ${
                             isActive(item.href)
                               ? 'text-primary bg-primary/10 border-primary'
@@ -387,6 +462,14 @@ export default function Navigation({ userEmail, userName, userNickname, userPhot
             </div>
           </div>
         </>
+      )}
+
+      {userEmail && (
+        <KeyboardShortcuts
+          onFocusSearch={focusSearch}
+          helpOpen={shortcutsOpen}
+          onHelpOpenChange={setShortcutsOpen}
+        />
       )}
     </nav>
   );

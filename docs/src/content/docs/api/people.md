@@ -253,7 +253,7 @@ curl -X DELETE https://your-instance.example.com/api/people/clx1/permanent \
 GET /api/people/search
 ```
 
-Searches name, surname, middle name, second last name, and nickname. Case-insensitive, returns up to 20 results.
+Searches name, surname, middle name, second last name, and nickname. Case-insensitive, returns up to 20 results. Names that start with the query come first.
 
 **Query parameters**
 
@@ -278,13 +278,32 @@ GET /api/people/search-index
 
 Returns a flat, denormalized dataset for client-side search indexing. Multi-value fields (phones, emails, etc.) are joined into single space-separated strings.
 
+Each person also carries the context that the search shows next to a hit and uses for its quick actions: `relationship` (label) and `relationshipTypeId`, `locality` (first city in the addresses), `groupIds`, `groupNames` and `lastContact` (`YYYY-MM-DD`). Next to `people`, the response lists your `groups` (`id`, `name`) and `relationshipTypes` (`id`, `label`).
+
 ```bash
 curl https://your-instance.example.com/api/people/search-index \
   -H "Authorization: Bearer ntag_xxx"
 ```
 
 ```json
-{ "people": [ { "id": "clx1", "name": "Ada", "phones": "+1 555 0100", "groups": "Colleagues" } ] }
+{
+  "people": [
+    {
+      "id": "clx1",
+      "name": "Ada",
+      "phones": "+1 555 0100",
+      "groups": "Colleagues",
+      "groupIds": ["clg1"],
+      "groupNames": ["Colleagues"],
+      "relationship": "Friend",
+      "relationshipTypeId": "clr1",
+      "locality": "London",
+      "lastContact": "2026-03-04"
+    }
+  ],
+  "groups": [ { "id": "clg1", "name": "Colleagues" } ],
+  "relationshipTypes": [ { "id": "clr1", "label": "Friend" } ]
+}
 ```
 
 ## Find orphaned connections

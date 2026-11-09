@@ -55,16 +55,69 @@
     "search": {
       "placeholder": "Search people...",
       "searching": "Searching...",
-      "noResults": "No people found matching \"{searchTerm}\""
+      "noResults": "No people found matching \"{searchTerm}\"",
+      "error": "Search is not available right now. Check your connection and try again.",
+      "offline": "You are offline. Search needs a connection until your contacts have loaded.",
+      "retry": "Try again",
+      "recent": "Recently opened",
+      "emptyTitle": "No people yet",
+      "emptyDescription": "Add your first person, or import your contacts with CardDAV.",
+      "addPerson": "Add a person",
+      "importContacts": "Import contacts",
+      "noResultsHint": "Check the spelling, or try a group, place or note.",
+      "addAsNew": "Add \"{searchTerm}\" as a new person",
+      "resultCount": "{count, plural, one {# result} other {# results}}",
+      "keyHint": "Enter opens the profile. Shift+Enter or Tab shows quick actions.",
+      "actions": {
+        "title": "Quick actions",
+        "contactedToday": "Contacted today",
+        "alreadyContactedToday": "Contacted today",
+        "contactedDone": "Marked {name} as contacted today",
+        "addToGroup": "Add to group",
+        "addedToGroup": "Added {name} to {group}",
+        "setRelationship": "Set relationship",
+        "relationshipSet": "{name} is now: {relationship}",
+        "back": "Back",
+        "filter": "Filter...",
+        "noMatches": "Nothing matches",
+        "noGroups": "You have no groups yet.",
+        "createGroup": "Create a group",
+        "noRelationshipTypes": "You have no relationship types yet.",
+        "createRelationshipType": "Create one",
+        "failed": "Could not update {name}. Please try again."
+      },
+      "matchedIn": {
+        "group": "Group",
+        "relationship": "Relationship",
+        "locality": "Place",
+        "organization": "Organization",
+        "jobTitle": "Job title",
+        "notes": "In notes",
+        "contact": "Contact details",
+        "other": "Other details"
+      }
     },
     "userMenu": {
       "settings": "Settings",
       "documentation": "Documentation",
-      "signOut": "Sign out"
+      "signOut": "Sign out",
+      "shortcuts": "Keyboard shortcuts"
     },
     "journal": "Journal",
     "createJournal": "New entry",
-    "map": "Map"
+    "map": "Map",
+    "newPerson": "New person",
+    "shortcuts": {
+      "title": "Keyboard shortcuts",
+      "close": "Close shortcuts",
+      "description": "Single keys work anywhere except while you are typing in a field.",
+      "search": "Search",
+      "or": "or",
+      "newPerson": "New person",
+      "help": "Show this help",
+      "goTo": "Go to",
+      "then": "then"
+    }
   },
   "notifications": {
     "push": {

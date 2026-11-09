@@ -55,16 +55,69 @@
     "search": {
       "placeholder": "Cerca persone...",
       "searching": "Ricerca in corso...",
-      "noResults": "Nessuna persona trovata corrispondente a \"{searchTerm}\""
+      "noResults": "Nessuna persona trovata corrispondente a \"{searchTerm}\"",
+      "error": "La ricerca non è disponibile al momento. Controlla la connessione e riprova.",
+      "offline": "Sei offline. La ricerca richiede una connessione finché i tuoi contatti non sono stati caricati.",
+      "retry": "Riprova",
+      "recent": "Aperte di recente",
+      "emptyTitle": "Ancora nessuna persona",
+      "emptyDescription": "Aggiungi la tua prima persona oppure importa i contatti con CardDAV.",
+      "addPerson": "Aggiungi una persona",
+      "importContacts": "Importa contatti",
+      "noResultsHint": "Controlla l'ortografia oppure prova con un gruppo, un luogo o una nota.",
+      "addAsNew": "Aggiungi \"{searchTerm}\" come nuova persona",
+      "resultCount": "{count, plural, one {# risultato} other {# risultati}}",
+      "keyHint": "Invio apre il profilo. Maiusc+Invio o Tab mostra le azioni rapide.",
+      "actions": {
+        "title": "Azioni rapide",
+        "contactedToday": "Contattato oggi",
+        "alreadyContactedToday": "Contattato oggi",
+        "contactedDone": "{name} segnato come contattato oggi",
+        "addToGroup": "Aggiungi a un gruppo",
+        "addedToGroup": "{name} aggiunto a {group}",
+        "setRelationship": "Imposta relazione",
+        "relationshipSet": "{name} ora è: {relationship}",
+        "back": "Indietro",
+        "filter": "Filtra...",
+        "noMatches": "Nessun risultato",
+        "noGroups": "Non hai ancora gruppi.",
+        "createGroup": "Crea un gruppo",
+        "noRelationshipTypes": "Non hai ancora tipi di relazione.",
+        "createRelationshipType": "Creane uno",
+        "failed": "Impossibile aggiornare {name}. Riprova."
+      },
+      "matchedIn": {
+        "group": "Gruppo",
+        "relationship": "Relazione",
+        "locality": "Luogo",
+        "organization": "Organizzazione",
+        "jobTitle": "Professione",
+        "notes": "Nelle note",
+        "contact": "Dati di contatto",
+        "other": "Altri dati"
+      }
     },
     "userMenu": {
       "settings": "Impostazioni",
       "documentation": "Documentazione",
-      "signOut": "Esci"
+      "signOut": "Esci",
+      "shortcuts": "Scorciatoie da tastiera"
     },
     "journal": "Diario",
     "createJournal": "Nuova voce",
-    "map": "Mappa"
+    "map": "Mappa",
+    "newPerson": "Nuova persona",
+    "shortcuts": {
+      "title": "Scorciatoie da tastiera",
+      "close": "Chiudi scorciatoie",
+      "description": "I tasti funzionano ovunque, tranne mentre scrivi in un campo.",
+      "search": "Cerca",
+      "or": "oppure",
+      "newPerson": "Nuova persona",
+      "help": "Mostra questa guida",
+      "goTo": "Vai a",
+      "then": "poi"
+    }
   },
   "notifications": {
     "push": {

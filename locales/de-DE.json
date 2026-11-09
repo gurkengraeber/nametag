@@ -55,16 +55,69 @@
     "search": {
       "placeholder": "Personen suchen...",
       "searching": "Suche läuft...",
-      "noResults": "Keine Personen gefunden, die \"{searchTerm}\" entsprechen"
+      "noResults": "Keine Personen gefunden, die \"{searchTerm}\" entsprechen",
+      "error": "Die Suche ist gerade nicht verfügbar. Prüfe deine Verbindung und versuche es erneut.",
+      "offline": "Du bist offline. Die Suche braucht eine Verbindung, bis deine Kontakte geladen sind.",
+      "retry": "Erneut versuchen",
+      "recent": "Zuletzt geöffnet",
+      "emptyTitle": "Noch keine Personen",
+      "emptyDescription": "Lege deine erste Person an oder importiere deine Kontakte per CardDAV.",
+      "addPerson": "Person hinzufügen",
+      "importContacts": "Kontakte importieren",
+      "noResultsHint": "Prüfe die Schreibweise oder suche nach einer Gruppe, einem Ort oder einer Notiz.",
+      "addAsNew": "\"{searchTerm}\" als neue Person anlegen",
+      "resultCount": "{count, plural, one {# Treffer} other {# Treffer}}",
+      "keyHint": "Enter öffnet das Profil. Umschalt+Enter oder Tab zeigt Schnellaktionen.",
+      "actions": {
+        "title": "Schnellaktionen",
+        "contactedToday": "Heute kontaktiert",
+        "alreadyContactedToday": "Heute kontaktiert",
+        "contactedDone": "{name} als heute kontaktiert markiert",
+        "addToGroup": "Zu Gruppe hinzufügen",
+        "addedToGroup": "{name} zu {group} hinzugefügt",
+        "setRelationship": "Beziehung setzen",
+        "relationshipSet": "{name} ist jetzt: {relationship}",
+        "back": "Zurück",
+        "filter": "Filtern...",
+        "noMatches": "Nichts passt",
+        "noGroups": "Du hast noch keine Gruppen.",
+        "createGroup": "Gruppe anlegen",
+        "noRelationshipTypes": "Du hast noch keine Beziehungstypen.",
+        "createRelationshipType": "Einen anlegen",
+        "failed": "{name} konnte nicht aktualisiert werden. Bitte versuche es erneut."
+      },
+      "matchedIn": {
+        "group": "Gruppe",
+        "relationship": "Beziehung",
+        "locality": "Ort",
+        "organization": "Organisation",
+        "jobTitle": "Berufsbezeichnung",
+        "notes": "In den Notizen",
+        "contact": "Kontaktdaten",
+        "other": "Weitere Angaben"
+      }
     },
     "userMenu": {
       "settings": "Einstellungen",
       "documentation": "Dokumentation",
-      "signOut": "Abmelden"
+      "signOut": "Abmelden",
+      "shortcuts": "Tastenkürzel"
     },
     "journal": "Tagebuch",
     "createJournal": "Neuer Eintrag",
-    "map": "Karte"
+    "map": "Karte",
+    "newPerson": "Neue Person",
+    "shortcuts": {
+      "title": "Tastenkürzel",
+      "close": "Tastenkürzel schließen",
+      "description": "Die Tasten gelten überall, außer während du in einem Feld tippst.",
+      "search": "Suche",
+      "or": "oder",
+      "newPerson": "Neue Person",
+      "help": "Diese Hilfe anzeigen",
+      "goTo": "Gehe zu",
+      "then": "dann"
+    }
   },
   "notifications": {
     "push": {
