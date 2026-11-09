@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/Button';
 import { useFocusTrap } from '@/hooks/useFocusTrap';
 import { formatUserDisplayName } from '@/lib/nameUtils';
 import { personIdFromPath, rememberRecentPerson } from '@/lib/recent-people';
+import { isSearchShortcut } from '@/lib/keyboard-shortcuts';
 import { useSearchIndex } from './SearchIndexProvider';
 
 interface NavigationProps {
@@ -170,8 +171,7 @@ export default function Navigation({ userEmail, userName, userNickname, userPhot
   // breakpoint, so the shortcut would otherwise do nothing on narrow screens.
   useEffect(() => {
     const handleShortcut = (e: KeyboardEvent) => {
-      if (!(e.metaKey || e.ctrlKey) || e.key !== 'k') return;
-      if (desktopSearchVisible()) return;
+      if (!isSearchShortcut(e) || desktopSearchVisible()) return;
       e.preventDefault();
       openMobileSearch();
     };
@@ -375,7 +375,7 @@ export default function Navigation({ userEmail, userName, userNickname, userPhot
                 )}
                 <button
                   onClick={() => setMobileMenuOpen(false)}
-                  className="shrink-0 p-2 rounded-md text-muted hover:bg-surface-elevated transition-colors"
+                  className="shrink-0 p-2.5 rounded-md text-muted hover:bg-surface-elevated transition-colors"
                   aria-label={tNav('closeMenu')}
                 >
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">

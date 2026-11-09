@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import {
   INITIAL_SHORTCUT_STATE,
   handleShortcutKey,
+  isSearchShortcut,
   isTypingTarget,
   type ShortcutState,
 } from '@/lib/keyboard-shortcuts';
@@ -12,6 +13,10 @@ const press = (state: ShortcutState, key: string, extra: Record<string, unknown>
 describe('handleShortcutKey', () => {
   it('opens search with a slash', () => {
     expect(press(INITIAL_SHORTCUT_STATE, '/').action).toEqual({ type: 'search' });
+  });
+
+  it('opens search with a slash that needs Shift, as on a German keyboard', () => {
+    expect(press(INITIAL_SHORTCUT_STATE, '/', { shiftKey: true, code: 'Digit7' }).action).toEqual({ type: 'search' });
   });
 
   it('starts a new person with n', () => {
@@ -69,6 +74,19 @@ describe('handleShortcutKey', () => {
   it('ignores keys without a shortcut', () => {
     expect(press(INITIAL_SHORTCUT_STATE, 'q').action).toBeNull();
     expect(press(INITIAL_SHORTCUT_STATE, 'Enter').action).toBeNull();
+  });
+});
+
+describe('isSearchShortcut', () => {
+  it('accepts Ctrl+K and Cmd+K, also with Caps Lock or another layout', () => {
+    expect(isSearchShortcut({ key: 'k', code: 'KeyK', ctrlKey: true })).toBe(true);
+    expect(isSearchShortcut({ key: 'K', code: 'KeyK', metaKey: true })).toBe(true);
+    expect(isSearchShortcut({ key: 'л', code: 'KeyK', ctrlKey: true })).toBe(true);
+  });
+
+  it('needs Ctrl or Cmd and the K key', () => {
+    expect(isSearchShortcut({ key: 'k', code: 'KeyK' })).toBe(false);
+    expect(isSearchShortcut({ key: 'j', code: 'KeyJ', ctrlKey: true })).toBe(false);
   });
 });
 

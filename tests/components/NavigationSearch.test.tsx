@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { render, screen, cleanup, waitFor, within } from '@testing-library/react';
+import { render, screen, cleanup, waitFor, within, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { NextIntlClientProvider } from 'next-intl';
 import NavigationSearch from '@/components/NavigationSearch';
@@ -148,6 +148,21 @@ describe('NavigationSearch', () => {
 
     expect(mocks.push).toHaveBeenCalledWith('/people/p1');
     expect(window.localStorage.getItem('nametag:recent-people:user-1')).toContain('p1');
+  });
+
+  it('leaves Enter to the input method while a word is being composed', async () => {
+    const user = userEvent.setup();
+    renderSearch();
+
+    const input = screen.getByPlaceholderText(enMessages.nav.search.placeholder);
+    await user.type(input, 'ada');
+    await screen.findByRole('button', { name: /Ada Lovelace/ });
+
+    fireEvent.keyDown(input, { key: 'Enter', isComposing: true });
+    expect(mocks.push).not.toHaveBeenCalled();
+
+    fireEvent.keyDown(input, { key: 'Enter' });
+    expect(mocks.push).toHaveBeenCalledWith('/people/p1');
   });
 
   it('marks someone as contacted today with Shift+Enter, without leaving the page', async () => {
@@ -318,6 +333,29 @@ describe('NavigationSearch', () => {
 
       expect(await screen.findByRole('button', { name: /Server Hit/ })).toBeInTheDocument();
       expect(screen.queryByRole('button', { name: enMessages.nav.search.actions.title })).not.toBeInTheDocument();
+    });
+
+    it('ignores a late answer for an earlier search term', async () => {
+      const user = userEvent.setup();
+      let answerFirst: (value: FakeResponse) => void = () => {};
+      fetchSpy.mockImplementation(async (url: string): Promise<FakeResponse> => {
+        if (url === '/api/user/profile') return { ok: true, json: async () => ({ user: {} }) };
+        if (url.endsWith('q=se')) return new Promise<FakeResponse>((resolve) => (answerFirst = resolve));
+        return { ok: true, json: async () => ({ people: [{ id: 'p2', name: 'Second', surname: 'Hit' }] }) };
+      });
+      renderSearch();
+
+      const input = screen.getByPlaceholderText(enMessages.nav.search.placeholder);
+      await user.type(input, 'se');
+      await waitFor(() => expect(calls(fetchSpy, 'q=se')).toHaveLength(1));
+      await user.type(input, 'c');
+      expect(await screen.findByRole('button', { name: /Second Hit/ })).toBeInTheDocument();
+
+      answerFirst({ ok: true, json: async () => ({ people: [{ id: 'p1', name: 'First', surname: 'Hit' }] }) });
+      await new Promise((resolve) => setTimeout(resolve, 20));
+
+      expect(screen.queryByRole('button', { name: /First Hit/ })).not.toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /Second Hit/ })).toBeInTheDocument();
     });
 
     it('says so when the server cannot be reached, and retries on request', async () => {
