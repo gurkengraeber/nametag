@@ -7,6 +7,7 @@ import { isPushConfigured } from '@/lib/notifications/vapid';
 import ReminderLeadTimeSelector from '@/components/ReminderLeadTimeSelector';
 import WeeklyDigestSettings from '@/components/WeeklyDigestSettings';
 import NotificationChannelsCard from '@/components/NotificationChannelsCard';
+import ReminderSummary from '@/components/settings/ReminderSummary';
 import NotificationEndpointsCard from '@/components/NotificationEndpointsCard';
 import { MAX_ENDPOINTS_PER_USER } from '@/lib/notifications/endpoint-health';
 import { canUseWebhooks } from '@/lib/notifications/entitlements';
@@ -82,6 +83,16 @@ export default async function NotificationSettingsPage() {
 
   return (
     <div className="space-y-6">
+      <ReminderSummary
+        emailAvailable={emailAvailable}
+        emailEnabled={user?.emailRemindersEnabled ?? true}
+        pushAvailable={pushAvailable}
+        activePushDevices={devices.filter((device) => !device.autoDisabledAt).length}
+        activeDestinations={
+          endpoints.filter((endpoint) => endpoint.enabled && !endpoint.autoDisabledAt).length
+        }
+      />
+
       <NotificationChannelsCard
         emailEnabled={user?.emailRemindersEnabled ?? true}
         emailAvailable={emailAvailable}

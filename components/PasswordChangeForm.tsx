@@ -4,58 +4,62 @@ import { useState, FormEvent } from 'react';
 import { useTranslations } from 'next-intl';
 import { useSession, signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 import { PasswordStrengthIndicator } from '@/components/PasswordStrengthIndicator';
+import SettingsSaveBar from '@/components/settings/SettingsSaveBar';
+import { useUnsavedChangesWarning } from '@/components/settings/useUnsavedChangesWarning';
+import { parseApiError } from '@/components/settings/formState';
+import { firstPasswordRuleError } from '@/components/settings/passwordRules';
 
 interface PasswordChangeFormProps {
   userId: string;
 }
 
+type PasswordField = 'currentPassword' | 'newPassword' | 'confirmPassword';
+
+const EMPTY_FORM: Record<PasswordField, string> = {
+  currentPassword: '',
+  newPassword: '',
+  confirmPassword: '',
+};
+
+const INPUT_CLASS =
+  'w-full min-h-11 px-3 py-2 border border-border rounded-lg bg-surface text-foreground focus:outline-none focus:ring-2 focus:ring-primary';
+
 export default function PasswordChangeForm({}: PasswordChangeFormProps) {
   const t = useTranslations('settings.security');
+  const tUnsaved = useTranslations('settings.unsaved');
   const { data: session } = useSession();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-  const [validationErrors, setValidationErrors] = useState<Array<{ field: string; message: string }>>([]);
-  const [success, setSuccess] = useState('');
+  const [fieldErrors, setFieldErrors] = useState<Partial<Record<PasswordField, string>>>({});
+  const [showPasswords, setShowPasswords] = useState(false);
 
-  const [formData, setFormData] = useState({
-    currentPassword: '',
-    newPassword: '',
-    confirmPassword: '',
-  });
+  const [formData, setFormData] = useState(EMPTY_FORM);
+
+  const isDirty = Object.values(formData).some((value) => value !== '');
+  useUnsavedChangesWarning(isDirty, tUnsaved('warning'));
+
+  const setField = (field: PasswordField, value: string) => {
+    setFormData({ ...formData, [field]: value });
+    if (fieldErrors[field]) {
+      setFieldErrors({ ...fieldErrors, [field]: undefined });
+    }
+  };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError('');
-    setValidationErrors([]);
-    setSuccess('');
+    setFieldErrors({});
 
-    // Validate passwords match
+    const ruleError = firstPasswordRuleError(formData.newPassword);
+    if (ruleError) {
+      setFieldErrors({ newPassword: t(ruleError) });
+      return;
+    }
     if (formData.newPassword !== formData.confirmPassword) {
-      setError(t('passwordsNoMatch'));
-      return;
-    }
-
-    // Client-side password validation (matches backend requirements)
-    if (formData.newPassword.length < 8) {
-      setError(t('passwordTooShort'));
-      return;
-    }
-    if (!/[A-Z]/.test(formData.newPassword)) {
-      setError(t('passwordNeedsUppercase'));
-      return;
-    }
-    if (!/[a-z]/.test(formData.newPassword)) {
-      setError(t('passwordNeedsLowercase'));
-      return;
-    }
-    if (!/[0-9]/.test(formData.newPassword)) {
-      setError(t('passwordNeedsNumber'));
-      return;
-    }
-    if (!/[^A-Za-z0-9]/.test(formData.newPassword)) {
-      setError(t('passwordNeedsSpecial'));
+      setFieldErrors({ confirmPassword: t('passwordsNoMatch') });
       return;
     }
 
@@ -73,15 +77,24 @@ export default function PasswordChangeForm({}: PasswordChangeFormProps) {
         }),
       });
 
-      const data = await response.json();
+      const data: unknown = await response.json();
 
       if (!response.ok) {
-        // Check if there are detailed validation errors
-        if (data.details && Array.isArray(data.details)) {
-          setValidationErrors(data.details);
-          setError(data.error || t('errorValidation'));
+        const info = parseApiError(data);
+        if (info.code === 'wrong_password') {
+          setFieldErrors({ currentPassword: info.message ?? t('errorUpdate') });
+        } else if (Object.keys(info.fields).length > 0) {
+          const mapped: Partial<Record<PasswordField, string>> = {};
+          for (const field of ['currentPassword', 'newPassword', 'confirmPassword'] as const) {
+            if (info.fields[field]) mapped[field] = info.fields[field];
+          }
+          if (Object.keys(mapped).length > 0) {
+            setFieldErrors(mapped);
+          } else {
+            setError(t('errorValidation'));
+          }
         } else {
-          setError(data.error || t('errorUpdate'));
+          setError(info.message ?? t('errorUpdate'));
         }
         return;
       }
@@ -97,15 +110,9 @@ export default function PasswordChangeForm({}: PasswordChangeFormProps) {
         return;
       }
 
-      setSuccess(t('successUpdate'));
-      setFormData({
-        currentPassword: '',
-        newPassword: '',
-        confirmPassword: '',
-      });
-
-      // Clear success message after 3 seconds
-      setTimeout(() => setSuccess(''), 3000);
+      toast.success(t('successUpdate'));
+      setFormData(EMPTY_FORM);
+      setShowPasswords(false);
     } catch {
       setError(t('errorConnection'));
     } finally {
@@ -113,26 +120,17 @@ export default function PasswordChangeForm({}: PasswordChangeFormProps) {
     }
   };
 
+  const fieldProps = (field: PasswordField) => ({
+    'aria-invalid': fieldErrors[field] ? true : undefined,
+    'aria-describedby': fieldErrors[field] ? `${field}-error` : undefined,
+  });
+  const inputType = showPasswords ? 'text' : 'password';
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-4" noValidate>
       {error && (
         <div role="alert" className="bg-warning/10 border border-warning/30 text-warning px-4 py-3 rounded">
           <div className="font-medium">{error}</div>
-          {validationErrors.length > 0 && (
-            <ul className="mt-2 ml-4 list-disc space-y-1 text-sm">
-              {validationErrors.map((err, index) => (
-                <li key={index}>
-                  <strong>{err.field}:</strong> {err.message}
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-      )}
-
-      {success && (
-        <div className="bg-green-50 dark:bg-green-900/20 border border-green-400 dark:border-green-800 text-green-700 dark:text-green-400 px-4 py-3 rounded">
-          {success}
         </div>
       )}
 
@@ -144,13 +142,18 @@ export default function PasswordChangeForm({}: PasswordChangeFormProps) {
           {t('currentPassword')}
         </label>
         <input
-          type="password"
+          type={inputType}
           id="currentPassword"
           required
+          autoComplete="current-password"
           value={formData.currentPassword}
-          onChange={(e) => setFormData({ ...formData, currentPassword: e.target.value })}
-          className="w-full px-3 py-2 border border-border rounded-lg bg-surface text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+          onChange={(e) => setField('currentPassword', e.target.value)}
+          className={INPUT_CLASS}
+          {...fieldProps('currentPassword')}
         />
+        {fieldErrors.currentPassword && (
+          <p id="currentPassword-error" className="mt-1 text-sm text-warning">{fieldErrors.currentPassword}</p>
+        )}
       </div>
 
       <div className="space-y-2">
@@ -161,13 +164,18 @@ export default function PasswordChangeForm({}: PasswordChangeFormProps) {
           {t('newPassword')}
         </label>
         <input
-          type="password"
+          type={inputType}
           id="newPassword"
           required
+          autoComplete="new-password"
           value={formData.newPassword}
-          onChange={(e) => setFormData({ ...formData, newPassword: e.target.value })}
-          className="w-full px-3 py-2 border border-border rounded-lg bg-surface text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+          onChange={(e) => setField('newPassword', e.target.value)}
+          className={INPUT_CLASS}
+          {...fieldProps('newPassword')}
         />
+        {fieldErrors.newPassword && (
+          <p id="newPassword-error" className="text-sm text-warning">{fieldErrors.newPassword}</p>
+        )}
         <PasswordStrengthIndicator password={formData.newPassword} showRequirements={true} />
       </div>
 
@@ -179,24 +187,42 @@ export default function PasswordChangeForm({}: PasswordChangeFormProps) {
           {t('confirmPassword')}
         </label>
         <input
-          type="password"
+          type={inputType}
           id="confirmPassword"
           required
+          autoComplete="new-password"
           value={formData.confirmPassword}
-          onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-          className="w-full px-3 py-2 border border-border rounded-lg bg-surface text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+          onChange={(e) => setField('confirmPassword', e.target.value)}
+          className={INPUT_CLASS}
+          {...fieldProps('confirmPassword')}
         />
+        {fieldErrors.confirmPassword && (
+          <p id="confirmPassword-error" className="mt-1 text-sm text-warning">{fieldErrors.confirmPassword}</p>
+        )}
       </div>
 
-      <div className="flex justify-end pt-4">
-        <button
-          type="submit"
-          disabled={isLoading}
-          className="px-6 py-2 bg-primary text-on-primary rounded-lg font-semibold hover:bg-primary-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {isLoading ? t('updating') : t('updatePassword')}
-        </button>
-      </div>
+      <label className="flex items-center gap-2 min-h-11 cursor-pointer w-fit">
+        <input
+          type="checkbox"
+          checked={showPasswords}
+          onChange={(e) => setShowPasswords(e.target.checked)}
+          className="w-4 h-4 text-primary bg-surface border-border rounded focus:ring-2 focus:ring-primary"
+        />
+        <span className="text-sm text-muted">{t('showPasswords')}</span>
+      </label>
+
+      <SettingsSaveBar
+        dirty={isDirty}
+        isSaving={isLoading}
+        showIdleStatus={false}
+        saveLabel={t('updatePassword')}
+        savingLabel={t('updating')}
+        onDiscard={() => {
+          setFormData(EMPTY_FORM);
+          setFieldErrors({});
+          setError('');
+        }}
+      />
     </form>
   );
 }

@@ -96,7 +96,12 @@
         "warning": "Na nowy adres zostanie wysłana wiadomość weryfikacyjna. Zostaniesz wylogowany i nie zalogujesz się, dopóki nie potwierdzisz nowego adresu.",
         "cancel": "Anuluj",
         "confirm": "Potwierdź i wyloguj"
-      }
+      },
+      "nameRequired": "Wpisz swoje imię.",
+      "errorFields": "Sprawdź zaznaczone pola.",
+      "photoHint": "JPG, PNG, GIF, WebP lub HEIC, do 50 MB. Po wybraniu możesz przyciąć zdjęcie.",
+      "photoPending": "Nowe zdjęcie zostanie zapisane po naciśnięciu Zapisz zmiany.",
+      "emailChangeHint": "Zmiana adresu e-mail wyloguje Cię do czasu potwierdzenia nowego adresu."
     },
     "appearance": {
       "title": "Wygląd",
@@ -153,7 +158,15 @@
         "ruRU": "Русский (Russian)",
         "nlNL": "Nederlands (Dutch)",
         "frFR": "Français (French)",
-        "plPL": "Polski"
+        "plPL": "Polski",
+        "error": "Nie udało się zmienić języka. Spróbuj ponownie."
+      },
+      "namesTitle": "Imiona i nazwiska",
+      "namesDescription": "Wybierz, jak zapisywane są imiona i nazwiska i które części są widoczne. Przykład zmienia się wraz z wyborem.",
+      "namePreview": {
+        "title": "Tak wygląda imię i nazwisko",
+        "page": "Na stronie osoby",
+        "compact": "Na listach i w grafie"
       }
     },
     "notifications": {
@@ -272,7 +285,14 @@
       "pushDeviceDisabled": "To urządzenie zostało wyłączone po powtarzających się błędach dostarczania.",
       "pushDeviceDisabledRejected": "Usługa push odrzuciła wiadomości. Włącz ponownie powiadomienia push na tym urządzeniu, aby zarejestrować je od nowa.",
       "pushDeviceDisabledUnreachable": "Nie udało się połączyć z urządzeniem. Włącz ponownie powiadomienia push na tym urządzeniu, aby zarejestrować je od nowa.",
-      "endpointAddTooLong": "Ten adres URL jest za długi. Skróć go i spróbuj ponownie."
+      "endpointAddTooLong": "Ten adres URL jest za długi. Skróć go i spróbuj ponownie.",
+      "summary": {
+        "none": "Żaden kanał przypomnień nie jest włączony, więc nie dowiesz się o zbliżających się datach. Włącz poniżej e-mail lub push.",
+        "active": "Przypomnienia docierają do Ciebie przez: {channels}.",
+        "email": "e-mail",
+        "push": "push na {count, plural, one {# urządzeniu} other {# urządzeniach}}",
+        "destinations": "{count, plural, one {# inny cel} few {# inne cele} many {# innych celów} other {# innego celu}}"
+      }
     },
     "security": {
       "title": "Bezpieczeństwo",
@@ -314,7 +334,8 @@
         "signingOut": "Wylogowywanie...",
         "loadError": "Nie udało się wczytać Twoich urządzeń. Spróbuj ponownie później.",
         "signOutError": "Nie udało się wylogować tego urządzenia. Spróbuj ponownie."
-      }
+      },
+      "showPasswords": "Pokaż hasła"
     },
     "carddav": {
       "title": "Synchronizacja CardDAV",
@@ -753,7 +774,7 @@
       "deleteAccount": "Usuń konto",
       "deleteAccountDescription": "Trwale usuń swoje konto i wszystkie powiązane dane. Tej operacji nie można cofnąć.",
       "deleteAccountButton": "Usuń konto",
-      "warningPermanent": "Uwaga: to jest nieodwracalne!",
+      "warningPermanent": "Przeczytaj to, zanim przejdziesz dalej",
       "deleteWarningMessage": "Wszystkie Twoje dane, w tym osoby, grupy, relacje i własne typy relacji, zostaną trwale usunięte. Zalecamy najpierw wyeksportować dane.",
       "confirmPassword": "Potwierdź hasło",
       "typeToConfirm": "Wpisz DELETE, aby potwierdzić",
@@ -763,7 +784,10 @@
       "deleteError": "Wpisz DELETE, aby potwierdzić",
       "passwordRequired": "Hasło jest wymagane",
       "deleteFailed": "Nie udało się usunąć konta",
-      "importDataFailed": "Nie udało się zaimportować danych"
+      "importDataFailed": "Nie udało się zaimportować danych",
+      "deleteExportFirst": "Jeśli możesz potrzebować danych później, najpierw pobierz kopię w sekcji Eksportuj dane.",
+      "deleteSummary": "Zostanie usunięte Twoje konto razem z: {people, plural, one {# osoba} few {# osoby} many {# osób} other {# osoby}} i {groups, plural, one {# grupa} few {# grupy} many {# grup} other {# grupy}}.",
+      "importSuccessToast": "Import zakończony"
     },
     "trash": {
       "title": "Kosz",
@@ -865,7 +889,26 @@
       "errorNameRequired": "Podaj nazwę tokenu.",
       "errorCreate": "Nie udało się utworzyć tokenu.",
       "errorRevoke": "Nie udało się unieważnić tokenu.",
-      "errorConnection": "Błąd połączenia. Spróbuj ponownie."
+      "errorConnection": "Błąd połączenia. Spróbuj ponownie.",
+      "expiry": {
+        "never": "Nigdy",
+        "days30": "Za 30 dni",
+        "days90": "Za 90 dni",
+        "year1": "Za 1 rok",
+        "custom": "Wybierz datę"
+      },
+      "nameHint": "Zapisz, gdzie będzie używany, żeby rozpoznać go później.",
+      "scopeReadHint": "Może przeglądać Twoje osoby i dane, ale niczego nie zmienia.",
+      "scopeReadWriteHint": "Może przeglądać i zmieniać Twoje osoby i dane. Wybierz tylko wtedy, gdy narzędzie musi zapisywać.",
+      "errorExpiryRequired": "Wybierz datę wygaśnięcia.",
+      "createdToast": "Token utworzony",
+      "revokedToast": "Token unieważniony",
+      "copyFailed": "Nie udało się skopiować automatycznie. Zaznacz token i skopiuj go ręcznie.",
+      "usageHint": "Wysyłaj go z każdym żądaniem jako",
+      "neverUsed": "Nigdy nie użyty",
+      "revokeTitle": "Unieważnić \"{name}\"?",
+      "revoking": "Unieważnianie...",
+      "cancel": "Anuluj"
     },
     "map": {
       "title": "Mapa",
@@ -875,6 +918,40 @@
       "geocodingLabel": "Lokalizuj adresy automatycznie",
       "success": "Ustawienia mapy zostały zapisane",
       "error": "Nie udało się zapisać ustawień mapy"
+    },
+    "overviewTitle": "Przegląd",
+    "backToOverview": "Wszystkie ustawienia",
+    "groups": {
+      "personal": "Ty",
+      "preferences": "Preferencje",
+      "connections": "Połączenia",
+      "data": "Dane i pomoc"
+    },
+    "search": {
+      "label": "Szukaj w ustawieniach",
+      "placeholder": "Szukaj, np. hasło, język, przypomnienia",
+      "noResults": "Żadne ustawienie nie pasuje do \"{query}\"",
+      "noResultsHint": "Spróbuj krótszego słowa albo wyczyść wyszukiwanie, aby zobaczyć wszystkie grupy.",
+      "keywords": {
+        "profile": "imię zdjęcie awatar e-mail pseudonim",
+        "security": "hasło sesje urządzenia wyloguj logowanie",
+        "billing": "plan subskrypcja płatność faktura",
+        "appearance": "motyw ciemny jasny język format daty kolejność imion graf zainstaluj",
+        "notifications": "przypomnienia e-mail push powiadomienia podsumowanie tygodniowe",
+        "custom-fields": "pola niestandardowe dodatkowe",
+        "map": "mapa geokodowanie adres lokalizacja",
+        "carddav": "kontakty synchronizacja carddav telefon książka adresowa",
+        "api-tokens": "api token dostęp skrypt integracja",
+        "account": "eksport import kopia zapasowa usuń konto pobierz",
+        "trash": "usunięte przywróć kosz",
+        "about": "wersja licencja pomoc o aplikacji"
+      }
+    },
+    "unsaved": {
+      "warning": "Masz niezapisane zmiany. Opuścić stronę bez zapisywania?",
+      "indicator": "Niezapisane zmiany",
+      "allSaved": "Wszystko zapisane",
+      "discard": "Odrzuć zmiany"
     }
   },
   "customFields": {
@@ -886,7 +963,33 @@
       "emptyDescription": "Dodaj pola takie jak ograniczenia dietetyczne, hobby czy zwierzęta i używaj ich do filtrowania osób.",
       "usageMeter": "Pola niestandardowe: {used} z {limit}",
       "usageMeterUnlimited": "Pola niestandardowe: {used}",
-      "valueCount": "{count, plural, =0 {Nieużywane} one {Używane przez 1 osobę} few {Używane przez # osoby} many {Używane przez # osób} other {Używane przez # osoby}}"
+      "valueCount": "{count, plural, =0 {Nieużywane} one {Używane przez 1 osobę} few {Używane przez # osoby} many {Używane przez # osób} other {Używane przez # osoby}}",
+      "examples": {
+        "title": "Zacznij od przykładu",
+        "items": {
+          "diet": {
+            "name": "Dieta",
+            "option1": "Wegetariańska",
+            "option2": "Wegańska",
+            "option3": "Bez ograniczeń"
+          },
+          "allergies": {
+            "name": "Alergie"
+          },
+          "pets": {
+            "name": "Ma zwierzęta"
+          },
+          "shoeSize": {
+            "name": "Rozmiar buta"
+          },
+          "giftIdeas": {
+            "name": "Pomysły na prezent"
+          }
+        }
+      },
+      "orderHint": "Strzałkami zmienisz kolejność. Taka kolejność jest na stronie każdej osoby.",
+      "savedToast": "Pole niestandardowe zapisane",
+      "deletedToast": "Pole niestandardowe usunięte"
     },
     "form": {
       "nameLabel": "Nazwa",
@@ -904,7 +1007,13 @@
       "saveButton": "Zapisz",
       "savingButton": "Zapisywanie...",
       "cancelButton": "Anuluj",
-      "deleteButton": "Usuń"
+      "deleteButton": "Usuń",
+      "typeHint": {
+        "TEXT": "Dowolny tekst, np. alergie lub pomysły na prezent.",
+        "NUMBER": "Liczba, np. rozmiar buta.",
+        "BOOLEAN": "Tak lub nie, np. \"ma zwierzęta\".",
+        "SELECT": "Jedna wartość z własnej listy, np. dieta."
+      }
     },
     "delete": {
       "confirmTitle": "Usunąć pole niestandardowe?",

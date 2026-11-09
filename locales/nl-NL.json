@@ -96,7 +96,12 @@
         "warning": "Er wordt een verificatie-e-mail verzonden naar uw nieuwe adres. U wordt uitgelogd en kunt niet inloggen totdat u uw nieuwe e-mail bevestigt.",
         "cancel": "Annuleren",
         "confirm": "Bevestigen & Uitloggen"
-      }
+      },
+      "nameRequired": "Vul je naam in.",
+      "errorFields": "Controleer de gemarkeerde velden.",
+      "photoHint": "JPG, PNG, GIF, WebP of HEIC, tot 50 MB. Na het kiezen kun je bijsnijden.",
+      "photoPending": "De nieuwe foto wordt opgeslagen wanneer je op Wijzigingen opslaan drukt.",
+      "emailChangeHint": "Als je je e-mailadres wijzigt, word je uitgelogd tot je het nieuwe adres bevestigt."
     },
     "appearance": {
       "title": "Uiterlijk",
@@ -153,7 +158,15 @@
         "ruRU": "Русский (Russian)",
         "nlNL": "Nederlands (Dutch)",
         "frFR": "Français (French)",
-        "plPL": "Polski (Polish)"
+        "plPL": "Polski (Polish)",
+        "error": "De taal kon niet worden gewijzigd. Probeer het opnieuw."
+      },
+      "namesTitle": "Namen",
+      "namesDescription": "Kies hoe namen worden geschreven en welke delen worden getoond. Het voorbeeld verandert mee met je keuze.",
+      "namePreview": {
+        "title": "Zo ziet een naam eruit",
+        "page": "Op de pagina van een persoon",
+        "compact": "In lijsten en de graaf"
       }
     },
     "notifications": {
@@ -272,7 +285,14 @@
       "pushDeviceDisabled": "Dit apparaat is uitgeschakeld na herhaalde bezorgfouten.",
       "pushDeviceDisabledRejected": "De pushdienst heeft de berichten geweigerd. Zet push weer aan op dit apparaat om het opnieuw te registreren.",
       "pushDeviceDisabledUnreachable": "Het apparaat was niet bereikbaar. Zet push weer aan op dit apparaat om het opnieuw te registreren.",
-      "endpointAddTooLong": "Die URL is te lang. Maak hem korter en probeer het opnieuw."
+      "endpointAddTooLong": "Die URL is te lang. Maak hem korter en probeer het opnieuw.",
+      "summary": {
+        "none": "Er staat geen herinneringskanaal aan, dus je hoort niets over aankomende data. Zet hieronder e-mail of push aan.",
+        "active": "Herinneringen bereiken je via {channels}.",
+        "email": "e-mail",
+        "push": "push op {count, plural, one {# apparaat} other {# apparaten}}",
+        "destinations": "{count, plural, one {# andere bestemming} other {# andere bestemmingen}}"
+      }
     },
     "security": {
       "title": "Beveiliging",
@@ -314,7 +334,8 @@
         "signingOut": "Uitloggen...",
         "loadError": "Je apparaten konden niet worden geladen. Probeer het later opnieuw.",
         "signOutError": "Dat apparaat kon niet worden uitgelogd. Probeer het opnieuw."
-      }
+      },
+      "showPasswords": "Wachtwoorden tonen"
     },
     "carddav": {
       "title": "CardDAV Synchronisatie",
@@ -753,7 +774,7 @@
       "deleteAccount": "Account verwijderen",
       "deleteAccountDescription": "Verwijder uw account en alle bijbehorende gegevens permanent. Deze actie kan niet ongedaan worden gemaakt.",
       "deleteAccountButton": "Account verwijderen",
-      "warningPermanent": "Waarschuwing: Dit is permanent!",
+      "warningPermanent": "Lees dit voordat je verdergaat",
       "deleteWarningMessage": "Alle uw gegevens inclusief personen, groepen, relaties en aangepaste relatietypes zullen permanent worden verwijderd. We raden aan uw gegevens eerst te exporteren.",
       "confirmPassword": "Bevestig uw wachtwoord",
       "typeToConfirm": "Typ DELETE om te bevestigen",
@@ -763,7 +784,10 @@
       "deleteError": "Typ DELETE om te bevestigen",
       "passwordRequired": "Wachtwoord is vereist",
       "deleteFailed": "Account verwijderen mislukt",
-      "importDataFailed": "Gegevens importeren mislukt"
+      "importDataFailed": "Gegevens importeren mislukt",
+      "deleteExportFirst": "Als je je gegevens later nog nodig kunt hebben, download dan eerst een kopie onder Gegevens exporteren.",
+      "deleteSummary": "Hiermee verwijder je je account samen met {people, plural, one {# persoon} other {# personen}} en {groups, plural, one {# groep} other {# groepen}}.",
+      "importSuccessToast": "Import voltooid"
     },
     "trash": {
       "title": "Prullenbak",
@@ -865,7 +889,26 @@
       "errorNameRequired": "Voer een naam in voor het token.",
       "errorCreate": "Token aanmaken mislukt.",
       "errorRevoke": "Token intrekken mislukt.",
-      "errorConnection": "Verbindingsfout. Probeer het opnieuw."
+      "errorConnection": "Verbindingsfout. Probeer het opnieuw.",
+      "expiry": {
+        "never": "Nooit",
+        "days30": "Over 30 dagen",
+        "days90": "Over 90 dagen",
+        "year1": "Over 1 jaar",
+        "custom": "Kies een datum"
+      },
+      "nameHint": "Noteer waar hij gebruikt wordt, zodat je hem later herkent.",
+      "scopeReadHint": "Kan je personen en gegevens bekijken, maar niets wijzigen.",
+      "scopeReadWriteHint": "Kan je personen en gegevens bekijken en wijzigen. Kies dit alleen als de tool moet kunnen schrijven.",
+      "errorExpiryRequired": "Kies een vervaldatum.",
+      "createdToast": "Token aangemaakt",
+      "revokedToast": "Token ingetrokken",
+      "copyFailed": "Automatisch kopiëren lukte niet. Selecteer de token en kopieer hem met de hand.",
+      "usageHint": "Stuur hem mee met elk verzoek als",
+      "neverUsed": "Nooit gebruikt",
+      "revokeTitle": "\"{name}\" intrekken?",
+      "revoking": "Intrekken...",
+      "cancel": "Annuleren"
     },
     "map": {
       "title": "Kaart",
@@ -875,6 +918,40 @@
       "geocodingLabel": "Adressen automatisch lokaliseren",
       "success": "Kaartinstellingen opgeslagen",
       "error": "Kon de kaartinstellingen niet opslaan"
+    },
+    "overviewTitle": "Overzicht",
+    "backToOverview": "Alle instellingen",
+    "groups": {
+      "personal": "Jij",
+      "preferences": "Voorkeuren",
+      "connections": "Verbindingen",
+      "data": "Gegevens en hulp"
+    },
+    "search": {
+      "label": "Instellingen doorzoeken",
+      "placeholder": "Zoek, bijv. wachtwoord, taal, herinneringen",
+      "noResults": "Geen instelling past bij \"{query}\"",
+      "noResultsHint": "Probeer een korter woord of wis de zoekopdracht om alle groepen te zien.",
+      "keywords": {
+        "profile": "naam foto avatar e-mail bijnaam",
+        "security": "wachtwoord sessies apparaten uitloggen inloggen",
+        "billing": "abonnement betaling factuur",
+        "appearance": "thema donker licht taal datumnotatie naamvolgorde graaf installeren",
+        "notifications": "herinneringen e-mail push meldingen weekoverzicht",
+        "custom-fields": "eigen velden extra",
+        "map": "kaart geocodering adres locatie",
+        "carddav": "contacten synchronisatie carddav telefoon adresboek",
+        "api-tokens": "api token toegang script integratie",
+        "account": "exporteren importeren back-up verwijderen account downloaden",
+        "trash": "verwijderd herstellen prullenbak",
+        "about": "versie licentie help over"
+      }
+    },
+    "unsaved": {
+      "warning": "Je hebt niet-opgeslagen wijzigingen. Deze pagina verlaten zonder op te slaan?",
+      "indicator": "Niet-opgeslagen wijzigingen",
+      "allSaved": "Alles opgeslagen",
+      "discard": "Wijzigingen verwerpen"
     }
   },
   "customFields": {
@@ -886,7 +963,33 @@
       "emptyDescription": "Voeg velden toe zoals dieetbeperkingen, hobby's of huisdieren, en gebruik ze om uw mensen te filteren.",
       "usageMeter": "{used} van {limit} aangepaste velden",
       "usageMeterUnlimited": "{used} aangepaste velden",
-      "valueCount": "{count, plural, =0 {Niet in gebruik} =1 {Gebruikt door 1 persoon} other {Gebruikt door # personen}}"
+      "valueCount": "{count, plural, =0 {Niet in gebruik} =1 {Gebruikt door 1 persoon} other {Gebruikt door # personen}}",
+      "examples": {
+        "title": "Begin met een voorbeeld",
+        "items": {
+          "diet": {
+            "name": "Dieet",
+            "option1": "Vegetarisch",
+            "option2": "Veganistisch",
+            "option3": "Geen beperkingen"
+          },
+          "allergies": {
+            "name": "Allergieën"
+          },
+          "pets": {
+            "name": "Heeft huisdieren"
+          },
+          "shoeSize": {
+            "name": "Schoenmaat"
+          },
+          "giftIdeas": {
+            "name": "Cadeau-ideeën"
+          }
+        }
+      },
+      "orderHint": "Gebruik de pijlen om de volgorde te wijzigen. Dit is de volgorde op de pagina van elke persoon.",
+      "savedToast": "Eigen veld opgeslagen",
+      "deletedToast": "Eigen veld verwijderd"
     },
     "form": {
       "nameLabel": "Naam",
@@ -904,7 +1007,13 @@
       "saveButton": "Opslaan",
       "savingButton": "Opslaan...",
       "cancelButton": "Annuleren",
-      "deleteButton": "Verwijderen"
+      "deleteButton": "Verwijderen",
+      "typeHint": {
+        "TEXT": "Vrije tekst, zoals allergieën of cadeau-ideeën.",
+        "NUMBER": "Een getal, zoals schoenmaat.",
+        "BOOLEAN": "Ja of nee, zoals \"heeft huisdieren\".",
+        "SELECT": "Eén waarde uit een lijst die je zelf maakt, zoals een dieet."
+      }
     },
     "delete": {
       "confirmTitle": "Aangepast veld verwijderen?",

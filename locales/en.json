@@ -96,7 +96,12 @@
         "warning": "A verification email will be sent to your new address. You will be logged out and won't be able to log in until you verify your new email.",
         "cancel": "Cancel",
         "confirm": "Confirm & Log Out"
-      }
+      },
+      "nameRequired": "Please enter your name.",
+      "errorFields": "Please check the highlighted fields.",
+      "photoHint": "JPG, PNG, GIF, WebP or HEIC, up to 50 MB. You can crop it after choosing.",
+      "photoPending": "The new photo is saved when you press Save changes.",
+      "emailChangeHint": "Changing your email signs you out until you confirm the new address."
     },
     "appearance": {
       "title": "Appearance",
@@ -153,7 +158,15 @@
         "ruRU": "Русский (Russian)",
         "nlNL": "Nederlands (Dutch)",
         "frFR": "Français (French)",
-        "plPL": "Polski (Polish)"
+        "plPL": "Polski (Polish)",
+        "error": "Failed to update language. Please try again."
+      },
+      "namesTitle": "Names",
+      "namesDescription": "Choose how names are written and which parts are shown. The example updates as you choose.",
+      "namePreview": {
+        "title": "This is how a name looks",
+        "page": "On a person's page",
+        "compact": "In lists and the graph"
       }
     },
     "notifications": {
@@ -272,7 +285,14 @@
       "pushDeviceDisabled": "This device was switched off after repeated delivery failures.",
       "pushDeviceDisabledRejected": "The push service rejected the messages. Turn push back on from this device to re-register it.",
       "pushDeviceDisabledUnreachable": "The device could not be reached. Turn push back on from this device to re-register it.",
-      "endpointAddTooLong": "That URL is too long. Shorten it and try again."
+      "endpointAddTooLong": "That URL is too long. Shorten it and try again.",
+      "summary": {
+        "none": "No reminder channel is on, so you will not hear about upcoming dates. Turn on email or push below.",
+        "active": "Reminders reach you by {channels}.",
+        "email": "email",
+        "push": "push on {count, plural, one {# device} other {# devices}}",
+        "destinations": "{count, plural, one {# other destination} other {# other destinations}}"
+      }
     },
     "security": {
       "title": "Security",
@@ -314,7 +334,8 @@
         "signingOut": "Signing out...",
         "loadError": "Couldn't load your devices. Try again later.",
         "signOutError": "Couldn't sign out that device. Try again."
-      }
+      },
+      "showPasswords": "Show passwords"
     },
     "carddav": {
       "title": "CardDAV Sync",
@@ -753,7 +774,7 @@
       "deleteAccount": "Delete Account",
       "deleteAccountDescription": "Permanently delete your account and all associated data. This action cannot be undone.",
       "deleteAccountButton": "Delete Account",
-      "warningPermanent": "Warning: This is permanent!",
+      "warningPermanent": "Please read this before you continue",
       "deleteWarningMessage": "All your data including people, groups, relationships, and custom relationship types will be permanently deleted. We recommend exporting your data first.",
       "confirmPassword": "Confirm your password",
       "typeToConfirm": "Type DELETE to confirm",
@@ -763,7 +784,10 @@
       "deleteError": "Please type DELETE to confirm",
       "passwordRequired": "Password is required",
       "deleteFailed": "Failed to delete account",
-      "importDataFailed": "Failed to import data"
+      "importDataFailed": "Failed to import data",
+      "deleteExportFirst": "If you may want your data later, download a copy under Export data first.",
+      "deleteSummary": "This deletes your account together with {people, plural, one {# person} other {# people}} and {groups, plural, one {# group} other {# groups}}.",
+      "importSuccessToast": "Import finished"
     },
     "trash": {
       "title": "Trash",
@@ -865,7 +889,26 @@
       "errorNameRequired": "Please enter a name for the token.",
       "errorCreate": "Failed to create token.",
       "errorRevoke": "Failed to revoke token.",
-      "errorConnection": "Connection error. Please try again."
+      "errorConnection": "Connection error. Please try again.",
+      "expiry": {
+        "never": "Never",
+        "days30": "In 30 days",
+        "days90": "In 90 days",
+        "year1": "In 1 year",
+        "custom": "Pick a date"
+      },
+      "nameHint": "Say where it will be used, so you can recognise it later.",
+      "scopeReadHint": "Can look at your people and data, but not change anything.",
+      "scopeReadWriteHint": "Can look at and change your people and data. Only choose this if the tool needs to write.",
+      "errorExpiryRequired": "Please pick an expiry date.",
+      "createdToast": "Token created",
+      "revokedToast": "Token revoked",
+      "copyFailed": "Could not copy automatically. Select the token and copy it by hand.",
+      "usageHint": "Send it with each request as",
+      "neverUsed": "Never used",
+      "revokeTitle": "Revoke \"{name}\"?",
+      "revoking": "Revoking...",
+      "cancel": "Cancel"
     },
     "map": {
       "title": "Map",
@@ -875,6 +918,40 @@
       "geocodingLabel": "Locate addresses automatically",
       "success": "Map settings saved",
       "error": "Could not save map settings"
+    },
+    "overviewTitle": "Overview",
+    "backToOverview": "All settings",
+    "groups": {
+      "personal": "You",
+      "preferences": "Preferences",
+      "connections": "Connections",
+      "data": "Data and help"
+    },
+    "search": {
+      "label": "Search settings",
+      "placeholder": "Search settings, e.g. password, language, reminders",
+      "noResults": "No settings match \"{query}\"",
+      "noResultsHint": "Try a shorter word, or browse the groups by clearing the search.",
+      "keywords": {
+        "profile": "name photo avatar email nickname",
+        "security": "password sessions devices sign out login",
+        "billing": "plan subscription payment invoice",
+        "appearance": "theme dark light language date format name order graph install",
+        "notifications": "reminders email push notify digest weekly",
+        "custom-fields": "custom fields tags extra",
+        "map": "map geocoding address location",
+        "carddav": "contacts sync carddav phone address book",
+        "api-tokens": "api token access script integration",
+        "account": "export import backup delete account download",
+        "trash": "deleted recover restore bin",
+        "about": "version license help about"
+      }
+    },
+    "unsaved": {
+      "warning": "You have unsaved changes. Leave this page without saving?",
+      "indicator": "You have unsaved changes",
+      "allSaved": "All changes saved",
+      "discard": "Discard changes"
     }
   },
   "customFields": {
@@ -886,7 +963,33 @@
       "emptyDescription": "Add fields like dietary restrictions, hobbies, or pets, and use them to filter your people.",
       "usageMeter": "{used} of {limit} custom fields",
       "usageMeterUnlimited": "{used} custom fields",
-      "valueCount": "{count, plural, =0 {Not in use} =1 {Used by 1 person} other {Used by # people}}"
+      "valueCount": "{count, plural, =0 {Not in use} =1 {Used by 1 person} other {Used by # people}}",
+      "examples": {
+        "title": "Start from an example",
+        "items": {
+          "diet": {
+            "name": "Diet",
+            "option1": "Vegetarian",
+            "option2": "Vegan",
+            "option3": "No restrictions"
+          },
+          "allergies": {
+            "name": "Allergies"
+          },
+          "pets": {
+            "name": "Has pets"
+          },
+          "shoeSize": {
+            "name": "Shoe size"
+          },
+          "giftIdeas": {
+            "name": "Gift ideas"
+          }
+        }
+      },
+      "orderHint": "Use the arrows to change the order. It is the order on each person's page.",
+      "savedToast": "Custom field saved",
+      "deletedToast": "Custom field deleted"
     },
     "form": {
       "nameLabel": "Name",
@@ -904,7 +1007,13 @@
       "saveButton": "Save",
       "savingButton": "Saving...",
       "cancelButton": "Cancel",
-      "deleteButton": "Delete"
+      "deleteButton": "Delete",
+      "typeHint": {
+        "TEXT": "Free text, like allergies or gift ideas.",
+        "NUMBER": "A number, like shoe size.",
+        "BOOLEAN": "Yes or no, like \"has pets\".",
+        "SELECT": "Pick one value from a list you define, like a diet."
+      }
     },
     "delete": {
       "confirmTitle": "Delete custom field?",

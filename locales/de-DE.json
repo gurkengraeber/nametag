@@ -96,7 +96,12 @@
         "warning": "An deine neue Adresse wird eine Bestätigungs-E-Mail gesendet. Du wirst abgemeldet und kannst dich erst wieder anmelden, nachdem du deine neue E-Mail verifiziert hast.",
         "cancel": "Abbrechen",
         "confirm": "Bestätigen & Abmelden"
-      }
+      },
+      "nameRequired": "Bitte gib deinen Namen ein.",
+      "errorFields": "Bitte prüfe die markierten Felder.",
+      "photoHint": "JPG, PNG, GIF, WebP oder HEIC, bis 50 MB. Nach der Auswahl kannst du zuschneiden.",
+      "photoPending": "Das neue Foto wird gespeichert, wenn du auf Änderungen speichern tippst.",
+      "emailChangeHint": "Wenn du deine E-Mail-Adresse änderst, wirst du abgemeldet, bis du die neue Adresse bestätigt hast."
     },
     "appearance": {
       "title": "Darstellung",
@@ -153,7 +158,15 @@
         "ruRU": "Русский (Russian)",
         "nlNL": "Nederlands (Dutch)",
         "frFR": "Français (French)",
-        "plPL": "Polski (Polish)"
+        "plPL": "Polski (Polish)",
+        "error": "Die Sprache konnte nicht geändert werden. Bitte versuche es noch einmal."
+      },
+      "namesTitle": "Namen",
+      "namesDescription": "Lege fest, wie Namen geschrieben werden und welche Teile erscheinen. Das Beispiel ändert sich mit deiner Auswahl.",
+      "namePreview": {
+        "title": "So sieht ein Name aus",
+        "page": "Auf der Seite einer Person",
+        "compact": "In Listen und im Netzwerk"
       }
     },
     "notifications": {
@@ -272,7 +285,14 @@
       "pushDeviceDisabled": "Dieses Gerät wurde nach wiederholten Zustellfehlern abgeschaltet.",
       "pushDeviceDisabledRejected": "Der Push-Dienst hat die Nachrichten abgelehnt. Schalte Push auf diesem Gerät wieder ein, um es neu zu registrieren.",
       "pushDeviceDisabledUnreachable": "Das Gerät war nicht erreichbar. Schalte Push auf diesem Gerät wieder ein, um es neu zu registrieren.",
-      "endpointAddTooLong": "Diese URL ist zu lang. Kürze sie und versuche es erneut."
+      "endpointAddTooLong": "Diese URL ist zu lang. Kürze sie und versuche es erneut.",
+      "summary": {
+        "none": "Es ist kein Kanal für Erinnerungen eingeschaltet, du erfährst also nichts über anstehende Termine. Schalte unten E-Mail oder Push ein.",
+        "active": "Erinnerungen erreichen dich per {channels}.",
+        "email": "E-Mail",
+        "push": "Push auf {count, plural, one {# Gerät} other {# Geräten}}",
+        "destinations": "{count, plural, one {# weiteres Ziel} other {# weiteren Zielen}}"
+      }
     },
     "security": {
       "title": "Sicherheit",
@@ -314,7 +334,8 @@
         "signingOut": "Wird abgemeldet...",
         "loadError": "Deine Geräte konnten nicht geladen werden. Versuche es später erneut.",
         "signOutError": "Dieses Gerät konnte nicht abgemeldet werden. Versuche es erneut."
-      }
+      },
+      "showPasswords": "Passwörter anzeigen"
     },
     "carddav": {
       "title": "CardDAV-Synchronisation",
@@ -753,7 +774,7 @@
       "deleteAccount": "Konto löschen",
       "deleteAccountDescription": "Lösche dein Konto und alle zugehörigen Daten dauerhaft. Diese Aktion kann nicht rückgängig gemacht werden.",
       "deleteAccountButton": "Konto löschen",
-      "warningPermanent": "Warnung: Das ist dauerhaft!",
+      "warningPermanent": "Bitte lies das, bevor du weitermachst",
       "deleteWarningMessage": "Alle deine Daten (Personen, Gruppen, Beziehungen und benutzerdefinierte Beziehungsarten) werden dauerhaft gelöscht. Wir empfehlen, vorher deine Daten zu exportieren.",
       "confirmPassword": "Passwort bestätigen",
       "typeToConfirm": "Tippe DELETE zur Bestätigung",
@@ -763,7 +784,10 @@
       "deleteError": "Bitte tippe DELETE zur Bestätigung",
       "passwordRequired": "Passwort ist erforderlich",
       "deleteFailed": "Konto konnte nicht gelöscht werden",
-      "importDataFailed": "Daten konnten nicht importiert werden"
+      "importDataFailed": "Daten konnten nicht importiert werden",
+      "deleteExportFirst": "Falls du deine Daten später noch brauchen könntest, lade vorher unter Daten exportieren eine Kopie herunter.",
+      "deleteSummary": "Damit werden dein Konto sowie {people, plural, one {# Person} other {# Personen}} und {groups, plural, one {# Gruppe} other {# Gruppen}} gelöscht.",
+      "importSuccessToast": "Import abgeschlossen"
     },
     "trash": {
       "title": "Papierkorb",
@@ -865,7 +889,26 @@
       "errorNameRequired": "Bitte gib einen Namen für das Token ein.",
       "errorCreate": "Token konnte nicht erstellt werden.",
       "errorRevoke": "Token konnte nicht widerrufen werden.",
-      "errorConnection": "Verbindungsfehler. Bitte versuche es erneut."
+      "errorConnection": "Verbindungsfehler. Bitte versuche es erneut.",
+      "expiry": {
+        "never": "Nie",
+        "days30": "In 30 Tagen",
+        "days90": "In 90 Tagen",
+        "year1": "In 1 Jahr",
+        "custom": "Datum wählen"
+      },
+      "nameHint": "Schreib auf, wo er verwendet wird, damit du ihn später erkennst.",
+      "scopeReadHint": "Kann deine Personen und Daten ansehen, aber nichts ändern.",
+      "scopeReadWriteHint": "Kann deine Personen und Daten ansehen und ändern. Wähle das nur, wenn das Werkzeug schreiben muss.",
+      "errorExpiryRequired": "Bitte wähle ein Ablaufdatum.",
+      "createdToast": "Token erstellt",
+      "revokedToast": "Token widerrufen",
+      "copyFailed": "Automatisches Kopieren hat nicht geklappt. Markiere den Token und kopiere ihn von Hand.",
+      "usageHint": "Sende ihn mit jeder Anfrage als",
+      "neverUsed": "Nie benutzt",
+      "revokeTitle": "\"{name}\" widerrufen?",
+      "revoking": "Wird widerrufen...",
+      "cancel": "Abbrechen"
     },
     "map": {
       "title": "Karte",
@@ -875,6 +918,40 @@
       "geocodingLabel": "Adressen automatisch lokalisieren",
       "success": "Karteneinstellungen gespeichert",
       "error": "Karteneinstellungen konnten nicht gespeichert werden"
+    },
+    "overviewTitle": "Übersicht",
+    "backToOverview": "Alle Einstellungen",
+    "groups": {
+      "personal": "Du",
+      "preferences": "Vorlieben",
+      "connections": "Verbindungen",
+      "data": "Daten und Hilfe"
+    },
+    "search": {
+      "label": "Einstellungen durchsuchen",
+      "placeholder": "Einstellungen suchen, z. B. Passwort, Sprache, Erinnerungen",
+      "noResults": "Keine Einstellung passt zu \"{query}\"",
+      "noResultsHint": "Versuche ein kürzeres Wort oder lösche die Suche, um alle Gruppen zu sehen.",
+      "keywords": {
+        "profile": "name foto profilbild e-mail spitzname",
+        "security": "passwort sitzungen geräte abmelden anmeldung",
+        "billing": "tarif abo zahlung rechnung",
+        "appearance": "design thema dunkel hell sprache datumsformat namensreihenfolge graph installieren",
+        "notifications": "erinnerungen e-mail push benachrichtigung zusammenfassung wöchentlich",
+        "custom-fields": "eigene felder zusatzfelder",
+        "map": "karte adresse standort geocoding",
+        "carddav": "kontakte sync carddav telefon adressbuch",
+        "api-tokens": "api token zugriff skript schnittstelle",
+        "account": "export import sicherung backup löschen konto herunterladen",
+        "trash": "gelöscht wiederherstellen papierkorb",
+        "about": "version lizenz hilfe über"
+      }
+    },
+    "unsaved": {
+      "warning": "Du hast ungespeicherte Änderungen. Seite trotzdem verlassen?",
+      "indicator": "Ungespeicherte Änderungen",
+      "allSaved": "Alles gespeichert",
+      "discard": "Änderungen verwerfen"
     }
   },
   "customFields": {
@@ -886,7 +963,33 @@
       "emptyDescription": "Füge Felder wie Ernährungsgewohnheiten, Hobbys oder Haustiere hinzu und nutze sie zum Filtern deiner Personen.",
       "usageMeter": "{used} von {limit} benutzerdefinierten Feldern",
       "usageMeterUnlimited": "{used} benutzerdefinierte Felder",
-      "valueCount": "{count, plural, =0 {Nicht in Verwendung} =1 {Von 1 Person verwendet} other {Von # Personen verwendet}}"
+      "valueCount": "{count, plural, =0 {Nicht in Verwendung} =1 {Von 1 Person verwendet} other {Von # Personen verwendet}}",
+      "examples": {
+        "title": "Mit einem Beispiel starten",
+        "items": {
+          "diet": {
+            "name": "Ernährung",
+            "option1": "Vegetarisch",
+            "option2": "Vegan",
+            "option3": "Keine Einschränkungen"
+          },
+          "allergies": {
+            "name": "Allergien"
+          },
+          "pets": {
+            "name": "Hat Haustiere"
+          },
+          "shoeSize": {
+            "name": "Schuhgröße"
+          },
+          "giftIdeas": {
+            "name": "Geschenkideen"
+          }
+        }
+      },
+      "orderHint": "Mit den Pfeilen änderst du die Reihenfolge. So erscheinen die Felder auf der Seite jeder Person.",
+      "savedToast": "Eigenes Feld gespeichert",
+      "deletedToast": "Eigenes Feld gelöscht"
     },
     "form": {
       "nameLabel": "Name",
@@ -904,7 +1007,13 @@
       "saveButton": "Speichern",
       "savingButton": "Wird gespeichert...",
       "cancelButton": "Abbrechen",
-      "deleteButton": "Löschen"
+      "deleteButton": "Löschen",
+      "typeHint": {
+        "TEXT": "Freitext, zum Beispiel Allergien oder Geschenkideen.",
+        "NUMBER": "Eine Zahl, zum Beispiel die Schuhgröße.",
+        "BOOLEAN": "Ja oder Nein, zum Beispiel \"Hat Haustiere\".",
+        "SELECT": "Ein Wert aus einer eigenen Liste, zum Beispiel die Ernährung."
+      }
     },
     "delete": {
       "confirmTitle": "Benutzerdefiniertes Feld löschen?",

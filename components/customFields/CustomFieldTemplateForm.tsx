@@ -4,10 +4,14 @@ import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { CustomFieldType } from '@prisma/client';
 import { TemplateWithCount } from './CustomFieldsManager';
+import { Button } from '@/components/ui/Button';
+import type { CustomFieldPrefill } from './customFieldExamples';
 
 interface CustomFieldTemplateFormProps {
   mode: 'create' | 'edit';
   template?: TemplateWithCount;
+  /** Starting values for a new field, for example from an example chip. */
+  initial?: CustomFieldPrefill;
   onSaved: () => void;
   onCancel: () => void;
 }
@@ -24,17 +28,21 @@ const TYPE_LABEL_KEYS: Record<CustomFieldType, string> = {
 export default function CustomFieldTemplateForm({
   mode,
   template,
+  initial,
   onSaved,
   onCancel,
 }: CustomFieldTemplateFormProps) {
   const t = useTranslations('customFields.form');
   const tErrors = useTranslations('customFields.errors');
 
-  const [name, setName] = useState(template?.name ?? '');
-  const [type, setType] = useState<CustomFieldType>(template?.type ?? 'TEXT');
+  const [name, setName] = useState(template?.name ?? initial?.name ?? '');
+  const [type, setType] = useState<CustomFieldType>(template?.type ?? initial?.type ?? 'TEXT');
   const [options, setOptions] = useState<string[]>(
-    template?.options.length ? template.options : ['']
+    template?.options.length ? template.options : initial?.options.length ? initial.options : ['']
   );
+  const [nameError, setNameError] = useState<string | null>(null);
+  // Index of an option input that should take focus after it was just added.
+  const [focusOption, setFocusOption] = useState<number | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -49,6 +57,7 @@ export default function CustomFieldTemplateForm({
 
   const handleAddOption = () => {
     setOptions([...options, '']);
+    setFocusOption(options.length);
   };
 
   const handleRemoveOption = (idx: number) => {
@@ -59,6 +68,7 @@ export default function CustomFieldTemplateForm({
     e.preventDefault();
     setIsSaving(true);
     setError(null);
+    setNameError(null);
 
     const payload =
       type === 'SELECT'
@@ -84,7 +94,7 @@ export default function CustomFieldTemplateForm({
         // Map known statuses to translated strings; fall back to the API's
         // raw message for cases we haven't mapped (already English-only).
         if (res.status === 409) {
-          setError(tErrors('duplicateName'));
+          setNameError(tErrors('duplicateName'));
         } else {
           setError(data.error ?? tErrors('somethingWentWrong'));
         }
@@ -107,12 +117,18 @@ export default function CustomFieldTemplateForm({
           id="cf-name"
           type="text"
           value={name}
-          onChange={(e) => setName(e.target.value)}
+          onChange={(e) => {
+            setName(e.target.value);
+            if (nameError) setNameError(null);
+          }}
           placeholder={t('namePlaceholder')}
           maxLength={60}
           required
-          className="w-full rounded-lg border border-border bg-surface text-foreground px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+          aria-invalid={nameError ? true : undefined}
+          aria-describedby={nameError ? 'cf-name-error' : undefined}
+          className="w-full min-h-11 rounded-lg border border-border bg-surface text-foreground px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
         />
+        {nameError && <p id="cf-name-error" className="mt-1 text-sm text-warning">{nameError}</p>}
       </div>
 
       {/* Type */}
@@ -125,7 +141,7 @@ export default function CustomFieldTemplateForm({
           {FIELD_TYPES.map((ft) => (
             <label
               key={ft}
-              className={`inline-flex items-center gap-2 cursor-pointer ${
+              className={`inline-flex items-center gap-2 min-h-11 cursor-pointer ${
                 isEdit ? 'opacity-50 cursor-not-allowed' : ''
               }`}
             >
@@ -142,6 +158,7 @@ export default function CustomFieldTemplateForm({
             </label>
           ))}
         </div>
+        <p className="mt-1 text-sm text-muted">{t(`typeHint.${type}`)}</p>
       </div>
 
       {/* Options (SELECT only) */}
@@ -157,14 +174,22 @@ export default function CustomFieldTemplateForm({
                   type="text"
                   value={opt}
                   onChange={(e) => handleOptionChange(idx, e.target.value)}
+                  onKeyDown={(e) => {
+                    // Enter adds the next option instead of submitting the form.
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      if (opt.trim() !== '') handleAddOption();
+                    }
+                  }}
+                  autoFocus={focusOption === idx}
                   placeholder={`${t('optionPlaceholder')} ${idx + 1}`}
-                  className="flex-1 rounded-lg border border-border bg-surface text-foreground px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                  className="flex-1 min-h-11 rounded-lg border border-border bg-surface text-foreground px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                 />
                 {options.length > 1 && (
                   <button
                     type="button"
                     onClick={() => handleRemoveOption(idx)}
-                    className="text-sm text-muted hover:text-red-600 dark:hover:text-red-400 transition-colors flex-shrink-0"
+                    className="min-h-11 px-2 text-sm text-muted hover:text-red-600 dark:hover:text-red-400 transition-colors flex-shrink-0"
                   >
                     {t('removeOption')}
                   </button>
@@ -175,7 +200,7 @@ export default function CustomFieldTemplateForm({
           <button
             type="button"
             onClick={handleAddOption}
-            className="mt-2 text-sm text-primary hover:underline"
+            className="mt-1 min-h-11 text-sm text-primary hover:underline"
           >
             + {t('addOption')}
           </button>
@@ -189,21 +214,12 @@ export default function CustomFieldTemplateForm({
 
       {/* Buttons */}
       <div className="flex items-center gap-3 pt-1">
-        <button
-          type="submit"
-          disabled={isSaving}
-          className="px-4 py-2 bg-primary text-on-primary rounded-lg text-sm font-medium hover:bg-primary-dark transition-colors disabled:opacity-50"
-        >
+        <Button type="submit" disabled={isSaving}>
           {isSaving ? t('savingButton') : t('saveButton')}
-        </button>
-        <button
-          type="button"
-          onClick={onCancel}
-          disabled={isSaving}
-          className="px-4 py-2 border border-border text-muted rounded-lg text-sm font-medium hover:bg-surface-elevated transition-colors disabled:opacity-50"
-        >
+        </Button>
+        <Button type="button" variant="secondary" onClick={onCancel} disabled={isSaving}>
           {t('cancelButton')}
-        </button>
+        </Button>
       </div>
     </form>
   );

@@ -96,7 +96,12 @@
         "warning": "En bekreftelses-e-post vil bli sendt til den nye adressen. Du blir logget ut og kan ikke logge inn igjen før du har bekreftet din nye e-post.",
         "cancel": "Avbryt",
         "confirm": "Bekreft og logg ut"
-      }
+      },
+      "nameRequired": "Skriv inn navnet ditt.",
+      "errorFields": "Sjekk de markerte feltene.",
+      "photoHint": "JPG, PNG, GIF, WebP eller HEIC, opptil 50 MB. Du kan beskjære etter at du har valgt.",
+      "photoPending": "Det nye bildet lagres når du trykker Lagre endringer.",
+      "emailChangeHint": "Hvis du endrer e-posten, logges du ut til du har bekreftet den nye adressen."
     },
     "appearance": {
       "title": "Utseende",
@@ -153,7 +158,15 @@
         "ruRU": "Русский (Russian)",
         "nlNL": "Nederlands (Dutch)",
         "frFR": "Français (French)",
-        "plPL": "Polski (Polish)"
+        "plPL": "Polski (Polish)",
+        "error": "Kunne ikke endre språk. Prøv igjen."
+      },
+      "namesTitle": "Navn",
+      "namesDescription": "Velg hvordan navn skrives og hvilke deler som vises. Eksempelet endrer seg mens du velger.",
+      "namePreview": {
+        "title": "Slik ser et navn ut",
+        "page": "På en persons side",
+        "compact": "I lister og grafen"
       }
     },
     "notifications": {
@@ -272,7 +285,14 @@
       "pushDeviceDisabled": "Denne enheten ble slått av etter gjentatte leveringsfeil.",
       "pushDeviceDisabledRejected": "Pushtjenesten avviste meldingene. Slå på push igjen fra denne enheten for å registrere den på nytt.",
       "pushDeviceDisabledUnreachable": "Enheten kunne ikke nås. Slå på push igjen fra denne enheten for å registrere den på nytt.",
-      "endpointAddTooLong": "Den URL-en er for lang. Gjør den kortere og prøv igjen."
+      "endpointAddTooLong": "Den URL-en er for lang. Gjør den kortere og prøv igjen.",
+      "summary": {
+        "none": "Ingen påminnelseskanal er slått på, så du får ikke vite om kommende datoer. Slå på e-post eller push nedenfor.",
+        "active": "Påminnelser når deg via {channels}.",
+        "email": "e-post",
+        "push": "push på {count, plural, one {# enhet} other {# enheter}}",
+        "destinations": "{count, plural, one {# annen mottaker} other {# andre mottakere}}"
+      }
     },
     "security": {
       "title": "Sikkerhet",
@@ -314,7 +334,8 @@
         "signingOut": "Logger ut...",
         "loadError": "Kunne ikke laste enhetene dine. Prøv igjen senere.",
         "signOutError": "Kunne ikke logge ut den enheten. Prøv igjen."
-      }
+      },
+      "showPasswords": "Vis passord"
     },
     "carddav": {
       "title": "CardDAV-synkronisering",
@@ -753,7 +774,7 @@
       "deleteAccount": "Slett konto",
       "deleteAccountDescription": "Slett kontoen din permanent og all tilknyttet data. Denne handlingen kan ikke angres.",
       "deleteAccountButton": "Slett konto",
-      "warningPermanent": "Advarsel: Dette er permanent!",
+      "warningPermanent": "Les dette før du fortsetter",
       "deleteWarningMessage": "Alle dataene dine, inkludert personer, grupper, relasjoner og egendefinerte relasjonstyper, blir slettet permanent. Vi anbefaler at du eksporterer dataene dine først.",
       "confirmPassword": "Bekreft passordet ditt",
       "typeToConfirm": "Skriv DELETE for å bekrefte",
@@ -763,7 +784,10 @@
       "deleteError": "Skriv DELETE for å bekrefte",
       "passwordRequired": "Passord er påkrevd",
       "deleteFailed": "Kunne ikke slette kontoen",
-      "importDataFailed": "Kunne ikke importere data"
+      "importDataFailed": "Kunne ikke importere data",
+      "deleteExportFirst": "Hvis du kan trenge dataene senere, last ned en kopi under Eksporter data først.",
+      "deleteSummary": "Dette sletter kontoen din sammen med {people, plural, one {# person} other {# personer}} og {groups, plural, one {# gruppe} other {# grupper}}.",
+      "importSuccessToast": "Importen er ferdig"
     },
     "trash": {
       "title": "Papirkurv",
@@ -865,7 +889,26 @@
       "errorNameRequired": "Skriv inn et navn for tokenen.",
       "errorCreate": "Kunne ikke opprette token.",
       "errorRevoke": "Kunne ikke tilbakekalle token.",
-      "errorConnection": "Tilkoblingsfeil. Prøv igjen."
+      "errorConnection": "Tilkoblingsfeil. Prøv igjen.",
+      "expiry": {
+        "never": "Aldri",
+        "days30": "Om 30 dager",
+        "days90": "Om 90 dager",
+        "year1": "Om 1 år",
+        "custom": "Velg dato"
+      },
+      "nameHint": "Skriv hvor den skal brukes, så du kjenner den igjen senere.",
+      "scopeReadHint": "Kan se personene og dataene dine, men ikke endre noe.",
+      "scopeReadWriteHint": "Kan se og endre personene og dataene dine. Velg dette bare hvis verktøyet må skrive.",
+      "errorExpiryRequired": "Velg en utløpsdato.",
+      "createdToast": "Token opprettet",
+      "revokedToast": "Token trukket tilbake",
+      "copyFailed": "Kunne ikke kopiere automatisk. Marker tokenet og kopier det for hånd.",
+      "usageHint": "Send det med hver forespørsel som",
+      "neverUsed": "Aldri brukt",
+      "revokeTitle": "Trekke tilbake \"{name}\"?",
+      "revoking": "Trekker tilbake...",
+      "cancel": "Avbryt"
     },
     "map": {
       "title": "Kart",
@@ -875,6 +918,40 @@
       "geocodingLabel": "Lokaliser adresser automatisk",
       "success": "Kartinnstillinger lagret",
       "error": "Kunne ikke lagre kartinnstillingene"
+    },
+    "overviewTitle": "Oversikt",
+    "backToOverview": "Alle innstillinger",
+    "groups": {
+      "personal": "Deg",
+      "preferences": "Preferanser",
+      "connections": "Tilkoblinger",
+      "data": "Data og hjelp"
+    },
+    "search": {
+      "label": "Søk i innstillinger",
+      "placeholder": "Søk, f.eks. passord, språk, påminnelser",
+      "noResults": "Ingen innstillinger passer til \"{query}\"",
+      "noResultsHint": "Prøv et kortere ord, eller tøm søket for å se alle gruppene.",
+      "keywords": {
+        "profile": "navn bilde avatar e-post kallenavn",
+        "security": "passord økter enheter logg ut innlogging",
+        "billing": "abonnement betaling faktura",
+        "appearance": "tema mørk lys språk datoformat navnerekkefølge graf installer",
+        "notifications": "påminnelser e-post push varsler ukesammendrag",
+        "custom-fields": "egendefinerte felt ekstra",
+        "map": "kart geokoding adresse sted",
+        "carddav": "kontakter synkronisering carddav telefon adressebok",
+        "api-tokens": "api token tilgang skript integrasjon",
+        "account": "eksporter importer sikkerhetskopi slett konto last ned",
+        "trash": "slettet gjenopprett papirkurv",
+        "about": "versjon lisens hjelp om"
+      }
+    },
+    "unsaved": {
+      "warning": "Du har ulagrede endringer. Forlate siden uten å lagre?",
+      "indicator": "Ulagrede endringer",
+      "allSaved": "Alt er lagret",
+      "discard": "Forkast endringer"
     }
   },
   "customFields": {
@@ -886,7 +963,33 @@
       "emptyDescription": "Legg til felt som kostholdsbegrensninger, hobbyer eller kjæledyr, og bruk dem til å filtrere personene dine.",
       "usageMeter": "{used} av {limit} egendefinerte felt",
       "usageMeterUnlimited": "{used} egendefinerte felt",
-      "valueCount": "{count, plural, =0 {Ikke i bruk} =1 {Brukt av 1 person} other {Brukt av # personer}}"
+      "valueCount": "{count, plural, =0 {Ikke i bruk} =1 {Brukt av 1 person} other {Brukt av # personer}}",
+      "examples": {
+        "title": "Start med et eksempel",
+        "items": {
+          "diet": {
+            "name": "Kosthold",
+            "option1": "Vegetarianer",
+            "option2": "Veganer",
+            "option3": "Ingen begrensninger"
+          },
+          "allergies": {
+            "name": "Allergier"
+          },
+          "pets": {
+            "name": "Har kjæledyr"
+          },
+          "shoeSize": {
+            "name": "Skostørrelse"
+          },
+          "giftIdeas": {
+            "name": "Gaveideer"
+          }
+        }
+      },
+      "orderHint": "Bruk pilene for å endre rekkefølgen. Det er rekkefølgen på hver persons side.",
+      "savedToast": "Egendefinert felt lagret",
+      "deletedToast": "Egendefinert felt slettet"
     },
     "form": {
       "nameLabel": "Navn",
@@ -904,7 +1007,13 @@
       "saveButton": "Lagre",
       "savingButton": "Lagrer...",
       "cancelButton": "Avbryt",
-      "deleteButton": "Slett"
+      "deleteButton": "Slett",
+      "typeHint": {
+        "TEXT": "Fri tekst, for eksempel allergier eller gaveideer.",
+        "NUMBER": "Et tall, for eksempel skostørrelse.",
+        "BOOLEAN": "Ja eller nei, for eksempel \"har kjæledyr\".",
+        "SELECT": "Én verdi fra en liste du lager selv, for eksempel kosthold."
+      }
     },
     "delete": {
       "confirmTitle": "Slette egendefinert felt?",

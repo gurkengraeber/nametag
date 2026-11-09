@@ -96,7 +96,12 @@
         "warning": "Un'email di verifica verrà inviata al nuovo indirizzo. Verrai disconnesso e non potrai accedere finché non verificherai la nuova email.",
         "cancel": "Annulla",
         "confirm": "Conferma e disconnetti"
-      }
+      },
+      "nameRequired": "Inserisci il tuo nome.",
+      "errorFields": "Controlla i campi evidenziati.",
+      "photoHint": "JPG, PNG, GIF, WebP o HEIC, fino a 50 MB. Puoi ritagliarla dopo averla scelta.",
+      "photoPending": "La nuova foto viene salvata quando premi Salva modifiche.",
+      "emailChangeHint": "Cambiando l'email verrai disconnesso finché non confermi il nuovo indirizzo."
     },
     "appearance": {
       "title": "Aspetto",
@@ -153,7 +158,15 @@
         "ruRU": "Русский (Russian)",
         "nlNL": "Nederlands (Dutch)",
         "frFR": "Français (French)",
-        "plPL": "Polski (Polish)"
+        "plPL": "Polski (Polish)",
+        "error": "Impossibile cambiare la lingua. Riprova."
+      },
+      "namesTitle": "Nomi",
+      "namesDescription": "Scegli come vengono scritti i nomi e quali parti mostrare. L'esempio cambia mentre scegli.",
+      "namePreview": {
+        "title": "Ecco come appare un nome",
+        "page": "Nella pagina di una persona",
+        "compact": "Negli elenchi e nel grafo"
       }
     },
     "notifications": {
@@ -272,7 +285,14 @@
       "pushDeviceDisabled": "Questo dispositivo è stato disattivato dopo ripetuti errori di consegna.",
       "pushDeviceDisabledRejected": "Il servizio di notifiche ha rifiutato i messaggi. Riattiva le notifiche da questo dispositivo per registrarlo di nuovo.",
       "pushDeviceDisabledUnreachable": "Non è stato possibile raggiungere il dispositivo. Riattiva le notifiche da questo dispositivo per registrarlo di nuovo.",
-      "endpointAddTooLong": "Questo URL è troppo lungo. Accorcialo e riprova."
+      "endpointAddTooLong": "Questo URL è troppo lungo. Accorcialo e riprova.",
+      "summary": {
+        "none": "Nessun canale per i promemoria è attivo, quindi non sarai avvisato delle prossime date. Attiva email o push qui sotto.",
+        "active": "I promemoria ti arrivano tramite {channels}.",
+        "email": "email",
+        "push": "push su {count, plural, one {# dispositivo} other {# dispositivi}}",
+        "destinations": "{count, plural, one {# altra destinazione} other {# altre destinazioni}}"
+      }
     },
     "security": {
       "title": "Sicurezza",
@@ -314,7 +334,8 @@
         "signingOut": "Disconnessione...",
         "loadError": "Impossibile caricare i tuoi dispositivi. Riprova più tardi.",
         "signOutError": "Impossibile disconnettere quel dispositivo. Riprova."
-      }
+      },
+      "showPasswords": "Mostra le password"
     },
     "carddav": {
       "title": "Sincronizzazione CardDAV",
@@ -753,7 +774,7 @@
       "deleteAccount": "Elimina account",
       "deleteAccountDescription": "Elimina permanentemente il tuo account e tutti i dati associati. Questa azione non può essere annullata.",
       "deleteAccountButton": "Elimina account",
-      "warningPermanent": "Attenzione: Questo è permanente!",
+      "warningPermanent": "Leggi prima di continuare",
       "deleteWarningMessage": "Tutti i tuoi dati inclusi persone, gruppi, relazioni e tipi relazione personalizzati verranno eliminati permanentemente. Consigliamo di esportare i tuoi dati prima.",
       "confirmPassword": "Conferma la tua password",
       "typeToConfirm": "Digita ELIMINA per confermare",
@@ -763,7 +784,10 @@
       "deleteError": "Digita ELIMINA per confermare",
       "passwordRequired": "La password è obbligatoria",
       "deleteFailed": "Eliminazione account fallita",
-      "importDataFailed": "Importazione dati fallita"
+      "importDataFailed": "Importazione dati fallita",
+      "deleteExportFirst": "Se potresti aver bisogno dei tuoi dati in futuro, scarica prima una copia in Esporta dati.",
+      "deleteSummary": "Verranno eliminati il tuo account insieme a {people, plural, one {# persona} other {# persone}} e {groups, plural, one {# gruppo} other {# gruppi}}.",
+      "importSuccessToast": "Importazione completata"
     },
     "trash": {
       "title": "Cestino",
@@ -865,7 +889,26 @@
       "errorNameRequired": "Inserisci un nome per il token.",
       "errorCreate": "Impossibile creare il token.",
       "errorRevoke": "Impossibile revocare il token.",
-      "errorConnection": "Errore di connessione. Riprova."
+      "errorConnection": "Errore di connessione. Riprova.",
+      "expiry": {
+        "never": "Mai",
+        "days30": "Tra 30 giorni",
+        "days90": "Tra 90 giorni",
+        "year1": "Tra 1 anno",
+        "custom": "Scegli una data"
+      },
+      "nameHint": "Indica dove verrà usato, così lo riconoscerai in seguito.",
+      "scopeReadHint": "Può vedere le tue persone e i tuoi dati, ma non modificare nulla.",
+      "scopeReadWriteHint": "Può vedere e modificare le tue persone e i tuoi dati. Sceglilo solo se lo strumento deve scrivere.",
+      "errorExpiryRequired": "Scegli una data di scadenza.",
+      "createdToast": "Token creato",
+      "revokedToast": "Token revocato",
+      "copyFailed": "Copia automatica non riuscita. Seleziona il token e copialo a mano.",
+      "usageHint": "Invialo a ogni richiesta come",
+      "neverUsed": "Mai usato",
+      "revokeTitle": "Revocare \"{name}\"?",
+      "revoking": "Revoca in corso...",
+      "cancel": "Annulla"
     },
     "map": {
       "title": "Mappa",
@@ -875,6 +918,40 @@
       "geocodingLabel": "Localizza automaticamente gli indirizzi",
       "success": "Impostazioni della mappa salvate",
       "error": "Impossibile salvare le impostazioni della mappa"
+    },
+    "overviewTitle": "Panoramica",
+    "backToOverview": "Tutte le impostazioni",
+    "groups": {
+      "personal": "Tu",
+      "preferences": "Preferenze",
+      "connections": "Connessioni",
+      "data": "Dati e aiuto"
+    },
+    "search": {
+      "label": "Cerca nelle impostazioni",
+      "placeholder": "Cerca, ad es. password, lingua, promemoria",
+      "noResults": "Nessuna impostazione corrisponde a \"{query}\"",
+      "noResultsHint": "Prova con una parola più corta o cancella la ricerca per vedere tutti i gruppi.",
+      "keywords": {
+        "profile": "nome foto avatar email soprannome",
+        "security": "password sessioni dispositivi disconnetti accesso",
+        "billing": "piano abbonamento pagamento fattura",
+        "appearance": "tema scuro chiaro lingua formato data ordine nomi grafo installa",
+        "notifications": "promemoria email push notifiche riepilogo settimanale",
+        "custom-fields": "campi personalizzati extra",
+        "map": "mappa geocodifica indirizzo posizione",
+        "carddav": "contatti sincronizzazione carddav telefono rubrica",
+        "api-tokens": "api token accesso script integrazione",
+        "account": "esporta importa backup elimina account scarica",
+        "trash": "eliminati recupera ripristina cestino",
+        "about": "versione licenza aiuto informazioni"
+      }
+    },
+    "unsaved": {
+      "warning": "Hai modifiche non salvate. Lasciare la pagina senza salvare?",
+      "indicator": "Modifiche non salvate",
+      "allSaved": "Tutto salvato",
+      "discard": "Annulla modifiche"
     }
   },
   "customFields": {
@@ -886,7 +963,33 @@
       "emptyDescription": "Aggiungi campi come restrizioni alimentari, hobby o animali domestici, e usali per filtrare le tue persone.",
       "usageMeter": "{used} di {limit} campi personalizzati",
       "usageMeterUnlimited": "{used} campi personalizzati",
-      "valueCount": "{count, plural, =0 {Non in uso} =1 {Usato da 1 persona} other {Usato da # persone}}"
+      "valueCount": "{count, plural, =0 {Non in uso} =1 {Usato da 1 persona} other {Usato da # persone}}",
+      "examples": {
+        "title": "Parti da un esempio",
+        "items": {
+          "diet": {
+            "name": "Dieta",
+            "option1": "Vegetariana",
+            "option2": "Vegana",
+            "option3": "Nessuna restrizione"
+          },
+          "allergies": {
+            "name": "Allergie"
+          },
+          "pets": {
+            "name": "Ha animali"
+          },
+          "shoeSize": {
+            "name": "Numero di scarpe"
+          },
+          "giftIdeas": {
+            "name": "Idee regalo"
+          }
+        }
+      },
+      "orderHint": "Usa le frecce per cambiare l'ordine. È l'ordine nella pagina di ogni persona.",
+      "savedToast": "Campo personalizzato salvato",
+      "deletedToast": "Campo personalizzato eliminato"
     },
     "form": {
       "nameLabel": "Nome",
@@ -904,7 +1007,13 @@
       "saveButton": "Salva",
       "savingButton": "Salvataggio...",
       "cancelButton": "Annulla",
-      "deleteButton": "Elimina"
+      "deleteButton": "Elimina",
+      "typeHint": {
+        "TEXT": "Testo libero, come allergie o idee regalo.",
+        "NUMBER": "Un numero, come il numero di scarpe.",
+        "BOOLEAN": "Sì o no, come \"ha animali\".",
+        "SELECT": "Un valore da una lista che definisci tu, come la dieta."
+      }
     },
     "delete": {
       "confirmTitle": "Eliminare il campo personalizzato?",

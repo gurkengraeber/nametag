@@ -31,12 +31,12 @@ export default async function SettingsLayout({
 
       <main className="max-w-6xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
-          <h1 className="text-3xl font-bold text-foreground mb-6">
+          <h1 className="text-3xl font-bold text-foreground mb-4 md:mb-6">
             {t('title')}
           </h1>
 
-          <div className="flex flex-col md:flex-row gap-6">
-            {/* Settings Navigation - responsive (dropdown on mobile, sidebar on desktop) */}
+          <div className="flex flex-col md:flex-row gap-2 md:gap-6">
+            {/* Settings Navigation - a back link on mobile (the overview page is the list), grouped sidebar on desktop */}
             <aside className="w-full md:w-64 flex-shrink-0">
               <SettingsNav isSaasMode={isSaasMode} />
             </aside>

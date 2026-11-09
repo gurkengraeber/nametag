@@ -96,7 +96,12 @@
         "warning": "新しいアドレスに確認メールが送信されます。ログアウトされ、新しいメールを確認するまでログインできなくなります。",
         "cancel": "キャンセル",
         "confirm": "確認してログアウト"
-      }
+      },
+      "nameRequired": "名前を入力してください。",
+      "errorFields": "強調表示された項目を確認してください。",
+      "photoHint": "JPG、PNG、GIF、WebP、HEIC に対応、50 MB まで。選択後にトリミングできます。",
+      "photoPending": "新しい写真は「変更を保存」を押すと保存されます。",
+      "emailChangeHint": "メールアドレスを変更すると、新しいアドレスを確認するまでサインアウトされます。"
     },
     "appearance": {
       "title": "外観",
@@ -153,7 +158,15 @@
         "ruRU": "Русский (Russian)",
         "nlNL": "Nederlands (Dutch)",
         "frFR": "Français (French)",
-        "plPL": "Polski (Polish)"
+        "plPL": "Polski (Polish)",
+        "error": "言語を変更できませんでした。もう一度お試しください。"
+      },
+      "namesTitle": "名前",
+      "namesDescription": "名前の書き方と表示する部分を選びます。例は選択に合わせて変わります。",
+      "namePreview": {
+        "title": "名前の見え方",
+        "page": "人物のページ",
+        "compact": "一覧とグラフ"
       }
     },
     "notifications": {
@@ -272,7 +285,14 @@
       "pushDeviceDisabled": "この端末は配信の失敗が続いたため、オフになりました。",
       "pushDeviceDisabledRejected": "プッシュサービスがメッセージを拒否しました。この端末でプッシュ通知をもう一度オンにして、登録し直してください。",
       "pushDeviceDisabledUnreachable": "端末に接続できませんでした。この端末でプッシュ通知をもう一度オンにして、登録し直してください。",
-      "endpointAddTooLong": "そのURLは長すぎます。短くしてもう一度お試しください。"
+      "endpointAddTooLong": "そのURLは長すぎます。短くしてもう一度お試しください。",
+      "summary": {
+        "none": "リマインダーの通知先がオンになっていないため、近づく日付をお知らせできません。下でメールまたはプッシュをオンにしてください。",
+        "active": "リマインダーは {channels} で届きます。",
+        "email": "メール",
+        "push": "{count, plural, other {#台のデバイス}}へのプッシュ",
+        "destinations": "{count, plural, other {#件のその他の通知先}}"
+      }
     },
     "security": {
       "title": "セキュリティ",
@@ -314,7 +334,8 @@
         "signingOut": "ログアウトしています...",
         "loadError": "デバイスを読み込めませんでした。後でもう一度お試しください。",
         "signOutError": "そのデバイスをログアウトできませんでした。もう一度お試しください。"
-      }
+      },
+      "showPasswords": "パスワードを表示"
     },
     "carddav": {
       "title": "CardDAV同期",
@@ -753,7 +774,7 @@
       "deleteAccount": "アカウントの削除",
       "deleteAccountDescription": "アカウントと関連するすべてのデータを完全に削除します。この操作は元に戻せません。",
       "deleteAccountButton": "アカウントの削除",
-      "warningPermanent": "警告：これは永続的です！",
+      "warningPermanent": "続ける前にお読みください",
       "deleteWarningMessage": "人物、グループ、関係、カスタム関係タイプを含むすべてのデータが完全に削除されます。最初にデータをエクスポートすることをお勧めします。",
       "confirmPassword": "パスワードを確認してください",
       "typeToConfirm": "確認するにはDELETEと入力してください",
@@ -763,7 +784,10 @@
       "deleteError": "確認するにはDELETEと入力してください",
       "passwordRequired": "パスワードが必要です",
       "deleteFailed": "アカウントの削除に失敗しました",
-      "importDataFailed": "データのインポートに失敗しました"
+      "importDataFailed": "データのインポートに失敗しました",
+      "deleteExportFirst": "後でデータが必要になるかもしれない場合は、先に「データのエクスポート」でコピーをダウンロードしてください。",
+      "deleteSummary": "アカウントと、{people, plural, other {#人}}、{groups, plural, other {#個のグループ}}が削除されます。",
+      "importSuccessToast": "インポートが完了しました"
     },
     "trash": {
       "title": "ゴミ箱",
@@ -865,7 +889,26 @@
       "errorNameRequired": "トークンの名前を入力してください。",
       "errorCreate": "トークンの作成に失敗しました。",
       "errorRevoke": "トークンの無効化に失敗しました。",
-      "errorConnection": "接続エラーです。もう一度お試しください。"
+      "errorConnection": "接続エラーです。もう一度お試しください。",
+      "expiry": {
+        "never": "なし",
+        "days30": "30日後",
+        "days90": "90日後",
+        "year1": "1年後",
+        "custom": "日付を選ぶ"
+      },
+      "nameHint": "後で見分けられるよう、使う場所を書いておきましょう。",
+      "scopeReadHint": "人物やデータを見ることはできますが、変更はできません。",
+      "scopeReadWriteHint": "人物やデータを見ることも変更することもできます。ツールが書き込みを必要とする場合だけ選んでください。",
+      "errorExpiryRequired": "有効期限の日付を選んでください。",
+      "createdToast": "トークンを作成しました",
+      "revokedToast": "トークンを取り消しました",
+      "copyFailed": "自動でコピーできませんでした。トークンを選択して手動でコピーしてください。",
+      "usageHint": "各リクエストに次の形で付けて送信します:",
+      "neverUsed": "未使用",
+      "revokeTitle": "\"{name}\" を取り消しますか?",
+      "revoking": "取り消し中...",
+      "cancel": "キャンセル"
     },
     "map": {
       "title": "マップ",
@@ -875,6 +918,40 @@
       "geocodingLabel": "住所を自動的に位置特定する",
       "success": "マップ設定を保存しました",
       "error": "マップ設定を保存できませんでした"
+    },
+    "overviewTitle": "概要",
+    "backToOverview": "設定一覧",
+    "groups": {
+      "personal": "あなた",
+      "preferences": "環境設定",
+      "connections": "連携",
+      "data": "データとヘルプ"
+    },
+    "search": {
+      "label": "設定を検索",
+      "placeholder": "設定を検索(例: パスワード、言語、リマインダー)",
+      "noResults": "\"{query}\" に一致する設定はありません",
+      "noResultsHint": "短い言葉で試すか、検索を消してすべてのグループを表示してください。",
+      "keywords": {
+        "profile": "名前 写真 アバター メール ニックネーム",
+        "security": "パスワード セッション デバイス サインアウト ログイン",
+        "billing": "プラン 購読 支払い 請求書",
+        "appearance": "テーマ ダーク ライト 言語 日付 形式 名前 順序 グラフ インストール",
+        "notifications": "リマインダー メール プッシュ 通知 週間 まとめ",
+        "custom-fields": "カスタム フィールド 追加項目",
+        "map": "地図 ジオコーディング 住所 場所",
+        "carddav": "連絡先 同期 carddav 電話 アドレス帳",
+        "api-tokens": "api トークン アクセス スクリプト 連携",
+        "account": "エクスポート インポート バックアップ 削除 アカウント ダウンロード",
+        "trash": "削除済み 復元 ごみ箱",
+        "about": "バージョン ライセンス ヘルプ 情報"
+      }
+    },
+    "unsaved": {
+      "warning": "保存されていない変更があります。保存せずにこのページを離れますか?",
+      "indicator": "保存されていない変更があります",
+      "allSaved": "すべて保存済み",
+      "discard": "変更を破棄"
     }
   },
   "customFields": {
@@ -886,7 +963,33 @@
       "emptyDescription": "食事制限、趣味、ペットなどのフィールドを追加して、人物の絞り込みに活用しましょう。",
       "usageMeter": "{limit}件中{used}件のカスタムフィールドを使用中",
       "usageMeterUnlimited": "{used}件のカスタムフィールド",
-      "valueCount": "{count, plural, =0 {未使用} =1 {1人が使用中} other {#人が使用中}}"
+      "valueCount": "{count, plural, =0 {未使用} =1 {1人が使用中} other {#人が使用中}}",
+      "examples": {
+        "title": "例から始める",
+        "items": {
+          "diet": {
+            "name": "食事",
+            "option1": "ベジタリアン",
+            "option2": "ビーガン",
+            "option3": "制限なし"
+          },
+          "allergies": {
+            "name": "アレルギー"
+          },
+          "pets": {
+            "name": "ペットの有無"
+          },
+          "shoeSize": {
+            "name": "靴のサイズ"
+          },
+          "giftIdeas": {
+            "name": "贈り物のアイデア"
+          }
+        }
+      },
+      "orderHint": "矢印で順番を変えられます。各人物のページでもこの順番で表示されます。",
+      "savedToast": "カスタムフィールドを保存しました",
+      "deletedToast": "カスタムフィールドを削除しました"
     },
     "form": {
       "nameLabel": "名前",
@@ -904,7 +1007,13 @@
       "saveButton": "保存",
       "savingButton": "保存中...",
       "cancelButton": "キャンセル",
-      "deleteButton": "削除"
+      "deleteButton": "削除",
+      "typeHint": {
+        "TEXT": "アレルギーや贈り物のアイデアなどの自由入力です。",
+        "NUMBER": "靴のサイズなどの数値です。",
+        "BOOLEAN": "「ペットの有無」のような はい か いいえ です。",
+        "SELECT": "食事など、自分で決めた一覧から1つ選びます。"
+      }
     },
     "delete": {
       "confirmTitle": "カスタムフィールドを削除しますか？",

@@ -4,6 +4,13 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { CustomFieldType } from '@prisma/client';
+import { toast } from 'sonner';
+import { Button } from '@/components/ui/Button';
+import {
+  CUSTOM_FIELD_EXAMPLES,
+  prefillFromExample,
+  type CustomFieldPrefill,
+} from './customFieldExamples';
 import CustomFieldTemplateRow from './CustomFieldTemplateRow';
 import CustomFieldTemplateForm from './CustomFieldTemplateForm';
 import DeleteCustomFieldDialog from './DeleteCustomFieldDialog';
@@ -35,7 +42,7 @@ interface CustomFieldsManagerProps {
 
 type Mode =
   | { kind: 'idle' }
-  | { kind: 'create' }
+  | { kind: 'create'; prefill?: CustomFieldPrefill }
   | { kind: 'edit'; id: string }
   | { kind: 'delete'; id: string };
 
@@ -61,8 +68,40 @@ export default function CustomFieldsManager({
 
   const handleSaved = () => {
     setMode({ kind: 'idle' });
+    toast.success(t('savedToast'));
     router.refresh();
   };
+
+  const handleDeleted = () => {
+    setMode({ kind: 'idle' });
+    toast.success(t('deletedToast'));
+    router.refresh();
+  };
+
+  const startFromExample = (id: (typeof CUSTOM_FIELD_EXAMPLES)[number]['id']) => {
+    const example = CUSTOM_FIELD_EXAMPLES.find((candidate) => candidate.id === id);
+    if (!example) return;
+    setMode({ kind: 'create', prefill: prefillFromExample(example, (key) => t(key)) });
+  };
+
+  const exampleChips = (
+    <div>
+      <p className="text-sm font-medium text-foreground mb-2">{t('examples.title')}</p>
+      <div className="flex flex-wrap gap-2">
+        {CUSTOM_FIELD_EXAMPLES.map((example) => (
+          <button
+            key={example.id}
+            type="button"
+            onClick={() => startFromExample(example.id)}
+            disabled={!canCreate}
+            className="inline-flex items-center min-h-11 sm:min-h-0 px-3 py-1.5 rounded-full border border-border bg-surface text-sm text-foreground hover:border-primary/50 hover:bg-surface-elevated transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {t(`examples.items.${example.id}.name`)}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
 
   const handleCancel = () => {
     setMode({ kind: 'idle' });
@@ -124,24 +163,27 @@ export default function CustomFieldsManager({
 
       {/* New field button */}
       <div className="flex justify-end">
-        <button
+        <Button
           type="button"
           onClick={() => setMode({ kind: 'create' })}
           disabled={!canCreate || mode.kind === 'create'}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-on-primary rounded-lg text-sm font-medium hover:bg-primary-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="gap-2"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
           </svg>
           {t('newButton')}
-        </button>
+        </Button>
       </div>
 
       {/* Inline create form */}
       {mode.kind === 'create' && (
-        <div className="border border-border rounded-lg p-4 bg-surface-elevated">
+        <div className="border border-border rounded-lg p-4 bg-surface-elevated space-y-4">
+          {!mode.prefill && exampleChips}
           <CustomFieldTemplateForm
+            key={mode.prefill ? `example-${mode.prefill.name}` : 'blank'}
             mode="create"
+            initial={mode.prefill}
             onSaved={handleSaved}
             onCancel={handleCancel}
           />
@@ -150,7 +192,7 @@ export default function CustomFieldsManager({
 
       {/* Reorder error */}
       {reorderError && (
-        <p className="text-sm text-red-600 dark:text-red-400">{reorderError}</p>
+        <p role="alert" className="text-sm text-red-600 dark:text-red-400">{reorderError}</p>
       )}
 
       {/* Template list */}
@@ -171,8 +213,11 @@ export default function CustomFieldsManager({
           </svg>
           <p className="font-medium">{t('emptyTitle')}</p>
           <p className="text-sm mt-1">{t('emptyDescription')}</p>
+          <div className="mt-6 text-left max-w-xl mx-auto">{exampleChips}</div>
         </div>
       ) : (
+        <>
+        {templates.length > 1 && <p className="text-sm text-muted">{t('orderHint')}</p>}
         <ul className="divide-y divide-border border border-border rounded-lg overflow-hidden">
           {templates.map((template, idx) => (
             <li key={template.id}>
@@ -191,13 +236,14 @@ export default function CustomFieldsManager({
             </li>
           ))}
         </ul>
+        </>
       )}
 
       {/* Delete dialog */}
       {mode.kind === 'delete' && templateBeingDeleted && (
         <DeleteCustomFieldDialog
           template={templateBeingDeleted}
-          onConfirm={handleSaved}
+          onConfirm={handleDeleted}
           onCancel={handleCancel}
         />
       )}

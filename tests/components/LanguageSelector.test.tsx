@@ -10,6 +10,7 @@ vi.mock('next-intl', () => ({
         'description': 'Choose your preferred language',
         'en': 'English',
         'esES': 'Spanish (Spain)',
+        'error': 'Failed to update language. Please try again.',
       },
       'success.profile': {
         'languageChanged': 'Language updated successfully',

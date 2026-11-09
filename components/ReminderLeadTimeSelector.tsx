@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { getLeadTimeLabel, getLeadTimeSelectOptions } from '@/lib/reminders/lead-time-options';
+import { toast } from 'sonner';
 import SettingsMessage from '@/components/ui/SettingsMessage';
 
 interface ReminderLeadTimeSelectorProps {
@@ -17,7 +18,6 @@ export default function ReminderLeadTimeSelector({ currentLeadDays, disabled }: 
   const [leadDays, setLeadDays] = useState(currentLeadDays);
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState('');
-  const [isSuccess, setIsSuccess] = useState(false);
 
   // The API accepts any value from 0 to 365, not just the presets below. If
   // the current value is a non-preset (set via the API, for example), it is
@@ -35,7 +35,6 @@ export default function ReminderLeadTimeSelector({ currentLeadDays, disabled }: 
     setLeadDays(newValue);
     setIsLoading(true);
     setMessage('');
-    setIsSuccess(false);
 
     try {
       const response = await fetch('/api/user/reminder-lead-days', {
@@ -51,20 +50,14 @@ export default function ReminderLeadTimeSelector({ currentLeadDays, disabled }: 
       if (!response.ok) {
         setLeadDays(previousValue);
         setMessage(data.error || t('leadTimeError'));
-        setIsSuccess(false);
         return;
       }
 
-      setMessage(t('leadTimeSuccess'));
-      setIsSuccess(true);
+      toast.success(t('leadTimeSuccess'));
       router.refresh();
-
-      // Clear success message after 2 seconds
-      setTimeout(() => setMessage(''), 2000);
     } catch {
       setLeadDays(previousValue);
       setMessage(t('leadTimeError'));
-      setIsSuccess(false);
     } finally {
       setIsLoading(false);
     }
@@ -87,7 +80,7 @@ export default function ReminderLeadTimeSelector({ currentLeadDays, disabled }: 
         onChange={handleChange}
         disabled={disabled || isLoading}
         aria-describedby="reminder-lead-days-summary"
-        className="w-full max-w-xs px-3 py-2 border border-border rounded-lg bg-surface text-foreground focus:ring-2 focus:ring-primary focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full max-w-xs min-h-11 px-3 py-2 border border-border rounded-lg bg-surface text-foreground focus:ring-2 focus:ring-primary focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {selectOptions.map((days) => (
           <option key={days} value={days}>
@@ -105,7 +98,7 @@ export default function ReminderLeadTimeSelector({ currentLeadDays, disabled }: 
         {leadDays === 0 ? t('leadTimeSummaryDayOf') : t('leadTimeSummary', { days: leadDays })}
       </p>
 
-      <SettingsMessage message={message} isSuccess={isSuccess} className="mt-2" />
+      <SettingsMessage message={message} isSuccess={false} className="mt-2" />
     </div>
   );
 }

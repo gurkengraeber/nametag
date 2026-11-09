@@ -96,7 +96,12 @@
         "warning": "验证邮件将发送到您的新地址。您将被登出，在验证新邮箱之前无法登入。",
         "cancel": "取消",
         "confirm": "确认并登出"
-      }
+      },
+      "nameRequired": "请输入你的姓名。",
+      "errorFields": "请检查标出的字段。",
+      "photoHint": "支持 JPG、PNG、GIF、WebP 或 HEIC,最大 50 MB。选择后可以裁剪。",
+      "photoPending": "新照片会在你点击\"保存更改\"时保存。",
+      "emailChangeHint": "更改邮箱后你会被退出登录,直到确认新地址。"
     },
     "appearance": {
       "title": "外观",
@@ -153,7 +158,15 @@
         "ruRU": "Русский (Russian)",
         "nlNL": "Nederlands (Dutch)",
         "frFR": "Français (French)",
-        "plPL": "Polski (Polish)"
+        "plPL": "Polski (Polish)",
+        "error": "无法更改语言,请重试。"
+      },
+      "namesTitle": "姓名",
+      "namesDescription": "选择姓名的书写方式和显示的部分。示例会随你的选择而变化。",
+      "namePreview": {
+        "title": "姓名的显示效果",
+        "page": "在个人页面",
+        "compact": "在列表和图谱中"
       }
     },
     "notifications": {
@@ -272,7 +285,14 @@
       "pushDeviceDisabled": "该设备在多次投递失败后已被关闭。",
       "pushDeviceDisabledRejected": "推送服务拒绝了这些消息。请在该设备上重新开启推送以再次注册。",
       "pushDeviceDisabledUnreachable": "无法连接到该设备。请在该设备上重新开启推送以再次注册。",
-      "endpointAddTooLong": "该网址过长。请缩短后重试。"
+      "endpointAddTooLong": "该网址过长。请缩短后重试。",
+      "summary": {
+        "none": "没有开启任何提醒渠道,因此你不会收到即将到来的日期提醒。请在下方开启邮件或推送。",
+        "active": "提醒将通过 {channels} 发送给你。",
+        "email": "邮件",
+        "push": "{count, plural, other {# 台设备}}上的推送",
+        "destinations": "{count, plural, other {# 个其他目的地}}"
+      }
     },
     "security": {
       "title": "安全",
@@ -314,7 +334,8 @@
         "signingOut": "正在退出...",
         "loadError": "无法加载你的设备。请稍后再试。",
         "signOutError": "无法退出该设备。请重试。"
-      }
+      },
+      "showPasswords": "显示密码"
     },
     "carddav": {
       "title": "CardDAV 同步",
@@ -753,7 +774,7 @@
       "deleteAccount": "删除账户",
       "deleteAccountDescription": "永久删除您的账户和所有相关数据。此操作无法撤消。",
       "deleteAccountButton": "删除账户",
-      "warningPermanent": "警告：这是永久的！",
+      "warningPermanent": "继续之前请先阅读",
       "deleteWarningMessage": "包括联系人、分组、关系和自定义关系类型在内的所有数据都将被永久删除。我们建议您先导出数据。",
       "confirmPassword": "确认您的密码",
       "typeToConfirm": "输入 DELETE 确认",
@@ -763,7 +784,10 @@
       "deleteError": "请输入 DELETE 确认",
       "passwordRequired": "需要密码",
       "deleteFailed": "删除账户失败",
-      "importDataFailed": "导入数据失败"
+      "importDataFailed": "导入数据失败",
+      "deleteExportFirst": "如果以后可能还需要这些数据,请先在\"导出数据\"中下载一份副本。",
+      "deleteSummary": "这将删除你的账户,以及 {people, plural, other {# 个人员}}和 {groups, plural, other {# 个分组}}。",
+      "importSuccessToast": "导入完成"
     },
     "trash": {
       "title": "回收站",
@@ -865,7 +889,26 @@
       "errorNameRequired": "请输入令牌名称。",
       "errorCreate": "创建令牌失败。",
       "errorRevoke": "撤销令牌失败。",
-      "errorConnection": "连接错误，请重试。"
+      "errorConnection": "连接错误，请重试。",
+      "expiry": {
+        "never": "永不",
+        "days30": "30 天后",
+        "days90": "90 天后",
+        "year1": "1 年后",
+        "custom": "选择日期"
+      },
+      "nameHint": "写下它的用途,以便以后辨认。",
+      "scopeReadHint": "可以查看你的人员和数据,但不能更改。",
+      "scopeReadWriteHint": "可以查看并更改你的人员和数据。仅在工具需要写入时选择。",
+      "errorExpiryRequired": "请选择到期日期。",
+      "createdToast": "令牌已创建",
+      "revokedToast": "令牌已撤销",
+      "copyFailed": "无法自动复制。请选中令牌后手动复制。",
+      "usageHint": "每次请求时以如下形式发送:",
+      "neverUsed": "从未使用",
+      "revokeTitle": "撤销\"{name}\"?",
+      "revoking": "正在撤销...",
+      "cancel": "取消"
     },
     "map": {
       "title": "地图",
@@ -875,6 +918,40 @@
       "geocodingLabel": "自动定位地址",
       "success": "地图设置已保存",
       "error": "无法保存地图设置"
+    },
+    "overviewTitle": "概览",
+    "backToOverview": "全部设置",
+    "groups": {
+      "personal": "你",
+      "preferences": "偏好",
+      "connections": "连接",
+      "data": "数据与帮助"
+    },
+    "search": {
+      "label": "搜索设置",
+      "placeholder": "搜索设置,例如密码、语言、提醒",
+      "noResults": "没有与\"{query}\"匹配的设置",
+      "noResultsHint": "试试更短的词,或清除搜索以查看全部分组。",
+      "keywords": {
+        "profile": "姓名 照片 头像 邮箱 昵称",
+        "security": "密码 会话 设备 退出 登录",
+        "billing": "套餐 订阅 付款 发票",
+        "appearance": "主题 深色 浅色 语言 日期格式 姓名顺序 图谱 安装",
+        "notifications": "提醒 邮件 推送 通知 每周 摘要",
+        "custom-fields": "自定义 字段 额外",
+        "map": "地图 地理编码 地址 位置",
+        "carddav": "联系人 同步 carddav 电话 通讯录",
+        "api-tokens": "api 令牌 访问 脚本 集成",
+        "account": "导出 导入 备份 删除 账户 下载",
+        "trash": "已删除 恢复 回收站",
+        "about": "版本 许可 帮助 关于"
+      }
+    },
+    "unsaved": {
+      "warning": "你有未保存的更改。不保存就离开此页面吗?",
+      "indicator": "有未保存的更改",
+      "allSaved": "已全部保存",
+      "discard": "放弃更改"
     }
   },
   "customFields": {
@@ -886,7 +963,33 @@
       "emptyDescription": "添加饮食限制、爱好或宠物等字段，并用它们来筛选您的联系人。",
       "usageMeter": "已使用 {used}/{limit} 个自定义字段",
       "usageMeterUnlimited": "{used} 个自定义字段",
-      "valueCount": "{count, plural, =0 {未使用} =1 {1人使用} other {#人使用}}"
+      "valueCount": "{count, plural, =0 {未使用} =1 {1人使用} other {#人使用}}",
+      "examples": {
+        "title": "从示例开始",
+        "items": {
+          "diet": {
+            "name": "饮食",
+            "option1": "素食",
+            "option2": "纯素",
+            "option3": "无限制"
+          },
+          "allergies": {
+            "name": "过敏"
+          },
+          "pets": {
+            "name": "养宠物"
+          },
+          "shoeSize": {
+            "name": "鞋码"
+          },
+          "giftIdeas": {
+            "name": "礼物想法"
+          }
+        }
+      },
+      "orderHint": "用箭头调整顺序。每个人的页面上也按此顺序显示。",
+      "savedToast": "自定义字段已保存",
+      "deletedToast": "自定义字段已删除"
     },
     "form": {
       "nameLabel": "名称",
@@ -904,7 +1007,13 @@
       "saveButton": "保存",
       "savingButton": "保存中...",
       "cancelButton": "取消",
-      "deleteButton": "删除"
+      "deleteButton": "删除",
+      "typeHint": {
+        "TEXT": "自由文本,例如过敏或礼物想法。",
+        "NUMBER": "数字,例如鞋码。",
+        "BOOLEAN": "是或否,例如\"养宠物\"。",
+        "SELECT": "从你自己定义的列表中选一个值,例如饮食。"
+      }
     },
     "delete": {
       "confirmTitle": "删除自定义字段？",
