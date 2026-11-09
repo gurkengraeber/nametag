@@ -303,6 +303,7 @@ export interface JournalDraft {
   personIds: string[];
 }
 
+/** Under the shared `nametag:` prefix, so signing out wipes drafts with clearNametagStorage(). */
 export const JOURNAL_DRAFT_PREFIX = 'nametag:journal-draft:';
 
 /** Drafts older than this are dropped when they are next looked at. */
@@ -407,15 +408,6 @@ function journalDraftKeys(): string[] {
     if (key && key.startsWith(JOURNAL_DRAFT_PREFIX)) keys.push(key);
   }
   return keys;
-}
-
-/** Remove every journal draft of every account. Call on sign out. */
-export function clearAllJournalDrafts(): void {
-  try {
-    journalDraftKeys().forEach((key) => window.localStorage.removeItem(key));
-  } catch {
-    // Storage unavailable: nothing was stored.
-  }
 }
 
 /** Remove drafts that have expired or cannot be read, whoever they belong to. */

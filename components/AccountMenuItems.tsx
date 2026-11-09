@@ -3,7 +3,6 @@
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { handleSignOut } from '@/app/actions/auth';
-import { clearAllJournalDrafts } from '@/lib/journal';
 import { clearNametagStorage } from '@/lib/client-storage';
 
 const VARIANTS = {
@@ -30,9 +29,7 @@ export default function AccountMenuItems({ variant = 'compact', onNavigate, onSh
 
   const onSignOut = async () => {
     onNavigate?.();
-    // Unsaved journal drafts must not outlive the session on a shared device
-    clearAllJournalDrafts();
-    // Nothing about this account may outlive the session in the browser.
+    // Nothing about this account (journal drafts included) may outlive the session in the browser.
     clearNametagStorage();
     await handleSignOut();
   };

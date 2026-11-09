@@ -17,13 +17,22 @@ describe('client storage', () => {
     window.localStorage.setItem('nametag:journal-draft:u1', 'x');
     window.localStorage.setItem('theme', 'dark');
     window.sessionStorage.setItem('nametag:something:u1', 'x');
-    window.sessionStorage.setItem('backLink:/people', '/people');
+    window.sessionStorage.setItem('other', 'x');
 
     clearNametagStorage();
 
     expect(window.localStorage.length).toBe(1);
     expect(window.localStorage.getItem('theme')).toBe('dark');
     expect(window.sessionStorage.length).toBe(1);
+    expect(window.sessionStorage.getItem('other')).toBe('x');
+  });
+
+  it('forgets the remembered list address, which can hold a search text', () => {
+    window.sessionStorage.setItem('backLink:/people', '/people?search=Ada');
+
+    clearNametagStorage();
+
+    expect(window.sessionStorage.getItem('backLink:/people')).toBeNull();
   });
 
   it('does not throw when storage is blocked', () => {
