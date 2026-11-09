@@ -9,7 +9,7 @@ The network graph turns your list of people into a picture: a living map of who 
 
 ## Two contexts
 
-- **Dashboard**: you sit at the center, with your entire network radiating outward. This is the big-picture view of everyone you've added. When the page opens, the graph is framed so that you are in the middle and your network is in view, until you pan or zoom yourself.
+- **Dashboard**: you sit at the center, with your entire network radiating outward. This is the big-picture view of everyone you've added. The page is built so that the greeting, a few key figures (people, groups, events this week) and the whole network fit on one screen: the graph takes the height that is left, and your upcoming events sit below it. When the page opens, the graph is framed so that you are in the middle and your network is in view, until you pan or zoom yourself.
 - **Person detail page**: the selected person sits at the center instead, showing their direct connections. This is the focused view for understanding one person's place in your network.
 
 ## Display modes
@@ -19,7 +19,7 @@ Nametag offers two ways to render the graph:
 - **Individuals**: every person is their own node, connected by edges that represent relationships. This is the default.
 - **Bubbles**: people are clustered into bubbles by group membership, so you see clusters instead of a dense tangle of nodes. People who don't belong to any group are collected into their own "Ungrouped" bubble. Click a bubble to expand it into its individual members, and click it again to collapse it back.
 
-You can switch modes from **Settings > Appearance**, or directly from the controls above the graph.
+You can switch modes from **Settings > Appearance**, or directly from the controls above the graph. As long as you have not chosen a mode yourself, a network with more than 80 people opens as bubbles, because that many individual nodes become a tangle. Your own choice always wins.
 
 ## Filtering by group
 
@@ -31,6 +31,22 @@ A pill selector above the graph lets you narrow down who's shown, with a few fil
 - **Ungrouped**: a dedicated filter for people who don't belong to any group at all
 
 A help button next to the filters walks through these modes with visual examples if you ever need a refresher.
+
+## Finding a person
+
+The search field in the top left corner of the dashboard graph finds people by name (accents and capital letters do not matter). Pick a hit and the graph zooms in on that person, centers them and marks them with a ring. In bubble mode the group that contains the person is expanded for you. Clearing the field removes the mark.
+
+## People without a connection
+
+People who have no relationship at all, neither to you nor to anyone else, are not drawn in the graph, because they would only drift far away from everyone else. They are listed under **Not connected** below the graph (the button with the person icon in the bottom left corner of the graph jumps there). Click a name to open the profile, or choose a relationship in the drop-down next to it to connect the person to you right away. The graph then loads again and shows them. While a group filter is active, a person can appear in this list only because their connections lie outside the filter.
+
+## Legend
+
+The legend button in the bottom left corner explains the colors: one entry per group (a node is colored by its first group, people without a group are gray) and one line per relationship type used for the edges.
+
+## Full screen
+
+The button in the top right corner of the dashboard graph shows the graph in full screen, which is handy on a phone. Press **Escape** or use the same button to leave it. Both the legend and the list of unconnected people are available in full screen as well.
 
 ## Node and edge appearance
 
@@ -44,6 +60,7 @@ A help button next to the filters walks through these modes with visual examples
 - **Drag a node** to rearrange it manually. Nametag's force simulation will let it settle back into place once you let go, unless you've pinned it by moving it
 - **Scroll to zoom** in and out
 - **Drag the background** to pan around
+- **Search** a person by name to zoom in on them
 - A **recenter button** puts you back in the middle and zooms out far enough to bring your network into view
 
 There are no dedicated keyboard shortcuts beyond these pointer interactions today.
