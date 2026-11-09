@@ -229,7 +229,6 @@ export default function PersonQuickActions({
               placeholder={t('notePlaceholder')}
               aria-invalid={noteError ? true : undefined}
               aria-describedby={noteError ? 'quick-note-error' : undefined}
-              // eslint-disable-next-line jsx-a11y/no-autofocus
               autoFocus
               className="w-full px-3 py-2 border border-border rounded-lg bg-surface text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
             />
