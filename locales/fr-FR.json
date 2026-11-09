@@ -953,7 +953,33 @@
       "emptyDescription": "Ajoutez des champs comme les restrictions alimentaires, les loisirs ou les animaux, et utilisez-les pour filtrer vos personnes.",
       "usageMeter": "{used} champs personnalisés sur {limit}",
       "usageMeterUnlimited": "{used} champs personnalisés",
-      "valueCount": "{count, plural, =0 {Non utilisé} =1 {Utilisé par 1 personne} other {Utilisé par # personnes}}"
+      "valueCount": "{count, plural, =0 {Non utilisé} =1 {Utilisé par 1 personne} other {Utilisé par # personnes}}",
+      "examples": {
+        "title": "Partir d'un exemple",
+        "items": {
+          "diet": {
+            "name": "Régime",
+            "option1": "Végétarien",
+            "option2": "Végétalien",
+            "option3": "Aucune restriction"
+          },
+          "allergies": {
+            "name": "Allergies"
+          },
+          "pets": {
+            "name": "A des animaux"
+          },
+          "shoeSize": {
+            "name": "Pointure"
+          },
+          "giftIdeas": {
+            "name": "Idées de cadeaux"
+          }
+        }
+      },
+      "orderHint": "Utilisez les flèches pour changer l'ordre. C'est l'ordre sur la page de chaque personne.",
+      "savedToast": "Champ personnalisé enregistré",
+      "deletedToast": "Champ personnalisé supprimé"
     },
     "form": {
       "nameLabel": "Nom",
@@ -971,7 +997,13 @@
       "saveButton": "Enregistrer",
       "savingButton": "Enregistrement...",
       "cancelButton": "Annuler",
-      "deleteButton": "Supprimer"
+      "deleteButton": "Supprimer",
+      "typeHint": {
+        "TEXT": "Texte libre, comme les allergies ou des idées de cadeaux.",
+        "NUMBER": "Un nombre, comme la pointure.",
+        "BOOLEAN": "Oui ou non, comme \"a des animaux\".",
+        "SELECT": "Une valeur choisie dans une liste que vous définissez, comme un régime."
+      }
     },
     "delete": {
       "confirmTitle": "Supprimer ce champ personnalisé ?",

@@ -953,7 +953,33 @@
       "emptyDescription": "食事制限、趣味、ペットなどのフィールドを追加して、人物の絞り込みに活用しましょう。",
       "usageMeter": "{limit}件中{used}件のカスタムフィールドを使用中",
       "usageMeterUnlimited": "{used}件のカスタムフィールド",
-      "valueCount": "{count, plural, =0 {未使用} =1 {1人が使用中} other {#人が使用中}}"
+      "valueCount": "{count, plural, =0 {未使用} =1 {1人が使用中} other {#人が使用中}}",
+      "examples": {
+        "title": "例から始める",
+        "items": {
+          "diet": {
+            "name": "食事",
+            "option1": "ベジタリアン",
+            "option2": "ビーガン",
+            "option3": "制限なし"
+          },
+          "allergies": {
+            "name": "アレルギー"
+          },
+          "pets": {
+            "name": "ペットの有無"
+          },
+          "shoeSize": {
+            "name": "靴のサイズ"
+          },
+          "giftIdeas": {
+            "name": "贈り物のアイデア"
+          }
+        }
+      },
+      "orderHint": "矢印で順番を変えられます。各人物のページでもこの順番で表示されます。",
+      "savedToast": "カスタムフィールドを保存しました",
+      "deletedToast": "カスタムフィールドを削除しました"
     },
     "form": {
       "nameLabel": "名前",
@@ -971,7 +997,13 @@
       "saveButton": "保存",
       "savingButton": "保存中...",
       "cancelButton": "キャンセル",
-      "deleteButton": "削除"
+      "deleteButton": "削除",
+      "typeHint": {
+        "TEXT": "アレルギーや贈り物のアイデアなどの自由入力です。",
+        "NUMBER": "靴のサイズなどの数値です。",
+        "BOOLEAN": "「ペットの有無」のような はい か いいえ です。",
+        "SELECT": "食事など、自分で決めた一覧から1つ選びます。"
+      }
     },
     "delete": {
       "confirmTitle": "カスタムフィールドを削除しますか？",

@@ -953,7 +953,33 @@
       "emptyDescription": "Add fields like dietary restrictions, hobbies, or pets, and use them to filter your people.",
       "usageMeter": "{used} of {limit} custom fields",
       "usageMeterUnlimited": "{used} custom fields",
-      "valueCount": "{count, plural, =0 {Not in use} =1 {Used by 1 person} other {Used by # people}}"
+      "valueCount": "{count, plural, =0 {Not in use} =1 {Used by 1 person} other {Used by # people}}",
+      "examples": {
+        "title": "Start from an example",
+        "items": {
+          "diet": {
+            "name": "Diet",
+            "option1": "Vegetarian",
+            "option2": "Vegan",
+            "option3": "No restrictions"
+          },
+          "allergies": {
+            "name": "Allergies"
+          },
+          "pets": {
+            "name": "Has pets"
+          },
+          "shoeSize": {
+            "name": "Shoe size"
+          },
+          "giftIdeas": {
+            "name": "Gift ideas"
+          }
+        }
+      },
+      "orderHint": "Use the arrows to change the order. It is the order on each person's page.",
+      "savedToast": "Custom field saved",
+      "deletedToast": "Custom field deleted"
     },
     "form": {
       "nameLabel": "Name",
@@ -971,7 +997,13 @@
       "saveButton": "Save",
       "savingButton": "Saving...",
       "cancelButton": "Cancel",
-      "deleteButton": "Delete"
+      "deleteButton": "Delete",
+      "typeHint": {
+        "TEXT": "Free text, like allergies or gift ideas.",
+        "NUMBER": "A number, like shoe size.",
+        "BOOLEAN": "Yes or no, like \"has pets\".",
+        "SELECT": "Pick one value from a list you define, like a diet."
+      }
     },
     "delete": {
       "confirmTitle": "Delete custom field?",

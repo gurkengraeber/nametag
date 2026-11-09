@@ -953,7 +953,33 @@
       "emptyDescription": "Añade campos como restricciones dietéticas, aficiones o mascotas, y úsalos para filtrar tus personas.",
       "usageMeter": "{used} de {limit} campos personalizados",
       "usageMeterUnlimited": "{used} campos personalizados",
-      "valueCount": "{count, plural, =0 {Sin uso} =1 {Usado por 1 persona} other {Usado por # personas}}"
+      "valueCount": "{count, plural, =0 {Sin uso} =1 {Usado por 1 persona} other {Usado por # personas}}",
+      "examples": {
+        "title": "Empezar con un ejemplo",
+        "items": {
+          "diet": {
+            "name": "Dieta",
+            "option1": "Vegetariana",
+            "option2": "Vegana",
+            "option3": "Sin restricciones"
+          },
+          "allergies": {
+            "name": "Alergias"
+          },
+          "pets": {
+            "name": "Tiene mascotas"
+          },
+          "shoeSize": {
+            "name": "Talla de zapato"
+          },
+          "giftIdeas": {
+            "name": "Ideas de regalo"
+          }
+        }
+      },
+      "orderHint": "Usa las flechas para cambiar el orden. Es el orden en la página de cada persona.",
+      "savedToast": "Campo personalizado guardado",
+      "deletedToast": "Campo personalizado eliminado"
     },
     "form": {
       "nameLabel": "Nombre",
@@ -971,7 +997,13 @@
       "saveButton": "Guardar",
       "savingButton": "Guardando...",
       "cancelButton": "Cancelar",
-      "deleteButton": "Eliminar"
+      "deleteButton": "Eliminar",
+      "typeHint": {
+        "TEXT": "Texto libre, como alergias o ideas de regalo.",
+        "NUMBER": "Un número, como la talla de zapato.",
+        "BOOLEAN": "Sí o no, como \"tiene mascotas\".",
+        "SELECT": "Un valor de una lista que defines, como la dieta."
+      }
     },
     "delete": {
       "confirmTitle": "¿Eliminar campo personalizado?",

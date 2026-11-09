@@ -953,7 +953,33 @@
       "emptyDescription": "Füge Felder wie Ernährungsgewohnheiten, Hobbys oder Haustiere hinzu und nutze sie zum Filtern deiner Personen.",
       "usageMeter": "{used} von {limit} benutzerdefinierten Feldern",
       "usageMeterUnlimited": "{used} benutzerdefinierte Felder",
-      "valueCount": "{count, plural, =0 {Nicht in Verwendung} =1 {Von 1 Person verwendet} other {Von # Personen verwendet}}"
+      "valueCount": "{count, plural, =0 {Nicht in Verwendung} =1 {Von 1 Person verwendet} other {Von # Personen verwendet}}",
+      "examples": {
+        "title": "Mit einem Beispiel starten",
+        "items": {
+          "diet": {
+            "name": "Ernährung",
+            "option1": "Vegetarisch",
+            "option2": "Vegan",
+            "option3": "Keine Einschränkungen"
+          },
+          "allergies": {
+            "name": "Allergien"
+          },
+          "pets": {
+            "name": "Hat Haustiere"
+          },
+          "shoeSize": {
+            "name": "Schuhgröße"
+          },
+          "giftIdeas": {
+            "name": "Geschenkideen"
+          }
+        }
+      },
+      "orderHint": "Mit den Pfeilen änderst du die Reihenfolge. So erscheinen die Felder auf der Seite jeder Person.",
+      "savedToast": "Eigenes Feld gespeichert",
+      "deletedToast": "Eigenes Feld gelöscht"
     },
     "form": {
       "nameLabel": "Name",
@@ -971,7 +997,13 @@
       "saveButton": "Speichern",
       "savingButton": "Wird gespeichert...",
       "cancelButton": "Abbrechen",
-      "deleteButton": "Löschen"
+      "deleteButton": "Löschen",
+      "typeHint": {
+        "TEXT": "Freitext, zum Beispiel Allergien oder Geschenkideen.",
+        "NUMBER": "Eine Zahl, zum Beispiel die Schuhgröße.",
+        "BOOLEAN": "Ja oder Nein, zum Beispiel \"Hat Haustiere\".",
+        "SELECT": "Ein Wert aus einer eigenen Liste, zum Beispiel die Ernährung."
+      }
     },
     "delete": {
       "confirmTitle": "Benutzerdefiniertes Feld löschen?",

@@ -953,7 +953,33 @@
       "emptyDescription": "Voeg velden toe zoals dieetbeperkingen, hobby's of huisdieren, en gebruik ze om uw mensen te filteren.",
       "usageMeter": "{used} van {limit} aangepaste velden",
       "usageMeterUnlimited": "{used} aangepaste velden",
-      "valueCount": "{count, plural, =0 {Niet in gebruik} =1 {Gebruikt door 1 persoon} other {Gebruikt door # personen}}"
+      "valueCount": "{count, plural, =0 {Niet in gebruik} =1 {Gebruikt door 1 persoon} other {Gebruikt door # personen}}",
+      "examples": {
+        "title": "Begin met een voorbeeld",
+        "items": {
+          "diet": {
+            "name": "Dieet",
+            "option1": "Vegetarisch",
+            "option2": "Veganistisch",
+            "option3": "Geen beperkingen"
+          },
+          "allergies": {
+            "name": "Allergieën"
+          },
+          "pets": {
+            "name": "Heeft huisdieren"
+          },
+          "shoeSize": {
+            "name": "Schoenmaat"
+          },
+          "giftIdeas": {
+            "name": "Cadeau-ideeën"
+          }
+        }
+      },
+      "orderHint": "Gebruik de pijlen om de volgorde te wijzigen. Dit is de volgorde op de pagina van elke persoon.",
+      "savedToast": "Eigen veld opgeslagen",
+      "deletedToast": "Eigen veld verwijderd"
     },
     "form": {
       "nameLabel": "Naam",
@@ -971,7 +997,13 @@
       "saveButton": "Opslaan",
       "savingButton": "Opslaan...",
       "cancelButton": "Annuleren",
-      "deleteButton": "Verwijderen"
+      "deleteButton": "Verwijderen",
+      "typeHint": {
+        "TEXT": "Vrije tekst, zoals allergieën of cadeau-ideeën.",
+        "NUMBER": "Een getal, zoals schoenmaat.",
+        "BOOLEAN": "Ja of nee, zoals \"heeft huisdieren\".",
+        "SELECT": "Eén waarde uit een lijst die je zelf maakt, zoals een dieet."
+      }
     },
     "delete": {
       "confirmTitle": "Aangepast veld verwijderen?",

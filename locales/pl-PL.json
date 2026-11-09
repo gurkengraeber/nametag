@@ -953,7 +953,33 @@
       "emptyDescription": "Dodaj pola takie jak ograniczenia dietetyczne, hobby czy zwierzęta i używaj ich do filtrowania osób.",
       "usageMeter": "Pola niestandardowe: {used} z {limit}",
       "usageMeterUnlimited": "Pola niestandardowe: {used}",
-      "valueCount": "{count, plural, =0 {Nieużywane} one {Używane przez 1 osobę} few {Używane przez # osoby} many {Używane przez # osób} other {Używane przez # osoby}}"
+      "valueCount": "{count, plural, =0 {Nieużywane} one {Używane przez 1 osobę} few {Używane przez # osoby} many {Używane przez # osób} other {Używane przez # osoby}}",
+      "examples": {
+        "title": "Zacznij od przykładu",
+        "items": {
+          "diet": {
+            "name": "Dieta",
+            "option1": "Wegetariańska",
+            "option2": "Wegańska",
+            "option3": "Bez ograniczeń"
+          },
+          "allergies": {
+            "name": "Alergie"
+          },
+          "pets": {
+            "name": "Ma zwierzęta"
+          },
+          "shoeSize": {
+            "name": "Rozmiar buta"
+          },
+          "giftIdeas": {
+            "name": "Pomysły na prezent"
+          }
+        }
+      },
+      "orderHint": "Strzałkami zmienisz kolejność. Taka kolejność jest na stronie każdej osoby.",
+      "savedToast": "Pole niestandardowe zapisane",
+      "deletedToast": "Pole niestandardowe usunięte"
     },
     "form": {
       "nameLabel": "Nazwa",
@@ -971,7 +997,13 @@
       "saveButton": "Zapisz",
       "savingButton": "Zapisywanie...",
       "cancelButton": "Anuluj",
-      "deleteButton": "Usuń"
+      "deleteButton": "Usuń",
+      "typeHint": {
+        "TEXT": "Dowolny tekst, np. alergie lub pomysły na prezent.",
+        "NUMBER": "Liczba, np. rozmiar buta.",
+        "BOOLEAN": "Tak lub nie, np. \"ma zwierzęta\".",
+        "SELECT": "Jedna wartość z własnej listy, np. dieta."
+      }
     },
     "delete": {
       "confirmTitle": "Usunąć pole niestandardowe?",

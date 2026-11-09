@@ -55,15 +55,15 @@ export default function CustomFieldTemplateRow({
   }
 
   return (
-    <div className="flex items-center gap-3 px-4 py-3 bg-surface hover:bg-surface-elevated/50 transition-colors">
+    <div className="flex items-center gap-2 sm:gap-3 px-2 sm:px-4 py-1 sm:py-3 bg-surface hover:bg-surface-elevated/50 transition-colors">
       {/* Reorder buttons */}
-      <div className="flex flex-col gap-0.5 flex-shrink-0">
+      <div className="flex flex-col sm:gap-0.5 flex-shrink-0">
         <button
           type="button"
           onClick={onMoveUp}
           disabled={!canMoveUp}
           aria-label={tRow('moveUp')}
-          className="p-0.5 text-muted hover:text-foreground disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          className="flex items-center justify-center min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 sm:p-0.5 text-muted hover:text-foreground disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
@@ -74,7 +74,7 @@ export default function CustomFieldTemplateRow({
           onClick={onMoveDown}
           disabled={!canMoveDown}
           aria-label={tRow('moveDown')}
-          className="p-0.5 text-muted hover:text-foreground disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          className="flex items-center justify-center min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 sm:p-0.5 text-muted hover:text-foreground disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -96,12 +96,12 @@ export default function CustomFieldTemplateRow({
       </div>
 
       {/* Action buttons */}
-      <div className="flex items-center gap-1 flex-shrink-0">
+      <div className="flex items-center sm:gap-1 flex-shrink-0">
         <button
           type="button"
           onClick={onEdit}
           aria-label={tRow('edit')}
-          className="p-1.5 text-muted hover:text-foreground hover:bg-surface-elevated rounded transition-colors"
+          className="flex items-center justify-center min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 sm:p-1.5 text-muted hover:text-foreground hover:bg-surface-elevated rounded transition-colors"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
@@ -116,7 +116,7 @@ export default function CustomFieldTemplateRow({
           type="button"
           onClick={onDelete}
           aria-label={tRow('delete')}
-          className="p-1.5 text-muted hover:text-red-600 dark:hover:text-red-400 hover:bg-surface-elevated rounded transition-colors"
+          className="flex items-center justify-center min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 sm:p-1.5 text-muted hover:text-red-600 dark:hover:text-red-400 hover:bg-surface-elevated rounded transition-colors"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path

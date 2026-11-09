@@ -953,7 +953,33 @@
       "emptyDescription": "添加饮食限制、爱好或宠物等字段，并用它们来筛选您的联系人。",
       "usageMeter": "已使用 {used}/{limit} 个自定义字段",
       "usageMeterUnlimited": "{used} 个自定义字段",
-      "valueCount": "{count, plural, =0 {未使用} =1 {1人使用} other {#人使用}}"
+      "valueCount": "{count, plural, =0 {未使用} =1 {1人使用} other {#人使用}}",
+      "examples": {
+        "title": "从示例开始",
+        "items": {
+          "diet": {
+            "name": "饮食",
+            "option1": "素食",
+            "option2": "纯素",
+            "option3": "无限制"
+          },
+          "allergies": {
+            "name": "过敏"
+          },
+          "pets": {
+            "name": "养宠物"
+          },
+          "shoeSize": {
+            "name": "鞋码"
+          },
+          "giftIdeas": {
+            "name": "礼物想法"
+          }
+        }
+      },
+      "orderHint": "用箭头调整顺序。每个人的页面上也按此顺序显示。",
+      "savedToast": "自定义字段已保存",
+      "deletedToast": "自定义字段已删除"
     },
     "form": {
       "nameLabel": "名称",
@@ -971,7 +997,13 @@
       "saveButton": "保存",
       "savingButton": "保存中...",
       "cancelButton": "取消",
-      "deleteButton": "删除"
+      "deleteButton": "删除",
+      "typeHint": {
+        "TEXT": "自由文本,例如过敏或礼物想法。",
+        "NUMBER": "数字,例如鞋码。",
+        "BOOLEAN": "是或否,例如\"养宠物\"。",
+        "SELECT": "从你自己定义的列表中选一个值,例如饮食。"
+      }
     },
     "delete": {
       "confirmTitle": "删除自定义字段？",
