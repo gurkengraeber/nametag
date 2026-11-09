@@ -13,6 +13,7 @@ import { isHeicFile, convertHeicToJpeg } from '@/lib/photo-client';
 import SettingsSaveBar from '@/components/settings/SettingsSaveBar';
 import { useUnsavedChangesWarning } from '@/components/settings/useUnsavedChangesWarning';
 import { hasChanges, parseApiError } from '@/components/settings/formState';
+import { clearNametagStorage } from '@/lib/client-storage';
 
 interface ProfileFormProps {
   userId: string;
@@ -190,7 +191,8 @@ export default function ProfileForm({ userId, currentName, currentSurname, curre
       }
 
       if (data.emailChanged) {
-        // Email was changed - sign out the user
+        // Email was changed - sign out the user and drop what this account left in the browser
+        clearNametagStorage();
         await signOut({ callbackUrl: '/login' });
         return;
       }
