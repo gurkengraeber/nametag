@@ -81,16 +81,19 @@ export function carddavPaths(): Record<string, Record<string, unknown>> {
       post: {
         tags: ['CardDAV'],
         summary: 'Test CardDAV credentials',
-        description: 'Tests connectivity to a CardDAV server with the given credentials without saving them.',
+        description:
+          'Tests connectivity to a CardDAV server with the given credentials without saving them. ' +
+          'When `password` is left out, the saved password is used, but only if `serverUrl` is the saved server; otherwise the code is password_required. ' +
+          'Failures carry `params.reason` (auth, not_found, timeout, dns, refused, tls, discovery or unknown) so clients can explain what to do.',
         security: sessionOnly(),
         requestBody: jsonBody({
           type: 'object',
           properties: {
             serverUrl: { type: 'string', format: 'uri' },
             username: { type: 'string', minLength: 1 },
-            password: { type: 'string', minLength: 1 },
+            password: { type: 'string', description: 'Optional when editing the saved connection' },
           },
-          required: ['serverUrl', 'username', 'password'],
+          required: ['serverUrl', 'username'],
         }),
         responses: {
           '200': jsonResponse('Connection successful', {
@@ -98,9 +101,22 @@ export function carddavPaths(): Record<string, Record<string, unknown>> {
             properties: {
               success: { type: 'boolean', enum: [true] },
               message: { type: 'string' },
+              addressBooks: {
+                type: 'array',
+                description: 'Address books found, with the number of contacts when the server reports it',
+                items: {
+                  type: 'object',
+                  properties: {
+                    url: { type: 'string' },
+                    displayName: { type: 'string', nullable: true },
+                    description: { type: 'string', nullable: true },
+                    contactCount: { type: 'integer', nullable: true },
+                  },
+                },
+              },
             },
           }),
-          '400': resp('Invalid input, or the server rejected the credentials (code carddav_auth_failed)'),
+          '400': resp('Invalid input, no usable password (code password_required), or the server rejected the credentials (code carddav_auth_failed)'),
           '401': ref401(),
           '502': resp('The CardDAV server is unreachable or failed (code carddav_unreachable)'),
         },

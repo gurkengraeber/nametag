@@ -62,7 +62,7 @@ export function reasonFromResponse(body: unknown): TestFailureReason {
 export interface AddressBookInfo {
   url: string;
   displayName: string | null;
-  description?: string | null;
+  description: string | null;
   contactCount: number | null;
 }
 

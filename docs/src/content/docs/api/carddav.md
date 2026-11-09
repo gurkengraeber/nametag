@@ -90,7 +90,7 @@ curl -X DELETE https://your-instance.example.com/api/carddav/connection \
 POST /api/carddav/connection/test
 ```
 
-Tests connectivity without saving credentials.
+Tests connectivity without saving credentials. `password` is optional: when it is left out, the saved password is used, but only if `serverUrl` is the saved server (otherwise the response is `400` with code `password_required`).
 
 ```bash
 curl -X POST https://your-instance.example.com/api/carddav/connection/test \
@@ -100,10 +100,18 @@ curl -X POST https://your-instance.example.com/api/carddav/connection/test \
 ```
 
 ```json
-{ "success": true, "message": "Connection successful" }
+{
+  "success": true,
+  "message": "Connection successful",
+  "addressBooks": [
+    { "url": "https://contacts.icloud.com/123/carddavhome/card/", "displayName": "Contacts", "description": null, "contactCount": 120 }
+  ]
+}
 ```
 
-Returns `400` with code `carddav_auth_failed` for bad credentials. Returns `502` with code `carddav_unreachable` if the server can't be found, times out, or otherwise fails.
+`contactCount` is `null` when the server does not report it.
+
+Returns `400` with code `carddav_auth_failed` for bad credentials. Returns `502` with code `carddav_unreachable` if the server can't be found, times out, or otherwise fails. Both errors carry `params.reason`, one of `auth`, `not_found`, `timeout`, `dns`, `refused`, `tls`, `discovery` or `unknown`, so a client can tell the user what to fix.
 
 ## Sync
 

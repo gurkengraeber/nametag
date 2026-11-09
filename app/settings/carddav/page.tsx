@@ -11,7 +11,7 @@ export default async function CardDavSettingsPage() {
   }
 
   // Fetch existing CardDAV connection if it exists
-  // Exclude encrypted password — it must never reach client components
+  // Exclude encrypted password, it must never reach client components
   const connection = await prisma.cardDavConnection.findUnique({
     where: {
       userId: session.user.id,

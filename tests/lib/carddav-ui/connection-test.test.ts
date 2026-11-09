@@ -53,8 +53,8 @@ describe('summarizeAddressBooks', () => {
   it('sums the contact counts', () => {
     expect(
       summarizeAddressBooks([
-        { url: 'a', displayName: 'Contacts', contactCount: 120 },
-        { url: 'b', displayName: 'Collected', contactCount: 3 },
+        { url: 'a', displayName: 'Contacts', description: null, contactCount: 120 },
+        { url: 'b', displayName: 'Collected', description: null, contactCount: 3 },
       ]),
     ).toEqual({ bookCount: 2, contactCount: 123, countUnknown: false });
   });
@@ -62,8 +62,8 @@ describe('summarizeAddressBooks', () => {
   it('flags books that did not report a size', () => {
     expect(
       summarizeAddressBooks([
-        { url: 'a', displayName: null, contactCount: 5 },
-        { url: 'b', displayName: null, contactCount: null },
+        { url: 'a', displayName: null, description: null, contactCount: 5 },
+        { url: 'b', displayName: null, description: null, contactCount: null },
       ]),
     ).toEqual({ bookCount: 2, contactCount: 5, countUnknown: true });
   });

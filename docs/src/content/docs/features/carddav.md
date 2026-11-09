@@ -24,10 +24,25 @@ Nametag can keep itself in sync with your contacts on an external server using C
 - Server URL: `https://outlook.office365.com/`
 - Uses your regular password, or an app password if you have two-factor authentication enabled.
 
+### mailbox.org
+
+- Server URL: `https://dav.mailbox.org/`
+- Use your full mailbox.org address. With two-factor sign-in turned on, create an app password in your mailbox.org account and use it instead of your normal password.
+
+### Fastmail
+
+- Server URL: `https://carddav.fastmail.com/`
+- Requires an app password with access to contacts.
+
+### Posteo
+
+- Server URL: `https://posteo.de:8843/`
+- Uses your regular Posteo address and password.
+
 ### Nextcloud / Radicale
 
-- Server URL: whatever your instance provides.
-- Uses your regular credentials.
+- Server URL: the address of your instance. For Nextcloud this is your address followed by `/remote.php/dav`.
+- Uses your regular credentials, or an app password if two-factor sign-in is on.
 
 ### Any standard CardDAV server
 
@@ -35,7 +50,15 @@ If your provider isn't listed, enter its server URL and your credentials directl
 
 ## Setting up a connection
 
-Go to **Settings > CardDAV**. Select a provider preset, or enter a custom server URL. Enter your username and password, then use **Test Connection** to confirm everything works before saving.
+Go to **Settings > CardDAV**. Select a provider preset, or enter a custom server URL. Each preset shows which password to use and links to the place where you create an app password. Enter your username and password (the eye button shows what you typed, handy on a phone), then use **Test Connection** before saving.
+
+The test tells you in plain words what it found, for example "Connection works. Found 123 contacts in 1 address book", with one line per address book when there are several. If the server reports no contacts, the test says so and explains the likely causes (another address book, or a login that cannot see them). If it fails, the message names the cause (wrong login, wrong address, no answer, certificate problem) and what to do next.
+
+When you edit an existing connection you can leave the password empty: the test then uses the saved password, as long as the server address is unchanged.
+
+## Status on the settings page
+
+The settings page shows when the last sync ran ("5 minutes ago", with the exact time shown on hover), whether automatic sync is on, and how many imports and conflicts are waiting. Both are links straight to the matching page. **Sync Now** opens a progress window and ends with a summary; if nothing changed it says that everything is up to date. **Send contacts to server** opens the bulk export.
 
 ## Sync settings
 
@@ -52,17 +75,27 @@ Once connected, you can configure:
 
 If a contact has changed on both sides (in Nametag and on the CardDAV server) since the last sync, Nametag can't just pick one side automatically. It creates a conflict instead.
 
-Go to **CardDAV > Conflicts** to see a side-by-side comparison of both versions. For each conflict, choose **Keep Local** to preserve your Nametag version, or **Keep Remote** to accept the server's version.
+Go to **CardDAV > Conflicts**. Each conflict lists only the fields that differ: side by side on a wide screen, stacked on a phone. Fields that are the same on both sides are collapsed. Choose **Keep Local** to send your Nametag version to the server, or **Keep Remote** to update Nametag to match the server. Under each button a line explains what happens.
+
+Nametag recommends a side only when keeping it cannot lose anything: the two versions are the same, or one side merely adds details the other lacks. When both sides changed the same field there is no recommendation, because the sync does not know which edit is newer.
+
+To handle many conflicts at once, use **Apply recommendations that lose nothing**, or **Keep all: Nametag** / **Keep all: server**. The two keep-all buttons ask for confirmation first, because they replace one side for every conflict. Conflicts are resolved one after another with a progress bar; any that fail stay in the list.
 
 ## Pending imports
 
 New contacts found on the CardDAV server that don't yet exist in Nametag show up as pending imports. Review them and choose which ones to bring in, rather than importing everything automatically.
 
-Contacts that already exist in Nametag (matched by their vCard UID) are marked with an "Already in Nametag" badge. You can still select these contacts and check the **Update existing contact** option to overwrite the existing record with the data from the import. This is useful when re-importing a VCF file with updated information for a contact you already have.
+The import page walks through four steps: connect (or open the file), choose, assign, done.
+
+- **Choose**: search by name, company, email or phone, and filter by new contacts or contacts already in Nametag. **Select all** only selects the contacts currently shown, so a search narrows what gets picked; contacts selected earlier stay selected, and the counter tells you how many of them are hidden by the search. Open a contact with the arrow to set groups or a relationship for that one person.
+- **Assign**: shows how many new and existing contacts will be imported and sets groups and a relationship for all of them. Groups and relationship only apply to new contacts.
+- **Done**: contacts are imported in batches of 25 with a progress bar, then a summary shows imported, updated, skipped and failed contacts, any error messages, and links to your contacts and back to the settings. If a request fails half way, the summary keeps what was imported so far and says how many contacts were not processed.
+
+Contacts that already exist in Nametag (matched by their vCard UID) are marked with an "Already in Nametag" badge. You can still select these contacts and check **Update existing contact** (or, in the assign step, update all of them at once) to overwrite the existing record with the data from the import. This is useful when re-importing a VCF file with updated information for a contact you already have.
 
 ## Bulk export
 
-If you're setting up sync for the first time and already have contacts in Nametag, use bulk export to push your existing contacts to the CardDAV server in batches.
+If you're setting up sync for the first time and already have contacts in Nametag, use bulk export (**Send contacts to server** on the settings page) to push your existing contacts to the CardDAV server. Search the list, select only the contacts shown, and send them in batches of 25 with a progress bar. A summary lists how many were sent, were already on the server or failed, with the error for each failed contact.
 
 ## Sync technical details
 
@@ -72,7 +105,8 @@ If you're setting up sync for the first time and already have contacts in Nameta
 | Retry initial delay | 1 second |
 | Retry backoff factor | 2x |
 | Retry max delay | 10 seconds |
-| Export batch size | 50 contacts per batch |
+| Export batch size | 50 contacts per batch on the server; the page sends 25 contacts per request |
+| Import batch size | 25 contacts per request |
 | Delay between export batches | 100ms |
 | Auto-sync interval range | 60 seconds to 24 hours (default: 12 hours) |
 | Cron inter-user delay | 200ms between users |
