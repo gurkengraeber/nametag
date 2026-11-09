@@ -4,6 +4,7 @@ import { useCallback, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 import { getLocalDateString } from '@/lib/date-format';
+import { countries } from '@/lib/countries';
 
 interface QuickUpdate {
   lastContact?: string | null;
@@ -172,6 +173,13 @@ export function LocationCell({
     }
   };
 
+  // Imported contacts may carry a country name or free text instead of a code. Show those as they are
+  // (a known name selects its code) so nothing is lost until the user picks another country.
+  const countryByName = countries.find((option) => option.name === countryValue);
+  const countryIsKnown = countries.some((option) => option.code === countryValue);
+  const selectedCountry = countryIsKnown ? countryValue : countryByName?.code ?? countryValue;
+  const countryIsUnknown = countryValue !== '' && !countryIsKnown && !countryByName;
+
   const commitOnEnter = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') event.currentTarget.blur();
   };
@@ -189,17 +197,23 @@ export function LocationCell({
         onKeyDown={commitOnEnter}
         className={`${inputClass} w-32`}
       />
-      <input
-        type="text"
-        value={countryValue}
-        maxLength={100}
-        placeholder={t('countryPlaceholder')}
+      <select
+        value={selectedCountry}
         aria-label={t('countryPlaceholder')}
-        onChange={(event) => setCountryValue(event.target.value)}
-        onBlur={(event) => commit('country', event.target.value)}
-        onKeyDown={commitOnEnter}
-        className={`${inputClass} w-28`}
-      />
+        onChange={(event) => {
+          setCountryValue(event.target.value);
+          void commit('country', event.target.value);
+        }}
+        className={`${inputClass} w-36`}
+      >
+        <option value="">{t('countryPlaceholder')}</option>
+        {countryIsUnknown && <option value={countryValue}>{countryValue}</option>}
+        {countries.map((option) => (
+          <option key={option.code} value={option.code}>
+            {option.name}
+          </option>
+        ))}
+      </select>
     </div>
   );
 }
