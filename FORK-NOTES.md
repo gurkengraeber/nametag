@@ -53,6 +53,10 @@ vom Handy aus nahtlos weitermachen kann. Sie gehört nur in diesen Fork, nicht i
   und Pushes über feste Commit-Nummern machen (`git push fork <sha>:refs/heads/<branch>`). Sicherung der Commits: `git bundle create <datei> --branches` an einen Ort außerhalb des Sync-Ordners.
 - **Projektordner verschoben oder kopiert:** Danach den Ordner `.next` löschen. Der Turbopack-Zwischenspeicher kennt den alten Pfad, `next dev` meldet im Log
   `FATAL: An unexpected Turbopack error` mit `Next.js package not found`, und die Seite lädt im Browser endlos neu (hunderte `GET`-Anfragen).
+- **Bildschirmfotos automatisch:** `playwright-core` liegt im Projekt, auf dem Rechner genügt `chromium-browser` (`executablePath`, `--no-sandbox`). Nur **einmal** anmelden und die Sitzung
+  mit `context.storageState` speichern: Der Server begrenzt Anmeldungen (HTTP 429 auf `/api/auth/callback/credentials`), viele Läufe mit Anmeldung sperren sich selbst aus
+  (der Zähler steht im Arbeitsspeicher, ein Neustart des Servers setzt ihn zurück). Vor dem Ausfüllen des Formulars warten, bis die Seite fertig geladen ist, sonst wird es nicht abgeschickt.
+  Das eingebettete Browser-Fenster der Desktop-App ist schmal, breite Layouts werden dort stark verkleinert.
 - **`tsc`-Fehler aus `.next/`** (zum Beispiel zu `app/calendar/page.js`) sind Altlasten aus anderen Branches und zu ignorieren.
 - **Sammelauswahl mit Filter (bekannter Fehler im Original):** "Alle N auswählen" in der Personenliste schickt nur `selectAll: true`, die Bulk-Route
   (`app/api/people/bulk/route.ts`, `resolvePersonIds`) nimmt dann alle Kontakte statt der gefilterten. Siehe Branch `feat/people-quick-edit` für die Korrektur.
@@ -80,6 +84,8 @@ Die einzelnen Branches liegen zusätzlich getrennt auf dem Fork, damit sie bei B
 | `feat/settings-clarity` | Einstellungsstart mit Suche, Speichern mit Rückmeldung, Vorschau bei Darstellung |
 | `feat/carddav-flow-ux` | CardDAV: Anbietervorlagen, Verbindungstest, Import-Assistent, Export, Konflikte |
 | `feat/duplicates-merge-trash-ux` | Duplikate nach Sicherheit, Schnell-Zusammenführen, Papierkorb mit Suche und Mehrfachwiederherstellung |
+| `feat/graph-wheel-and-compact` | Mausrad scrollt die Seite (Zoom mit Strg/Cmd), kleines Netz auf der Personenseite |
+| `showcase` | Vorzeigeseite mit Bildern (erfundene Daten) für den Ersteller, nur Bilder und Text |
 
 Nicht auf dem Fork enthalten und nicht gepusht: `feat/calendar-tab` (offener Pull Request beim Original) und `fix/carddav-fetch-by-url`
 (ebenfalls offener Pull Request). Beide haben ihren Stand beim Original.
