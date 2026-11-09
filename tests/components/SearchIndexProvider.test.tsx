@@ -106,6 +106,46 @@ describe('SearchIndexProvider', () => {
     await waitFor(() => expect(state().version).toBe(2));
   });
 
+  it('does not reload the people when only the session object is replaced', async () => {
+    const { rerender } = render(
+      <SearchIndexProvider>
+        <Probe />
+      </SearchIndexProvider>
+    );
+    await waitFor(() => expect(state().ready).toBe(true));
+    expect(global.fetch).toHaveBeenCalledTimes(1);
+
+    session.data = { user: { id: 'user-1' } };
+    rerender(
+      <SearchIndexProvider>
+        <Probe />
+      </SearchIndexProvider>
+    );
+
+    expect(global.fetch).toHaveBeenCalledTimes(1);
+    expect(state().ready).toBe(true);
+  });
+
+  it('drops the people of the previous account when the user signs out', async () => {
+    const original = session.data;
+    const { rerender } = render(
+      <SearchIndexProvider>
+        <Probe />
+      </SearchIndexProvider>
+    );
+    await waitFor(() => expect(state().found).toEqual(['p1']));
+
+    session.data = null as unknown as typeof original;
+    rerender(
+      <SearchIndexProvider>
+        <Probe />
+      </SearchIndexProvider>
+    );
+
+    await waitFor(() => expect(state()).toMatchObject({ ready: false, found: [], stored: null, groups: 0 }));
+    session.data = original;
+  });
+
   it('reports an empty library', async () => {
     global.fetch = vi.fn().mockResolvedValue({
       ok: true,
