@@ -1,24 +1,21 @@
 /**
- * Tests for ImportContactsList component
- * Focus on file import vs CardDAV import redirect behavior
+ * Tests for the CardDAV import assistant: choose, assign, import, summary.
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, within } from '@testing-library/react';
 import { useRouter } from 'next/navigation';
 import ImportContactsList from '@/components/ImportContactsList';
 
-// Mock next/navigation
 vi.mock('next/navigation', () => ({
   useRouter: vi.fn(),
 }));
 
-// Mock next-intl
 vi.mock('next-intl', () => ({
-  useTranslations: () => (key: string) => key,
+  useTranslations: () => (key: string, values?: Record<string, unknown>) =>
+    values ? `${key} ${JSON.stringify(values)}` : key,
 }));
 
-// Mock sonner
 vi.mock('sonner', () => ({
   toast: {
     success: vi.fn(),
@@ -26,404 +23,308 @@ vi.mock('sonner', () => ({
   },
 }));
 
-// Mock SearchIndexProvider
 vi.mock('@/components/SearchIndexProvider', () => ({
   useSearchIndex: () => ({ refreshIndex: vi.fn(), search: vi.fn(), isReady: false }),
 }));
 
+function makeImport(id: string, fullName: string, extra = '') {
+  const [first, last] = fullName.split(' ');
+  return {
+    id,
+    uid: `uid-${id}`,
+    href: `href-${id}`,
+    vCardData: `BEGIN:VCARD\nVERSION:3.0\nFN:${fullName}\nN:${last};${first};;;\n${extra}END:VCARD`,
+    displayName: fullName,
+    discoveredAt: new Date(),
+  };
+}
+
+const mockPendingImports = [
+  makeImport('import-1', 'Ada Example', 'ORG:Engines Ltd\nEMAIL:ada@example.com\n'),
+  makeImport('import-2', 'Grace Sample', 'EMAIL:grace@example.org\n'),
+  makeImport('import-3', 'Linus Demo'),
+];
+
+const mockGroups = [{ id: 'group-1', name: 'Friends', color: '#FF0000' }];
+const mockRelationshipTypes = [
+  { id: 'rel-1', label: 'Friend', color: '#00FF00' },
+  { id: 'rel-2', label: 'Family', color: '#0000FF' },
+];
+
+function renderList(props: Partial<React.ComponentProps<typeof ImportContactsList>> = {}) {
+  return render(
+    <ImportContactsList
+      pendingImports={mockPendingImports}
+      groups={mockGroups}
+      relationshipTypes={mockRelationshipTypes}
+      {...props}
+    />
+  );
+}
+
+const rowCheckbox = (name: string) =>
+  screen.getByRole('checkbox', { name: new RegExp(name) });
+
+function bodyOfCall(fetchMock: ReturnType<typeof vi.fn>, call = 0) {
+  const init = fetchMock.mock.calls[call][1] as RequestInit;
+  return JSON.parse(init.body as string);
+}
+
 describe('ImportContactsList', () => {
   const mockPush = vi.fn();
   const mockRefresh = vi.fn();
+  let fetchMock: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (useRouter as ReturnType<typeof vi.fn>).mockReturnValue({
-      push: mockPush,
-      refresh: mockRefresh,
-    });
-
-    // Mock fetch
-    global.fetch = vi.fn(() =>
+    (useRouter as ReturnType<typeof vi.fn>).mockReturnValue({ push: mockPush, refresh: mockRefresh });
+    window.scrollTo = vi.fn();
+    fetchMock = vi.fn(() =>
       Promise.resolve({
         ok: true,
-        json: () => Promise.resolve({
-          imported: 1,
-          skipped: 0,
-          errors: 0,
-        }),
+        status: 200,
+        json: () => Promise.resolve({ imported: 1, updated: 0, skipped: 0, errors: 0, errorMessages: [] }),
       } as Response)
     );
+    global.fetch = fetchMock as unknown as typeof fetch;
   });
 
-  const mockPendingImports = [
-    {
-      id: 'import-1',
-      uid: 'uid-1',
-      href: 'href-1',
-      vCardData: `BEGIN:VCARD
-VERSION:3.0
-FN:John Doe
-N:Doe;John;;;
-END:VCARD`,
-      displayName: 'John Doe',
-      discoveredAt: new Date(),
-    },
-  ];
-
-  const mockGroups = [
-    {
-      id: 'group-1',
-      name: 'Friends',
-      color: '#FF0000',
-    },
-  ];
-
-  const mockRelationshipTypes = [
-    {
-      id: 'rel-1',
-      label: 'Friend',
-      color: '#00FF00',
-    },
-    {
-      id: 'rel-2',
-      label: 'Family',
-      color: '#0000FF',
-    },
-  ];
-
-  describe('Redirect behavior', () => {
-    it('should redirect to /settings/carddav on successful CardDAV import', async () => {
-      render(
-        <ImportContactsList
-          pendingImports={mockPendingImports}
-          groups={mockGroups}
-          relationshipTypes={mockRelationshipTypes}
-          isFileImport={false}
-        />
-      );
-
-      // Select a contact
-      const checkbox = screen.getAllByRole('checkbox')[1]; // First is select all
-      fireEvent.click(checkbox);
-
-      // Click import button
-      const importButton = screen.getByText(/importSelected/);
-      fireEvent.click(importButton);
-
-      await waitFor(() => {
-        expect(mockPush).toHaveBeenCalledWith(
-          expect.stringContaining('/settings/carddav')
-        );
-      });
+  describe('Choosing contacts', () => {
+    it('disables continue until a contact is selected', () => {
+      renderList();
+      expect(screen.getByRole('button', { name: /continueWith/ })).toBeDisabled();
+      fireEvent.click(rowCheckbox('Ada Example'));
+      expect(screen.getByRole('button', { name: /continueWith/ })).toBeEnabled();
     });
 
-    it('should redirect to /people on successful file import', async () => {
-      render(
-        <ImportContactsList
-          pendingImports={mockPendingImports}
-          groups={mockGroups}
-          relationshipTypes={mockRelationshipTypes}
-          isFileImport={true}
-        />
-      );
-
-      // Select a contact
-      const checkbox = screen.getAllByRole('checkbox')[1];
-      fireEvent.click(checkbox);
-
-      // Click import button
-      const importButton = screen.getByText(/importSelected/);
-      fireEvent.click(importButton);
-
-      await waitFor(() => {
-        expect(mockPush).toHaveBeenCalledWith(
-          expect.stringContaining('/people')
-        );
-      });
+    it('filters the list with the search field', () => {
+      renderList();
+      fireEvent.change(screen.getByRole('searchbox'), { target: { value: 'grace' } });
+      expect(screen.queryByText('Ada Example')).toBeNull();
+      expect(screen.getByText('Grace Sample')).toBeDefined();
     });
 
-    it('should include import results in redirect URL', async () => {
-      render(
-        <ImportContactsList
-          pendingImports={mockPendingImports}
-          groups={mockGroups}
-          relationshipTypes={mockRelationshipTypes}
-          isFileImport={true}
-        />
-      );
+    it('searches in company and email too', () => {
+      renderList();
+      fireEvent.change(screen.getByRole('searchbox'), { target: { value: 'engines' } });
+      expect(screen.getByText('Ada Example')).toBeDefined();
+      expect(screen.queryByText('Linus Demo')).toBeNull();
+    });
 
-      const checkbox = screen.getAllByRole('checkbox')[1];
-      fireEvent.click(checkbox);
+    it('shows a way back when nothing matches', () => {
+      renderList();
+      fireEvent.change(screen.getByRole('searchbox'), { target: { value: 'zzz' } });
+      expect(screen.getByText('noMatches')).toBeDefined();
+      fireEvent.click(screen.getByRole('button', { name: 'clearSearch' }));
+      expect(screen.getByText('Ada Example')).toBeDefined();
+    });
 
-      const importButton = screen.getByText(/importSelected/);
-      fireEvent.click(importButton);
+    it('selects only the contacts that are shown', () => {
+      renderList();
+      fireEvent.change(screen.getByRole('searchbox'), { target: { value: 'ada' } });
+      // First checkbox is the "select all shown" box in the toolbar
+      fireEvent.click(screen.getAllByRole('checkbox')[0]);
+      fireEvent.change(screen.getByRole('searchbox'), { target: { value: '' } });
+      expect((rowCheckbox('Ada Example') as HTMLInputElement).checked).toBe(true);
+      expect((rowCheckbox('Grace Sample') as HTMLInputElement).checked).toBe(false);
+      expect((rowCheckbox('Linus Demo') as HTMLInputElement).checked).toBe(false);
+    });
 
-      await waitFor(() => {
-        const callArg = mockPush.mock.calls[0][0];
-        expect(callArg).toContain('importSuccess=true');
-        expect(callArg).toContain('imported=1');
-        expect(callArg).toContain('skipped=0');
-        expect(callArg).toContain('errors=0');
-      });
+    it('filters by already existing contacts', () => {
+      renderList({ existingUids: ['uid-import-2'] });
+      fireEvent.click(screen.getByRole('button', { name: 'filterExisting' }));
+      expect(screen.getByText('Grace Sample')).toBeDefined();
+      expect(screen.queryByText('Ada Example')).toBeNull();
+      fireEvent.click(screen.getByRole('button', { name: 'filterNew' }));
+      expect(screen.queryByText('Grace Sample')).toBeNull();
+      expect(screen.getByText('Ada Example')).toBeDefined();
+    });
+  });
+
+  describe('Importing', () => {
+    it('goes through assign and import and shows a summary instead of redirecting', async () => {
+      renderList();
+      fireEvent.click(rowCheckbox('Ada Example'));
+      fireEvent.click(screen.getByRole('button', { name: /continueWith/ }));
+      fireEvent.click(screen.getByRole('button', { name: /importSelected/ }));
+
+      await waitFor(() => expect(screen.getByText('importComplete')).toBeDefined());
+      expect(mockPush).not.toHaveBeenCalled();
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+      expect(fetchMock.mock.calls[0][0]).toBe('/api/carddav/import');
+      expect(bodyOfCall(fetchMock).importIds).toEqual(['import-1']);
+      expect(screen.getByRole('link', { name: 'openPeople' }).getAttribute('href')).toBe('/people');
+    });
+
+    it('offers the settings link after a CardDAV import only', async () => {
+      const { unmount } = renderList();
+      fireEvent.click(rowCheckbox('Ada Example'));
+      fireEvent.click(screen.getByRole('button', { name: /continueWith/ }));
+      fireEvent.click(screen.getByRole('button', { name: /importSelected/ }));
+      await waitFor(() => screen.getByText('importComplete'));
+      expect(screen.getByRole('link', { name: 'backToSettings' }).getAttribute('href')).toBe('/settings/carddav');
+      unmount();
+
+      renderList({ isFileImport: true });
+      fireEvent.click(rowCheckbox('Ada Example'));
+      fireEvent.click(screen.getByRole('button', { name: /continueWith/ }));
+      fireEvent.click(screen.getByRole('button', { name: /importSelected/ }));
+      await waitFor(() => screen.getByText('importComplete'));
+      expect(screen.queryByRole('link', { name: 'backToSettings' })).toBeNull();
+    });
+
+    it('sends the global relationship and groups', async () => {
+      renderList();
+      fireEvent.click(rowCheckbox('Ada Example'));
+      fireEvent.click(screen.getByRole('button', { name: /continueWith/ }));
+
+      fireEvent.change(screen.getByRole('combobox'), { target: { value: 'rel-1' } });
+      fireEvent.focus(screen.getByPlaceholderText('placeholder'));
+      await waitFor(() => fireEvent.click(screen.getByText('Friends')));
+
+      fireEvent.click(screen.getByRole('button', { name: /importSelected/ }));
+      await waitFor(() => expect(fetchMock).toHaveBeenCalled());
+      const body = bodyOfCall(fetchMock);
+      expect(body.globalRelationshipTypeId).toBe('rel-1');
+      expect(body.globalGroupIds).toEqual(['group-1']);
+    });
+
+    it('imports a long selection in several requests', async () => {
+      const many = Array.from({ length: 30 }, (_, i) => makeImport(`m-${i}`, `Person${i} Sample`));
+      renderList({ pendingImports: many });
+      fireEvent.click(screen.getAllByRole('checkbox')[0]);
+      fireEvent.click(screen.getByRole('button', { name: /continueWith/ }));
+      fireEvent.click(screen.getByRole('button', { name: /importSelected/ }));
+
+      await waitFor(() => screen.getByText('importComplete'));
+      expect(fetchMock).toHaveBeenCalledTimes(2);
+      expect(bodyOfCall(fetchMock, 0).importIds).toHaveLength(25);
+      expect(bodyOfCall(fetchMock, 1).importIds).toHaveLength(5);
+      // 1 imported per mocked response, summed over both requests
+      expect(screen.getByText('statImported').parentElement?.textContent).toContain('2');
+    });
+
+    it('keeps the partial result and shows the error when a later batch fails', async () => {
+      const many = Array.from({ length: 30 }, (_, i) => makeImport(`m-${i}`, `Person${i} Sample`));
+      fetchMock
+        .mockResolvedValueOnce({
+          ok: true,
+          status: 200,
+          json: () => Promise.resolve({ imported: 25, updated: 0, skipped: 0, errors: 0, errorMessages: [] }),
+        } as Response)
+        .mockResolvedValueOnce({
+          ok: false,
+          status: 500,
+          json: () => Promise.resolve({ error: 'Server exploded' }),
+        } as Response);
+      renderList({ pendingImports: many });
+      fireEvent.click(screen.getAllByRole('checkbox')[0]);
+      fireEvent.click(screen.getByRole('button', { name: /continueWith/ }));
+      fireEvent.click(screen.getByRole('button', { name: /importSelected/ }));
+
+      await waitFor(() => screen.getByText('Server exploded'));
+      expect(screen.getByText(/notProcessed/)).toBeDefined();
+      expect(screen.getByText('statImported').parentElement?.textContent).toContain('25');
+    });
+
+    it('lists the per contact error messages', async () => {
+      fetchMock.mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: () =>
+          Promise.resolve({ imported: 0, updated: 0, skipped: 0, errors: 1, errorMessages: ['Failed to import Ada Example: boom'] }),
+      } as Response);
+      renderList();
+      fireEvent.click(rowCheckbox('Ada Example'));
+      fireEvent.click(screen.getByRole('button', { name: /continueWith/ }));
+      fireEvent.click(screen.getByRole('button', { name: /importSelected/ }));
+      await waitFor(() => screen.getByText('Failed to import Ada Example: boom'));
+    });
+
+    it('explains a plan limit', async () => {
+      fetchMock.mockResolvedValueOnce({
+        ok: false,
+        status: 403,
+        json: () => Promise.resolve({ code: 'plan_limit_reached', params: { available: 2, requested: 5 } }),
+      } as Response);
+      renderList();
+      fireEvent.click(rowCheckbox('Ada Example'));
+      fireEvent.click(screen.getByRole('button', { name: /continueWith/ }));
+      fireEvent.click(screen.getByRole('button', { name: /importSelected/ }));
+      await waitFor(() => screen.getByText(/importLimitExceeded/));
+    });
+  });
+
+  describe('Assign step', () => {
+    it('shows how many selected contacts already exist and can update them all', async () => {
+      renderList({ existingUids: ['uid-import-2'] });
+      fireEvent.click(rowCheckbox('Ada Example'));
+      fireEvent.click(rowCheckbox('Grace Sample'));
+      fireEvent.click(screen.getByRole('button', { name: /continueWith/ }));
+
+      expect(screen.getByText(/reviewBreakdown/).textContent).toContain('"existingCount":1');
+      fireEvent.click(screen.getByRole('checkbox', { name: /updateAllExisting/ }));
+      fireEvent.click(screen.getByRole('button', { name: /importSelected/ }));
+
+      await waitFor(() => expect(fetchMock).toHaveBeenCalled());
+      expect(bodyOfCall(fetchMock).updateExistingIds).toEqual(['import-2']);
+    });
+
+    it('goes back to the list without losing the selection', () => {
+      renderList();
+      fireEvent.click(rowCheckbox('Ada Example'));
+      fireEvent.click(screen.getByRole('button', { name: /continueWith/ }));
+      fireEvent.click(screen.getByRole('button', { name: 'back' }));
+      expect((rowCheckbox('Ada Example') as HTMLInputElement).checked).toBe(true);
+    });
+
+    it('does not offer a relationship select without relationship types', () => {
+      renderList({ relationshipTypes: [] });
+      fireEvent.click(rowCheckbox('Ada Example'));
+      fireEvent.click(screen.getByRole('button', { name: /continueWith/ }));
+      expect(screen.queryAllByRole('combobox')).toHaveLength(0);
     });
   });
 
   describe('Cancel behavior', () => {
-    it('should navigate to /settings/carddav when canceling CardDAV import', () => {
-      render(
-        <ImportContactsList
-          pendingImports={mockPendingImports}
-          groups={mockGroups}
-          relationshipTypes={mockRelationshipTypes}
-          isFileImport={false}
-        />
-      );
-
-      const cancelButton = screen.getByText(/cancel/);
-      fireEvent.click(cancelButton);
-
+    it('navigates to /settings/carddav when canceling a CardDAV import', () => {
+      renderList({ isFileImport: false });
+      fireEvent.click(screen.getByRole('button', { name: 'cancel' }));
       expect(mockPush).toHaveBeenCalledWith('/settings/carddav');
     });
 
-    it('should navigate to /people when canceling file import', () => {
-      render(
-        <ImportContactsList
-          pendingImports={mockPendingImports}
-          groups={mockGroups}
-          relationshipTypes={mockRelationshipTypes}
-          isFileImport={true}
-        />
-      );
-
-      const cancelButton = screen.getByText(/cancel/);
-      fireEvent.click(cancelButton);
-
+    it('navigates to /people when canceling a file import', () => {
+      renderList({ isFileImport: true });
+      fireEvent.click(screen.getByRole('button', { name: 'cancel' }));
       expect(mockPush).toHaveBeenCalledWith('/people');
     });
 
-    it('should show confirmation dialog when canceling with unsaved changes', () => {
-      // Mock window.confirm
+    it('asks before leaving with a selection', () => {
       const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(false);
-
-      render(
-        <ImportContactsList
-          pendingImports={mockPendingImports}
-          groups={mockGroups}
-          relationshipTypes={mockRelationshipTypes}
-          isFileImport={false}
-        />
-      );
-
-      // Select a contact (creates unsaved change)
-      const checkbox = screen.getAllByRole('checkbox')[1];
-      fireEvent.click(checkbox);
-
-      // Try to cancel
-      const cancelButton = screen.getByText(/cancel/);
-      fireEvent.click(cancelButton);
-
+      renderList();
+      fireEvent.click(rowCheckbox('Ada Example'));
+      fireEvent.click(screen.getByRole('button', { name: 'cancel' }));
       expect(confirmSpy).toHaveBeenCalled();
-      expect(mockPush).not.toHaveBeenCalled(); // User clicked "No"
-
+      expect(mockPush).not.toHaveBeenCalled();
       confirmSpy.mockRestore();
     });
 
-    it('should allow cancel when user confirms with unsaved changes', () => {
+    it('leaves when the user confirms', () => {
       const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(true);
-
-      render(
-        <ImportContactsList
-          pendingImports={mockPendingImports}
-          groups={mockGroups}
-          relationshipTypes={mockRelationshipTypes}
-          isFileImport={true}
-        />
-      );
-
-      // Select a contact
-      const checkbox = screen.getAllByRole('checkbox')[1];
-      fireEvent.click(checkbox);
-
-      // Cancel with confirmation
-      const cancelButton = screen.getByText(/cancel/);
-      fireEvent.click(cancelButton);
-
-      expect(confirmSpy).toHaveBeenCalled();
+      renderList({ isFileImport: true });
+      fireEvent.click(rowCheckbox('Ada Example'));
+      fireEvent.click(screen.getByRole('button', { name: 'cancel' }));
       expect(mockPush).toHaveBeenCalledWith('/people');
-
       confirmSpy.mockRestore();
     });
   });
 
-  describe('isFileImport prop defaults', () => {
-    it('should default to false when isFileImport is not provided', () => {
-      render(
-        <ImportContactsList
-          pendingImports={mockPendingImports}
-          groups={mockGroups}
-          relationshipTypes={mockRelationshipTypes}
-        />
-      );
-
-      const cancelButton = screen.getByText(/cancel/);
-      fireEvent.click(cancelButton);
-
-      // Should use default CardDAV behavior
-      expect(mockPush).toHaveBeenCalledWith('/settings/carddav');
-    });
-  });
-
-  describe('Import API call', () => {
-    it('should call /api/carddav/import with selected contacts', async () => {
-      const fetchSpy = vi.spyOn(global, 'fetch');
-
-      render(
-        <ImportContactsList
-          pendingImports={mockPendingImports}
-          groups={mockGroups}
-          relationshipTypes={mockRelationshipTypes}
-          isFileImport={false}
-        />
-      );
-
-      const checkbox = screen.getAllByRole('checkbox')[1];
-      fireEvent.click(checkbox);
-
-      const importButton = screen.getByText(/importSelected/);
-      fireEvent.click(importButton);
-
-      await waitFor(() => {
-        expect(fetchSpy).toHaveBeenCalledWith(
-          '/api/carddav/import',
-          expect.objectContaining({
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: expect.stringContaining('import-1'),
-          })
-        );
-      });
-    });
-
-    it('should include global groups in API call', async () => {
-      const fetchSpy = vi.spyOn(global, 'fetch');
-
-      render(
-        <ImportContactsList
-          pendingImports={mockPendingImports}
-          groups={mockGroups}
-          relationshipTypes={mockRelationshipTypes}
-          isFileImport={false}
-        />
-      );
-
-      // Select contact and group
-      const checkbox = screen.getAllByRole('checkbox')[1];
-      fireEvent.click(checkbox);
-
-      // Select group via GroupsSelector (PillSelector)
-      const groupInput = screen.getByPlaceholderText('placeholder');
-      fireEvent.focus(groupInput);
-
-      await waitFor(() => {
-        const groupOption = screen.getByText('Friends');
-        fireEvent.click(groupOption);
-      });
-
-      const importButton = screen.getByText(/importSelected/);
-      fireEvent.click(importButton);
-
-      await waitFor(() => {
-        const callArg = fetchSpy.mock.calls[0]?.[1] as RequestInit;
-        const body = JSON.parse(callArg.body as string);
-        expect(body.globalGroupIds).toEqual(['group-1']);
-      });
-    });
-
-    it('should include globalRelationshipTypeId in API call when selected', async () => {
-      const fetchSpy = vi.spyOn(global, 'fetch');
-
-      render(
-        <ImportContactsList
-          pendingImports={mockPendingImports}
-          groups={mockGroups}
-          relationshipTypes={mockRelationshipTypes}
-          isFileImport={false}
-        />
-      );
-
-      // Select contact
-      const checkbox = screen.getAllByRole('checkbox')[1];
-      fireEvent.click(checkbox);
-
-      // Select global relationship
-      const relSelect = screen.getAllByRole('combobox')[0];
-      fireEvent.change(relSelect, { target: { value: 'rel-1' } });
-
-      const importButton = screen.getByText(/importSelected/);
-      fireEvent.click(importButton);
-
-      await waitFor(() => {
-        const callArg = fetchSpy.mock.calls[0]?.[1] as RequestInit;
-        const body = JSON.parse(callArg.body as string);
-        expect(body.globalRelationshipTypeId).toBe('rel-1');
-      });
-    });
-  });
-
-  describe('Relationship dropdown', () => {
-    it('should render global relationship dropdown with None default', () => {
-      render(
-        <ImportContactsList
-          pendingImports={mockPendingImports}
-          groups={mockGroups}
-          relationshipTypes={mockRelationshipTypes}
-          isFileImport={false}
-        />
-      );
-
-      // The global relationship select should be present
-      const relSelect = screen.getAllByRole('combobox')[0];
-      expect(relSelect).toBeDefined();
-      expect((relSelect as HTMLSelectElement).value).toBe('');
-    });
-
-    it('should not render relationship dropdown when no relationship types exist', () => {
-      render(
-        <ImportContactsList
-          pendingImports={mockPendingImports}
-          groups={mockGroups}
-          relationshipTypes={[]}
-          isFileImport={false}
-        />
-      );
-
-      // Should not have any combobox (the group selector uses a text input, not a combobox)
-      const comboboxes = screen.queryAllByRole('combobox');
-      expect(comboboxes.length).toBe(0);
-    });
-
-    it('should detect unsaved changes when global relationship is set', () => {
-      const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(false);
-
-      render(
-        <ImportContactsList
-          pendingImports={mockPendingImports}
-          groups={mockGroups}
-          relationshipTypes={mockRelationshipTypes}
-          isFileImport={false}
-        />
-      );
-
-      // Select global relationship (creates unsaved change)
-      const relSelect = screen.getAllByRole('combobox')[0];
-      fireEvent.change(relSelect, { target: { value: 'rel-1' } });
-
-      // Try to cancel
-      const cancelButton = screen.getByText(/cancel/);
-      fireEvent.click(cancelButton);
-
-      expect(confirmSpy).toHaveBeenCalled();
-      confirmSpy.mockRestore();
-    });
+  it('shows the step labels', () => {
+    renderList();
+    const steps = screen.getByRole('list');
+    expect(within(steps).getByText('stepConnect')).toBeDefined();
+    expect(within(steps).getByText('stepChoose')).toBeDefined();
+    expect(within(steps).getByText('stepAssign')).toBeDefined();
+    expect(within(steps).getByText('stepDone')).toBeDefined();
   });
 });

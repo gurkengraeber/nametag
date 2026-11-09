@@ -4,6 +4,8 @@ import { prisma } from '@/lib/prisma';
 import { getTranslations } from 'next-intl/server';
 import { getAlreadyMappedPersonUids } from '@/lib/carddav/mapped-uids';
 import ImportContactsList from '@/components/ImportContactsList';
+import Link from 'next/link';
+import { Button } from '@/components/ui/Button';
 import Navigation from '@/components/Navigation';
 
 export default async function ImportPage({
@@ -123,19 +125,32 @@ export default async function ImportPage({
 
       <div className="container mx-auto px-4 py-8">
         <div className="bg-surface shadow rounded-lg p-6">
+          <Link
+            href={isFileImport ? '/people' : '/settings/carddav'}
+            className="inline-flex items-center min-h-11 sm:min-h-0 text-sm text-primary hover:underline mb-2"
+          >
+            {'← '}{isFileImport ? t('backToPeople') : t('backToSettings')}
+          </Link>
           <h1 className="text-2xl font-bold text-foreground mb-4">
             {isFileImport ? t('titleFile') : t('title')}
           </h1>
 
           {pendingImports.length === 0 ? (
             <div className="text-center py-12">
-              <div className="text-6xl mb-4">📥</div>
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
+                <svg className="h-8 w-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
               <h2 className="text-xl font-semibold text-foreground mb-2">
                 {isFileImport ? t('noPendingFile') : t('noPending')}
               </h2>
-              <p className="text-muted">
+              <p className="text-muted mb-6">
                 {t('noPendingDescription')}
               </p>
+              <Button href={isFileImport ? '/people' : '/settings/carddav'} variant="secondary">
+                {isFileImport ? t('backToPeople') : t('backToSettings')}
+              </Button>
             </div>
           ) : (
             <>
