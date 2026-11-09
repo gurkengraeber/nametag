@@ -767,7 +767,7 @@
       "deleteAccount": "Elimina account",
       "deleteAccountDescription": "Elimina permanentemente il tuo account e tutti i dati associati. Questa azione non può essere annullata.",
       "deleteAccountButton": "Elimina account",
-      "warningPermanent": "Attenzione: Questo è permanente!",
+      "warningPermanent": "Leggi prima di continuare",
       "deleteWarningMessage": "Tutti i tuoi dati inclusi persone, gruppi, relazioni e tipi relazione personalizzati verranno eliminati permanentemente. Consigliamo di esportare i tuoi dati prima.",
       "confirmPassword": "Conferma la tua password",
       "typeToConfirm": "Digita ELIMINA per confermare",
@@ -777,7 +777,10 @@
       "deleteError": "Digita ELIMINA per confermare",
       "passwordRequired": "La password è obbligatoria",
       "deleteFailed": "Eliminazione account fallita",
-      "importDataFailed": "Importazione dati fallita"
+      "importDataFailed": "Importazione dati fallita",
+      "deleteExportFirst": "Se potresti aver bisogno dei tuoi dati in futuro, scarica prima una copia in Esporta dati.",
+      "deleteSummary": "Verranno eliminati il tuo account insieme a {people, plural, one {# persona} other {# persone}} e {groups, plural, one {# gruppo} other {# gruppi}}.",
+      "importSuccessToast": "Importazione completata"
     },
     "trash": {
       "title": "Cestino",

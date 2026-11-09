@@ -89,6 +89,7 @@ export default function AccountManagement({ groups, peopleCount }: AccountManage
 
       if (!response.ok) {
         setExportMessage(t('exportFailed'));
+        toast.error(t('exportFailed'));
         return;
       }
 
@@ -347,6 +348,7 @@ export default function AccountManagement({ groups, peopleCount }: AccountManage
         return;
       }
 
+      toast.success(t('importSuccessToast'));
       setImportMessage(
         t('importSuccess', {
           groups: result.imported.groups,
@@ -447,8 +449,8 @@ export default function AccountManagement({ groups, peopleCount }: AccountManage
 
         {/* Export Mode Toggle */}
         <div className="mb-4 space-y-3">
-          <div className="flex gap-4">
-            <label className="flex items-center gap-2 cursor-pointer">
+          <div className="flex flex-wrap gap-x-4">
+            <label className="flex items-center gap-2 min-h-11 cursor-pointer">
               <input
                 type="radio"
                 name="exportMode"
@@ -462,7 +464,7 @@ export default function AccountManagement({ groups, peopleCount }: AccountManage
                 {t('exportEverything')}
               </span>
             </label>
-            <label className="flex items-center gap-2 cursor-pointer">
+            <label className="flex items-center gap-2 min-h-11 cursor-pointer">
               <input
                 type="radio"
                 name="exportMode"
@@ -499,7 +501,7 @@ export default function AccountManagement({ groups, peopleCount }: AccountManage
           )}
         </div>
 
-        <div className="flex gap-3">
+        <div className="flex flex-col sm:flex-row gap-3">
           <Button
             onClick={handleExportJson}
             disabled={
@@ -795,8 +797,11 @@ export default function AccountManagement({ groups, peopleCount }: AccountManage
         <h3 className="text-lg font-semibold text-red-600 dark:text-red-400 mb-2">
           {t('deleteAccount')}
         </h3>
-        <p className="text-sm text-muted mb-4">
+        <p className="text-sm text-muted mb-2">
           {t('deleteAccountDescription')}
+        </p>
+        <p className="text-sm text-muted mb-4">
+          {t('deleteExportFirst')}
         </p>
 
         {!showDeleteDialog ? (
@@ -826,8 +831,11 @@ export default function AccountManagement({ groups, peopleCount }: AccountManage
                 <h4 className="font-bold text-red-900 dark:text-red-300 mb-2">
                   {t('warningPermanent')}
                 </h4>
-                <p className="text-sm text-red-800 dark:text-red-400 mb-4">
+                <p className="text-sm text-red-800 dark:text-red-400 mb-2">
                   {t('deleteWarningMessage')}
+                </p>
+                <p className="text-sm text-red-800 dark:text-red-400 mb-4">
+                  {t('deleteSummary', { people: peopleCount, groups: groups.length })}
                 </p>
               </div>
             </div>
@@ -848,6 +856,7 @@ export default function AccountManagement({ groups, peopleCount }: AccountManage
               <input
                 type="password"
                 id="delete-password"
+                autoComplete="current-password"
                 value={deletePassword}
                 onChange={(e) => setDeletePassword(e.target.value)}
                 className="w-full px-3 py-2 border border-border rounded-lg bg-surface text-foreground focus:outline-none focus:ring-2 focus:ring-red-500"
@@ -864,6 +873,8 @@ export default function AccountManagement({ groups, peopleCount }: AccountManage
               <input
                 type="text"
                 id="delete-confirmation"
+                autoComplete="off"
+                autoCapitalize="characters"
                 value={deleteConfirmation}
                 onChange={(e) => setDeleteConfirmation(e.target.value)}
                 placeholder="DELETE"
@@ -871,7 +882,7 @@ export default function AccountManagement({ groups, peopleCount }: AccountManage
               />
             </div>
 
-            <div className="flex gap-3 pt-2">
+            <div className="flex flex-col sm:flex-row gap-3 pt-2">
               <Button
                 variant="danger"
                 onClick={handleDeleteAccount}

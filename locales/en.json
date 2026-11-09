@@ -767,7 +767,7 @@
       "deleteAccount": "Delete Account",
       "deleteAccountDescription": "Permanently delete your account and all associated data. This action cannot be undone.",
       "deleteAccountButton": "Delete Account",
-      "warningPermanent": "Warning: This is permanent!",
+      "warningPermanent": "Please read this before you continue",
       "deleteWarningMessage": "All your data including people, groups, relationships, and custom relationship types will be permanently deleted. We recommend exporting your data first.",
       "confirmPassword": "Confirm your password",
       "typeToConfirm": "Type DELETE to confirm",
@@ -777,7 +777,10 @@
       "deleteError": "Please type DELETE to confirm",
       "passwordRequired": "Password is required",
       "deleteFailed": "Failed to delete account",
-      "importDataFailed": "Failed to import data"
+      "importDataFailed": "Failed to import data",
+      "deleteExportFirst": "If you may want your data later, download a copy under Export data first.",
+      "deleteSummary": "This deletes your account together with {people, plural, one {# person} other {# people}} and {groups, plural, one {# group} other {# groups}}.",
+      "importSuccessToast": "Import finished"
     },
     "trash": {
       "title": "Trash",

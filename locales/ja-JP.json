@@ -767,7 +767,7 @@
       "deleteAccount": "アカウントの削除",
       "deleteAccountDescription": "アカウントと関連するすべてのデータを完全に削除します。この操作は元に戻せません。",
       "deleteAccountButton": "アカウントの削除",
-      "warningPermanent": "警告：これは永続的です！",
+      "warningPermanent": "続ける前にお読みください",
       "deleteWarningMessage": "人物、グループ、関係、カスタム関係タイプを含むすべてのデータが完全に削除されます。最初にデータをエクスポートすることをお勧めします。",
       "confirmPassword": "パスワードを確認してください",
       "typeToConfirm": "確認するにはDELETEと入力してください",
@@ -777,7 +777,10 @@
       "deleteError": "確認するにはDELETEと入力してください",
       "passwordRequired": "パスワードが必要です",
       "deleteFailed": "アカウントの削除に失敗しました",
-      "importDataFailed": "データのインポートに失敗しました"
+      "importDataFailed": "データのインポートに失敗しました",
+      "deleteExportFirst": "後でデータが必要になるかもしれない場合は、先に「データのエクスポート」でコピーをダウンロードしてください。",
+      "deleteSummary": "アカウントと、{people, plural, other {#人}}、{groups, plural, other {#個のグループ}}が削除されます。",
+      "importSuccessToast": "インポートが完了しました"
     },
     "trash": {
       "title": "ゴミ箱",

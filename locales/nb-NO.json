@@ -767,7 +767,7 @@
       "deleteAccount": "Slett konto",
       "deleteAccountDescription": "Slett kontoen din permanent og all tilknyttet data. Denne handlingen kan ikke angres.",
       "deleteAccountButton": "Slett konto",
-      "warningPermanent": "Advarsel: Dette er permanent!",
+      "warningPermanent": "Les dette før du fortsetter",
       "deleteWarningMessage": "Alle dataene dine, inkludert personer, grupper, relasjoner og egendefinerte relasjonstyper, blir slettet permanent. Vi anbefaler at du eksporterer dataene dine først.",
       "confirmPassword": "Bekreft passordet ditt",
       "typeToConfirm": "Skriv DELETE for å bekrefte",
@@ -777,7 +777,10 @@
       "deleteError": "Skriv DELETE for å bekrefte",
       "passwordRequired": "Passord er påkrevd",
       "deleteFailed": "Kunne ikke slette kontoen",
-      "importDataFailed": "Kunne ikke importere data"
+      "importDataFailed": "Kunne ikke importere data",
+      "deleteExportFirst": "Hvis du kan trenge dataene senere, last ned en kopi under Eksporter data først.",
+      "deleteSummary": "Dette sletter kontoen din sammen med {people, plural, one {# person} other {# personer}} og {groups, plural, one {# gruppe} other {# grupper}}.",
+      "importSuccessToast": "Importen er ferdig"
     },
     "trash": {
       "title": "Papirkurv",

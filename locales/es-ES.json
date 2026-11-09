@@ -767,7 +767,7 @@
       "deleteAccount": "Eliminar Cuenta",
       "deleteAccountDescription": "Eliminar permanentemente tu cuenta y todos los datos asociados. Esta acción no se puede deshacer.",
       "deleteAccountButton": "Eliminar Cuenta",
-      "warningPermanent": "¡Advertencia: Esto es permanente!",
+      "warningPermanent": "Lee esto antes de continuar",
       "deleteWarningMessage": "Todos tus datos incluyendo personas, grupos, relaciones y tipos de relación personalizados serán eliminados permanentemente. Recomendamos exportar tus datos primero.",
       "confirmPassword": "Confirma tu contraseña",
       "typeToConfirm": "Escribe DELETE para confirmar",
@@ -777,7 +777,10 @@
       "deleteError": "Por favor escribe DELETE para confirmar",
       "passwordRequired": "La contraseña es requerida",
       "deleteFailed": "Error al eliminar la cuenta",
-      "importDataFailed": "Error al importar los datos"
+      "importDataFailed": "Error al importar los datos",
+      "deleteExportFirst": "Si podrías necesitar tus datos más adelante, descarga antes una copia en Exportar datos.",
+      "deleteSummary": "Esto elimina tu cuenta junto con {people, plural, one {# persona} other {# personas}} y {groups, plural, one {# grupo} other {# grupos}}.",
+      "importSuccessToast": "Importación terminada"
     },
     "trash": {
       "title": "Papelera",

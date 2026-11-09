@@ -767,7 +767,7 @@
       "deleteAccount": "Account verwijderen",
       "deleteAccountDescription": "Verwijder uw account en alle bijbehorende gegevens permanent. Deze actie kan niet ongedaan worden gemaakt.",
       "deleteAccountButton": "Account verwijderen",
-      "warningPermanent": "Waarschuwing: Dit is permanent!",
+      "warningPermanent": "Lees dit voordat je verdergaat",
       "deleteWarningMessage": "Alle uw gegevens inclusief personen, groepen, relaties en aangepaste relatietypes zullen permanent worden verwijderd. We raden aan uw gegevens eerst te exporteren.",
       "confirmPassword": "Bevestig uw wachtwoord",
       "typeToConfirm": "Typ DELETE om te bevestigen",
@@ -777,7 +777,10 @@
       "deleteError": "Typ DELETE om te bevestigen",
       "passwordRequired": "Wachtwoord is vereist",
       "deleteFailed": "Account verwijderen mislukt",
-      "importDataFailed": "Gegevens importeren mislukt"
+      "importDataFailed": "Gegevens importeren mislukt",
+      "deleteExportFirst": "Als je je gegevens later nog nodig kunt hebben, download dan eerst een kopie onder Gegevens exporteren.",
+      "deleteSummary": "Hiermee verwijder je je account samen met {people, plural, one {# persoon} other {# personen}} en {groups, plural, one {# groep} other {# groepen}}.",
+      "importSuccessToast": "Import voltooid"
     },
     "trash": {
       "title": "Prullenbak",

@@ -767,7 +767,7 @@
       "deleteAccount": "Supprimer le compte",
       "deleteAccountDescription": "Supprimez définitivement votre compte et toutes les données associées. Cette action est irréversible.",
       "deleteAccountButton": "Supprimer le compte",
-      "warningPermanent": "Attention : cette action est définitive.",
+      "warningPermanent": "Lisez ceci avant de continuer",
       "deleteWarningMessage": "Toutes vos données, y compris les personnes, les groupes, les relations et les types de relation personnalisés, seront définitivement supprimées. Nous vous recommandons d'exporter vos données au préalable.",
       "confirmPassword": "Confirmez votre mot de passe",
       "typeToConfirm": "Saisissez DELETE pour confirmer",
@@ -777,7 +777,10 @@
       "deleteError": "Saisissez DELETE pour confirmer",
       "passwordRequired": "Le mot de passe est obligatoire",
       "deleteFailed": "Échec de la suppression du compte",
-      "importDataFailed": "Échec de l'import des données"
+      "importDataFailed": "Échec de l'import des données",
+      "deleteExportFirst": "Si vous pourriez avoir besoin de vos données plus tard, téléchargez d'abord une copie sous Exporter les données.",
+      "deleteSummary": "Cela supprime votre compte ainsi que {people, plural, one {# personne} other {# personnes}} et {groups, plural, one {# groupe} other {# groupes}}.",
+      "importSuccessToast": "Import terminé"
     },
     "trash": {
       "title": "Corbeille",

@@ -767,7 +767,7 @@
       "deleteAccount": "Konto löschen",
       "deleteAccountDescription": "Lösche dein Konto und alle zugehörigen Daten dauerhaft. Diese Aktion kann nicht rückgängig gemacht werden.",
       "deleteAccountButton": "Konto löschen",
-      "warningPermanent": "Warnung: Das ist dauerhaft!",
+      "warningPermanent": "Bitte lies das, bevor du weitermachst",
       "deleteWarningMessage": "Alle deine Daten (Personen, Gruppen, Beziehungen und benutzerdefinierte Beziehungsarten) werden dauerhaft gelöscht. Wir empfehlen, vorher deine Daten zu exportieren.",
       "confirmPassword": "Passwort bestätigen",
       "typeToConfirm": "Tippe DELETE zur Bestätigung",
@@ -777,7 +777,10 @@
       "deleteError": "Bitte tippe DELETE zur Bestätigung",
       "passwordRequired": "Passwort ist erforderlich",
       "deleteFailed": "Konto konnte nicht gelöscht werden",
-      "importDataFailed": "Daten konnten nicht importiert werden"
+      "importDataFailed": "Daten konnten nicht importiert werden",
+      "deleteExportFirst": "Falls du deine Daten später noch brauchen könntest, lade vorher unter Daten exportieren eine Kopie herunter.",
+      "deleteSummary": "Damit werden dein Konto sowie {people, plural, one {# Person} other {# Personen}} und {groups, plural, one {# Gruppe} other {# Gruppen}} gelöscht.",
+      "importSuccessToast": "Import abgeschlossen"
     },
     "trash": {
       "title": "Papierkorb",

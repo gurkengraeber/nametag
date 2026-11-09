@@ -767,7 +767,7 @@
       "deleteAccount": "Usuń konto",
       "deleteAccountDescription": "Trwale usuń swoje konto i wszystkie powiązane dane. Tej operacji nie można cofnąć.",
       "deleteAccountButton": "Usuń konto",
-      "warningPermanent": "Uwaga: to jest nieodwracalne!",
+      "warningPermanent": "Przeczytaj to, zanim przejdziesz dalej",
       "deleteWarningMessage": "Wszystkie Twoje dane, w tym osoby, grupy, relacje i własne typy relacji, zostaną trwale usunięte. Zalecamy najpierw wyeksportować dane.",
       "confirmPassword": "Potwierdź hasło",
       "typeToConfirm": "Wpisz DELETE, aby potwierdzić",
@@ -777,7 +777,10 @@
       "deleteError": "Wpisz DELETE, aby potwierdzić",
       "passwordRequired": "Hasło jest wymagane",
       "deleteFailed": "Nie udało się usunąć konta",
-      "importDataFailed": "Nie udało się zaimportować danych"
+      "importDataFailed": "Nie udało się zaimportować danych",
+      "deleteExportFirst": "Jeśli możesz potrzebować danych później, najpierw pobierz kopię w sekcji Eksportuj dane.",
+      "deleteSummary": "Zostanie usunięte Twoje konto razem z: {people, plural, one {# osoba} few {# osoby} many {# osób} other {# osoby}} i {groups, plural, one {# grupa} few {# grupy} many {# grup} other {# grupy}}.",
+      "importSuccessToast": "Import zakończony"
     },
     "trash": {
       "title": "Kosz",
