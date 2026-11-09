@@ -204,7 +204,7 @@ export function LocationCell({
           setCountryValue(event.target.value);
           void commit('country', event.target.value);
         }}
-        className={`${inputClass} w-36`}
+        className={`${inputClass} w-36${selectedCountry === '' ? ' text-muted' : ''}`}
       >
         <option value="">{t('countryPlaceholder')}</option>
         {countryIsUnknown && <option value={countryValue}>{countryValue}</option>}
