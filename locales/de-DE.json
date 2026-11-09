@@ -2826,7 +2826,8 @@
     "summary": {
       "preview": "{from} ist {type} von {to}",
       "pair": "{from} ist {type} von {to}, {to} ist {inverse} von {from}",
-      "symmetric": "{from} und {to} sind jetzt verbunden: {type}"
+      "symmetric": "{from} und {to} sind jetzt verbunden: {type}",
+      "previewSymmetric": "{from} / {to}: {type}"
     },
     "toast": {
       "undo": "Rückgängig",

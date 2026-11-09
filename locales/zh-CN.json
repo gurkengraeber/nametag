@@ -2826,7 +2826,8 @@
     "summary": {
       "preview": "{from}是{to}的{type}",
       "pair": "{from}是{to}的{type}，{to}是{from}的{inverse}",
-      "symmetric": "已将{from}和{to}关联为「{type}」"
+      "symmetric": "已将{from}和{to}关联为「{type}」",
+      "previewSymmetric": "{from} / {to}: {type}"
     },
     "toast": {
       "undo": "撤销",

@@ -2826,7 +2826,8 @@
     "summary": {
       "preview": "{from} is {type} van {to}",
       "pair": "{from} is {type} van {to}, {to} is {inverse} van {from}",
-      "symmetric": "{from} en {to} zijn nu gekoppeld: {type}"
+      "symmetric": "{from} en {to} zijn nu gekoppeld: {type}",
+      "previewSymmetric": "{from} / {to}: {type}"
     },
     "toast": {
       "undo": "Ongedaan maken",

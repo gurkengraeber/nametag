@@ -2826,7 +2826,8 @@
     "summary": {
       "preview": "{from} в роли «{type}» для {to}",
       "pair": "{from} в роли «{type}» для {to}, {to} в роли «{inverse}» для {from}",
-      "symmetric": "{from} и {to} теперь связаны: {type}"
+      "symmetric": "{from} и {to} теперь связаны: {type}",
+      "previewSymmetric": "{from} / {to}: {type}"
     },
     "toast": {
       "undo": "Отменить",

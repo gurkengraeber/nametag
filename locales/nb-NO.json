@@ -2826,7 +2826,8 @@
     "summary": {
       "preview": "{from} er {type} til {to}",
       "pair": "{from} er {type} til {to}, {to} er {inverse} til {from}",
-      "symmetric": "{from} og {to} er nå knyttet sammen: {type}"
+      "symmetric": "{from} og {to} er nå knyttet sammen: {type}",
+      "previewSymmetric": "{from} / {to}: {type}"
     },
     "toast": {
       "undo": "Angre",

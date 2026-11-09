@@ -2826,7 +2826,8 @@
     "summary": {
       "preview": "{from} to {type} osoby {to}",
       "pair": "{from} to {type} osoby {to}, {to} to {inverse} osoby {from}",
-      "symmetric": "{from} i {to} są teraz połączone: {type}"
+      "symmetric": "{from} i {to} są teraz połączone: {type}",
+      "previewSymmetric": "{from} / {to}: {type}"
     },
     "toast": {
       "undo": "Cofnij",

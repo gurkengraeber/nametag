@@ -104,10 +104,10 @@ export default function RelationshipBuilder({
   );
 
   const summaryFor = useCallback(
-    (from: BuilderPerson, to: BuilderPerson, type: BuilderType): string => {
+    (from: BuilderPerson, to: BuilderPerson, type: BuilderType, preview = false): string => {
       const inverse = typesById.get(inverseTypeIdOf(type)) ?? type;
       if (inverse.id === type.id) {
-        return t('summary.symmetric', { from: from.displayName, to: to.displayName, type: type.label });
+        return t(preview ? 'summary.previewSymmetric' : 'summary.symmetric', { from: from.displayName, to: to.displayName, type: type.label });
       }
       return t('summary.pair', {
         from: from.displayName,
@@ -300,7 +300,7 @@ export default function RelationshipBuilder({
     (typeId: string): string => {
       const type = typesById.get(typeId);
       if (!type || !pendingFrom || !pendingTo) return '';
-      return summaryFor(pendingFrom, pendingTo, type);
+      return summaryFor(pendingFrom, pendingTo, type, true);
     },
     [typesById, pendingFrom, pendingTo, summaryFor]
   );

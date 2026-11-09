@@ -2826,7 +2826,8 @@
     "summary": {
       "preview": "{from}は{to}の{type}",
       "pair": "{from}は{to}の{type}、{to}は{from}の{inverse}",
-      "symmetric": "{from}と{to}を「{type}」でつなぎました"
+      "symmetric": "{from}と{to}を「{type}」でつなぎました",
+      "previewSymmetric": "{from} / {to}: {type}"
     },
     "toast": {
       "undo": "元に戻す",
