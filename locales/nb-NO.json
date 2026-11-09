@@ -879,7 +879,26 @@
       "errorNameRequired": "Skriv inn et navn for tokenen.",
       "errorCreate": "Kunne ikke opprette token.",
       "errorRevoke": "Kunne ikke tilbakekalle token.",
-      "errorConnection": "Tilkoblingsfeil. Prøv igjen."
+      "errorConnection": "Tilkoblingsfeil. Prøv igjen.",
+      "expiry": {
+        "never": "Aldri",
+        "days30": "Om 30 dager",
+        "days90": "Om 90 dager",
+        "year1": "Om 1 år",
+        "custom": "Velg dato"
+      },
+      "nameHint": "Skriv hvor den skal brukes, så du kjenner den igjen senere.",
+      "scopeReadHint": "Kan se personene og dataene dine, men ikke endre noe.",
+      "scopeReadWriteHint": "Kan se og endre personene og dataene dine. Velg dette bare hvis verktøyet må skrive.",
+      "errorExpiryRequired": "Velg en utløpsdato.",
+      "createdToast": "Token opprettet",
+      "revokedToast": "Token trukket tilbake",
+      "copyFailed": "Kunne ikke kopiere automatisk. Marker tokenet og kopier det for hånd.",
+      "usageHint": "Send det med hver forespørsel som",
+      "neverUsed": "Aldri brukt",
+      "revokeTitle": "Trekke tilbake \"{name}\"?",
+      "revoking": "Trekker tilbake...",
+      "cancel": "Avbryt"
     },
     "map": {
       "title": "Kart",

@@ -879,7 +879,26 @@
       "errorNameRequired": "Saisissez un nom pour le jeton.",
       "errorCreate": "Échec de la création du jeton.",
       "errorRevoke": "Échec de la révocation du jeton.",
-      "errorConnection": "Erreur de connexion. Veuillez réessayer."
+      "errorConnection": "Erreur de connexion. Veuillez réessayer.",
+      "expiry": {
+        "never": "Jamais",
+        "days30": "Dans 30 jours",
+        "days90": "Dans 90 jours",
+        "year1": "Dans 1 an",
+        "custom": "Choisir une date"
+      },
+      "nameHint": "Indiquez où il sera utilisé pour le reconnaître plus tard.",
+      "scopeReadHint": "Peut consulter vos personnes et données, sans rien modifier.",
+      "scopeReadWriteHint": "Peut consulter et modifier vos personnes et données. À choisir seulement si l'outil doit écrire.",
+      "errorExpiryRequired": "Veuillez choisir une date d'expiration.",
+      "createdToast": "Jeton créé",
+      "revokedToast": "Jeton révoqué",
+      "copyFailed": "Copie automatique impossible. Sélectionnez le jeton et copiez-le à la main.",
+      "usageHint": "Envoyez-le avec chaque requête sous la forme",
+      "neverUsed": "Jamais utilisé",
+      "revokeTitle": "Révoquer \"{name}\" ?",
+      "revoking": "Révocation...",
+      "cancel": "Annuler"
     },
     "map": {
       "title": "Carte",

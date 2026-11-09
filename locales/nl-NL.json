@@ -879,7 +879,26 @@
       "errorNameRequired": "Voer een naam in voor het token.",
       "errorCreate": "Token aanmaken mislukt.",
       "errorRevoke": "Token intrekken mislukt.",
-      "errorConnection": "Verbindingsfout. Probeer het opnieuw."
+      "errorConnection": "Verbindingsfout. Probeer het opnieuw.",
+      "expiry": {
+        "never": "Nooit",
+        "days30": "Over 30 dagen",
+        "days90": "Over 90 dagen",
+        "year1": "Over 1 jaar",
+        "custom": "Kies een datum"
+      },
+      "nameHint": "Noteer waar hij gebruikt wordt, zodat je hem later herkent.",
+      "scopeReadHint": "Kan je personen en gegevens bekijken, maar niets wijzigen.",
+      "scopeReadWriteHint": "Kan je personen en gegevens bekijken en wijzigen. Kies dit alleen als de tool moet kunnen schrijven.",
+      "errorExpiryRequired": "Kies een vervaldatum.",
+      "createdToast": "Token aangemaakt",
+      "revokedToast": "Token ingetrokken",
+      "copyFailed": "Automatisch kopiëren lukte niet. Selecteer de token en kopieer hem met de hand.",
+      "usageHint": "Stuur hem mee met elk verzoek als",
+      "neverUsed": "Nooit gebruikt",
+      "revokeTitle": "\"{name}\" intrekken?",
+      "revoking": "Intrekken...",
+      "cancel": "Annuleren"
     },
     "map": {
       "title": "Kaart",

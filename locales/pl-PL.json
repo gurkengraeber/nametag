@@ -879,7 +879,26 @@
       "errorNameRequired": "Podaj nazwę tokenu.",
       "errorCreate": "Nie udało się utworzyć tokenu.",
       "errorRevoke": "Nie udało się unieważnić tokenu.",
-      "errorConnection": "Błąd połączenia. Spróbuj ponownie."
+      "errorConnection": "Błąd połączenia. Spróbuj ponownie.",
+      "expiry": {
+        "never": "Nigdy",
+        "days30": "Za 30 dni",
+        "days90": "Za 90 dni",
+        "year1": "Za 1 rok",
+        "custom": "Wybierz datę"
+      },
+      "nameHint": "Zapisz, gdzie będzie używany, żeby rozpoznać go później.",
+      "scopeReadHint": "Może przeglądać Twoje osoby i dane, ale niczego nie zmienia.",
+      "scopeReadWriteHint": "Może przeglądać i zmieniać Twoje osoby i dane. Wybierz tylko wtedy, gdy narzędzie musi zapisywać.",
+      "errorExpiryRequired": "Wybierz datę wygaśnięcia.",
+      "createdToast": "Token utworzony",
+      "revokedToast": "Token unieważniony",
+      "copyFailed": "Nie udało się skopiować automatycznie. Zaznacz token i skopiuj go ręcznie.",
+      "usageHint": "Wysyłaj go z każdym żądaniem jako",
+      "neverUsed": "Nigdy nie użyty",
+      "revokeTitle": "Unieważnić \"{name}\"?",
+      "revoking": "Unieważnianie...",
+      "cancel": "Anuluj"
     },
     "map": {
       "title": "Mapa",

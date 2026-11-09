@@ -879,7 +879,26 @@
       "errorNameRequired": "Bitte gib einen Namen für das Token ein.",
       "errorCreate": "Token konnte nicht erstellt werden.",
       "errorRevoke": "Token konnte nicht widerrufen werden.",
-      "errorConnection": "Verbindungsfehler. Bitte versuche es erneut."
+      "errorConnection": "Verbindungsfehler. Bitte versuche es erneut.",
+      "expiry": {
+        "never": "Nie",
+        "days30": "In 30 Tagen",
+        "days90": "In 90 Tagen",
+        "year1": "In 1 Jahr",
+        "custom": "Datum wählen"
+      },
+      "nameHint": "Schreib auf, wo er verwendet wird, damit du ihn später erkennst.",
+      "scopeReadHint": "Kann deine Personen und Daten ansehen, aber nichts ändern.",
+      "scopeReadWriteHint": "Kann deine Personen und Daten ansehen und ändern. Wähle das nur, wenn das Werkzeug schreiben muss.",
+      "errorExpiryRequired": "Bitte wähle ein Ablaufdatum.",
+      "createdToast": "Token erstellt",
+      "revokedToast": "Token widerrufen",
+      "copyFailed": "Automatisches Kopieren hat nicht geklappt. Markiere den Token und kopiere ihn von Hand.",
+      "usageHint": "Sende ihn mit jeder Anfrage als",
+      "neverUsed": "Nie benutzt",
+      "revokeTitle": "\"{name}\" widerrufen?",
+      "revoking": "Wird widerrufen...",
+      "cancel": "Abbrechen"
     },
     "map": {
       "title": "Karte",

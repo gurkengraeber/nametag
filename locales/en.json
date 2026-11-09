@@ -879,7 +879,26 @@
       "errorNameRequired": "Please enter a name for the token.",
       "errorCreate": "Failed to create token.",
       "errorRevoke": "Failed to revoke token.",
-      "errorConnection": "Connection error. Please try again."
+      "errorConnection": "Connection error. Please try again.",
+      "expiry": {
+        "never": "Never",
+        "days30": "In 30 days",
+        "days90": "In 90 days",
+        "year1": "In 1 year",
+        "custom": "Pick a date"
+      },
+      "nameHint": "Say where it will be used, so you can recognise it later.",
+      "scopeReadHint": "Can look at your people and data, but not change anything.",
+      "scopeReadWriteHint": "Can look at and change your people and data. Only choose this if the tool needs to write.",
+      "errorExpiryRequired": "Please pick an expiry date.",
+      "createdToast": "Token created",
+      "revokedToast": "Token revoked",
+      "copyFailed": "Could not copy automatically. Select the token and copy it by hand.",
+      "usageHint": "Send it with each request as",
+      "neverUsed": "Never used",
+      "revokeTitle": "Revoke \"{name}\"?",
+      "revoking": "Revoking...",
+      "cancel": "Cancel"
     },
     "map": {
       "title": "Map",

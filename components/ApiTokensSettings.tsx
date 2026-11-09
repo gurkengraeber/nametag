@@ -2,6 +2,15 @@
 
 import { useCallback, useEffect, useState, FormEvent } from 'react';
 import { useTranslations } from 'next-intl';
+import { toast } from 'sonner';
+import { Button } from '@/components/ui/Button';
+import ConfirmationModal from '@/components/ui/ConfirmationModal';
+import {
+  TOKEN_EXPIRY_PRESETS,
+  expiryForPreset,
+  isCustomDateMissing,
+  type TokenExpiryPreset,
+} from '@/components/settings/apiTokenExpiry';
 
 type ApiTokenScope = 'READ' | 'READ_WRITE';
 
@@ -28,7 +37,11 @@ export default function ApiTokensSettings() {
 
   const [name, setName] = useState('');
   const [scope, setScope] = useState<ApiTokenScope>('READ_WRITE');
+  const [expiryPreset, setExpiryPreset] = useState<TokenExpiryPreset>('never');
   const [expiresAt, setExpiresAt] = useState('');
+  const [nameError, setNameError] = useState('');
+  const [tokenToRevoke, setTokenToRevoke] = useState<ApiToken | null>(null);
+  const [revoking, setRevoking] = useState(false);
   const [creating, setCreating] = useState(false);
 
   // Plaintext of a just-created token, shown once.
@@ -58,9 +71,14 @@ export default function ApiTokensSettings() {
     setError('');
     setNewToken(null);
     setCopied(false);
+    setNameError('');
 
     if (!name.trim()) {
-      setError(t('errorNameRequired'));
+      setNameError(t('errorNameRequired'));
+      return;
+    }
+    if (isCustomDateMissing(expiryPreset, expiresAt)) {
+      setError(t('errorExpiryRequired'));
       return;
     }
 
@@ -72,9 +90,7 @@ export default function ApiTokensSettings() {
         body: JSON.stringify({
           name: name.trim(),
           scope,
-          expiresAt: expiresAt
-            ? new Date(expiresAt).toISOString()
-            : null,
+          expiresAt: expiryForPreset(expiryPreset, expiresAt),
         }),
       });
       const data = await res.json();
@@ -85,7 +101,9 @@ export default function ApiTokensSettings() {
       setNewToken(data.apiToken as CreatedApiToken);
       setName('');
       setScope('READ_WRITE');
+      setExpiryPreset('never');
       setExpiresAt('');
+      toast.success(t('createdToast'));
       await loadTokens();
     } catch {
       setError(t('errorConnection'));
@@ -94,23 +112,25 @@ export default function ApiTokensSettings() {
     }
   };
 
-  const handleRevoke = async (id: string) => {
-    if (!confirm(t('confirmRevoke'))) return;
+  const handleRevoke = async () => {
+    if (!tokenToRevoke) return;
+    setRevoking(true);
     setError('');
     try {
-      const res = await fetch(`/api/user/api-tokens/${id}`, {
+      const res = await fetch(`/api/user/api-tokens/${tokenToRevoke.id}`, {
         method: 'DELETE',
       });
       if (!res.ok) {
-        setError(t('errorRevoke'));
+        toast.error(t('errorRevoke'));
         return;
       }
-      if (newToken && tokens.find((tok) => tok.id === id)) {
-        // no-op; keep the one-time banner until dismissed
-      }
+      toast.success(t('revokedToast'));
+      setTokenToRevoke(null);
       await loadTokens();
     } catch {
-      setError(t('errorConnection'));
+      toast.error(t('errorConnection'));
+    } finally {
+      setRevoking(false);
     }
   };
 
@@ -119,9 +139,12 @@ export default function ApiTokensSettings() {
     try {
       await navigator.clipboard.writeText(newToken.token);
       setCopied(true);
+      toast.success(t('copied'));
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      // Clipboard may be unavailable (non-secure context); user can select manually.
+      // Clipboard may be unavailable (non-secure context); the token is
+      // selectable, so tell the person to copy it by hand.
+      toast.error(t('copyFailed'));
     }
   };
 
@@ -151,21 +174,23 @@ export default function ApiTokensSettings() {
             {t('copyOnce')}
           </p>
           <div className="flex flex-col sm:flex-row gap-2">
-            <code className="flex-1 px-3 py-2 rounded bg-surface border border-border text-foreground text-sm break-all">
+            <code
+              className="flex-1 px-3 py-2 rounded bg-surface border border-border text-foreground text-sm break-all select-all"
+              data-testid="new-token"
+            >
               {newToken.token}
             </code>
-            <button
-              type="button"
-              onClick={handleCopy}
-              className="px-4 py-2 bg-primary text-on-primary rounded-lg font-medium hover:bg-primary-dark transition-colors"
-            >
+            <Button type="button" onClick={handleCopy}>
               {copied ? t('copied') : t('copy')}
-            </button>
+            </Button>
           </div>
+          <p className="text-sm text-green-700 dark:text-green-400">
+            {t('usageHint')} <code className="break-all">Authorization: Bearer &lt;token&gt;</code>
+          </p>
           <button
             type="button"
             onClick={() => setNewToken(null)}
-            className="text-sm text-muted hover:text-foreground underline"
+            className="min-h-11 sm:min-h-0 text-sm text-muted hover:text-foreground underline"
           >
             {t('dismiss')}
           </button>
@@ -173,7 +198,7 @@ export default function ApiTokensSettings() {
       )}
 
       {/* Create form */}
-      <form onSubmit={handleCreate} className="space-y-4">
+      <form onSubmit={handleCreate} className="space-y-4" noValidate>
         <h3 className="text-lg font-semibold text-foreground">{t('createTitle')}</h3>
 
         <div>
@@ -184,11 +209,21 @@ export default function ApiTokensSettings() {
             id="token-name"
             type="text"
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={(e) => {
+              setName(e.target.value);
+              if (nameError) setNameError('');
+            }}
             placeholder={t('namePlaceholder')}
             maxLength={100}
-            className="w-full px-3 py-2 border border-border rounded-lg bg-surface text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+            aria-invalid={nameError ? true : undefined}
+            aria-describedby={nameError ? 'token-name-error' : 'token-name-hint'}
+            className="w-full min-h-11 px-3 py-2 border border-border rounded-lg bg-surface text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
           />
+          {nameError ? (
+            <p id="token-name-error" className="mt-1 text-sm text-warning">{nameError}</p>
+          ) : (
+            <p id="token-name-hint" className="mt-1 text-sm text-muted">{t('nameHint')}</p>
+          )}
         </div>
 
         <div className="flex flex-col sm:flex-row gap-4">
@@ -200,35 +235,50 @@ export default function ApiTokensSettings() {
               id="token-scope"
               value={scope}
               onChange={(e) => setScope(e.target.value as ApiTokenScope)}
-              className="w-full px-3 py-2 border border-border rounded-lg bg-surface text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+              aria-describedby="token-scope-hint"
+              className="w-full min-h-11 px-3 py-2 border border-border rounded-lg bg-surface text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
             >
               <option value="READ_WRITE">{t('scopeReadWrite')}</option>
               <option value="READ">{t('scopeRead')}</option>
             </select>
+            <p id="token-scope-hint" className="mt-1 text-sm text-muted">
+              {scope === 'READ' ? t('scopeReadHint') : t('scopeReadWriteHint')}
+            </p>
           </div>
 
           <div className="flex-1">
-            <label htmlFor="token-expiry" className="block text-sm font-medium text-muted mb-1">
+            <label htmlFor="token-expiry-preset" className="block text-sm font-medium text-muted mb-1">
               {t('expiryLabel')}
             </label>
-            <input
-              id="token-expiry"
-              type="date"
-              value={expiresAt}
-              onChange={(e) => setExpiresAt(e.target.value)}
-              className="w-full px-3 py-2 border border-border rounded-lg bg-surface text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-            />
+            <select
+              id="token-expiry-preset"
+              value={expiryPreset}
+              onChange={(e) => setExpiryPreset(e.target.value as TokenExpiryPreset)}
+              className="w-full min-h-11 px-3 py-2 border border-border rounded-lg bg-surface text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+            >
+              {TOKEN_EXPIRY_PRESETS.map((preset) => (
+                <option key={preset} value={preset}>
+                  {t(`expiry.${preset}`)}
+                </option>
+              ))}
+            </select>
+            {expiryPreset === 'custom' && (
+              <input
+                id="token-expiry"
+                type="date"
+                aria-label={t('expiry.custom')}
+                value={expiresAt}
+                onChange={(e) => setExpiresAt(e.target.value)}
+                className="mt-2 w-full min-h-11 px-3 py-2 border border-border rounded-lg bg-surface text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+              />
+            )}
           </div>
         </div>
 
         <div className="flex justify-end">
-          <button
-            type="submit"
-            disabled={creating}
-            className="px-6 py-2 bg-primary text-on-primary rounded-lg font-semibold hover:bg-primary-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          >
+          <Button type="submit" disabled={creating}>
             {creating ? t('creating') : t('createButton')}
-          </button>
+          </Button>
         </div>
       </form>
 
@@ -245,33 +295,54 @@ export default function ApiTokensSettings() {
             {tokens.map((token) => (
               <li
                 key={token.id}
-                className="flex items-center justify-between gap-4 px-4 py-3 bg-surface"
+                className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 px-4 py-3 bg-surface"
               >
                 <div className="min-w-0">
-                  <p className="font-medium text-foreground truncate">
+                  <p className="font-medium text-foreground break-words">
                     {token.name}
                     <span className="ml-2 inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-primary/10 text-primary">
                       {token.scope === 'READ' ? t('scopeRead') : t('scopeReadWrite')}
                     </span>
                   </p>
-                  <p className="text-sm text-muted truncate">
-                    <code>{token.prefix}…</code> · {t('createdAt')}: {formatDate(token.createdAt)} ·{' '}
-                    {t('lastUsed')}: {formatDate(token.lastUsedAt)} ·{' '}
+                  <p className="text-sm text-muted">
+                    <code>{token.prefix}…</code>
+                  </p>
+                  <p className="text-sm text-muted">
+                    {t('createdAt')}: {formatDate(token.createdAt)} · {t('lastUsed')}:{' '}
+                    {token.lastUsedAt ? formatDate(token.lastUsedAt) : t('neverUsed')}
+                  </p>
+                  <p className="text-sm text-muted">
                     {t('expires')}: {token.expiresAt ? formatDate(token.expiresAt) : t('never')}
                   </p>
                 </div>
-                <button
+                <Button
                   type="button"
-                  onClick={() => handleRevoke(token.id)}
-                  className="flex-shrink-0 px-3 py-1.5 text-sm border border-warning/40 text-warning rounded-lg hover:bg-warning/10 transition-colors"
+                  variant="custom"
+                  className="flex-shrink-0 border border-warning/40 text-warning hover:bg-warning/10"
+                  onClick={() => setTokenToRevoke(token)}
+                  aria-label={`${t('revoke')}: ${token.name}`}
                 >
                   {t('revoke')}
-                </button>
+                </Button>
               </li>
             ))}
           </ul>
         )}
       </div>
+
+      <ConfirmationModal
+        isOpen={tokenToRevoke !== null}
+        onClose={() => setTokenToRevoke(null)}
+        onConfirm={handleRevoke}
+        title={t('revokeTitle', { name: tokenToRevoke?.name ?? '' })}
+        confirmText={t('revoke')}
+        cancelText={t('cancel')}
+        isLoading={revoking}
+        loadingText={t('revoking')}
+        variant="danger"
+      >
+        <p>{t('confirmRevoke')}</p>
+      </ConfirmationModal>
     </div>
   );
 }

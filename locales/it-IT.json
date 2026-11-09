@@ -879,7 +879,26 @@
       "errorNameRequired": "Inserisci un nome per il token.",
       "errorCreate": "Impossibile creare il token.",
       "errorRevoke": "Impossibile revocare il token.",
-      "errorConnection": "Errore di connessione. Riprova."
+      "errorConnection": "Errore di connessione. Riprova.",
+      "expiry": {
+        "never": "Mai",
+        "days30": "Tra 30 giorni",
+        "days90": "Tra 90 giorni",
+        "year1": "Tra 1 anno",
+        "custom": "Scegli una data"
+      },
+      "nameHint": "Indica dove verrà usato, così lo riconoscerai in seguito.",
+      "scopeReadHint": "Può vedere le tue persone e i tuoi dati, ma non modificare nulla.",
+      "scopeReadWriteHint": "Può vedere e modificare le tue persone e i tuoi dati. Sceglilo solo se lo strumento deve scrivere.",
+      "errorExpiryRequired": "Scegli una data di scadenza.",
+      "createdToast": "Token creato",
+      "revokedToast": "Token revocato",
+      "copyFailed": "Copia automatica non riuscita. Seleziona il token e copialo a mano.",
+      "usageHint": "Invialo a ogni richiesta come",
+      "neverUsed": "Mai usato",
+      "revokeTitle": "Revocare \"{name}\"?",
+      "revoking": "Revoca in corso...",
+      "cancel": "Annulla"
     },
     "map": {
       "title": "Mappa",

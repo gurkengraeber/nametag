@@ -879,7 +879,26 @@
       "errorNameRequired": "トークンの名前を入力してください。",
       "errorCreate": "トークンの作成に失敗しました。",
       "errorRevoke": "トークンの無効化に失敗しました。",
-      "errorConnection": "接続エラーです。もう一度お試しください。"
+      "errorConnection": "接続エラーです。もう一度お試しください。",
+      "expiry": {
+        "never": "なし",
+        "days30": "30日後",
+        "days90": "90日後",
+        "year1": "1年後",
+        "custom": "日付を選ぶ"
+      },
+      "nameHint": "後で見分けられるよう、使う場所を書いておきましょう。",
+      "scopeReadHint": "人物やデータを見ることはできますが、変更はできません。",
+      "scopeReadWriteHint": "人物やデータを見ることも変更することもできます。ツールが書き込みを必要とする場合だけ選んでください。",
+      "errorExpiryRequired": "有効期限の日付を選んでください。",
+      "createdToast": "トークンを作成しました",
+      "revokedToast": "トークンを取り消しました",
+      "copyFailed": "自動でコピーできませんでした。トークンを選択して手動でコピーしてください。",
+      "usageHint": "各リクエストに次の形で付けて送信します:",
+      "neverUsed": "未使用",
+      "revokeTitle": "\"{name}\" を取り消しますか?",
+      "revoking": "取り消し中...",
+      "cancel": "キャンセル"
     },
     "map": {
       "title": "マップ",

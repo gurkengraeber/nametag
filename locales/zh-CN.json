@@ -879,7 +879,26 @@
       "errorNameRequired": "请输入令牌名称。",
       "errorCreate": "创建令牌失败。",
       "errorRevoke": "撤销令牌失败。",
-      "errorConnection": "连接错误，请重试。"
+      "errorConnection": "连接错误，请重试。",
+      "expiry": {
+        "never": "永不",
+        "days30": "30 天后",
+        "days90": "90 天后",
+        "year1": "1 年后",
+        "custom": "选择日期"
+      },
+      "nameHint": "写下它的用途,以便以后辨认。",
+      "scopeReadHint": "可以查看你的人员和数据,但不能更改。",
+      "scopeReadWriteHint": "可以查看并更改你的人员和数据。仅在工具需要写入时选择。",
+      "errorExpiryRequired": "请选择到期日期。",
+      "createdToast": "令牌已创建",
+      "revokedToast": "令牌已撤销",
+      "copyFailed": "无法自动复制。请选中令牌后手动复制。",
+      "usageHint": "每次请求时以如下形式发送:",
+      "neverUsed": "从未使用",
+      "revokeTitle": "撤销\"{name}\"?",
+      "revoking": "正在撤销...",
+      "cancel": "取消"
     },
     "map": {
       "title": "地图",
