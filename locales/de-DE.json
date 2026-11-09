@@ -133,7 +133,7 @@
       "nameDisplayFormatSuccess": "Namensanzeigeformat erfolgreich aktualisiert",
       "nameDisplayFormatError": "Fehler beim Aktualisieren des Namensanzeigeformats",
       "graphModeTitle": "Netzwerk-Grafikanzeige",
-      "graphModeDescription": "Wie dein Netzwerk-Graph auf dem Dashboard angezeigt wird.",
+      "graphModeDescription": "Wie dein Netzwerk-Graph auf dem Dashboard angezeigt wird. Ohne Auswahl öffnen große Netzwerke (mehr als 80 Personen) als Gruppen.",
       "graphModeIndividuals": "Immer einzeln anzeigen",
       "graphModeBubbles": "Immer als Gruppen anzeigen",
       "graphDisplaySuccess": "Anzeige aktualisiert",
@@ -1010,8 +1010,51 @@
       "showAsGroups": "Als Gruppen anzeigen",
       "showIndividuals": "Einzeln anzeigen",
       "collapseAllGroups": "Alle Gruppen einklappen",
-      "unsortedBubbleLabel": "Ohne Gruppe"
-    }
+      "unsortedBubbleLabel": "Ohne Gruppe",
+      "fullscreen": {
+        "enter": "Vollbild",
+        "exit": "Vollbild beenden",
+        "dialogLabel": "Dein Netzwerk im Vollbild"
+      },
+      "search": {
+        "ariaLabel": "Person im Netzwerk suchen",
+        "placeholder": "Person suchen...",
+        "noResults": "Niemand gefunden",
+        "clear": "Suche leeren"
+      },
+      "legend": {
+        "toggle": "Legende",
+        "groups": "Gruppen",
+        "relationships": "Beziehungen",
+        "noGroup": "Keine Gruppe",
+        "empty": "Noch nichts zu erklären. Farben erscheinen, sobald es Gruppen oder Beziehungen gibt."
+      },
+      "loose": {
+        "title": "Ohne Verbindung",
+        "description": "Diese Personen haben noch keine Beziehung und werden deshalb nicht im Netzwerk gezeichnet. Wähle, wie jemand zu dir steht, um die Person einzubinden.",
+        "filterNote": "Ein Gruppenfilter ist aktiv. Manche dieser Personen sind vielleicht mit Personen außerhalb des Filters verbunden.",
+        "typesFailed": "Die Beziehungsarten konnten nicht geladen werden.",
+        "noTypes": "Du hast noch keine Beziehungsarten.",
+        "createType": "Eine anlegen",
+        "assignPlaceholder": "Beziehung zu dir...",
+        "assignAriaLabel": "Wie steht {name} zu dir?",
+        "assigned": "{name} ist jetzt mit dir verbunden",
+        "assignFailed": "Die Beziehung konnte nicht gespeichert werden. Bitte versuche es noch einmal.",
+        "showList": "Ohne Verbindung: {count}. Liste anzeigen"
+      },
+      "emptyFiltered": "Zu diesen Filtern passt niemand.",
+      "clearFilters": "Filter zurücksetzen",
+      "noConnections": "Noch niemand ist verbunden. Öffne unten die Liste, um Personen mit dir zu verknüpfen.",
+      "emptyNetwork": "Noch niemand zum Anzeigen."
+    },
+    "stats": {
+      "ariaLabel": "Überblick",
+      "people": "{count, plural, =1 {1 Person} other {# Personen}}",
+      "groups": "{count, plural, =1 {1 Gruppe} other {# Gruppen}}",
+      "thisWeek": "{count} diese Woche"
+    },
+    "markContacted": "Heute gesprochen",
+    "markContactedAria": "{name} als heute kontaktiert markieren"
   },
   "people": {
     "title": "Personen",

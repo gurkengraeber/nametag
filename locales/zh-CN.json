@@ -133,7 +133,7 @@
       "nameDisplayFormatSuccess": "姓名显示格式已更新",
       "nameDisplayFormatError": "更新姓名显示格式失败",
       "graphModeTitle": "网络图显示",
-      "graphModeDescription": "如何在仪表盘中显示你的人脉网络图。",
+      "graphModeDescription": "如何在仪表盘中显示你的人脉网络图。未选择时，较大的网络(超过 80 人)会以群组方式打开。",
       "graphModeIndividuals": "始终单独显示",
       "graphModeBubbles": "始终按组显示",
       "graphDisplaySuccess": "显示已更新",
@@ -1010,8 +1010,51 @@
       "showAsGroups": "按组显示",
       "showIndividuals": "单独显示",
       "collapseAllGroups": "收起所有组",
-      "unsortedBubbleLabel": "未分组"
-    }
+      "unsortedBubbleLabel": "未分组",
+      "fullscreen": {
+        "enter": "全屏",
+        "exit": "退出全屏",
+        "dialogLabel": "全屏显示的人脉网络"
+      },
+      "search": {
+        "ariaLabel": "在网络中查找联系人",
+        "placeholder": "查找联系人...",
+        "noResults": "没有找到",
+        "clear": "清除搜索"
+      },
+      "legend": {
+        "toggle": "图例",
+        "groups": "群组",
+        "relationships": "关系",
+        "noGroup": "无群组",
+        "empty": "暂时没有可说明的内容。添加群组或关系后会显示颜色。"
+      },
+      "loose": {
+        "title": "未建立关系",
+        "description": "这些联系人还没有任何关系，因此没有绘制在网络中。选择对方与你的关系即可加入网络。",
+        "filterNote": "群组筛选已启用。其中一些人可能与筛选范围之外的人有联系。",
+        "typesFailed": "无法加载关系类型。",
+        "noTypes": "你还没有关系类型。",
+        "createType": "创建一个",
+        "assignPlaceholder": "与你的关系...",
+        "assignAriaLabel": "{name} 与你是什么关系?",
+        "assigned": "{name} 已与你建立关系",
+        "assignFailed": "无法保存关系，请重试。",
+        "showList": "未建立关系:{count}。显示列表"
+      },
+      "emptyFiltered": "没有符合这些筛选条件的人。",
+      "clearFilters": "清除筛选",
+      "noConnections": "还没有人与你建立关系。打开下方列表，把联系人与你关联起来。",
+      "emptyNetwork": "暂时没有可显示的人。"
+    },
+    "stats": {
+      "ariaLabel": "概览",
+      "people": "{count} 人",
+      "groups": "{count} 个群组",
+      "thisWeek": "本周 {count} 项"
+    },
+    "markContacted": "今天聊过",
+    "markContactedAria": "将 {name} 标记为今天已联系"
   },
   "people": {
     "title": "联系人",

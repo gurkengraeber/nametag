@@ -11,6 +11,8 @@ export interface RenderContext {
   isDark: boolean;
   isMobile: boolean;
   hoveredNodeId: string | null;
+  /** Node picked through the search: gets a ring and its name at any zoom level. */
+  focusedNodeId?: string | null;
   getPhoto: (id: string) => PhotoCacheEntry | undefined;
   formatEdgeLabel?: (edge: SimulationEdge) => EdgeLabelParts;
 }
@@ -206,6 +208,31 @@ function drawBubble(rc: RenderContext, node: SimulationNode): void {
   }
 }
 
+function drawFocus(rc: RenderContext, node: SimulationNode): void {
+  if (node.kind !== 'person') return;
+  if (node.x === undefined || node.y === undefined) return;
+  const r = nodeRadius(node, rc.isMobile);
+  const accent = rc.isDark ? '#f3f4f6' : '#111827';
+
+  // Ring around the node, kept the same size on screen at every zoom level
+  const ringWidth = 3 / rc.transform.k;
+  rc.ctx.beginPath();
+  rc.ctx.arc(node.x, node.y, r + 6 / rc.transform.k + ringWidth, 0, Math.PI * 2);
+  rc.ctx.lineWidth = ringWidth;
+  rc.ctx.strokeStyle = accent;
+  rc.ctx.stroke();
+
+  // The name is always readable, even when zoomed out to plain dots
+  if (rc.lod === 'dots') {
+    const fontSize = nodeFontSize(node, rc.isMobile) / rc.transform.k;
+    rc.ctx.font = `600 ${fontSize}px system-ui, -apple-system, sans-serif`;
+    rc.ctx.fillStyle = accent;
+    rc.ctx.textAlign = 'center';
+    rc.ctx.textBaseline = 'top';
+    rc.ctx.fillText(node.label, node.x, node.y + r + 10 / rc.transform.k);
+  }
+}
+
 export function paintFrame(
   rc: RenderContext,
   nodes: SimulationNode[],
@@ -295,6 +322,11 @@ export function paintFrame(
     for (const node of nodes) {
       if (node.kind === 'person') drawLabel(rc, node, labelColor);
     }
+  }
+
+  if (rc.focusedNodeId) {
+    const focused = nodes.find((n) => n.id === rc.focusedNodeId);
+    if (focused) drawFocus(rc, focused);
   }
 
   rc.ctx.restore();

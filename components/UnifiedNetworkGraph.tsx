@@ -14,7 +14,13 @@ import PillSelector from './PillSelector';
 import { GraphFilterGroupPill } from './GraphFilterPills';
 import { paintFrame } from './graph/canvas-renderer';
 import { getLODTier } from './graph/lod';
-import { computeFitTransform } from './graph/fit-view';
+import { computeFitTransform, computeFocusTransform } from './graph/fit-view';
+import { computeCanvasHeight } from './graph/canvas-height';
+import { splitLoosePeople } from './graph/loose-people';
+import { buildGraphLegend } from './graph/legend';
+import GraphSearch from './GraphSearch';
+import GraphLegend from './GraphLegend';
+import GraphLoosePeople from './GraphLoosePeople';
 import { getCachedPhoto, loadPhoto } from './graph/photo-cache';
 import { buildQuadtree, findNodeAtPoint, type NodeQuadtree } from './graph/hit-test';
 import { diffSimulationData } from './graph/diff-simulation';
@@ -57,6 +63,8 @@ export default function UnifiedNetworkGraph({
   const t = useTranslations('dashboard.graph');
   const tPeople = useTranslations('people');
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const canvasWrapRef = useRef<HTMLDivElement>(null);
+  const looseSectionRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
   // Simulation state
@@ -76,6 +84,12 @@ export default function UnifiedNetworkGraph({
   // the network never takes their view away from them. A fresh data load
   // clears it again.
   const userMovedViewRef = useRef<boolean>(false);
+  // Person picked through the search. Drawn with a ring and kept in the middle
+  // while the layout settles, until the user moves the view.
+  const focusedNodeIdRef = useRef<string | null>(null);
+  const focusMovedRef = useRef<boolean>(false);
+  // Person hidden inside a collapsed group bubble, focused once it is expanded
+  const pendingFocusRef = useRef<string | null>(null);
 
   // Filter state
   const [selectedGroupFilters, setSelectedGroupFilters] = useState<GroupFilterItem[]>([]);
@@ -87,6 +101,21 @@ export default function UnifiedNetworkGraph({
   const [expandedBubbles, setExpandedBubbles] = useState<Set<string>>(new Set());
   const [localGraphMode, setLocalGraphMode] = useState<'individuals' | 'bubbles' | null>(graphModeProp);
   const rawCacheRef = useRef<{ nodes: RawGraphPerson[]; edges: SimulationEdge[] } | null>(null);
+
+  // Dashboard tools (search, legend, list of unconnected people, full screen)
+  // exist only where the group list is passed in
+  const isDashboard = Boolean(groups);
+  const [graphPeople, setGraphPeople] = useState<RawGraphPerson[] | null>(null);
+  const [graphEdges, setGraphEdges] = useState<SimulationEdge[]>([]);
+  const [loosePeople, setLoosePeople] = useState<RawGraphPerson[]>([]);
+  const [looseOpen, setLooseOpen] = useState(false);
+  const [legendOpen, setLegendOpen] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [canvasHeight, setCanvasHeight] = useState<number | null>(null);
+  const [reloadKey, setReloadKey] = useState(0);
+  // People shown in the network (without you and without the unconnected ones)
+  const [networkSize, setNetworkSize] = useState<number | undefined>(undefined);
+  const prevFullscreenRef = useRef(false);
 
   // Ungrouped label for bubble composition
   const ungroupedLabel = t('unsortedBubbleLabel');
@@ -185,6 +214,52 @@ export default function UnifiedNetworkGraph({
     fitView(true);
   }, [fitView]);
 
+  // Put one person in the middle and zoom in on them
+  const applyFocus = useCallback((personId: string, animate: boolean) => {
+    const canvas = canvasRef.current;
+    const zoomBehavior = zoomBehaviorRef.current;
+    if (!canvas || !zoomBehavior) return;
+    const node = nodesRef.current.find((n) => n.kind === 'person' && n.id === personId);
+    if (!node || node.x === undefined || node.y === undefined) return;
+    focusedNodeIdRef.current = personId;
+    focusMovedRef.current = false;
+    // The automatic framing of the whole network must not take this view away
+    userMovedViewRef.current = true;
+    const rect = canvas.getBoundingClientRect();
+    const focus = computeFocusTransform(
+      { x: node.x, y: node.y },
+      { width: rect.width, height: rect.height, currentScale: transformRef.current.k },
+    );
+    const target = zoomIdentity.translate(focus.x, focus.y).scale(focus.k);
+    const selection = select(canvas);
+    if (animate) {
+      selection.transition().duration(500).call(zoomBehavior.transform, target);
+    } else {
+      selection.call(zoomBehavior.transform, target);
+    }
+    dirtyRef.current = true;
+  }, []);
+
+  const clearFocus = useCallback(() => {
+    focusedNodeIdRef.current = null;
+    pendingFocusRef.current = null;
+    dirtyRef.current = true;
+  }, []);
+
+  const focusPerson = useCallback((personId: string) => {
+    const visible = nodesRef.current.some((n) => n.kind === 'person' && n.id === personId);
+    if (visible) {
+      applyFocus(personId, true);
+      return;
+    }
+    // Hidden inside a collapsed group bubble: open that group first
+    const person = rawCacheRef.current?.nodes.find((n) => n.id === personId);
+    if (!person) return;
+    pendingFocusRef.current = personId;
+    const groupId = person.groups[0] ?? UNGROUPED_SYNTHETIC_ID;
+    setExpandedBubbles((prev) => new Set(prev).add(groupId));
+  }, [applyFocus]);
+
   const toggleFilterSign = (id: string) => {
     setSelectedGroupFilters((prev) =>
       prev.map((filter) =>
@@ -277,7 +352,8 @@ export default function UnifiedNetworkGraph({
         lod,
         isDark,
         isMobile,
-        hoveredNodeId: touchSelectedNodeIdRef.current ?? hoveredNodeIdRef.current,
+        hoveredNodeId: touchSelectedNodeIdRef.current ?? hoveredNodeIdRef.current ?? focusedNodeIdRef.current,
+        focusedNodeId: focusedNodeIdRef.current,
         getPhoto: getCachedPhoto,
         formatEdgeLabel,
       },
@@ -434,7 +510,8 @@ export default function UnifiedNetworkGraph({
     );
 
     // If no groups prop, we're not on the dashboard — skip bubble logic.
-    const resolvedMode = groups ? resolveGraphMode(localGraphMode) : 'individuals';
+    const peopleInView = raw.nodes.filter((n) => !n.isCenter).length;
+    const resolvedMode = groups ? resolveGraphMode(localGraphMode, peopleInView) : 'individuals';
 
     // Always expand any group that's currently in the include filter.
     const nextExpanded = new Set(expandedBubbles);
@@ -504,12 +581,23 @@ export default function UnifiedNetworkGraph({
       sim.on('end.fit', () => {
         if (!userMovedViewRef.current) fitView(true);
       });
+      // A person picked through the search stays in the middle while the
+      // layout settles, until the user moves the view
+      sim.on('end.focus', () => {
+        const focusedId = focusedNodeIdRef.current;
+        if (focusedId && !focusMovedRef.current) applyFocus(focusedId, true);
+      });
       sim.alpha(0.3).restart();
       simRef.current = sim;
+      const pendingId = pendingFocusRef.current;
+      if (pendingId) {
+        pendingFocusRef.current = null;
+        applyFocus(pendingId, false);
+      }
     }
   }, [
     groups, localGraphMode, expandedBubbles,
-    includeGroupIds, ungroupedLabel, buildSimulation, tPeople, fitView,
+    includeGroupIds, ungroupedLabel, buildSimulation, tPeople, fitView, applyFocus,
   ]);
 
   // Step 4: Data-fetch effect
@@ -525,13 +613,26 @@ export default function UnifiedNetworkGraph({
       if (excludeGroupIds.length > 0) url.searchParams.set('excludeGroupIds', excludeGroupIds.join(','));
 
       const response = await fetch(url.toString());
+      if (!response.ok) return;
       const data = await response.json() as { nodes: RawGraphPerson[]; edges: SimulationEdge[] };
 
       if (cancelled) return;
 
-      rawCacheRef.current = data;
+      // On the dashboard, people without any connection are listed below the
+      // network instead of drifting far away from it
+      let graph = data;
+      if (isDashboard) {
+        const { connected, loose } = splitLoosePeople(data.nodes, data.edges);
+        graph = { nodes: connected, edges: data.edges };
+        setLoosePeople(loose);
+      }
+      setGraphPeople(graph.nodes);
+      setGraphEdges(graph.edges);
+      setNetworkSize(graph.nodes.filter((n) => !n.isCenter).length);
+
+      rawCacheRef.current = graph;
       userMovedViewRef.current = false;
-      recomposeAndBuildSim(data);
+      recomposeAndBuildSim(graph);
     };
 
     fetchData();
@@ -540,7 +641,7 @@ export default function UnifiedNetworkGraph({
     // (expandedBubbles, localGraphMode) which are handled by the Step 5 effect
     // from the cached raw data — no need to re-fetch.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [apiEndpoint, refreshKey, includeMode, includeGroupIds, excludeGroupIds]);
+  }, [apiEndpoint, refreshKey, reloadKey, includeMode, includeGroupIds, excludeGroupIds]);
 
   // Step 5: Recompose when bubble state changes (mode toggle, expand/collapse)
   useEffect(() => {
@@ -595,7 +696,10 @@ export default function UnifiedNetworkGraph({
       })
       .on('zoom', (event) => {
         // Only gestures carry a source event, fitView's own transforms do not.
-        if (event.sourceEvent) userMovedViewRef.current = true;
+        if (event.sourceEvent) {
+          userMovedViewRef.current = true;
+          focusMovedRef.current = true;
+        }
         transformRef.current = event.transform;
         requestPaint();
       });
@@ -699,6 +803,7 @@ export default function UnifiedNetworkGraph({
         dragStartY = event.y;
         isDraggingRef.current = true;
         userMovedViewRef.current = true;
+        focusMovedRef.current = true;
         if (!event.active && simRef.current) simRef.current.alphaTarget(0.1).restart();
         d.fx = d.x;
         d.fy = d.y;
@@ -763,10 +868,97 @@ export default function UnifiedNetworkGraph({
     };
   }, [centerNodeNonClickable, isMobile, requestPaint, router]);
 
+  // On the dashboard the canvas ends at the bottom of the screen, so greeting,
+  // key figures and network fit on one screen without scrolling
+  useEffect(() => {
+    if (compact || isFullscreen) return;
+    const measure = () => {
+      const wrap = canvasWrapRef.current;
+      if (!wrap) return;
+      const top = wrap.getBoundingClientRect().top + window.scrollY;
+      setCanvasHeight(computeCanvasHeight({ viewportHeight: window.innerHeight, top }));
+    };
+    measure();
+    window.addEventListener('resize', measure);
+    // Anything above the canvas can change its height (filter pills wrapping,
+    // an install hint appearing), which moves the canvas without a resize
+    const observer = new ResizeObserver(measure);
+    observer.observe(document.body);
+    return () => {
+      window.removeEventListener('resize', measure);
+      observer.disconnect();
+    };
+  }, [compact, isFullscreen]);
+
+  // Full screen: no page scrolling behind it, Escape closes the legend first
+  // and then the full screen view
+  useEffect(() => {
+    if (!isFullscreen) return;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = previous;
+    };
+  }, [isFullscreen]);
+
+  useEffect(() => {
+    if (!isFullscreen && !legendOpen) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return;
+      if (legendOpen) setLegendOpen(false);
+      else setIsFullscreen(false);
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [isFullscreen, legendOpen]);
+
+  // The canvas changes size when entering or leaving full screen: frame the
+  // network (or the person from the search) again once the layout has followed
+  useEffect(() => {
+    if (prevFullscreenRef.current === isFullscreen) return;
+    prevFullscreenRef.current = isFullscreen;
+    const timer = window.setTimeout(() => {
+      const focusedId = focusedNodeIdRef.current;
+      if (focusedId) {
+        applyFocus(focusedId, true);
+      } else {
+        userMovedViewRef.current = false;
+        fitView(true);
+      }
+    }, 350);
+    return () => window.clearTimeout(timer);
+  }, [isFullscreen, applyFocus, fitView]);
+
+  const legendData = useMemo(
+    () => buildGraphLegend(graphPeople ?? [], graphEdges, groups ?? []),
+    [graphPeople, graphEdges, groups],
+  );
+
+  const bubblesActive = resolveGraphMode(localGraphMode, networkSize) === 'bubbles';
+  const noPeopleInView = isDashboard && graphPeople !== null
+    && graphPeople.every((p) => p.isCenter);
+  const filtersActive = selectedGroupFilters.length > 0;
+
+  const openLooseList = () => {
+    setLooseOpen(true);
+    window.setTimeout(() => {
+      looseSectionRef.current?.scrollIntoView({ block: 'nearest' });
+    }, 0);
+  };
+
   return (
-    <div className="w-full h-full">
+    <div
+      className={
+        isFullscreen
+          ? 'fixed inset-0 z-[60] flex flex-col bg-background p-3 sm:p-4 pt-[max(0.75rem,env(safe-area-inset-top))] pb-[max(0.75rem,env(safe-area-inset-bottom))]'
+          : 'w-full h-full'
+      }
+      role={isFullscreen ? 'dialog' : undefined}
+      aria-modal={isFullscreen ? true : undefined}
+      aria-label={isFullscreen ? t('fullscreen.dialogLabel') : undefined}
+    >
       {groups && (
-        <div className="mb-4 space-y-2">
+        <div className="mb-3 space-y-2 shrink-0">
           <div className="flex items-stretch gap-3">
             <div className="shrink-0">
               <label className="flex h-full items-center text-sm placeholder-muted">
@@ -854,18 +1046,138 @@ export default function UnifiedNetworkGraph({
           </div>
         </div>
       )}
-      <div className="relative">
+      <div
+        ref={canvasWrapRef}
+        className={`relative ${
+          isFullscreen
+            ? 'flex-1 min-h-0'
+            : compact
+              ? 'h-[400px] sm:h-[500px] lg:h-[600px] xl:h-[700px] 2xl:h-[800px]'
+              : 'h-[420px] sm:h-[500px] lg:h-[calc(100dvh-20rem)] lg:min-h-[480px]'
+        }`}
+        style={!isFullscreen && !compact && canvasHeight !== null ? { height: canvasHeight } : undefined}
+      >
         <canvas
           ref={canvasRef}
-          className={`w-full bg-surface rounded-lg border border-border ${
-            compact
-              ? 'h-[400px] sm:h-[500px] lg:h-[600px] xl:h-[700px] 2xl:h-[800px]'
-              : 'h-[400px] sm:h-[500px] lg:h-[calc(100dvh-26rem)] lg:min-h-[480px]'
-          }`}
+          className="absolute inset-0 w-full h-full bg-surface rounded-lg border border-border"
         />
+        {isDashboard && (
+          <>
+            <div className="absolute top-3 left-3 w-[calc(100%-5rem)] max-w-72">
+              <GraphSearch
+                people={graphPeople ?? []}
+                onSelect={focusPerson}
+                onClear={clearFocus}
+              />
+            </div>
+            <button
+              type="button"
+              onClick={() => setIsFullscreen((prev) => !prev)}
+              className="absolute top-3 right-3 inline-flex h-11 w-11 sm:h-9 sm:w-9 items-center justify-center bg-surface border border-border rounded-lg hover:bg-surface-elevated transition-colors focus:outline-none focus:ring-2 focus:ring-primary"
+              aria-label={isFullscreen ? t('fullscreen.exit') : t('fullscreen.enter')}
+              title={isFullscreen ? t('fullscreen.exit') : t('fullscreen.enter')}
+              aria-pressed={isFullscreen}
+            >
+              <svg
+                className="w-5 h-5 text-primary dark:text-white"
+                fill="none"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                {isFullscreen ? (
+                  <path d="M6 6l12 12M18 6L6 18" />
+                ) : (
+                  <path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" />
+                )}
+              </svg>
+            </button>
+            {noPeopleInView && (
+              <div className="pointer-events-none absolute inset-x-4 top-[58%] flex justify-center">
+                <div className="pointer-events-auto max-w-sm text-center rounded-lg bg-surface/90 px-4 py-3 text-sm text-muted">
+                  {filtersActive ? (
+                    <>
+                      <p>{t('emptyFiltered')}</p>
+                      <button
+                        type="button"
+                        onClick={() => setSelectedGroupFilters([])}
+                        className="mt-2 inline-flex min-h-11 sm:min-h-0 items-center px-3 py-1.5 text-sm font-semibold text-primary hover:underline focus:outline-none focus:ring-2 focus:ring-primary rounded-lg"
+                      >
+                        {t('clearFilters')}
+                      </button>
+                    </>
+                  ) : (
+                    <p>{loosePeople.length > 0 ? t('noConnections') : t('emptyNetwork')}</p>
+                  )}
+                </div>
+              </div>
+            )}
+            {legendOpen && (
+              <div className="absolute bottom-20 left-4 w-64 max-w-[calc(100%-2rem)] max-h-[60%] overflow-y-auto rounded-lg border border-border bg-surface p-4 shadow-lg">
+                <GraphLegend data={legendData} capitalizeLabels={capitalizeType} />
+              </div>
+            )}
+            <div className="absolute bottom-4 left-4 flex gap-2">
+              <button
+                type="button"
+                onClick={() => setLegendOpen((prev) => !prev)}
+                className={`p-3 border rounded-lg transition-colors ${
+                  legendOpen
+                    ? 'bg-primary/20 border-primary/40 dark:bg-primary dark:border-primary'
+                    : 'bg-surface border-border hover:bg-surface-elevated'
+                }`}
+                aria-label={t('legend.toggle')}
+                title={t('legend.toggle')}
+                aria-expanded={legendOpen}
+              >
+                <svg
+                  className="w-5 h-5 text-primary dark:text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <circle cx="5" cy="6" r="1.5" />
+                  <circle cx="5" cy="12" r="1.5" />
+                  <circle cx="5" cy="18" r="1.5" />
+                  <path d="M10 6h10M10 12h10M10 18h10" />
+                </svg>
+              </button>
+              {loosePeople.length > 0 && (
+                <button
+                  type="button"
+                  onClick={openLooseList}
+                  className="inline-flex items-center gap-2 px-3 bg-surface border border-border rounded-lg hover:bg-surface-elevated transition-colors text-sm text-foreground"
+                  aria-label={t('loose.showList', { count: loosePeople.length })}
+                  title={t('loose.showList', { count: loosePeople.length })}
+                >
+                  <svg
+                    className="w-5 h-5 text-primary dark:text-white"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <circle cx="12" cy="8" r="4" />
+                    <path d="M4 21v-1a6 6 0 016-6h4a6 6 0 016 6v1" strokeDasharray="3 3" />
+                  </svg>
+                  <span className="font-semibold">{loosePeople.length}</span>
+                </button>
+              )}
+            </div>
+          </>
+        )}
         <div className="absolute bottom-4 right-4 flex gap-2">
           {groups && (() => {
-            const bubblesActive = resolveGraphMode(localGraphMode) === 'bubbles';
             const label = bubblesActive ? t('showIndividuals') : t('showAsGroups');
             return (
               <>
@@ -941,6 +1253,17 @@ export default function UnifiedNetworkGraph({
           </button>
         </div>
       </div>
+      {isDashboard && (
+        <div ref={looseSectionRef} className="shrink-0">
+          <GraphLoosePeople
+            people={loosePeople}
+            open={looseOpen}
+            onToggle={() => setLooseOpen((prev) => !prev)}
+            filterActive={filtersActive}
+            onAssigned={() => setReloadKey((k) => k + 1)}
+          />
+        </div>
+      )}
     </div>
   );
 }

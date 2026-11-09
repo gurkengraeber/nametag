@@ -133,7 +133,7 @@
       "nameDisplayFormatSuccess": "Naamweergaveformaat succesvol bijgewerkt",
       "nameDisplayFormatError": "Naamweergaveformaat bijwerken mislukt",
       "graphModeTitle": "Netwerk diagram weergave",
-      "graphModeDescription": "Hoe uw netwerk diagram op het dashboard weer te geven.",
+      "graphModeDescription": "Hoe uw netwerk diagram op het dashboard weer te geven. Zonder keuze openen grote netwerken (meer dan 80 personen) als groepen.",
       "graphModeIndividuals": "Altijd individuen tonen",
       "graphModeBubbles": "Altijd groepen tonen",
       "graphDisplaySuccess": "Diagram weergave bijgewerkt",
@@ -1010,8 +1010,51 @@
       "showAsGroups": "Als groepen tonen",
       "showIndividuals": "Individuen tonen",
       "collapseAllGroups": "Alle groepen samenvouwen",
-      "unsortedBubbleLabel": "Ongesorteerd"
-    }
+      "unsortedBubbleLabel": "Ongesorteerd",
+      "fullscreen": {
+        "enter": "Volledig scherm",
+        "exit": "Volledig scherm sluiten",
+        "dialogLabel": "Uw netwerk op volledig scherm"
+      },
+      "search": {
+        "ariaLabel": "Een persoon in het netwerk zoeken",
+        "placeholder": "Persoon zoeken...",
+        "noResults": "Niemand gevonden",
+        "clear": "Zoekopdracht wissen"
+      },
+      "legend": {
+        "toggle": "Legenda",
+        "groups": "Groepen",
+        "relationships": "Relaties",
+        "noGroup": "Geen groep",
+        "empty": "Nog niets uit te leggen. Kleuren verschijnen zodra u groepen of relaties toevoegt."
+      },
+      "loose": {
+        "title": "Zonder verbinding",
+        "description": "Deze personen hebben nog geen relatie en worden daarom niet in het netwerk getekend. Kies hoe iemand met u verbonden is om de persoon toe te voegen.",
+        "filterNote": "Er is een groepsfilter actief. Sommige van deze personen zijn misschien verbonden met personen buiten het filter.",
+        "typesFailed": "De relatietypes konden niet worden geladen.",
+        "noTypes": "U heeft nog geen relatietypes.",
+        "createType": "Maak er een",
+        "assignPlaceholder": "Relatie met u...",
+        "assignAriaLabel": "Wat is de relatie van {name} met u?",
+        "assigned": "{name} is nu met u verbonden",
+        "assignFailed": "De relatie kon niet worden opgeslagen. Probeer het opnieuw.",
+        "showList": "Zonder verbinding: {count}. Lijst tonen"
+      },
+      "emptyFiltered": "Niemand komt overeen met deze filters.",
+      "clearFilters": "Filters wissen",
+      "noConnections": "Nog niemand is verbonden. Open de lijst hieronder om personen aan u te koppelen.",
+      "emptyNetwork": "Nog niemand om te tonen."
+    },
+    "stats": {
+      "ariaLabel": "Overzicht",
+      "people": "{count, plural, =1 {1 persoon} other {# personen}}",
+      "groups": "{count, plural, =1 {1 groep} other {# groepen}}",
+      "thisWeek": "{count} deze week"
+    },
+    "markContacted": "Vandaag gesproken",
+    "markContactedAria": "Markeer {name} als vandaag gesproken"
   },
   "people": {
     "title": "Personen",

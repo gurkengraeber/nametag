@@ -133,7 +133,7 @@
       "nameDisplayFormatSuccess": "名前の表示形式を更新しました",
       "nameDisplayFormatError": "名前の表示形式の更新に失敗しました",
       "graphModeTitle": "ネットワークグラフの表示",
-      "graphModeDescription": "ダッシュボードでネットワークグラフを表示する方法。",
+      "graphModeDescription": "ダッシュボードでネットワークグラフを表示する方法。選択しない場合、大きなネットワーク(80人超)はグループで表示されます。",
       "graphModeIndividuals": "常に個別に表示",
       "graphModeBubbles": "常にグループで表示",
       "graphDisplaySuccess": "表示を更新しました",
@@ -1010,8 +1010,51 @@
       "showAsGroups": "グループで表示",
       "showIndividuals": "個別に表示",
       "collapseAllGroups": "すべてのグループを折りたたむ",
-      "unsortedBubbleLabel": "未分類"
-    }
+      "unsortedBubbleLabel": "未分類",
+      "fullscreen": {
+        "enter": "全画面表示",
+        "exit": "全画面表示を終了",
+        "dialogLabel": "全画面表示のネットワーク"
+      },
+      "search": {
+        "ariaLabel": "ネットワーク内の人を探す",
+        "placeholder": "人を探す...",
+        "noResults": "見つかりませんでした",
+        "clear": "検索をクリア"
+      },
+      "legend": {
+        "toggle": "凡例",
+        "groups": "グループ",
+        "relationships": "関係",
+        "noGroup": "グループなし",
+        "empty": "まだ説明することはありません。グループや関係を追加すると色が表示されます。"
+      },
+      "loose": {
+        "title": "つながりなし",
+        "description": "この人たちはまだ関係が設定されていないため、ネットワークには描かれていません。あなたとの関係を選ぶと追加されます。",
+        "filterNote": "グループフィルターが有効です。この中には、フィルター外の人とつながっている人もいるかもしれません。",
+        "typesFailed": "関係の種類を読み込めませんでした。",
+        "noTypes": "関係の種類がまだありません。",
+        "createType": "作成する",
+        "assignPlaceholder": "あなたとの関係...",
+        "assignAriaLabel": "{name}さんはあなたとどんな関係ですか?",
+        "assigned": "{name}さんがあなたとつながりました",
+        "assignFailed": "関係を保存できませんでした。もう一度お試しください。",
+        "showList": "つながりなし: {count}人。一覧を表示"
+      },
+      "emptyFiltered": "このフィルターに一致する人はいません。",
+      "clearFilters": "フィルターを解除",
+      "noConnections": "まだ誰ともつながっていません。下の一覧を開いて、あなたとの関係を設定してください。",
+      "emptyNetwork": "まだ表示する人がいません。"
+    },
+    "stats": {
+      "ariaLabel": "概要",
+      "people": "{count}人",
+      "groups": "{count}グループ",
+      "thisWeek": "今週 {count}件"
+    },
+    "markContacted": "今日話した",
+    "markContactedAria": "{name}を今日連絡したことにする"
   },
   "people": {
     "title": "人",

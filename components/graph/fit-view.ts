@@ -100,3 +100,33 @@ export function computeFitTransform(
 
   return { x: width / 2 - k * ax, y: height / 2 - k * ay, k };
 }
+
+export interface FocusViewOptions {
+  width: number;
+  height: number;
+  /** Scale of the current view. Focusing never zooms out, only in. */
+  currentScale: number;
+  minScale?: number;
+  maxScale?: number;
+}
+
+export const FOCUS_MIN_SCALE = 1;
+export const FOCUS_MAX_SCALE = 2;
+
+/**
+ * Transform that puts one node in the middle of the canvas and zooms in far
+ * enough to read its name and photo (never out, and not beyond the maximum).
+ */
+export function computeFocusTransform(
+  node: { x: number; y: number },
+  {
+    width,
+    height,
+    currentScale,
+    minScale = FOCUS_MIN_SCALE,
+    maxScale = FOCUS_MAX_SCALE,
+  }: FocusViewOptions,
+): FitTransform {
+  const k = Math.min(maxScale, Math.max(minScale, currentScale));
+  return { x: width / 2 - k * node.x, y: height / 2 - k * node.y, k };
+}

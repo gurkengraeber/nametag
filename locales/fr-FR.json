@@ -133,7 +133,7 @@
       "nameDisplayFormatSuccess": "Format d'affichage des noms mis à jour",
       "nameDisplayFormatError": "Échec de la mise à jour du format d'affichage des noms",
       "graphModeTitle": "Affichage du graphe du réseau",
-      "graphModeDescription": "Façon d'afficher le graphe de votre réseau sur le tableau de bord.",
+      "graphModeDescription": "Façon d'afficher le graphe de votre réseau sur le tableau de bord. Sans choix, les grands réseaux (plus de 80 personnes) s'ouvrent en groupes.",
       "graphModeIndividuals": "Toujours afficher les personnes",
       "graphModeBubbles": "Toujours afficher les groupes",
       "graphDisplaySuccess": "Affichage du graphe mis à jour",
@@ -1010,8 +1010,51 @@
       "showAsGroups": "Afficher par groupes",
       "showIndividuals": "Afficher les personnes",
       "collapseAllGroups": "Replier tous les groupes",
-      "unsortedBubbleLabel": "Non classés"
-    }
+      "unsortedBubbleLabel": "Non classés",
+      "fullscreen": {
+        "enter": "Plein écran",
+        "exit": "Quitter le plein écran",
+        "dialogLabel": "Votre réseau en plein écran"
+      },
+      "search": {
+        "ariaLabel": "Trouver une personne dans le réseau",
+        "placeholder": "Trouver une personne...",
+        "noResults": "Personne n'a été trouvé",
+        "clear": "Effacer la recherche"
+      },
+      "legend": {
+        "toggle": "Légende",
+        "groups": "Groupes",
+        "relationships": "Relations",
+        "noGroup": "Sans groupe",
+        "empty": "Rien à expliquer pour l'instant. Les couleurs apparaissent dès que vous ajoutez des groupes ou des relations."
+      },
+      "loose": {
+        "title": "Sans lien",
+        "description": "Ces personnes n'ont pas encore de relation, elles ne sont donc pas dessinées dans le réseau. Choisissez le lien qui vous unit à elles pour les ajouter.",
+        "filterNote": "Un filtre de groupes est actif. Certaines de ces personnes sont peut-être liées à des personnes hors du filtre.",
+        "typesFailed": "Impossible de charger les types de relation.",
+        "noTypes": "Vous n'avez pas encore de type de relation.",
+        "createType": "En créer un",
+        "assignPlaceholder": "Lien avec vous...",
+        "assignAriaLabel": "Quel est le lien entre {name} et vous ?",
+        "assigned": "{name} est maintenant lié(e) à vous",
+        "assignFailed": "Impossible d'enregistrer la relation. Veuillez réessayer.",
+        "showList": "Sans lien : {count}. Afficher la liste"
+      },
+      "emptyFiltered": "Personne ne correspond à ces filtres.",
+      "clearFilters": "Effacer les filtres",
+      "noConnections": "Personne n'est encore relié. Ouvrez la liste ci-dessous pour lier des personnes à vous.",
+      "emptyNetwork": "Personne à afficher pour l'instant."
+    },
+    "stats": {
+      "ariaLabel": "Aperçu",
+      "people": "{count, plural, =1 {1 personne} other {# personnes}}",
+      "groups": "{count, plural, =1 {1 groupe} other {# groupes}}",
+      "thisWeek": "{count} cette semaine"
+    },
+    "markContacted": "Parlé aujourd'hui",
+    "markContactedAria": "Marquer {name} comme contacté aujourd'hui"
   },
   "people": {
     "title": "Personnes",
