@@ -2780,5 +2780,73 @@
       "title": "登录链接已过期",
       "body": "此登录链接已过期。请返回应用后重试。"
     }
+  },
+  "relationshipBuilder": {
+    "title": "关联人物",
+    "intro": "把一个人拖到另一个人上，就能把他们关联起来。在手机上，先稍微长按卡片再拖动。也可以依次点按两个人。",
+    "openLink": "关联人物",
+    "gridLabel": "人物",
+    "filters": {
+      "searchLabel": "搜索人物",
+      "searchPlaceholder": "按姓名搜索",
+      "groupLabel": "分组",
+      "allGroups": "所有分组",
+      "showing": "显示 {shown} / {total}",
+      "noMatches": "没有匹配的人。试试其他姓名或分组。"
+    },
+    "card": {
+      "connections": "{count, plural, =0 {没有关联} other {# 个关联}}",
+      "aria": "{name}，{details}",
+      "noRelationship": "与你没有直接关系"
+    },
+    "pick": {
+      "target": "已选中 {name}。现在点按第二个人。",
+      "cancel": "取消"
+    },
+    "brush": {
+      "label": "画笔模式",
+      "description": "选择一种关系类型。之后关联的每一对人都会立即获得这种关系，无需弹出对话框。",
+      "select": "画笔模式的关系类型",
+      "placeholder": "选择类型",
+      "active": "画笔模式已开启：{type}",
+      "activeHint": "把两个人拖放到一起或依次点按，他们会立即被关联为「{type}」。",
+      "stop": "结束"
+    },
+    "dialog": {
+      "title": "{from} → {to}",
+      "sentence": "{from}是{to}的…",
+      "alreadyConnected": "已经关联：{summary}",
+      "alreadyLinked": "已关联",
+      "cannotUndo": "这两个人已经有关联，所以无法一键撤销这次新增的关联。你可以在此人的页面中删除它。",
+      "searchPlaceholder": "搜索关系类型",
+      "noTypes": "没有匹配的关系类型。",
+      "close": "关闭",
+      "typesLabel": "关系类型"
+    },
+    "summary": {
+      "preview": "{from}是{to}的{type}",
+      "pair": "{from}是{to}的{type}，{to}是{from}的{inverse}",
+      "symmetric": "已将{from}和{to}关联为「{type}」"
+    },
+    "toast": {
+      "undo": "撤销",
+      "undone": "已撤销：{from}和{to}不再是「{type}」关系",
+      "alreadyExists": "{from}和{to}已经是「{type}」关系",
+      "failed": "操作没有成功，请再试一次。",
+      "undoFailed": "无法撤销，请再试一次。"
+    },
+    "recent": {
+      "title": "刚刚关联",
+      "undoAria": "撤销：{summary}",
+      "noUndo": "请在此人的页面中删除"
+    },
+    "empty": {
+      "noPeopleTitle": "至少需要两个人",
+      "noPeopleDescription": "请先添加几个人，然后回到这里把他们互相关联。",
+      "addPerson": "添加人物",
+      "noTypesTitle": "还没有关系类型",
+      "noTypesDescription": "关系类型说明两个人之间是什么关系，例如朋友或同事。创建一个即可开始关联。",
+      "createType": "创建关系类型"
+    }
   }
 }

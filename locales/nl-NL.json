@@ -2780,5 +2780,73 @@
       "title": "Inloglink verlopen",
       "body": "Deze inloglink is verlopen. Ga terug naar de app en probeer het opnieuw."
     }
+  },
+  "relationshipBuilder": {
+    "title": "Mensen koppelen",
+    "intro": "Sleep een persoon op een andere om ze te koppelen. Op een telefoon houd je een kaart even ingedrukt en sleep je daarna. Of tik gewoon na elkaar op twee personen.",
+    "openLink": "Mensen koppelen",
+    "gridLabel": "Personen",
+    "filters": {
+      "searchLabel": "Personen zoeken",
+      "searchPlaceholder": "Zoeken op naam",
+      "groupLabel": "Groep",
+      "allGroups": "Alle groepen",
+      "showing": "{shown} van {total} getoond",
+      "noMatches": "Niemand komt overeen. Probeer een andere naam of groep."
+    },
+    "card": {
+      "connections": "{count, plural, =0 {Geen verbindingen} one {# verbinding} other {# verbindingen}}",
+      "aria": "{name}, {details}",
+      "noRelationship": "Geen directe relatie met jou"
+    },
+    "pick": {
+      "target": "{name} is geselecteerd. Tik nu op de tweede persoon.",
+      "cancel": "Annuleren"
+    },
+    "brush": {
+      "label": "Penseelmodus",
+      "description": "Kies één relatietype. Elk paar dat je daarna koppelt, krijgt het meteen, zonder dialoogvenster.",
+      "select": "Relatietype voor de penseelmodus",
+      "placeholder": "Kies een type",
+      "active": "Penseelmodus aan: {type}",
+      "activeHint": "Laat twee personen op elkaar vallen of tik ze aan, dan zijn ze meteen gekoppeld als {type}.",
+      "stop": "Stoppen"
+    },
+    "dialog": {
+      "title": "{from} → {to}",
+      "sentence": "{from} is … van {to}",
+      "alreadyConnected": "Al gekoppeld: {summary}",
+      "alreadyLinked": "al gekoppeld",
+      "cannotUndo": "Deze twee zijn al gekoppeld, dus deze nieuwe koppeling kan niet met één tik ongedaan worden gemaakt. Je kunt haar verwijderen op de pagina van de persoon.",
+      "searchPlaceholder": "Relatietypes zoeken",
+      "noTypes": "Geen relatietype komt overeen.",
+      "close": "Sluiten",
+      "typesLabel": "Relatietypes"
+    },
+    "summary": {
+      "preview": "{from} is {type} van {to}",
+      "pair": "{from} is {type} van {to}, {to} is {inverse} van {from}",
+      "symmetric": "{from} en {to} zijn nu gekoppeld: {type}"
+    },
+    "toast": {
+      "undo": "Ongedaan maken",
+      "undone": "Ongedaan gemaakt: {from} en {to} zijn niet meer gekoppeld als {type}",
+      "alreadyExists": "{from} en {to} zijn al gekoppeld als {type}",
+      "failed": "Dat is niet gelukt. Probeer het opnieuw.",
+      "undoFailed": "Ongedaan maken is niet gelukt. Probeer het opnieuw."
+    },
+    "recent": {
+      "title": "Net gekoppeld",
+      "undoAria": "Ongedaan maken: {summary}",
+      "noUndo": "Verwijder op de pagina van de persoon"
+    },
+    "empty": {
+      "noPeopleTitle": "Je hebt minstens twee personen nodig",
+      "noPeopleDescription": "Voeg eerst een paar personen toe en kom dan terug om ze met elkaar te koppelen.",
+      "addPerson": "Persoon toevoegen",
+      "noTypesTitle": "Nog geen relatietypes",
+      "noTypesDescription": "Relatietypes geven aan hoe twee personen met elkaar verbonden zijn, bijvoorbeeld vriend of collega. Maak er een om te beginnen.",
+      "createType": "Relatietype aanmaken"
+    }
   }
 }

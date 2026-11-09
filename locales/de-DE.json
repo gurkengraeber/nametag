@@ -2780,5 +2780,73 @@
       "title": "Anmeldelink abgelaufen",
       "body": "Dieser Anmeldelink ist abgelaufen. Gehe zurück zur App und versuche es erneut."
     }
+  },
+  "relationshipBuilder": {
+    "title": "Beziehungen knüpfen",
+    "intro": "Zieh eine Person auf eine andere, um die beiden zu verbinden. Am Handy hältst du eine Karte kurz gedrückt und ziehst dann. Oder tippe einfach nacheinander zwei Personen an.",
+    "openLink": "Beziehungen knüpfen",
+    "gridLabel": "Personen",
+    "filters": {
+      "searchLabel": "Personen suchen",
+      "searchPlaceholder": "Nach Namen suchen",
+      "groupLabel": "Gruppe",
+      "allGroups": "Alle Gruppen",
+      "showing": "{shown} von {total} angezeigt",
+      "noMatches": "Niemand passt. Probier einen anderen Namen oder eine andere Gruppe."
+    },
+    "card": {
+      "connections": "{count, plural, =0 {Keine Verbindungen} one {# Verbindung} other {# Verbindungen}}",
+      "aria": "{name}, {details}",
+      "noRelationship": "Nicht direkt mit dir verbunden"
+    },
+    "pick": {
+      "target": "{name} ist ausgewählt. Tippe jetzt die zweite Person an.",
+      "cancel": "Abbrechen"
+    },
+    "brush": {
+      "label": "Pinsel-Modus",
+      "description": "Wähle eine Beziehungsart. Jedes Paar, das du danach verbindest, bekommt sie sofort, ganz ohne Dialog.",
+      "select": "Beziehungsart für den Pinsel-Modus",
+      "placeholder": "Art wählen",
+      "active": "Pinsel-Modus an: {type}",
+      "activeHint": "Zieh zwei Personen aufeinander oder tippe sie an, dann sind sie sofort als {type} verbunden.",
+      "stop": "Beenden"
+    },
+    "dialog": {
+      "title": "{from} → {to}",
+      "sentence": "{from} ist … von {to}",
+      "alreadyConnected": "Schon verbunden: {summary}",
+      "alreadyLinked": "schon verbunden",
+      "cannotUndo": "Die beiden sind schon verbunden, deshalb lässt sich diese neue Verbindung nicht mit einem Tipp zurücknehmen. Du kannst sie auf der Seite der Person entfernen.",
+      "searchPlaceholder": "Beziehungsarten durchsuchen",
+      "noTypes": "Keine Beziehungsart passt.",
+      "close": "Schließen",
+      "typesLabel": "Beziehungsarten"
+    },
+    "summary": {
+      "preview": "{from} ist {type} von {to}",
+      "pair": "{from} ist {type} von {to}, {to} ist {inverse} von {from}",
+      "symmetric": "{from} und {to} sind jetzt verbunden: {type}"
+    },
+    "toast": {
+      "undo": "Rückgängig",
+      "undone": "Zurückgenommen: {from} und {to} sind nicht mehr als {type} verbunden",
+      "alreadyExists": "{from} und {to} sind schon als {type} verbunden",
+      "failed": "Das hat nicht geklappt. Versuch es bitte noch einmal.",
+      "undoFailed": "Das ließ sich nicht zurücknehmen. Versuch es bitte noch einmal."
+    },
+    "recent": {
+      "title": "Gerade verknüpft",
+      "undoAria": "Rückgängig: {summary}",
+      "noUndo": "Auf der Seite der Person entfernen"
+    },
+    "empty": {
+      "noPeopleTitle": "Du brauchst mindestens zwei Personen",
+      "noPeopleDescription": "Lege zuerst ein paar Personen an, dann kannst du sie hier miteinander verbinden.",
+      "addPerson": "Person hinzufügen",
+      "noTypesTitle": "Noch keine Beziehungsarten",
+      "noTypesDescription": "Beziehungsarten sagen, wie zwei Personen zusammenhängen, zum Beispiel Freund oder Kollegin. Lege eine an, um loszulegen.",
+      "createType": "Beziehungsart anlegen"
+    }
   }
 }

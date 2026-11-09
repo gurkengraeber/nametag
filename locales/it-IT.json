@@ -2780,5 +2780,73 @@
       "title": "Link di accesso scaduto",
       "body": "Questo link di accesso è scaduto. Torna all'app e riprova."
     }
+  },
+  "relationshipBuilder": {
+    "title": "Collega le persone",
+    "intro": "Trascina una persona su un'altra per collegarle. Sul telefono tieni premuta una scheda per un istante, poi trascina. Oppure tocca semplicemente due persone una dopo l'altra.",
+    "openLink": "Collega le persone",
+    "gridLabel": "Persone",
+    "filters": {
+      "searchLabel": "Cerca persone",
+      "searchPlaceholder": "Cerca per nome",
+      "groupLabel": "Gruppo",
+      "allGroups": "Tutti i gruppi",
+      "showing": "Mostrate {shown} su {total}",
+      "noMatches": "Nessuno corrisponde. Prova un altro nome o un altro gruppo."
+    },
+    "card": {
+      "connections": "{count, plural, =0 {Nessun collegamento} one {# collegamento} other {# collegamenti}}",
+      "aria": "{name}, {details}",
+      "noRelationship": "Nessun legame diretto con te"
+    },
+    "pick": {
+      "target": "{name} è selezionata. Ora tocca la seconda persona.",
+      "cancel": "Annulla"
+    },
+    "brush": {
+      "label": "Modalità pennello",
+      "description": "Scegli un tipo di relazione. Ogni coppia che colleghi dopo lo riceve subito, senza finestra di dialogo.",
+      "select": "Tipo di relazione per la modalità pennello",
+      "placeholder": "Scegli un tipo",
+      "active": "Modalità pennello attiva: {type}",
+      "activeHint": "Rilascia o tocca due persone una sull'altra e vengono collegate subito come {type}.",
+      "stop": "Termina"
+    },
+    "dialog": {
+      "title": "{from} → {to}",
+      "sentence": "{from} è … di {to}",
+      "alreadyConnected": "Già collegate: {summary}",
+      "alreadyLinked": "già collegate",
+      "cannotUndo": "Queste due persone sono già collegate, quindi il nuovo collegamento non si può annullare con un tocco. Puoi rimuoverlo dalla pagina della persona.",
+      "searchPlaceholder": "Cerca tipi di relazione",
+      "noTypes": "Nessun tipo di relazione corrisponde.",
+      "close": "Chiudi",
+      "typesLabel": "Tipi di relazione"
+    },
+    "summary": {
+      "preview": "{from} è {type} di {to}",
+      "pair": "{from} è {type} di {to}, {to} è {inverse} di {from}",
+      "symmetric": "{from} e {to} ora sono collegate: {type}"
+    },
+    "toast": {
+      "undo": "Annulla",
+      "undone": "Annullato: {from} e {to} non sono più collegate come {type}",
+      "alreadyExists": "{from} e {to} sono già collegate come {type}",
+      "failed": "Non ha funzionato. Riprova.",
+      "undoFailed": "Impossibile annullare. Riprova."
+    },
+    "recent": {
+      "title": "Appena collegate",
+      "undoAria": "Annulla: {summary}",
+      "noUndo": "Rimuovilo dalla pagina della persona"
+    },
+    "empty": {
+      "noPeopleTitle": "Servono almeno due persone",
+      "noPeopleDescription": "Aggiungi prima qualche persona, poi torna qui per collegarle tra loro.",
+      "addPerson": "Aggiungi una persona",
+      "noTypesTitle": "Ancora nessun tipo di relazione",
+      "noTypesDescription": "I tipi di relazione dicono come due persone sono legate, per esempio amico o collega. Creane uno per iniziare.",
+      "createType": "Crea un tipo di relazione"
+    }
   }
 }

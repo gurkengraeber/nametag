@@ -2780,5 +2780,73 @@
       "title": "Sign-in link expired",
       "body": "This sign-in link has expired. Go back to the app and try again."
     }
+  },
+  "relationshipBuilder": {
+    "title": "Connect people",
+    "intro": "Drag one person onto another to link them. On a phone, press and hold a card for a moment, then drag. Or simply tap two people one after the other.",
+    "openLink": "Connect people",
+    "gridLabel": "People",
+    "filters": {
+      "searchLabel": "Search people",
+      "searchPlaceholder": "Search by name",
+      "groupLabel": "Group",
+      "allGroups": "All groups",
+      "showing": "Showing {shown} of {total}",
+      "noMatches": "Nobody matches. Try another name or group."
+    },
+    "card": {
+      "connections": "{count, plural, =0 {No connections} one {# connection} other {# connections}}",
+      "aria": "{name}, {details}",
+      "noRelationship": "Not related to you directly"
+    },
+    "pick": {
+      "target": "{name} is selected. Now tap the second person.",
+      "cancel": "Cancel"
+    },
+    "brush": {
+      "label": "Brush mode",
+      "description": "Pick one relationship type. Every pair you connect afterwards gets it right away, without a dialog.",
+      "select": "Relationship type for brush mode",
+      "placeholder": "Choose a type",
+      "active": "Brush mode on: {type}",
+      "activeHint": "Drop or tap two people onto each other and they are linked as {type} at once.",
+      "stop": "Stop"
+    },
+    "dialog": {
+      "title": "{from} → {to}",
+      "sentence": "{from} is {to}'s …",
+      "alreadyConnected": "Already connected: {summary}",
+      "alreadyLinked": "already linked",
+      "cannotUndo": "These two are already linked, so this new link cannot be undone with one tap. You can remove it on the person's page.",
+      "searchPlaceholder": "Search relationship types",
+      "noTypes": "No relationship type matches.",
+      "close": "Close",
+      "typesLabel": "Relationship types"
+    },
+    "summary": {
+      "preview": "{from} is {to}'s {type}",
+      "pair": "{from} is {to}'s {type}, {to} is {from}'s {inverse}",
+      "symmetric": "{from} and {to} are now linked: {type}"
+    },
+    "toast": {
+      "undo": "Undo",
+      "undone": "Undone: {from} and {to} are no longer linked as {type}",
+      "alreadyExists": "{from} and {to} are already linked as {type}",
+      "failed": "That did not work. Please try again.",
+      "undoFailed": "Could not undo that. Please try again."
+    },
+    "recent": {
+      "title": "Just linked",
+      "undoAria": "Undo: {summary}",
+      "noUndo": "Remove it on the person's page"
+    },
+    "empty": {
+      "noPeopleTitle": "You need at least two people",
+      "noPeopleDescription": "Add a few people first, then come back to link them with each other.",
+      "addPerson": "Add a person",
+      "noTypesTitle": "No relationship types yet",
+      "noTypesDescription": "Relationship types say how two people are related, for example friend or colleague. Create one to start linking.",
+      "createType": "Create a relationship type"
+    }
   }
 }

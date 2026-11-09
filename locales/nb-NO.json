@@ -2780,5 +2780,73 @@
       "title": "Innloggingslenken er utløpt",
       "body": "Denne innloggingslenken er utløpt. Gå tilbake til appen og prøv igjen."
     }
+  },
+  "relationshipBuilder": {
+    "title": "Knytt personer sammen",
+    "intro": "Dra en person over på en annen for å knytte dem sammen. På mobil holder du et kort inne et øyeblikk og drar etterpå. Eller trykk på to personer etter hverandre.",
+    "openLink": "Knytt personer sammen",
+    "gridLabel": "Personer",
+    "filters": {
+      "searchLabel": "Søk etter personer",
+      "searchPlaceholder": "Søk på navn",
+      "groupLabel": "Gruppe",
+      "allGroups": "Alle grupper",
+      "showing": "Viser {shown} av {total}",
+      "noMatches": "Ingen treff. Prøv et annet navn eller en annen gruppe."
+    },
+    "card": {
+      "connections": "{count, plural, =0 {Ingen forbindelser} one {# forbindelse} other {# forbindelser}}",
+      "aria": "{name}, {details}",
+      "noRelationship": "Ikke direkte knyttet til deg"
+    },
+    "pick": {
+      "target": "{name} er valgt. Trykk nå på den andre personen.",
+      "cancel": "Avbryt"
+    },
+    "brush": {
+      "label": "Penselmodus",
+      "description": "Velg én relasjonstype. Hvert par du knytter sammen etterpå får den med en gang, uten dialog.",
+      "select": "Relasjonstype for penselmodus",
+      "placeholder": "Velg en type",
+      "active": "Penselmodus på: {type}",
+      "activeHint": "Slipp eller trykk to personer på hverandre, så knyttes de sammen som {type} med en gang.",
+      "stop": "Avslutt"
+    },
+    "dialog": {
+      "title": "{from} → {to}",
+      "sentence": "{from} er … for {to}",
+      "alreadyConnected": "Allerede knyttet sammen: {summary}",
+      "alreadyLinked": "allerede knyttet",
+      "cannotUndo": "De to er allerede knyttet sammen, så denne nye koblingen kan ikke angres med ett trykk. Du kan fjerne den på personens side.",
+      "searchPlaceholder": "Søk i relasjonstyper",
+      "noTypes": "Ingen relasjonstype passer.",
+      "close": "Lukk",
+      "typesLabel": "Relasjonstyper"
+    },
+    "summary": {
+      "preview": "{from} er {type} til {to}",
+      "pair": "{from} er {type} til {to}, {to} er {inverse} til {from}",
+      "symmetric": "{from} og {to} er nå knyttet sammen: {type}"
+    },
+    "toast": {
+      "undo": "Angre",
+      "undone": "Angret: {from} og {to} er ikke lenger knyttet sammen som {type}",
+      "alreadyExists": "{from} og {to} er allerede knyttet sammen som {type}",
+      "failed": "Det gikk ikke. Prøv igjen.",
+      "undoFailed": "Kunne ikke angre. Prøv igjen."
+    },
+    "recent": {
+      "title": "Nettopp knyttet",
+      "undoAria": "Angre: {summary}",
+      "noUndo": "Fjern den på personens side"
+    },
+    "empty": {
+      "noPeopleTitle": "Du trenger minst to personer",
+      "noPeopleDescription": "Legg først til noen personer, og kom så tilbake for å knytte dem sammen.",
+      "addPerson": "Legg til en person",
+      "noTypesTitle": "Ingen relasjonstyper ennå",
+      "noTypesDescription": "Relasjonstyper forteller hvordan to personer henger sammen, for eksempel venn eller kollega. Opprett en for å komme i gang.",
+      "createType": "Opprett en relasjonstype"
+    }
   }
 }

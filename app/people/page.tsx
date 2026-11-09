@@ -30,6 +30,7 @@ export default async function PeoplePage({
   const session = await auth();
   const t = await getTranslations('people');
   const tCommon = await getTranslations('common');
+  const tConnect = await getTranslations('relationshipBuilder');
 
   if (!session?.user) {
     redirect('/login');
@@ -181,6 +182,9 @@ export default async function PeoplePage({
               {t('title')}
             </h1>
             <div className="flex flex-wrap gap-3 w-full sm:w-auto">
+              <Button href="/people/connect" variant="secondary" className="flex-1 sm:flex-initial">
+                {tConnect('openLink')}
+              </Button>
               <Button href="/people/duplicates" variant="secondary" className="flex-1 sm:flex-initial">
                 {t('duplicates.findDuplicates')}
               </Button>

@@ -2780,5 +2780,73 @@
       "title": "Enlace de inicio de sesión caducado",
       "body": "Este enlace de inicio de sesión ha caducado. Vuelve a la app e inténtalo de nuevo."
     }
+  },
+  "relationshipBuilder": {
+    "title": "Conectar personas",
+    "intro": "Arrastra una persona sobre otra para vincularlas. En el móvil, mantén pulsada una tarjeta un momento y luego arrastra. O simplemente toca dos personas, una tras otra.",
+    "openLink": "Conectar personas",
+    "gridLabel": "Personas",
+    "filters": {
+      "searchLabel": "Buscar personas",
+      "searchPlaceholder": "Buscar por nombre",
+      "groupLabel": "Grupo",
+      "allGroups": "Todos los grupos",
+      "showing": "Mostrando {shown} de {total}",
+      "noMatches": "Nadie coincide. Prueba con otro nombre u otro grupo."
+    },
+    "card": {
+      "connections": "{count, plural, =0 {Sin conexiones} one {# conexión} other {# conexiones}}",
+      "aria": "{name}, {details}",
+      "noRelationship": "Sin relación directa contigo"
+    },
+    "pick": {
+      "target": "{name} está seleccionada. Ahora toca a la segunda persona.",
+      "cancel": "Cancelar"
+    },
+    "brush": {
+      "label": "Modo pincel",
+      "description": "Elige un tipo de relación. Cada par que conectes después lo recibe al instante, sin diálogo.",
+      "select": "Tipo de relación para el modo pincel",
+      "placeholder": "Elegir un tipo",
+      "active": "Modo pincel activado: {type}",
+      "activeHint": "Suelta o toca dos personas una sobre otra y quedan vinculadas al instante como {type}.",
+      "stop": "Terminar"
+    },
+    "dialog": {
+      "title": "{from} → {to}",
+      "sentence": "{from} es … de {to}",
+      "alreadyConnected": "Ya conectadas: {summary}",
+      "alreadyLinked": "ya vinculadas",
+      "cannotUndo": "Estas dos personas ya están vinculadas, así que este nuevo vínculo no se puede deshacer con un toque. Puedes quitarlo en la página de la persona.",
+      "searchPlaceholder": "Buscar tipos de relación",
+      "noTypes": "Ningún tipo de relación coincide.",
+      "close": "Cerrar",
+      "typesLabel": "Tipos de relación"
+    },
+    "summary": {
+      "preview": "{from} es {type} de {to}",
+      "pair": "{from} es {type} de {to}, {to} es {inverse} de {from}",
+      "symmetric": "{from} y {to} ahora están vinculadas: {type}"
+    },
+    "toast": {
+      "undo": "Deshacer",
+      "undone": "Deshecho: {from} y {to} ya no están vinculadas como {type}",
+      "alreadyExists": "{from} y {to} ya están vinculadas como {type}",
+      "failed": "No ha funcionado. Inténtalo de nuevo.",
+      "undoFailed": "No se pudo deshacer. Inténtalo de nuevo."
+    },
+    "recent": {
+      "title": "Recién vinculadas",
+      "undoAria": "Deshacer: {summary}",
+      "noUndo": "Quítalo en la página de la persona"
+    },
+    "empty": {
+      "noPeopleTitle": "Necesitas al menos dos personas",
+      "noPeopleDescription": "Añade primero algunas personas y luego vuelve para vincularlas entre sí.",
+      "addPerson": "Añadir una persona",
+      "noTypesTitle": "Aún no hay tipos de relación",
+      "noTypesDescription": "Los tipos de relación indican cómo se relacionan dos personas, por ejemplo amigo o colega. Crea uno para empezar.",
+      "createType": "Crear un tipo de relación"
+    }
   }
 }

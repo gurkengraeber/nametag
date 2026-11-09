@@ -2780,5 +2780,73 @@
       "title": "Link do logowania wygasł",
       "body": "Ten link do logowania wygasł. Wróć do aplikacji i spróbuj ponownie."
     }
+  },
+  "relationshipBuilder": {
+    "title": "Łączenie osób",
+    "intro": "Przeciągnij jedną osobę na drugą, aby je połączyć. Na telefonie przytrzymaj kartę przez chwilę, a potem przeciągnij. Możesz też po prostu dotknąć kolejno dwóch osób.",
+    "openLink": "Łączenie osób",
+    "gridLabel": "Osoby",
+    "filters": {
+      "searchLabel": "Szukaj osób",
+      "searchPlaceholder": "Szukaj po imieniu i nazwisku",
+      "groupLabel": "Grupa",
+      "allGroups": "Wszystkie grupy",
+      "showing": "Pokazano {shown} z {total}",
+      "noMatches": "Nikt nie pasuje. Spróbuj innego imienia lub innej grupy."
+    },
+    "card": {
+      "connections": "{count, plural, =0 {Brak powiązań} one {# powiązanie} few {# powiązania} many {# powiązań} other {# powiązania}}",
+      "aria": "{name}, {details}",
+      "noRelationship": "Brak bezpośredniej relacji z Tobą"
+    },
+    "pick": {
+      "target": "Wybrano: {name}. Teraz dotknij drugiej osoby.",
+      "cancel": "Anuluj"
+    },
+    "brush": {
+      "label": "Tryb pędzla",
+      "description": "Wybierz jeden typ relacji. Każda para, którą potem połączysz, od razu go dostanie, bez okna dialogowego.",
+      "select": "Typ relacji dla trybu pędzla",
+      "placeholder": "Wybierz typ",
+      "active": "Tryb pędzla włączony: {type}",
+      "activeHint": "Upuść lub dotknij dwie osoby jedną na drugiej, a od razu zostaną połączone jako {type}.",
+      "stop": "Zakończ"
+    },
+    "dialog": {
+      "title": "{from} → {to}",
+      "sentence": "{from} to … osoby {to}",
+      "alreadyConnected": "Już połączone: {summary}",
+      "alreadyLinked": "już połączone",
+      "cannotUndo": "Te dwie osoby są już połączone, więc nowego powiązania nie da się cofnąć jednym dotknięciem. Możesz je usunąć na stronie osoby.",
+      "searchPlaceholder": "Szukaj typów relacji",
+      "noTypes": "Żaden typ relacji nie pasuje.",
+      "close": "Zamknij",
+      "typesLabel": "Typy relacji"
+    },
+    "summary": {
+      "preview": "{from} to {type} osoby {to}",
+      "pair": "{from} to {type} osoby {to}, {to} to {inverse} osoby {from}",
+      "symmetric": "{from} i {to} są teraz połączone: {type}"
+    },
+    "toast": {
+      "undo": "Cofnij",
+      "undone": "Cofnięto: {from} i {to} nie są już połączone jako {type}",
+      "alreadyExists": "{from} i {to} są już połączone jako {type}",
+      "failed": "To się nie udało. Spróbuj ponownie.",
+      "undoFailed": "Nie udało się cofnąć. Spróbuj ponownie."
+    },
+    "recent": {
+      "title": "Właśnie połączone",
+      "undoAria": "Cofnij: {summary}",
+      "noUndo": "Usuń na stronie osoby"
+    },
+    "empty": {
+      "noPeopleTitle": "Potrzebujesz co najmniej dwóch osób",
+      "noPeopleDescription": "Najpierw dodaj kilka osób, a potem wróć tutaj, aby je ze sobą połączyć.",
+      "addPerson": "Dodaj osobę",
+      "noTypesTitle": "Brak typów relacji",
+      "noTypesDescription": "Typy relacji mówią, jak dwie osoby są ze sobą związane, na przykład przyjaciel lub współpracownik. Utwórz jeden, aby zacząć.",
+      "createType": "Utwórz typ relacji"
+    }
   }
 }

@@ -2780,5 +2780,73 @@
       "title": "Lien de connexion expiré",
       "body": "Ce lien de connexion a expiré. Retournez dans l'application et réessayez."
     }
+  },
+  "relationshipBuilder": {
+    "title": "Relier des personnes",
+    "intro": "Faites glisser une personne sur une autre pour les relier. Sur téléphone, maintenez une carte appuyée un instant, puis glissez. Ou touchez simplement deux personnes l'une après l'autre.",
+    "openLink": "Relier des personnes",
+    "gridLabel": "Personnes",
+    "filters": {
+      "searchLabel": "Rechercher des personnes",
+      "searchPlaceholder": "Rechercher par nom",
+      "groupLabel": "Groupe",
+      "allGroups": "Tous les groupes",
+      "showing": "{shown} affichées sur {total}",
+      "noMatches": "Personne ne correspond. Essayez un autre nom ou un autre groupe."
+    },
+    "card": {
+      "connections": "{count, plural, =0 {Aucun lien} one {# lien} other {# liens}}",
+      "aria": "{name}, {details}",
+      "noRelationship": "Pas de lien direct avec vous"
+    },
+    "pick": {
+      "target": "{name} est sélectionnée. Touchez maintenant la deuxième personne.",
+      "cancel": "Annuler"
+    },
+    "brush": {
+      "label": "Mode pinceau",
+      "description": "Choisissez un type de relation. Chaque paire que vous reliez ensuite le reçoit aussitôt, sans boîte de dialogue.",
+      "select": "Type de relation pour le mode pinceau",
+      "placeholder": "Choisir un type",
+      "active": "Mode pinceau activé : {type}",
+      "activeHint": "Déposez ou touchez deux personnes l'une sur l'autre et elles sont aussitôt reliées en tant que {type}.",
+      "stop": "Terminer"
+    },
+    "dialog": {
+      "title": "{from} → {to}",
+      "sentence": "{from} est … de {to}",
+      "alreadyConnected": "Déjà reliées : {summary}",
+      "alreadyLinked": "déjà reliées",
+      "cannotUndo": "Ces deux personnes sont déjà reliées, ce nouveau lien ne peut donc pas être annulé d'un seul geste. Vous pouvez le supprimer depuis la page de la personne.",
+      "searchPlaceholder": "Rechercher des types de relation",
+      "noTypes": "Aucun type de relation ne correspond.",
+      "close": "Fermer",
+      "typesLabel": "Types de relation"
+    },
+    "summary": {
+      "preview": "{from} est {type} de {to}",
+      "pair": "{from} est {type} de {to}, {to} est {inverse} de {from}",
+      "symmetric": "{from} et {to} sont maintenant reliées : {type}"
+    },
+    "toast": {
+      "undo": "Annuler",
+      "undone": "Annulé : {from} et {to} ne sont plus reliées en tant que {type}",
+      "alreadyExists": "{from} et {to} sont déjà reliées en tant que {type}",
+      "failed": "Cela n'a pas fonctionné. Veuillez réessayer.",
+      "undoFailed": "Impossible d'annuler. Veuillez réessayer."
+    },
+    "recent": {
+      "title": "Reliées à l'instant",
+      "undoAria": "Annuler : {summary}",
+      "noUndo": "Supprimez-le depuis la page de la personne"
+    },
+    "empty": {
+      "noPeopleTitle": "Il faut au moins deux personnes",
+      "noPeopleDescription": "Ajoutez d'abord quelques personnes, puis revenez ici pour les relier entre elles.",
+      "addPerson": "Ajouter une personne",
+      "noTypesTitle": "Pas encore de types de relation",
+      "noTypesDescription": "Les types de relation disent comment deux personnes sont liées, par exemple ami ou collègue. Créez-en un pour commencer.",
+      "createType": "Créer un type de relation"
+    }
   }
 }

@@ -2780,5 +2780,73 @@
       "title": "ログインリンクの有効期限が切れました",
       "body": "このログインリンクは有効期限が切れています。アプリに戻って、もう一度お試しください。"
     }
+  },
+  "relationshipBuilder": {
+    "title": "人と人をつなぐ",
+    "intro": "人のカードを別のカードにドラッグすると、2人をつなげられます。スマートフォンではカードを少し長押ししてからドラッグしてください。2人を順番にタップするだけでもつなげられます。",
+    "openLink": "人と人をつなぐ",
+    "gridLabel": "人",
+    "filters": {
+      "searchLabel": "人を検索",
+      "searchPlaceholder": "名前で検索",
+      "groupLabel": "グループ",
+      "allGroups": "すべてのグループ",
+      "showing": "{total}人中{shown}人を表示",
+      "noMatches": "該当する人がいません。別の名前やグループを試してください。"
+    },
+    "card": {
+      "connections": "{count, plural, =0 {つながりなし} other {#件のつながり}}",
+      "aria": "{name}、{details}",
+      "noRelationship": "あなたとは直接のつながりなし"
+    },
+    "pick": {
+      "target": "{name}を選択中です。次にもう1人をタップしてください。",
+      "cancel": "キャンセル"
+    },
+    "brush": {
+      "label": "ブラシモード",
+      "description": "関係の種類を1つ選びます。その後つなげたペアには、ダイアログなしですぐにその種類が付きます。",
+      "select": "ブラシモードの関係の種類",
+      "placeholder": "種類を選ぶ",
+      "active": "ブラシモード中：{type}",
+      "activeHint": "2人を重ねるかタップすると、すぐに「{type}」でつながります。",
+      "stop": "終了"
+    },
+    "dialog": {
+      "title": "{from} → {to}",
+      "sentence": "{from}は{to}の…",
+      "alreadyConnected": "すでにつながっています：{summary}",
+      "alreadyLinked": "つながり済み",
+      "cannotUndo": "この2人はすでにつながっているため、新しいつながりをワンタップで取り消すことはできません。その人のページで削除できます。",
+      "searchPlaceholder": "関係の種類を検索",
+      "noTypes": "該当する関係の種類がありません。",
+      "close": "閉じる",
+      "typesLabel": "関係の種類"
+    },
+    "summary": {
+      "preview": "{from}は{to}の{type}",
+      "pair": "{from}は{to}の{type}、{to}は{from}の{inverse}",
+      "symmetric": "{from}と{to}を「{type}」でつなぎました"
+    },
+    "toast": {
+      "undo": "元に戻す",
+      "undone": "取り消しました：{from}と{to}の「{type}」のつながりを解除",
+      "alreadyExists": "{from}と{to}はすでに「{type}」でつながっています",
+      "failed": "うまくいきませんでした。もう一度お試しください。",
+      "undoFailed": "取り消せませんでした。もう一度お試しください。"
+    },
+    "recent": {
+      "title": "いまつないだ関係",
+      "undoAria": "元に戻す：{summary}",
+      "noUndo": "その人のページで削除してください"
+    },
+    "empty": {
+      "noPeopleTitle": "2人以上が必要です",
+      "noPeopleDescription": "まず何人か追加してから、ここで互いにつなげましょう。",
+      "addPerson": "人を追加",
+      "noTypesTitle": "関係の種類がまだありません",
+      "noTypesDescription": "関係の種類は、2人がどんな間柄かを表します（友人、同僚など）。つなげ始めるには1つ作成してください。",
+      "createType": "関係の種類を作成"
+    }
   }
 }
