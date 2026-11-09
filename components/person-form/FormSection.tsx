@@ -35,7 +35,7 @@ export default function FormSection({
           aria-expanded={isOpen}
           aria-controls={contentId}
           onClick={() => setOpen(!isOpen)}
-          className="w-full flex items-center justify-between gap-3 px-4 py-3 min-h-11 text-left rounded-lg hover:bg-surface-elevated transition-colors focus:outline-none focus:ring-2 focus:ring-primary"
+          className="w-full flex items-center justify-between gap-3 px-4 py-3 min-h-11 text-left rounded-lg hover:bg-surface-elevated transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary"
         >
           <span className="flex items-center gap-2 min-w-0">
             <span className="text-lg font-semibold text-foreground">{title}</span>
@@ -61,7 +61,7 @@ export default function FormSection({
           {error}
         </p>
       )}
-      <div id={contentId} hidden={!isOpen} className="px-4 pb-4">
+      <div id={contentId} hidden={!isOpen} className="px-4 pt-2 pb-4">
         {children}
       </div>
     </section>
