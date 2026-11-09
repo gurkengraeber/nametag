@@ -2123,31 +2123,44 @@
     "noEntriesDescription": "En kaffe med venner, en familiemiddag, et uventet gjensyn. Ta vare på øyeblikkene som betyr noe.",
     "writeFirstEntry": "Skriv din første oppføring",
     "form": {
-      "titleLabel": "Tittel",
-      "titlePlaceholder": "Gi denne oppføringen en tittel...",
+      "titleLabel": "Tittel (valgfritt)",
+      "titlePlaceholder": "La stå tom for å bruke første linje",
       "dateLabel": "Dato",
       "peopleLabel": "Personer",
       "peoplePlaceholder": "Skriv for å legge til personer...",
       "bodyLabel": "Oppføring",
       "bodyPlaceholder": "Skriv om møtet ditt...",
-      "updateLastContact": "Oppdater siste kontaktdato for merkede personer",
-      "updateLastContactTooltip": "Setter datoen for «sist kontaktet» for hver merket person til datoen for denne oppføringen, slik at du kan holde styr på når du sist hadde kontakt med dem.",
+      "updateLastContact": "Sett siste kontakt til {date}",
       "save": "Lagre oppføring",
       "cancel": "Avbryt",
       "markdownSupport": "Støtter Markdown-formatering",
       "timeLabel": "Tid",
       "addTime": "Legg til tid",
       "removeTime": "Fjern tid",
-      "saved": "Oppføring lagret"
+      "saved": "Oppføring lagret",
+      "updateLastContactHelp": "Gjelder alle som er merket her. Hvis noens siste kontakt allerede er senere, forblir den uendret.",
+      "updateLastContactFuture": "Denne oppføringen har en dato i fremtiden, så siste kontakt røres ikke. Huk av i boksen for å endre det.",
+      "bodyRequired": "Skriv noe før du lagrer.",
+      "untitled": "Oppføring uten tittel",
+      "saveFailed": "Kunne ikke lagre oppføringen. Prøv igjen.",
+      "saveAndAddAnother": "Lagre og skriv en til",
+      "savedAddAnother": "Oppføringen er lagret. Klar for neste.",
+      "shortcutHint": "Ctrl+Enter (Cmd+Enter på Mac) lagrer",
+      "recentPeople": "Nylig skrevet om",
+      "draftRestored": "Vi gjenopprettet det ulagrede utkastet ditt.",
+      "discardDraft": "Forkast utkast"
     },
     "detail": {
       "editButton": "Rediger",
       "deleteButton": "Slett",
       "confirmDelete": "Er du sikker på at du vil slette denne journaloppføringen?",
-      "confirmDeleteDescription": "Denne handlingen kan ikke angres.",
+      "confirmDeleteDescription": "Oppføringen forsvinner fra dagboken din. Rett etter sletting kan du angre.",
       "deleted": "Journaloppføring slettet",
       "deleteFailed": "Kunne ikke slette oppføringen",
-      "taggedPeople": "Personer"
+      "taggedPeople": "Personer",
+      "undo": "Angre",
+      "restored": "Oppføringen er gjenopprettet",
+      "restoreFailed": "Kunne ikke gjenopprette oppføringen."
     },
     "personSection": {
       "title": "Journal",
@@ -2155,7 +2168,26 @@
       "writeOne": "Skriv en",
       "viewAll": "Vis alle oppføringer",
       "newEntry": "Ny oppføring"
-    }
+    },
+    "filters": {
+      "rangeLabel": "Periode",
+      "rangeAny": "Når som helst",
+      "rangeWeek": "Siste 7 dager",
+      "rangeMonth": "Siste 30 dager",
+      "rangeYear": "I år",
+      "rangeCustom": "{from} til {to}",
+      "rangeFrom": "Fra {date}",
+      "rangeTo": "Til {date}"
+    },
+    "timeline": {
+      "showMore": "Vis hele oppføringen",
+      "showLess": "Vis mindre"
+    },
+    "noResults": "Ingen oppføringer passer til filtrene",
+    "noResultsDescription": "Prøv et annet søkeord eller en annen periode, eller fjern filtrene.",
+    "clearFilters": "Fjern filtre",
+    "writeEntry": "Skriv en oppføring",
+    "resultCount": "{count, plural, one {# oppføring} other {# oppføringer}}"
   },
   "pwa": {
     "description": "Hold oversikt over menneskene i livet ditt.",

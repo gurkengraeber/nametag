@@ -2123,31 +2123,44 @@
     "noEntriesDescription": "Kawa z przyjacielem, rodzinna kolacja, spotkanie dawno niewidzianego znajomego. Zapisz chwile, które mają znaczenie.",
     "writeFirstEntry": "Napisz pierwszy wpis",
     "form": {
-      "titleLabel": "Tytuł",
-      "titlePlaceholder": "Nadaj temu wpisowi tytuł...",
+      "titleLabel": "Tytuł (opcjonalnie)",
+      "titlePlaceholder": "Zostaw puste, aby użyć pierwszego wiersza",
       "dateLabel": "Data",
       "peopleLabel": "Osoby",
       "peoplePlaceholder": "Zacznij pisać, aby dodać osoby...",
       "bodyLabel": "Wpis",
       "bodyPlaceholder": "Napisz o swoim spotkaniu...",
-      "updateLastContact": "Zaktualizuj datę ostatniego kontaktu oznaczonych osób",
-      "updateLastContactTooltip": "Ustawia datę „ostatniego kontaktu” każdej oznaczonej osoby na datę tego wpisu, dzięki czemu możesz śledzić, kiedy ostatnio doszło do kontaktu.",
+      "updateLastContact": "Ustaw ostatni kontakt na {date}",
       "save": "Zapisz wpis",
       "cancel": "Anuluj",
       "markdownSupport": "Obsługuje formatowanie Markdown",
       "timeLabel": "Godzina",
       "addTime": "Dodaj godzinę",
       "removeTime": "Usuń godzinę",
-      "saved": "Wpis zapisano"
+      "saved": "Wpis zapisano",
+      "updateLastContactHelp": "Dotyczy wszystkich oznaczonych tu osób. Jeśli czyjś ostatni kontakt jest już późniejszy, pozostaje bez zmian.",
+      "updateLastContactFuture": "Ten wpis ma datę w przyszłości, więc ostatni kontakt nie zostanie zmieniony. Zaznacz pole, aby to zmienić.",
+      "bodyRequired": "Napisz coś przed zapisaniem.",
+      "untitled": "Wpis bez tytułu",
+      "saveFailed": "Nie udało się zapisać wpisu. Spróbuj ponownie.",
+      "saveAndAddAnother": "Zapisz i dodaj kolejny",
+      "savedAddAnother": "Wpis zapisany. Można pisać następny.",
+      "shortcutHint": "Ctrl+Enter (Cmd+Enter na Macu) zapisuje",
+      "recentPeople": "Ostatnio wspominani",
+      "draftRestored": "Przywróciliśmy Twój niezapisany szkic.",
+      "discardDraft": "Odrzuć szkic"
     },
     "detail": {
       "editButton": "Edytuj",
       "deleteButton": "Usuń",
       "confirmDelete": "Czy na pewno chcesz usunąć ten wpis w dzienniku?",
-      "confirmDeleteDescription": "Tej operacji nie można cofnąć.",
+      "confirmDeleteDescription": "Wpis zniknie z Twojego dziennika. Tuż po usunięciu możesz to cofnąć.",
       "deleted": "Wpis w dzienniku został usunięty",
       "deleteFailed": "Nie udało się usunąć wpisu",
-      "taggedPeople": "Osoby"
+      "taggedPeople": "Osoby",
+      "undo": "Cofnij",
+      "restored": "Wpis przywrócony",
+      "restoreFailed": "Nie udało się przywrócić wpisu."
     },
     "personSection": {
       "title": "Dziennik",
@@ -2155,7 +2168,26 @@
       "writeOne": "Napisz wpis",
       "viewAll": "Zobacz wszystkie wpisy",
       "newEntry": "Nowy wpis"
-    }
+    },
+    "filters": {
+      "rangeLabel": "Okres",
+      "rangeAny": "Dowolny czas",
+      "rangeWeek": "Ostatnie 7 dni",
+      "rangeMonth": "Ostatnie 30 dni",
+      "rangeYear": "Ten rok",
+      "rangeCustom": "Od {from} do {to}",
+      "rangeFrom": "Od {date}",
+      "rangeTo": "Do {date}"
+    },
+    "timeline": {
+      "showMore": "Pokaż cały wpis",
+      "showLess": "Pokaż mniej"
+    },
+    "noResults": "Żaden wpis nie pasuje do tych filtrów",
+    "noResultsDescription": "Spróbuj innego słowa lub okresu albo wyczyść filtry.",
+    "clearFilters": "Wyczyść filtry",
+    "writeEntry": "Napisz wpis",
+    "resultCount": "{count, plural, one {# wpis} few {# wpisy} many {# wpisów} other {# wpisu}}"
   },
   "pwa": {
     "description": "Śledź osoby w swoim życiu.",

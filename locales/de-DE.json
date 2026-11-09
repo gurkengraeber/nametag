@@ -2123,31 +2123,44 @@
     "noEntriesDescription": "Ein Kaffee mit Freunden, ein Familienessen, ein unverhofftes Wiedersehen. Halte die Momente fest, die zählen.",
     "writeFirstEntry": "Schreib deinen ersten Eintrag",
     "form": {
-      "titleLabel": "Titel",
-      "titlePlaceholder": "Gib diesem Eintrag einen Titel...",
+      "titleLabel": "Titel (optional)",
+      "titlePlaceholder": "Leer lassen, dann gilt die erste Zeile",
       "dateLabel": "Datum",
       "peopleLabel": "Personen",
       "peoplePlaceholder": "Tippen um Personen hinzuzufügen...",
       "bodyLabel": "Eintrag",
       "bodyPlaceholder": "Schreibe über deine Begegnung...",
-      "updateLastContact": "Letzten Kontaktzeitpunkt für markierte Personen aktualisieren",
-      "updateLastContactTooltip": "Setzt das Datum des 'letzten Kontakts' jeder markierten Person auf das Datum dieses Eintrags, damit du nachverfolgen kannst, wann du zuletzt mit ihnen interagiert hast.",
+      "updateLastContact": "Letzten Kontakt auf {date} setzen",
       "save": "Eintrag speichern",
       "cancel": "Abbrechen",
       "markdownSupport": "Unterstützt Markdown-Formatierung",
       "timeLabel": "Uhrzeit",
       "addTime": "Uhrzeit hinzufügen",
       "removeTime": "Uhrzeit entfernen",
-      "saved": "Eintrag gespeichert"
+      "saved": "Eintrag gespeichert",
+      "updateLastContactHelp": "Gilt für alle hier markierten Personen. Ist der letzte Kontakt einer Person schon später, bleibt er unverändert.",
+      "updateLastContactFuture": "Dieser Eintrag liegt in der Zukunft, deshalb bleibt der letzte Kontakt unverändert. Mit dem Häkchen änderst du das.",
+      "bodyRequired": "Schreibe etwas, bevor du speicherst.",
+      "untitled": "Eintrag ohne Titel",
+      "saveFailed": "Der Eintrag konnte nicht gespeichert werden. Bitte versuche es erneut.",
+      "saveAndAddAnother": "Speichern und weiteren schreiben",
+      "savedAddAnother": "Eintrag gespeichert. Bereit für den nächsten.",
+      "shortcutHint": "Strg+Enter (am Mac Cmd+Enter) speichert",
+      "recentPeople": "Zuletzt erwähnt",
+      "draftRestored": "Dein ungespeicherter Entwurf wurde wiederhergestellt.",
+      "discardDraft": "Entwurf verwerfen"
     },
     "detail": {
       "editButton": "Bearbeiten",
       "deleteButton": "Löschen",
       "confirmDelete": "Bist du sicher, dass du diesen Tagebucheintrag löschen möchtest?",
-      "confirmDeleteDescription": "Diese Aktion kann nicht ruckgangig gemacht werden.",
+      "confirmDeleteDescription": "Der Eintrag verschwindet aus deinem Tagebuch. Direkt nach dem Löschen kannst du das rückgängig machen.",
       "deleted": "Tagebucheintrag gelöscht",
       "deleteFailed": "Eintrag konnte nicht gelöscht werden",
-      "taggedPeople": "Personen"
+      "taggedPeople": "Personen",
+      "undo": "Rückgängig",
+      "restored": "Eintrag wiederhergestellt",
+      "restoreFailed": "Der Eintrag konnte nicht wiederhergestellt werden."
     },
     "personSection": {
       "title": "Tagebuch",
@@ -2155,7 +2168,26 @@
       "writeOne": "Einen schreiben",
       "viewAll": "Alle Einträge anzeigen",
       "newEntry": "Neuer Eintrag"
-    }
+    },
+    "filters": {
+      "rangeLabel": "Zeitraum",
+      "rangeAny": "Jederzeit",
+      "rangeWeek": "Letzte 7 Tage",
+      "rangeMonth": "Letzte 30 Tage",
+      "rangeYear": "Dieses Jahr",
+      "rangeCustom": "{from} bis {to}",
+      "rangeFrom": "Ab {date}",
+      "rangeTo": "Bis {date}"
+    },
+    "timeline": {
+      "showMore": "Ganzen Eintrag zeigen",
+      "showLess": "Weniger zeigen"
+    },
+    "noResults": "Keine Einträge passen zu diesen Filtern",
+    "noResultsDescription": "Versuche einen anderen Suchbegriff oder Zeitraum, oder setze die Filter zurück.",
+    "clearFilters": "Filter zurücksetzen",
+    "writeEntry": "Eintrag schreiben",
+    "resultCount": "{count, plural, one {# Eintrag} other {# Einträge}}"
   },
   "pwa": {
     "description": "Behalte den Überblick über die Menschen in deinem Leben.",

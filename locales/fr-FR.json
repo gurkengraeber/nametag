@@ -2123,31 +2123,44 @@
     "noEntriesDescription": "Un café entre amis, un dîner de famille, une rencontre imprévue. Notez les moments qui comptent.",
     "writeFirstEntry": "Écrire votre première entrée",
     "form": {
-      "titleLabel": "Titre",
-      "titlePlaceholder": "Donnez un titre à cette entrée...",
+      "titleLabel": "Titre (facultatif)",
+      "titlePlaceholder": "Laissez vide pour utiliser la première ligne",
       "dateLabel": "Date",
       "peopleLabel": "Personnes",
       "peoplePlaceholder": "Saisissez pour ajouter des personnes...",
       "bodyLabel": "Entrée",
       "bodyPlaceholder": "Racontez votre rencontre...",
-      "updateLastContact": "Mettre à jour la date du dernier contact pour les personnes mentionnées",
-      "updateLastContactTooltip": "Attribue la date de cette entrée comme dernier contact pour chaque personne mentionnée, afin de suivre vos derniers échanges avec elles.",
+      "updateLastContact": "Définir le dernier contact au {date}",
       "save": "Enregistrer l'entrée",
       "cancel": "Annuler",
       "markdownSupport": "Prend en charge la mise en forme Markdown",
       "timeLabel": "Heure",
       "addTime": "Ajouter une heure",
       "removeTime": "Retirer l'heure",
-      "saved": "Entrée enregistrée"
+      "saved": "Entrée enregistrée",
+      "updateLastContactHelp": "S'applique à toutes les personnes mentionnées ici. Si le dernier contact de quelqu'un est déjà plus récent, il reste inchangé.",
+      "updateLastContactFuture": "Cette entrée est datée dans le futur, le dernier contact reste donc inchangé. Cochez la case pour le modifier.",
+      "bodyRequired": "Écrivez quelque chose avant d'enregistrer.",
+      "untitled": "Entrée sans titre",
+      "saveFailed": "Impossible d'enregistrer l'entrée. Veuillez réessayer.",
+      "saveAndAddAnother": "Enregistrer et en ajouter une autre",
+      "savedAddAnother": "Entrée enregistrée. Prêt pour la suivante.",
+      "shortcutHint": "Ctrl+Entrée (Cmd+Entrée sur Mac) enregistre",
+      "recentPeople": "Mentionnées récemment",
+      "draftRestored": "Nous avons restauré votre brouillon non enregistré.",
+      "discardDraft": "Supprimer le brouillon"
     },
     "detail": {
       "editButton": "Modifier",
       "deleteButton": "Supprimer",
       "confirmDelete": "Voulez-vous vraiment supprimer cette entrée de journal ?",
-      "confirmDeleteDescription": "Cette action est irréversible.",
+      "confirmDeleteDescription": "L'entrée disparaît de votre journal. Juste après la suppression, vous pouvez l'annuler.",
       "deleted": "Entrée de journal supprimée",
       "deleteFailed": "Échec de la suppression de l'entrée",
-      "taggedPeople": "Personnes"
+      "taggedPeople": "Personnes",
+      "undo": "Annuler",
+      "restored": "Entrée restaurée",
+      "restoreFailed": "Impossible de restaurer l'entrée."
     },
     "personSection": {
       "title": "Journal",
@@ -2155,7 +2168,26 @@
       "writeOne": "En écrire une",
       "viewAll": "Voir toutes les entrées",
       "newEntry": "Nouvelle entrée"
-    }
+    },
+    "filters": {
+      "rangeLabel": "Période",
+      "rangeAny": "Toutes les dates",
+      "rangeWeek": "7 derniers jours",
+      "rangeMonth": "30 derniers jours",
+      "rangeYear": "Cette année",
+      "rangeCustom": "{from} au {to}",
+      "rangeFrom": "Depuis le {date}",
+      "rangeTo": "Jusqu'au {date}"
+    },
+    "timeline": {
+      "showMore": "Afficher l'entrée complète",
+      "showLess": "Afficher moins"
+    },
+    "noResults": "Aucune entrée ne correspond à ces filtres",
+    "noResultsDescription": "Essayez un autre mot ou une autre période, ou effacez les filtres.",
+    "clearFilters": "Effacer les filtres",
+    "writeEntry": "Écrire une entrée",
+    "resultCount": "{count, plural, one {# entrée} other {# entrées}}"
   },
   "pwa": {
     "description": "Gardez le fil des personnes qui comptent dans votre vie.",
