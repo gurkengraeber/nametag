@@ -75,7 +75,7 @@ function ConnectionsCell({
   const hidden = ordered.slice(MAX_VISIBLE_CONNECTIONS);
 
   return (
-    <div className="flex flex-wrap gap-1 min-w-[18rem] max-w-md">
+    <div className="flex flex-wrap gap-1 min-w-[14rem] max-w-sm">
       {visible.map((connection, index) => {
         const inGroup = memberIds.has(connection.id);
         return (
