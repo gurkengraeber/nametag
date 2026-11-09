@@ -473,7 +473,7 @@ describe('PersonCompare', () => {
       );
 
       // Fields that are not in conflict are collapsed but present
-      expect(screen.getByText(/1 field is the same or only filled in once/i)).toBeInTheDocument();
+      expect(screen.getByText(/2 fields are the same or only filled in once/i)).toBeInTheDocument();
       expect(screen.getByText('Acme')).toBeInTheDocument();
     });
   });

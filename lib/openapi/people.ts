@@ -400,6 +400,25 @@ export function peoplePaths(): Record<string, Record<string, unknown>> {
                       },
                     },
                     similarity: { type: 'number', description: 'Score between 0 and 1' },
+                    pairs: {
+                      type: 'array',
+                      description: 'Flagged pairs inside the group, most similar first, each with the reasons that matched.',
+                      items: {
+                        type: 'object',
+                        properties: {
+                          personAId: { type: 'string' },
+                          personBId: { type: 'string' },
+                          similarity: { type: 'number', description: 'Score between 0 and 1' },
+                          reasons: {
+                            type: 'array',
+                            items: {
+                              type: 'string',
+                              enum: ['sameName', 'similarName', 'sameEmail', 'samePhone', 'sameBirthday', 'sameBirthdayDay'],
+                            },
+                          },
+                        },
+                      },
+                    },
                   },
                 },
               },
@@ -463,6 +482,30 @@ export function peoplePaths(): Record<string, Record<string, unknown>> {
           '400': ref400(),
           '401': ref401(),
           '404': ref404(),
+        },
+      },
+      delete: {
+        tags: ['People'],
+        summary: 'Undo a duplicate dismissal',
+        description: 'Removes the dismissal of a pair so the two contacts can be suggested as duplicates again. Succeeds even if the pair was not dismissed.',
+        security: sessionOrToken(),
+        requestBody: jsonBody({
+          type: 'object',
+          required: ['personAId', 'personBId'],
+          properties: {
+            personAId: { type: 'string', description: 'ID of the first person' },
+            personBId: { type: 'string', description: 'ID of the second person' },
+          },
+        }),
+        responses: {
+          '200': jsonResponse('Dismissal removed', {
+            type: 'object',
+            properties: {
+              dismissed: { type: 'boolean', description: 'Always false after this call' },
+            },
+          }),
+          '400': ref400(),
+          '401': ref401(),
         },
       },
     },
