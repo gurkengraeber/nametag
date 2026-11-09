@@ -22,8 +22,10 @@ Returns entries ordered by date descending. This is the one list endpoint in the
 | Parameter | Type | Description |
 | --- | --- | --- |
 | `page` | integer | Page number, defaults to 1. Page size is fixed at 50. |
-| `person` | string | Filter to entries tagging this person ID. |
+| `person` | string | Filter to entries tagging this person ID. Pass several IDs separated by commas to get only entries that tag all of them. |
 | `q` | string | Search text in title and body. |
+| `from` | string | First calendar day to include, as `YYYY-MM-DD`. Compared as a UTC day. Invalid values are ignored. |
+| `to` | string | Last calendar day to include, as `YYYY-MM-DD`. Compared as a UTC day. Invalid values are ignored. |
 
 ```bash
 curl "https://your-instance.example.com/api/journal?page=1&person=clx1" \
@@ -116,7 +118,7 @@ curl -X PUT https://your-instance.example.com/api/journal/clxj1 \
 DELETE /api/journal/{id}
 ```
 
-Soft-deletes the entry.
+Soft-deletes the entry. It can be brought back with the restore endpoint below.
 
 ```bash
 curl -X DELETE https://your-instance.example.com/api/journal/clxj1 \
@@ -125,4 +127,21 @@ curl -X DELETE https://your-instance.example.com/api/journal/clxj1 \
 
 ```json
 { "message": "Journal entry deleted" }
+```
+
+## Restore a journal entry
+
+```
+POST /api/journal/{id}/restore
+```
+
+Brings back a soft-deleted entry together with its tagged people. Returns `404` if the entry does not exist or belongs to someone else, and `400` if it is not deleted.
+
+```bash
+curl -X POST https://your-instance.example.com/api/journal/clxj1/restore \
+  -H "Authorization: Bearer ntag_xxx"
+```
+
+```json
+{ "entry": { "id": "clxj1", "title": "Coffee with Ada", "deletedAt": null } }
 ```
