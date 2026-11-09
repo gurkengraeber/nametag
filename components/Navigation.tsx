@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/Button';
 import { useFocusTrap } from '@/hooks/useFocusTrap';
 import { formatUserDisplayName } from '@/lib/nameUtils';
 import { personIdFromPath, rememberRecentPerson } from '@/lib/recent-people';
+import { useSearchIndex } from './SearchIndexProvider';
 
 interface NavigationProps {
   userEmail?: string;
@@ -66,6 +67,7 @@ const navItems = [
 ];
 
 export default function Navigation({ userEmail, userName, userNickname, userPhoto, currentPath }: NavigationProps) {
+  const { userId } = useSearchIndex();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
@@ -151,9 +153,9 @@ export default function Navigation({ userEmail, userName, userNickname, userPhot
   useEffect(() => {
     const personId = personIdFromPath(window.location.pathname);
     if (personId && userEmail) {
-      rememberRecentPerson(personId);
+      rememberRecentPerson(userId, personId);
     }
-  }, [userEmail]);
+  }, [userEmail, userId]);
 
   // Puts the cursor in whichever search field is on screen.
   const focusSearch = () => {

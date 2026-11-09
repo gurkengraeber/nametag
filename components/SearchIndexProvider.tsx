@@ -35,6 +35,8 @@ interface SearchIndexContextType {
   /** True once the index has loaded and holds no people at all. */
   isEmpty: boolean;
   refreshIndex: () => void;
+  /** The signed-in account, used to keep per-account browser data apart. */
+  userId?: string;
 }
 
 const SearchIndexContext = createContext<SearchIndexContextType | undefined>(undefined);
@@ -99,7 +101,18 @@ export function SearchIndexProvider({ children }: { children: React.ReactNode })
 
   return (
     <SearchIndexContext.Provider
-      value={{ search, getPerson, isReady, version, hasError, groups, relationshipTypes, isEmpty, refreshIndex }}
+      value={{
+        search,
+        getPerson,
+        isReady,
+        version,
+        hasError,
+        groups,
+        relationshipTypes,
+        isEmpty,
+        refreshIndex,
+        userId: session?.user?.id,
+      }}
     >
       {children}
     </SearchIndexContext.Provider>

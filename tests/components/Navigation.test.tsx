@@ -23,6 +23,7 @@ const searchIndex = vi.hoisted(() => ({
   getPerson: () => null,
   isReady: true,
   version: 1,
+  userId: 'user-1',
   hasError: false,
   isEmpty: false,
   groups: [],
@@ -165,6 +166,20 @@ describe('Navigation', () => {
       await user.click(within(screen.getByRole('dialog')).getByRole('button', { name: enMessages.nav.userMenu.signOut }));
 
       expect(handleSignOut).toHaveBeenCalledTimes(1);
+    });
+
+    it('wipes the account data kept in this browser when signing out', async () => {
+      const user = userEvent.setup();
+      window.localStorage.setItem('nametag:recent-people:user-1', '{}');
+      window.localStorage.setItem('unrelated', 'keep');
+      renderNav();
+
+      await user.click(screen.getByRole('button', { name: enMessages.nav.openMenu }));
+      await user.click(within(screen.getByRole('dialog')).getByRole('button', { name: enMessages.nav.userMenu.signOut }));
+
+      expect(window.localStorage.getItem('nametag:recent-people:user-1')).toBeNull();
+      expect(window.localStorage.getItem('unrelated')).toBe('keep');
+      window.localStorage.clear();
     });
 
     it('closes the menu when a nav item is followed', async () => {

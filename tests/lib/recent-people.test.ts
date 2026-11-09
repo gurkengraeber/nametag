@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import {
   MAX_RECENT_PEOPLE,
   forgetRecentPeople,
+  freshEntries,
   personIdFromPath,
   readRecentPeople,
   rememberRecentPerson,
@@ -25,16 +26,38 @@ describe('personIdFromPath', () => {
   });
 });
 
+const NOW = Date.UTC(2026, 10, 9);
+const DAY = 24 * 60 * 60 * 1000;
+
 describe('withRecentPerson', () => {
+  const entries = [
+    { id: 'a', at: NOW - 3 },
+    { id: 'b', at: NOW - 2 },
+    { id: 'c', at: NOW - 1 },
+  ];
+
   it('moves a person to the front without duplicates', () => {
-    expect(withRecentPerson(['a', 'b', 'c'], 'b')).toEqual(['b', 'a', 'c']);
+    expect(withRecentPerson(entries, 'b', NOW).map((e) => e.id)).toEqual(['b', 'a', 'c']);
   });
 
   it('caps the list', () => {
-    const many = Array.from({ length: MAX_RECENT_PEOPLE }, (_, i) => `p${i}`);
-    const next = withRecentPerson(many, 'new');
+    const many = Array.from({ length: MAX_RECENT_PEOPLE }, (_, i) => ({ id: `p${i}`, at: NOW }));
+    const next = withRecentPerson(many, 'new', NOW);
     expect(next).toHaveLength(MAX_RECENT_PEOPLE);
-    expect(next[0]).toBe('new');
+    expect(next[0]).toEqual({ id: 'new', at: NOW });
+  });
+});
+
+describe('freshEntries', () => {
+  it('drops entries older than 30 days', () => {
+    const kept = freshEntries(
+      [
+        { id: 'new', at: NOW - 29 * DAY },
+        { id: 'old', at: NOW - 31 * DAY },
+      ],
+      NOW
+    );
+    expect(kept.map((e) => e.id)).toEqual(['new']);
   });
 });
 
@@ -45,26 +68,64 @@ describe('recent people storage', () => {
   });
 
   it('remembers people newest first', () => {
-    rememberRecentPerson('a');
-    rememberRecentPerson('b');
-    rememberRecentPerson('a');
-    expect(readRecentPeople()).toEqual(['a', 'b']);
+    rememberRecentPerson('u1', 'a', NOW);
+    rememberRecentPerson('u1', 'b', NOW + 1);
+    rememberRecentPerson('u1', 'a', NOW + 2);
+    expect(readRecentPeople('u1', NOW + 3)).toEqual(['a', 'b']);
+  });
+
+  it('stores only ids and timestamps under a key that names the account', () => {
+    rememberRecentPerson('u1', 'a', NOW);
+    expect(Object.keys(window.localStorage)).toEqual(['nametag:recent-people:u1']);
+    expect(JSON.parse(window.localStorage.getItem('nametag:recent-people:u1') ?? '')).toEqual({
+      userId: 'u1',
+      entries: [{ id: 'a', at: NOW }],
+    });
+  });
+
+  it('keeps accounts apart', () => {
+    rememberRecentPerson('u1', 'a', NOW);
+    expect(readRecentPeople('u2', NOW)).toEqual([]);
+  });
+
+  it('refuses a value that was written for another account', () => {
+    window.localStorage.setItem(
+      'nametag:recent-people:u2',
+      JSON.stringify({ userId: 'u1', entries: [{ id: 'a', at: NOW }] })
+    );
+    expect(readRecentPeople('u2', NOW)).toEqual([]);
+  });
+
+  it('does nothing without a known account', () => {
+    rememberRecentPerson(undefined, 'a', NOW);
+    expect(window.localStorage.length).toBe(0);
+    expect(readRecentPeople(undefined, NOW)).toEqual([]);
+  });
+
+  it('expires old entries on read', () => {
+    rememberRecentPerson('u1', 'old', NOW - 31 * DAY);
+    rememberRecentPerson('u1', 'new', NOW - DAY);
+    expect(readRecentPeople('u1', NOW)).toEqual(['new']);
   });
 
   it('forgets people that no longer exist', () => {
-    rememberRecentPerson('a');
-    rememberRecentPerson('b');
-    forgetRecentPeople(['a']);
-    expect(readRecentPeople()).toEqual(['b']);
+    rememberRecentPerson('u1', 'a', Date.now());
+    rememberRecentPerson('u1', 'b', Date.now());
+    forgetRecentPeople('u1', ['a']);
+    expect(readRecentPeople('u1')).toEqual(['b']);
   });
 
   it('survives corrupt data', () => {
-    window.localStorage.setItem('nametag:recent-people', '{not json');
-    expect(readRecentPeople()).toEqual([]);
-    window.localStorage.setItem('nametag:recent-people', '{"a":1}');
-    expect(readRecentPeople()).toEqual([]);
-    window.localStorage.setItem('nametag:recent-people', '["a", 3, "b"]');
-    expect(readRecentPeople()).toEqual(['a', 'b']);
+    const key = 'nametag:recent-people:u1';
+    window.localStorage.setItem(key, '{not json');
+    expect(readRecentPeople('u1', NOW)).toEqual([]);
+    window.localStorage.setItem(key, '["a"]');
+    expect(readRecentPeople('u1', NOW)).toEqual([]);
+    window.localStorage.setItem(
+      key,
+      JSON.stringify({ userId: 'u1', entries: [{ id: 'a', at: NOW }, { id: 3, at: NOW }, 'x', { id: 'b' }] })
+    );
+    expect(readRecentPeople('u1', NOW)).toEqual(['a']);
   });
 
   it('does not throw when storage is blocked', () => {
@@ -74,8 +135,8 @@ describe('recent people storage', () => {
     vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
       throw new Error('blocked');
     });
-    expect(readRecentPeople()).toEqual([]);
-    expect(() => rememberRecentPerson('a')).not.toThrow();
-    expect(() => forgetRecentPeople(['a'])).not.toThrow();
+    expect(readRecentPeople('u1')).toEqual([]);
+    expect(() => rememberRecentPerson('u1', 'a')).not.toThrow();
+    expect(() => forgetRecentPeople('u1', ['a'])).not.toThrow();
   });
 });

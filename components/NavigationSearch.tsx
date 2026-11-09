@@ -78,6 +78,7 @@ export default function NavigationSearch({ autoFocus, onClose }: NavigationSearc
     groups = [],
     relationshipTypes = [],
     refreshIndex,
+    userId,
   } = useSearchIndex();
 
   // Fetch user's name order preference
@@ -171,7 +172,7 @@ export default function NavigationSearch({ autoFocus, onClose }: NavigationSearc
   // Recently opened people, resolved against the index so they are never stale.
   const refreshRecents = useCallback((): Hit[] => {
     if (!searchIndexReady) return [];
-    const ids = readRecentPeople();
+    const ids = readRecentPeople(userId);
     const found: Hit[] = [];
     const missing: string[] = [];
     for (const id of ids) {
@@ -179,9 +180,9 @@ export default function NavigationSearch({ autoFocus, onClose }: NavigationSearc
       if (person) found.push(person);
       else missing.push(id);
     }
-    forgetRecentPeople(missing);
+    forgetRecentPeople(userId, missing);
     return found;
-  }, [searchIndexReady, getPerson]);
+  }, [searchIndexReady, getPerson, userId]);
 
   useEffect(() => {
     const list = refreshRecents();
@@ -242,7 +243,7 @@ export default function NavigationSearch({ autoFocus, onClose }: NavigationSearc
   };
 
   const handleSelect = (person: Hit) => {
-    rememberRecentPerson(person.id);
+    rememberRecentPerson(userId, person.id);
     setSearchTerm('');
     setIsOpen(false);
     setActions(null);

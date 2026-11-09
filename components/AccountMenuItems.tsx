@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { handleSignOut } from '@/app/actions/auth';
+import { clearNametagStorage } from '@/lib/client-storage';
 
 const VARIANTS = {
   /** Desktop dropdown: tight rows inside a small floating panel. */
@@ -28,6 +29,8 @@ export default function AccountMenuItems({ variant = 'compact', onNavigate, onSh
 
   const onSignOut = async () => {
     onNavigate?.();
+    // Nothing about this account may outlive the session in the browser.
+    clearNametagStorage();
     await handleSignOut();
   };
 

@@ -1,10 +1,24 @@
+import { STORAGE_MAX_AGE_MS, storageKey } from '@/lib/client-storage';
+
 /**
  * The people a user opened most recently, newest first, kept in this browser
- * only. Only ids are stored; names are looked up in the search index so the
- * list never shows stale or deleted data.
+ * only. Only ids and a timestamp are stored; names are looked up in the search
+ * index so the list never shows stale or deleted data. The list belongs to one
+ * account (the key and the stored value both carry the user id) and entries
+ * expire after 30 days.
  */
-const STORAGE_KEY = 'nametag:recent-people';
+const AREA = 'recent-people';
 export const MAX_RECENT_PEOPLE = 8;
+
+interface RecentEntry {
+  id: string;
+  at: number;
+}
+
+interface StoredRecent {
+  userId: string;
+  entries: RecentEntry[];
+}
 
 /** Routes under /people that are not a person's profile. */
 const RESERVED_SEGMENTS = new Set(['new', 'merge', 'duplicates']);
@@ -20,45 +34,69 @@ export function personIdFromPath(pathname: string): string | null {
 }
 
 /** Moves `id` to the front, drops duplicates and caps the list. */
-export function withRecentPerson(ids: string[], id: string, max = MAX_RECENT_PEOPLE): string[] {
-  return [id, ...ids.filter((existing) => existing !== id)].slice(0, max);
+export function withRecentPerson(
+  entries: RecentEntry[],
+  id: string,
+  now: number,
+  max = MAX_RECENT_PEOPLE
+): RecentEntry[] {
+  return [{ id, at: now }, ...entries.filter((entry) => entry.id !== id)].slice(0, max);
 }
 
-function parseIds(raw: string | null): string[] {
+/** Keeps only well-formed entries that are not older than the retention limit. */
+export function freshEntries(entries: RecentEntry[], now: number): RecentEntry[] {
+  return entries.filter((entry) => now - entry.at <= STORAGE_MAX_AGE_MS && entry.at <= now + 60_000);
+}
+
+function parseStored(raw: string | null, userId: string): RecentEntry[] {
   if (!raw) return [];
   try {
     const parsed: unknown = JSON.parse(raw);
-    if (!Array.isArray(parsed)) return [];
-    return parsed.filter((value): value is string => typeof value === 'string');
+    if (typeof parsed !== 'object' || parsed === null) return [];
+    const { userId: owner, entries } = parsed as Partial<StoredRecent>;
+    // A value written for another account is never shown, even under this key.
+    if (owner !== userId || !Array.isArray(entries)) return [];
+    return entries.filter(
+      (entry): entry is RecentEntry =>
+        typeof entry === 'object' &&
+        entry !== null &&
+        typeof (entry as RecentEntry).id === 'string' &&
+        typeof (entry as RecentEntry).at === 'number'
+    );
   } catch {
     return [];
   }
 }
 
-export function readRecentPeople(): string[] {
+function load(userId: string, now: number): RecentEntry[] {
   try {
-    return parseIds(window.localStorage.getItem(STORAGE_KEY));
+    return freshEntries(parseStored(window.localStorage.getItem(storageKey(AREA, userId)), userId), now);
   } catch {
     return [];
   }
 }
 
-export function rememberRecentPerson(id: string): void {
+function save(userId: string, entries: RecentEntry[]): void {
   try {
-    const next = withRecentPerson(readRecentPeople(), id);
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+    const value: StoredRecent = { userId, entries };
+    window.localStorage.setItem(storageKey(AREA, userId), JSON.stringify(value));
   } catch {
     // Storage can be blocked or full; the list is a convenience only.
   }
 }
 
-export function forgetRecentPeople(idsToDrop: string[]): void {
-  if (idsToDrop.length === 0) return;
-  try {
-    const drop = new Set(idsToDrop);
-    const next = readRecentPeople().filter((id) => !drop.has(id));
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-  } catch {
-    // See rememberRecentPerson.
-  }
+export function readRecentPeople(userId: string | undefined, now = Date.now()): string[] {
+  if (!userId) return [];
+  return load(userId, now).map((entry) => entry.id);
+}
+
+export function rememberRecentPerson(userId: string | undefined, id: string, now = Date.now()): void {
+  if (!userId) return;
+  save(userId, withRecentPerson(load(userId, now), id, now));
+}
+
+export function forgetRecentPeople(userId: string | undefined, idsToDrop: string[]): void {
+  if (!userId || idsToDrop.length === 0) return;
+  const drop = new Set(idsToDrop);
+  save(userId, load(userId, Date.now()).filter((entry) => !drop.has(entry.id)));
 }
