@@ -461,7 +461,7 @@ export default function PeopleListClient({
                     <td className="hidden xl:table-cell px-3 py-4 whitespace-nowrap text-sm text-muted">
                       {person.nickname ? `'${person.nickname}'` : '\u2014'}
                     </td>
-                    <td className="px-3 py-3 whitespace-nowrap">
+                    <td className="px-3 py-3 whitespace-nowrap min-w-[8.5rem]">
                       <RelationshipCell
                         personId={person.id}
                         value={person.relationshipToUserId}
