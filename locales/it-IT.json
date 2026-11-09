@@ -706,7 +706,14 @@
       "testSuccessUnknownCount": "La connessione funziona. Il server non ha indicato quanti contatti contiene.",
       "testCountUnknown": "numero sconosciuto",
       "testZeroContacts": "Il server risponde ma non segnala contatti qui. Potrebbero essere in un'altra rubrica, o questo accesso potrebbe non poterli vedere. Puoi continuare; la prima sincronizzazione mostrerà cosa c'è davvero.",
-      "testBeforeSave": "Testa prima la connessione, poi potrai salvare."
+      "testBeforeSave": "Testa prima la connessione, poi potrai salvare.",
+      "autoSyncOn": "La sincronizzazione automatica è attiva",
+      "autoSyncOff": "La sincronizzazione automatica è disattivata. I nuovi contatti sul server vengono trovati solo quando premi Sincronizza ora.",
+      "conflictsLink": "{count, plural, =1 {1 conflitto attende la tua decisione} other {# conflitti attendono la tua decisione}}",
+      "allUpToDate": "Tutto è aggiornato. Niente è in attesa.",
+      "errorHint": "Controlla le impostazioni di connessione, poi sincronizza di nuovo.",
+      "exportLink": "Invia contatti al server",
+      "syncNothingNew": "Tutto è aggiornato. Niente di nuovo da nessuna parte."
     },
     "billing": {
       "title": "Fatturazione",

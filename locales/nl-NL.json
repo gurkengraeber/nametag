@@ -706,7 +706,14 @@
       "testSuccessUnknownCount": "Verbinding werkt. De server gaf niet aan hoeveel contacten hij bevat.",
       "testCountUnknown": "aantal onbekend",
       "testZeroContacts": "De server antwoordde, maar meldt hier geen contacten. Ze staan mogelijk in een ander adresboek, of deze login mag ze niet zien. Je kunt toch doorgaan; de eerste synchronisatie laat zien wat er echt is.",
-      "testBeforeSave": "Test eerst de verbinding, daarna kun je opslaan."
+      "testBeforeSave": "Test eerst de verbinding, daarna kun je opslaan.",
+      "autoSyncOn": "Automatische synchronisatie staat aan",
+      "autoSyncOff": "Automatische synchronisatie staat uit. Nieuwe contacten op de server worden alleen gevonden als je op Nu synchroniseren drukt.",
+      "conflictsLink": "{count, plural, =1 {1 conflict wacht op je beslissing} other {# conflicten wachten op je beslissing}}",
+      "allUpToDate": "Alles is bijgewerkt. Er wacht niets.",
+      "errorHint": "Controleer de verbindingsinstellingen en synchroniseer opnieuw.",
+      "exportLink": "Contacten naar de server sturen",
+      "syncNothingNew": "Alles is bijgewerkt. Aan beide kanten niets nieuws."
     },
     "billing": {
       "title": "Facturering",

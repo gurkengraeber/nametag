@@ -706,7 +706,14 @@
       "testSuccessUnknownCount": "La connexion fonctionne. Le serveur n'a pas indiqué combien de contacts il contient.",
       "testCountUnknown": "nombre inconnu",
       "testZeroContacts": "Le serveur répond mais ne signale aucun contact ici. Ils sont peut-être dans un autre carnet, ou cet accès ne peut pas les voir. Vous pouvez continuer ; la première synchronisation montrera ce qui s'y trouve vraiment.",
-      "testBeforeSave": "Testez d'abord la connexion, vous pourrez ensuite enregistrer."
+      "testBeforeSave": "Testez d'abord la connexion, vous pourrez ensuite enregistrer.",
+      "autoSyncOn": "La synchronisation automatique est activée",
+      "autoSyncOff": "La synchronisation automatique est désactivée. Les nouveaux contacts du serveur ne sont trouvés que lorsque vous appuyez sur Synchroniser maintenant.",
+      "conflictsLink": "{count, plural, =1 {1 conflit attend votre décision} other {# conflits attendent votre décision}}",
+      "allUpToDate": "Tout est à jour. Rien n'est en attente.",
+      "errorHint": "Vérifiez les réglages de connexion, puis resynchronisez.",
+      "exportLink": "Envoyer des contacts au serveur",
+      "syncNothingNew": "Tout est à jour. Rien de nouveau des deux côtés."
     },
     "billing": {
       "title": "Facturation",

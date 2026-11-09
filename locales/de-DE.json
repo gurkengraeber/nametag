@@ -706,7 +706,14 @@
       "testSuccessUnknownCount": "Verbindung funktioniert. Der Server hat nicht gesagt, wie viele Kontakte er enthält.",
       "testCountUnknown": "Anzahl unbekannt",
       "testZeroContacts": "Der Server antwortet, meldet hier aber keine Kontakte. Sie liegen vielleicht in einem anderen Adressbuch, oder dieser Zugang darf sie nicht sehen. Du kannst trotzdem fortfahren; die erste Synchronisierung zeigt, was wirklich da ist.",
-      "testBeforeSave": "Teste zuerst die Verbindung, danach kannst du speichern."
+      "testBeforeSave": "Teste zuerst die Verbindung, danach kannst du speichern.",
+      "autoSyncOn": "Automatische Synchronisierung ist an",
+      "autoSyncOff": "Automatische Synchronisierung ist aus. Neue Kontakte auf dem Server werden nur gefunden, wenn du auf Jetzt synchronisieren drückst.",
+      "conflictsLink": "{count, plural, =1 {1 Konflikt wartet auf deine Entscheidung} other {# Konflikte warten auf deine Entscheidung}}",
+      "allUpToDate": "Alles ist aktuell. Nichts wartet auf dich.",
+      "errorHint": "Prüfe die Verbindungs-Einstellungen und synchronisiere dann erneut.",
+      "exportLink": "Kontakte an den Server senden",
+      "syncNothingNew": "Alles ist aktuell. Auf keiner Seite gibt es etwas Neues."
     },
     "billing": {
       "title": "Abrechnung",

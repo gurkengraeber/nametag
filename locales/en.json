@@ -706,7 +706,14 @@
       "testSuccessUnknownCount": "Connection works. The server did not say how many contacts it holds.",
       "testCountUnknown": "number unknown",
       "testZeroContacts": "The server answered but reports no contacts here. They may be in another address book, or this login may not be allowed to see them. You can still continue; the first sync shows what is really there.",
-      "testBeforeSave": "Test the connection first, then you can save."
+      "testBeforeSave": "Test the connection first, then you can save.",
+      "autoSyncOn": "Automatic sync is on",
+      "autoSyncOff": "Automatic sync is off. New contacts on the server are only found when you press Sync now.",
+      "conflictsLink": "{count, plural, =1 {1 conflict needs your decision} other {# conflicts need your decision}}",
+      "allUpToDate": "Everything is up to date. Nothing is waiting.",
+      "errorHint": "Check the connection settings, then sync again.",
+      "exportLink": "Send contacts to server",
+      "syncNothingNew": "Everything is up to date. Nothing new on either side."
     },
     "billing": {
       "title": "Billing",

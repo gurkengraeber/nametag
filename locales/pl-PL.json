@@ -706,7 +706,14 @@
       "testSuccessUnknownCount": "Połączenie działa. Serwer nie podał liczby kontaktów.",
       "testCountUnknown": "liczba nieznana",
       "testZeroContacts": "Serwer odpowiedział, ale nie zgłasza tu kontaktów. Mogą być w innej książce adresowej albo to konto może ich nie widzieć. Możesz kontynuować; pierwsza synchronizacja pokaże, co naprawdę tam jest.",
-      "testBeforeSave": "Najpierw sprawdź połączenie, potem będzie można zapisać."
+      "testBeforeSave": "Najpierw sprawdź połączenie, potem będzie można zapisać.",
+      "autoSyncOn": "Automatyczna synchronizacja jest włączona",
+      "autoSyncOff": "Automatyczna synchronizacja jest wyłączona. Nowe kontakty na serwerze zostaną znalezione dopiero po naciśnięciu Synchronizuj teraz.",
+      "conflictsLink": "{count, plural, =1 {1 konflikt czeka na twoją decyzję} other {Konflikty czekające na decyzję: #}}",
+      "allUpToDate": "Wszystko jest aktualne. Nic nie czeka.",
+      "errorHint": "Sprawdź ustawienia połączenia i zsynchronizuj ponownie.",
+      "exportLink": "Wyślij kontakty na serwer",
+      "syncNothingNew": "Wszystko jest aktualne. Po żadnej stronie nie ma nic nowego."
     },
     "billing": {
       "title": "Rozliczenia",

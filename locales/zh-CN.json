@@ -706,7 +706,14 @@
       "testSuccessUnknownCount": "连接正常。服务器没有说明包含多少联系人。",
       "testCountUnknown": "数量未知",
       "testZeroContacts": "服务器有响应，但这里没有报告联系人。它们可能在另一个通讯录中，或此登录无权查看。你仍可继续；首次同步会显示实际内容。",
-      "testBeforeSave": "请先测试连接，之后即可保存。"
+      "testBeforeSave": "请先测试连接，之后即可保存。",
+      "autoSyncOn": "自动同步已开启",
+      "autoSyncOff": "自动同步已关闭。只有点击“立即同步”时才会发现服务器上的新联系人。",
+      "conflictsLink": "{count, plural, =1 {有 1 个冲突等待你决定} other {有 # 个冲突等待你决定}}",
+      "allUpToDate": "一切都是最新的，没有待处理的事项。",
+      "errorHint": "请检查连接设置后再次同步。",
+      "exportLink": "将联系人发送到服务器",
+      "syncNothingNew": "一切都是最新的，两边都没有新内容。"
     },
     "billing": {
       "title": "计费",

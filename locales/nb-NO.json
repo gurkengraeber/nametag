@@ -706,7 +706,14 @@
       "testSuccessUnknownCount": "Tilkoblingen fungerer. Serveren oppgav ikke hvor mange kontakter den har.",
       "testCountUnknown": "antall ukjent",
       "testZeroContacts": "Serveren svarte, men melder ingen kontakter her. De kan ligge i en annen adressebok, eller denne påloggingen har kanskje ikke tilgang til dem. Du kan fortsette; første synkronisering viser hva som faktisk finnes.",
-      "testBeforeSave": "Test tilkoblingen først, så kan du lagre."
+      "testBeforeSave": "Test tilkoblingen først, så kan du lagre.",
+      "autoSyncOn": "Automatisk synkronisering er på",
+      "autoSyncOff": "Automatisk synkronisering er av. Nye kontakter på serveren blir bare funnet når du trykker Synkroniser nå.",
+      "conflictsLink": "{count, plural, =1 {1 konflikt venter på avgjørelsen din} other {# konflikter venter på avgjørelsen din}}",
+      "allUpToDate": "Alt er oppdatert. Ingenting venter.",
+      "errorHint": "Sjekk tilkoblingsinnstillingene og synkroniser på nytt.",
+      "exportLink": "Send kontakter til serveren",
+      "syncNothingNew": "Alt er oppdatert. Ingenting nytt på noen av sidene."
     },
     "billing": {
       "title": "Fakturering",

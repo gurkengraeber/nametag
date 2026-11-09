@@ -14,6 +14,7 @@ interface CardDavSettingsProps {
   pendingImportsCount: number;
   syncedContactsCount: number;
   pendingUploadsCount: number;
+  conflictsCount: number;
 }
 
 export default function CardDavSettings({
@@ -21,6 +22,7 @@ export default function CardDavSettings({
   pendingImportsCount,
   syncedContactsCount,
   pendingUploadsCount,
+  conflictsCount,
 }: CardDavSettingsProps) {
   const [showConnectionModal, setShowConnectionModal] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
@@ -37,7 +39,7 @@ export default function CardDavSettings({
         </svg>
         <p className="text-sm text-amber-800 dark:text-amber-300">
           <span className="font-semibold">{t('betaLabel')}</span>
-          {' — '}
+          {': '}
           {t('betaBanner')}
         </p>
       </div>
@@ -47,6 +49,7 @@ export default function CardDavSettings({
         pendingImportsCount={pendingImportsCount}
         syncedContactsCount={syncedContactsCount}
         pendingUploadsCount={pendingUploadsCount}
+        conflictsCount={conflictsCount}
         onConnectClick={() => setShowConnectionModal(true)}
         onEditClick={() => setShowConnectionModal(true)}
         onSettingsClick={() => setShowSettingsModal(true)}
