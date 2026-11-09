@@ -21,14 +21,22 @@ export function expiryForPreset(
   if (preset === 'never') return null;
   if (preset === 'custom') {
     if (!customDate) return null;
-    const parsed = new Date(customDate);
+    // The chosen day counts as a whole day: the token works until it ends in
+    // the viewer's timezone, not until midnight UTC at its start.
+    const parsed = new Date(`${customDate}T23:59:59.999`);
     return Number.isNaN(parsed.getTime()) ? null : parsed.toISOString();
   }
   // Plain milliseconds, so a daylight saving change cannot shift the result.
   return new Date(now.getTime() + DAYS[preset] * 24 * 60 * 60 * 1000).toISOString();
 }
 
-/** True when "pick a date" is chosen but no usable date was entered. */
-export function isCustomDateMissing(preset: TokenExpiryPreset, customDate: string): boolean {
-  return preset === 'custom' && expiryForPreset('custom', customDate) === null;
+/** True when "pick a date" is chosen but no usable date was entered, or the day is already over. */
+export function isCustomDateMissing(
+  preset: TokenExpiryPreset,
+  customDate: string,
+  now: Date = new Date()
+): boolean {
+  if (preset !== 'custom') return false;
+  const expiry = expiryForPreset('custom', customDate);
+  return expiry === null || new Date(expiry).getTime() <= now.getTime();
 }
