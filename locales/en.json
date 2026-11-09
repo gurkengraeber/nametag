@@ -1339,7 +1339,8 @@
       "emptyFiltered": "Nobody matches these filters.",
       "clearFilters": "Clear filters",
       "noConnections": "Nobody is connected yet. Open the list below to link people to you.",
-      "emptyNetwork": "Nobody to show yet."
+      "emptyNetwork": "Nobody to show yet.",
+      "zoomHint": "Hold Ctrl (Cmd on Mac) and scroll to zoom"
     },
     "stats": {
       "ariaLabel": "Overview",
@@ -1404,7 +1405,7 @@
     "lastContactUpdateError": "Failed to update last contact",
     "noContactRecorded": "You haven't contacted this person yet",
     "relationshipNetwork": "Relationship Network",
-    "graphHelp": "Click nodes to navigate • Drag to reposition • Scroll to zoom",
+    "graphHelp": "Click nodes to navigate • Drag to reposition • Ctrl + scroll to zoom",
     "cardDavSynced": "Synced to CardDAV",
     "cardDavNotSynced": "Not synced to CardDAV",
     "you": "You",

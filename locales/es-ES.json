@@ -1339,7 +1339,8 @@
       "emptyFiltered": "Nadie coincide con estos filtros.",
       "clearFilters": "Quitar filtros",
       "noConnections": "Todavía no hay nadie conectado. Abre la lista de abajo para vincular personas contigo.",
-      "emptyNetwork": "Todavía no hay nadie que mostrar."
+      "emptyNetwork": "Todavía no hay nadie que mostrar.",
+      "zoomHint": "Mantén Ctrl (Cmd en Mac) y desplázate para hacer zoom"
     },
     "stats": {
       "ariaLabel": "Resumen",
@@ -1404,7 +1405,7 @@
     "lastContactUpdateError": "Error al actualizar el último contacto",
     "noContactRecorded": "Aún no has contactado a esta persona",
     "relationshipNetwork": "Red de Relaciones",
-    "graphHelp": "Haz clic en los nodos para navegar • Arrastra para reposicionar • Desplázate para hacer zoom",
+    "graphHelp": "Haz clic en los nodos para navegar • Arrastra para reposicionar • Ctrl + desplazamiento para hacer zoom",
     "cardDavSynced": "Sincronizado con CardDAV",
     "cardDavNotSynced": "No sincronizado con CardDAV",
     "you": "Tú",

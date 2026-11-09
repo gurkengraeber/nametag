@@ -1339,7 +1339,8 @@
       "emptyFiltered": "このフィルターに一致する人はいません。",
       "clearFilters": "フィルターを解除",
       "noConnections": "まだ誰ともつながっていません。下の一覧を開いて、あなたとの関係を設定してください。",
-      "emptyNetwork": "まだ表示する人がいません。"
+      "emptyNetwork": "まだ表示する人がいません。",
+      "zoomHint": "Ctrl（Macでは Cmd）を押しながらスクロールでズーム"
     },
     "stats": {
       "ariaLabel": "概要",
@@ -1404,7 +1405,7 @@
     "lastContactUpdateError": "最終連絡日の更新に失敗しました",
     "noContactRecorded": "この人にまだ連絡していません",
     "relationshipNetwork": "関係ネットワーク",
-    "graphHelp": "ノードをクリックしてナビゲート•ドラッグして再配置•スクロールしてズーム",
+    "graphHelp": "ノードをクリックしてナビゲート•ドラッグして再配置•Ctrl+スクロールでズーム",
     "cardDavSynced": "CardDAVに同期済み",
     "cardDavNotSynced": "CardDAVに未同期",
     "you": "あなた",

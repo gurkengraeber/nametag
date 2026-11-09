@@ -15,7 +15,8 @@ import { GraphFilterGroupPill } from './GraphFilterPills';
 import { paintFrame } from './graph/canvas-renderer';
 import { getLODTier } from './graph/lod';
 import { computeFitTransform, computeFocusTransform } from './graph/fit-view';
-import { computeCanvasHeight } from './graph/canvas-height';
+import { computeCanvasHeight, computeCompactHeight, COMPACT_MIN_HEIGHT } from './graph/canvas-height';
+import { shouldZoomOnWheel, canvasTouchAction } from './graph/interaction';
 import { splitLoosePeople } from './graph/loose-people';
 import { buildGraphLegend } from './graph/legend';
 import GraphSearch from './GraphSearch';
@@ -112,10 +113,22 @@ export default function UnifiedNetworkGraph({
   const [legendOpen, setLegendOpen] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [canvasHeight, setCanvasHeight] = useState<number | null>(null);
+  const [compactHeight, setCompactHeight] = useState<number>(COMPACT_MIN_HEIGHT + 40);
+  const [zoomHintVisible, setZoomHintVisible] = useState(false);
+  const zoomHintTimerRef = useRef<number | null>(null);
+  const isFullscreenRef = useRef(false);
   const [reloadKey, setReloadKey] = useState(0);
   // People shown in the network (without you and without the unconnected ones)
   const [networkSize, setNetworkSize] = useState<number | undefined>(undefined);
   const prevFullscreenRef = useRef(false);
+  useEffect(() => {
+    isFullscreenRef.current = isFullscreen;
+    const canvas = canvasRef.current;
+    if (canvas) canvas.style.touchAction = canvasTouchAction(isFullscreen);
+  }, [isFullscreen]);
+  useEffect(() => () => {
+    if (zoomHintTimerRef.current !== null) window.clearTimeout(zoomHintTimerRef.current);
+  }, []);
 
   // Ungrouped label for bubble composition
   const ungroupedLabel = t('unsortedBubbleLabel');
@@ -566,6 +579,7 @@ export default function UnifiedNetworkGraph({
     const { nodes, edges } = diffSimulationData(nodesRef.current, incomingNodes, edgesRef.current, incomingEdges);
     nodesRef.current = nodes;
     edgesRef.current = edges;
+    if (compact) setCompactHeight(computeCompactHeight(nodes.length));
 
     simRef.current?.stop();
     const sim = buildSimulation(nodes, edges);
@@ -597,7 +611,7 @@ export default function UnifiedNetworkGraph({
     }
   }, [
     groups, localGraphMode, expandedBubbles,
-    includeGroupIds, ungroupedLabel, buildSimulation, tPeople, fitView, applyFocus,
+    includeGroupIds, ungroupedLabel, buildSimulation, tPeople, fitView, applyFocus, compact,
   ]);
 
   // Step 4: Data-fetch effect
@@ -685,6 +699,14 @@ export default function UnifiedNetworkGraph({
       .scaleExtent([0.1, 3])
       .filter((event: Event) => {
         const me = event as MouseEvent;
+        if (event.type === 'wheel') {
+          // Without Ctrl/Cmd the wheel scrolls the page; show a short hint instead.
+          if (shouldZoomOnWheel(me, isFullscreenRef.current)) return true;
+          setZoomHintVisible(true);
+          if (zoomHintTimerRef.current !== null) window.clearTimeout(zoomHintTimerRef.current);
+          zoomHintTimerRef.current = window.setTimeout(() => setZoomHintVisible(false), 1800);
+          return false;
+        }
         if (me.ctrlKey || me.button) return false;
         if (event.type === 'mousedown' || event.type === 'touchstart') {
           const touch = 'touches' in event ? (event as TouchEvent).touches[0] : null;
@@ -705,6 +727,7 @@ export default function UnifiedNetworkGraph({
       });
     zoomBehaviorRef.current = zoomBehavior;
     select(canvas).call(zoomBehavior);
+    canvas.style.touchAction = canvasTouchAction(isFullscreenRef.current);
 
     const onMove = (event: MouseEvent) => {
       const node = nodeAt(event.clientX, event.clientY);
@@ -1052,15 +1075,27 @@ export default function UnifiedNetworkGraph({
           isFullscreen
             ? 'flex-1 min-h-0'
             : compact
-              ? 'h-[400px] sm:h-[500px] lg:h-[600px] xl:h-[700px] 2xl:h-[800px]'
+              ? ''
               : 'h-[420px] sm:h-[500px] lg:h-[calc(100dvh-20rem)] lg:min-h-[480px]'
         }`}
-        style={!isFullscreen && !compact && canvasHeight !== null ? { height: canvasHeight } : undefined}
+        style={
+          compact
+            ? { height: compactHeight }
+            : !isFullscreen && canvasHeight !== null ? { height: canvasHeight } : undefined
+        }
       >
         <canvas
           ref={canvasRef}
           className="absolute inset-0 w-full h-full bg-surface rounded-lg border border-border"
         />
+        {zoomHintVisible && (
+          <div
+            role="status"
+            className="pointer-events-none absolute bottom-3 left-1/2 -translate-x-1/2 max-w-[calc(100%-2rem)] rounded-lg border border-border bg-surface-elevated px-3 py-1.5 text-center text-xs text-muted shadow"
+          >
+            {t('zoomHint')}
+          </div>
+        )}
         {isDashboard && (
           <>
             <div className="absolute top-3 left-3 w-[calc(100%-5rem)] max-w-72">

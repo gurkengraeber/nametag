@@ -1339,7 +1339,8 @@
       "emptyFiltered": "Nikt nie pasuje do tych filtrów.",
       "clearFilters": "Wyczyść filtry",
       "noConnections": "Nikt nie jest jeszcze połączony. Otwórz listę poniżej, aby powiązać osoby z sobą.",
-      "emptyNetwork": "Nie ma jeszcze kogo pokazać."
+      "emptyNetwork": "Nie ma jeszcze kogo pokazać.",
+      "zoomHint": "Przytrzymaj Ctrl (Cmd na Macu) i przewiń, aby powiększyć"
     },
     "stats": {
       "ariaLabel": "Przegląd",
@@ -1404,7 +1405,7 @@
     "lastContactUpdateError": "Nie udało się zaktualizować ostatniego kontaktu",
     "noContactRecorded": "Nie było jeszcze kontaktu z tą osobą",
     "relationshipNetwork": "Sieć relacji",
-    "graphHelp": "Kliknij węzły, aby przejść • Przeciągnij, aby zmienić położenie • Przewiń, aby powiększyć",
+    "graphHelp": "Kliknij węzły, aby przejść • Przeciągnij, aby zmienić położenie • Ctrl + przewijanie, aby powiększyć",
     "cardDavSynced": "Zsynchronizowano z CardDAV",
     "cardDavNotSynced": "Niezsynchronizowano z CardDAV",
     "you": "Ty",

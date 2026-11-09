@@ -1339,7 +1339,8 @@
       "emptyFiltered": "没有符合这些筛选条件的人。",
       "clearFilters": "清除筛选",
       "noConnections": "还没有人与你建立关系。打开下方列表，把联系人与你关联起来。",
-      "emptyNetwork": "暂时没有可显示的人。"
+      "emptyNetwork": "暂时没有可显示的人。",
+      "zoomHint": "按住 Ctrl（Mac 上为 Cmd）并滚动以缩放"
     },
     "stats": {
       "ariaLabel": "概览",
@@ -1404,7 +1405,7 @@
     "lastContactUpdateError": "更新最后联系失败",
     "noContactRecorded": "您还没有联系过这个人",
     "relationshipNetwork": "关系网络",
-    "graphHelp": "单击节点进行导航 • 拖动以重新定位 • 滚动以缩放",
+    "graphHelp": "单击节点进行导航 • 拖动以重新定位 • Ctrl + 滚动以缩放",
     "cardDavSynced": "已同步到 CardDAV",
     "cardDavNotSynced": "未同步到 CardDAV",
     "you": "您",

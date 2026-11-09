@@ -1339,7 +1339,8 @@
       "emptyFiltered": "Niemand komt overeen met deze filters.",
       "clearFilters": "Filters wissen",
       "noConnections": "Nog niemand is verbonden. Open de lijst hieronder om personen aan u te koppelen.",
-      "emptyNetwork": "Nog niemand om te tonen."
+      "emptyNetwork": "Nog niemand om te tonen.",
+      "zoomHint": "Houd Ctrl (Cmd op Mac) ingedrukt en scroll om te zoomen"
     },
     "stats": {
       "ariaLabel": "Overzicht",
@@ -1404,7 +1405,7 @@
     "lastContactUpdateError": "Laatste contact bijwerken mislukt",
     "noContactRecorded": "U heeft nog geen contact opgenomen met deze persoon",
     "relationshipNetwork": "Relatie netwerk",
-    "graphHelp": "Klik op nodes om te navigeren • Sleep om te herpositioneren • Scroll om te zoomen",
+    "graphHelp": "Klik op nodes om te navigeren • Sleep om te herpositioneren • Ctrl + scrollen om te zoomen",
     "cardDavSynced": "Gesynchroniseerd naar CardDAV",
     "cardDavNotSynced": "Niet gesynchroniseerd naar CardDAV",
     "you": "U",
