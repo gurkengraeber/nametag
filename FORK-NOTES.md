@@ -51,6 +51,8 @@ vom Handy aus nahtlos weitermachen kann. Sie gehört nur in diesen Fork, nicht i
   Erkennbar an `Warnung: Ignoriere Referenz mit fehlerhaftem Namen ... [conflicted]` und an Merge-Fehlern "lokale Änderungen würden überschrieben".
   Abhilfe: Repository außerhalb des Sync-Ordners halten. Notfalls `git reset --soft <richtiger-commit>` (Arbeitsbaum und Index vorher mit `git diff <commit>` auf Gleichheit prüfen)
   und Pushes über feste Commit-Nummern machen (`git push fork <sha>:refs/heads/<branch>`). Sicherung der Commits: `git bundle create <datei> --branches` an einen Ort außerhalb des Sync-Ordners.
+- **Projektordner verschoben oder kopiert:** Danach den Ordner `.next` löschen. Der Turbopack-Zwischenspeicher kennt den alten Pfad, `next dev` meldet im Log
+  `FATAL: An unexpected Turbopack error` mit `Next.js package not found`, und die Seite lädt im Browser endlos neu (hunderte `GET`-Anfragen).
 - **`tsc`-Fehler aus `.next/`** (zum Beispiel zu `app/calendar/page.js`) sind Altlasten aus anderen Branches und zu ignorieren.
 - **Sammelauswahl mit Filter (bekannter Fehler im Original):** "Alle N auswählen" in der Personenliste schickt nur `selectAll: true`, die Bulk-Route
   (`app/api/people/bulk/route.ts`, `resolvePersonIds`) nimmt dann alle Kontakte statt der gefilterten. Siehe Branch `feat/people-quick-edit` für die Korrektur.
