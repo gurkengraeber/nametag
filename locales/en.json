@@ -133,7 +133,7 @@
       "nameDisplayFormatSuccess": "Name display format updated successfully",
       "nameDisplayFormatError": "Failed to update name display format",
       "graphModeTitle": "Network graph display",
-      "graphModeDescription": "How to display your network graph on the dashboard.",
+      "graphModeDescription": "How to display your network graph on the dashboard. Without a choice, large networks (more than 80 people) open as groups.",
       "graphModeIndividuals": "Always show individuals",
       "graphModeBubbles": "Always show groups",
       "graphDisplaySuccess": "Graph display updated",
@@ -1010,8 +1010,51 @@
       "showAsGroups": "Show as groups",
       "showIndividuals": "Show individuals",
       "collapseAllGroups": "Collapse all groups",
-      "unsortedBubbleLabel": "Unsorted"
-    }
+      "unsortedBubbleLabel": "Unsorted",
+      "fullscreen": {
+        "enter": "Full screen",
+        "exit": "Exit full screen",
+        "dialogLabel": "Your network in full screen"
+      },
+      "search": {
+        "ariaLabel": "Find a person in the network",
+        "placeholder": "Find a person...",
+        "noResults": "Nobody found",
+        "clear": "Clear search"
+      },
+      "legend": {
+        "toggle": "Legend",
+        "groups": "Groups",
+        "relationships": "Relationships",
+        "noGroup": "No group",
+        "empty": "Nothing to explain yet. Colors appear once you add groups or relationships."
+      },
+      "loose": {
+        "title": "Not connected",
+        "description": "These people have no relationship yet, so they are not drawn in the network. Choose how someone is related to you to add them.",
+        "filterNote": "A group filter is active. Some of these people may be connected to people outside the filter.",
+        "typesFailed": "Relationship types could not be loaded.",
+        "noTypes": "You have no relationship types yet.",
+        "createType": "Create one",
+        "assignPlaceholder": "Related to you as...",
+        "assignAriaLabel": "How is {name} related to you?",
+        "assigned": "{name} is now connected to you",
+        "assignFailed": "Could not save the relationship. Please try again.",
+        "showList": "Not connected: {count}. Show list"
+      },
+      "emptyFiltered": "Nobody matches these filters.",
+      "clearFilters": "Clear filters",
+      "noConnections": "Nobody is connected yet. Open the list below to link people to you.",
+      "emptyNetwork": "Nobody to show yet."
+    },
+    "stats": {
+      "ariaLabel": "Overview",
+      "people": "{count, plural, =1 {1 person} other {# people}}",
+      "groups": "{count, plural, =1 {1 group} other {# groups}}",
+      "thisWeek": "{count} this week"
+    },
+    "markContacted": "Spoke today",
+    "markContactedAria": "Mark {name} as contacted today"
   },
   "people": {
     "title": "People",

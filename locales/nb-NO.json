@@ -133,7 +133,7 @@
       "nameDisplayFormatSuccess": "Navnevisningsformat oppdatert",
       "nameDisplayFormatError": "Kunne ikke oppdatere navnevisningsformat",
       "graphModeTitle": "Visning av nettverksgraf",
-      "graphModeDescription": "Hvordan nettverksgrafen vises i dashbordet.",
+      "graphModeDescription": "Hvordan nettverksgrafen vises i dashbordet. Uten valg åpnes store nettverk (over 80 personer) som grupper.",
       "graphModeIndividuals": "Vis alltid enkeltvis",
       "graphModeBubbles": "Vis alltid som grupper",
       "graphDisplaySuccess": "Visning oppdatert",
@@ -1010,8 +1010,51 @@
       "showAsGroups": "Vis som grupper",
       "showIndividuals": "Vis enkeltvis",
       "collapseAllGroups": "Lukk alle grupper",
-      "unsortedBubbleLabel": "Uten gruppe"
-    }
+      "unsortedBubbleLabel": "Uten gruppe",
+      "fullscreen": {
+        "enter": "Fullskjerm",
+        "exit": "Avslutt fullskjerm",
+        "dialogLabel": "Nettverket ditt i fullskjerm"
+      },
+      "search": {
+        "ariaLabel": "Finn en person i nettverket",
+        "placeholder": "Finn en person...",
+        "noResults": "Ingen funnet",
+        "clear": "Tøm søket"
+      },
+      "legend": {
+        "toggle": "Tegnforklaring",
+        "groups": "Grupper",
+        "relationships": "Relasjoner",
+        "noGroup": "Ingen gruppe",
+        "empty": "Ingenting å forklare ennå. Farger vises når du legger til grupper eller relasjoner."
+      },
+      "loose": {
+        "title": "Uten forbindelse",
+        "description": "Disse personene har ingen relasjon ennå, så de tegnes ikke i nettverket. Velg hvordan noen står i forhold til deg for å ta dem med.",
+        "filterNote": "Et gruppefilter er aktivt. Noen av disse kan være knyttet til personer utenfor filteret.",
+        "typesFailed": "Kunne ikke laste relasjonstypene.",
+        "noTypes": "Du har ingen relasjonstyper ennå.",
+        "createType": "Lag en",
+        "assignPlaceholder": "Relasjon til deg...",
+        "assignAriaLabel": "Hvordan står {name} i forhold til deg?",
+        "assigned": "{name} er nå knyttet til deg",
+        "assignFailed": "Kunne ikke lagre relasjonen. Prøv igjen.",
+        "showList": "Uten forbindelse: {count}. Vis liste"
+      },
+      "emptyFiltered": "Ingen passer til disse filtrene.",
+      "clearFilters": "Fjern filtre",
+      "noConnections": "Ingen er knyttet til deg ennå. Åpne listen under for å knytte personer til deg.",
+      "emptyNetwork": "Ingen å vise ennå."
+    },
+    "stats": {
+      "ariaLabel": "Oversikt",
+      "people": "{count, plural, =1 {1 person} other {# personer}}",
+      "groups": "{count, plural, =1 {1 gruppe} other {# grupper}}",
+      "thisWeek": "{count} denne uken"
+    },
+    "markContacted": "Snakket i dag",
+    "markContactedAria": "Marker {name} som kontaktet i dag"
   },
   "people": {
     "title": "Personer",

@@ -133,7 +133,7 @@
       "nameDisplayFormatSuccess": "Formato de nombre actualizado correctamente",
       "nameDisplayFormatError": "Error al actualizar el formato de nombre",
       "graphModeTitle": "Visualización del grafo",
-      "graphModeDescription": "Cómo mostrar tu grafo de red en el panel.",
+      "graphModeDescription": "Cómo mostrar tu grafo de red en el panel. Sin una elección, las redes grandes (más de 80 personas) se abren como grupos.",
       "graphModeIndividuals": "Mostrar siempre personas",
       "graphModeBubbles": "Mostrar siempre grupos",
       "graphDisplaySuccess": "Visualización actualizada",
@@ -1010,8 +1010,51 @@
       "showAsGroups": "Mostrar como grupos",
       "showIndividuals": "Mostrar personas",
       "collapseAllGroups": "Contraer todos los grupos",
-      "unsortedBubbleLabel": "Sin grupo"
-    }
+      "unsortedBubbleLabel": "Sin grupo",
+      "fullscreen": {
+        "enter": "Pantalla completa",
+        "exit": "Salir de pantalla completa",
+        "dialogLabel": "Tu red en pantalla completa"
+      },
+      "search": {
+        "ariaLabel": "Buscar una persona en la red",
+        "placeholder": "Buscar una persona...",
+        "noResults": "No se encontró a nadie",
+        "clear": "Borrar búsqueda"
+      },
+      "legend": {
+        "toggle": "Leyenda",
+        "groups": "Grupos",
+        "relationships": "Relaciones",
+        "noGroup": "Sin grupo",
+        "empty": "Aún no hay nada que explicar. Los colores aparecen cuando añades grupos o relaciones."
+      },
+      "loose": {
+        "title": "Sin conexión",
+        "description": "Estas personas aún no tienen ninguna relación, por eso no se dibujan en la red. Elige cómo se relaciona alguien contigo para añadirlo.",
+        "filterNote": "Hay un filtro de grupos activo. Algunas de estas personas pueden estar conectadas con personas fuera del filtro.",
+        "typesFailed": "No se pudieron cargar los tipos de relación.",
+        "noTypes": "Aún no tienes tipos de relación.",
+        "createType": "Crear uno",
+        "assignPlaceholder": "Relación contigo...",
+        "assignAriaLabel": "¿Cómo se relaciona {name} contigo?",
+        "assigned": "{name} ya está conectado/a contigo",
+        "assignFailed": "No se pudo guardar la relación. Inténtalo de nuevo.",
+        "showList": "Sin conexión: {count}. Mostrar lista"
+      },
+      "emptyFiltered": "Nadie coincide con estos filtros.",
+      "clearFilters": "Quitar filtros",
+      "noConnections": "Todavía no hay nadie conectado. Abre la lista de abajo para vincular personas contigo.",
+      "emptyNetwork": "Todavía no hay nadie que mostrar."
+    },
+    "stats": {
+      "ariaLabel": "Resumen",
+      "people": "{count, plural, =1 {1 persona} other {# personas}}",
+      "groups": "{count, plural, =1 {1 grupo} other {# grupos}}",
+      "thisWeek": "{count} esta semana"
+    },
+    "markContacted": "Hablamos hoy",
+    "markContactedAria": "Marcar a {name} como contactado hoy"
   },
   "people": {
     "title": "Personas",

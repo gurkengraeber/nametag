@@ -1,6 +1,9 @@
 import { describe, it, expect } from 'vitest';
 import {
   computeFitTransform,
+  computeFocusTransform,
+  FOCUS_MAX_SCALE,
+  FOCUS_MIN_SCALE,
   FIT_COVERAGE,
   FIT_MAX_SCALE,
   FIT_MIN_SCALE,
@@ -161,5 +164,21 @@ describe('computeFitTransform', () => {
     expect(computeFitTransform(nodes, { ...size, padding: 40 }).k).toBeCloseTo(1, 5);
     // with the default padding the room is only 344 px
     expect(computeFitTransform(nodes, size).k).toBeCloseTo(344 / 360, 5);
+  });
+});
+
+describe('computeFocusTransform', () => {
+  it('puts the node in the middle of the canvas', () => {
+    const t = computeFocusTransform({ x: 500, y: -200 }, { ...size, currentScale: 1 });
+    expect(screenOf(t, 500, -200)).toEqual({ x: 400, y: 300 });
+  });
+
+  it('zooms in to the minimum focus scale but never out', () => {
+    expect(computeFocusTransform({ x: 0, y: 0 }, { ...size, currentScale: 0.3 }).k).toBe(FOCUS_MIN_SCALE);
+    expect(computeFocusTransform({ x: 0, y: 0 }, { ...size, currentScale: 1.5 }).k).toBe(1.5);
+  });
+
+  it('does not zoom beyond the maximum focus scale', () => {
+    expect(computeFocusTransform({ x: 0, y: 0 }, { ...size, currentScale: 3 }).k).toBe(FOCUS_MAX_SCALE);
   });
 });

@@ -133,7 +133,7 @@
       "nameDisplayFormatSuccess": "Format wyświetlania nazwiska został zaktualizowany",
       "nameDisplayFormatError": "Nie udało się zaktualizować formatu wyświetlania nazwiska",
       "graphModeTitle": "Wyświetlanie grafu sieci",
-      "graphModeDescription": "Jak pokazywać graf Twojej sieci na pulpicie.",
+      "graphModeDescription": "Jak pokazywać graf Twojej sieci na pulpicie. Bez wyboru duże sieci (ponad 80 osób) otwierają się jako grupy.",
       "graphModeIndividuals": "Zawsze pokazuj pojedyncze osoby",
       "graphModeBubbles": "Zawsze pokazuj grupy",
       "graphDisplaySuccess": "Wyświetlanie grafu zostało zaktualizowane",
@@ -1010,8 +1010,51 @@
       "showAsGroups": "Pokaż jako grupy",
       "showIndividuals": "Pokaż pojedyncze osoby",
       "collapseAllGroups": "Zwiń wszystkie grupy",
-      "unsortedBubbleLabel": "Nieposortowane"
-    }
+      "unsortedBubbleLabel": "Nieposortowane",
+      "fullscreen": {
+        "enter": "Pełny ekran",
+        "exit": "Zamknij pełny ekran",
+        "dialogLabel": "Twoja sieć na pełnym ekranie"
+      },
+      "search": {
+        "ariaLabel": "Znajdź osobę w sieci",
+        "placeholder": "Znajdź osobę...",
+        "noResults": "Nikogo nie znaleziono",
+        "clear": "Wyczyść wyszukiwanie"
+      },
+      "legend": {
+        "toggle": "Legenda",
+        "groups": "Grupy",
+        "relationships": "Relacje",
+        "noGroup": "Bez grupy",
+        "empty": "Na razie nie ma czego objaśniać. Kolory pojawią się, gdy dodasz grupy lub relacje."
+      },
+      "loose": {
+        "title": "Bez połączenia",
+        "description": "Te osoby nie mają jeszcze żadnej relacji, więc nie są rysowane w sieci. Wybierz, jaka relacja łączy je z Tobą, aby je dodać.",
+        "filterNote": "Filtr grup jest aktywny. Niektóre z tych osób mogą być połączone z osobami spoza filtra.",
+        "typesFailed": "Nie udało się wczytać typów relacji.",
+        "noTypes": "Nie masz jeszcze typów relacji.",
+        "createType": "Utwórz typ",
+        "assignPlaceholder": "Relacja z Tobą...",
+        "assignAriaLabel": "Jaka relacja łączy Cię z osobą {name}?",
+        "assigned": "Osoba {name} jest teraz z Tobą połączona",
+        "assignFailed": "Nie udało się zapisać relacji. Spróbuj ponownie.",
+        "showList": "Bez połączenia: {count}. Pokaż listę"
+      },
+      "emptyFiltered": "Nikt nie pasuje do tych filtrów.",
+      "clearFilters": "Wyczyść filtry",
+      "noConnections": "Nikt nie jest jeszcze połączony. Otwórz listę poniżej, aby powiązać osoby z sobą.",
+      "emptyNetwork": "Nie ma jeszcze kogo pokazać."
+    },
+    "stats": {
+      "ariaLabel": "Przegląd",
+      "people": "{count, plural, =1 {1 osoba} few {# osoby} other {# osób}}",
+      "groups": "{count, plural, =1 {1 grupa} few {# grupy} other {# grup}}",
+      "thisWeek": "{count} w tym tygodniu"
+    },
+    "markContacted": "Rozmawialiśmy dziś",
+    "markContactedAria": "Oznacz osobę {name} jako skontaktowaną dziś"
   },
   "people": {
     "title": "Osoby",
