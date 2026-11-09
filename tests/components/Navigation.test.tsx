@@ -20,7 +20,13 @@ vi.mock('@/app/actions/auth', () => ({
 const searchIndex = vi.hoisted(() => ({
   search: (query: string) =>
     query.toLowerCase().startsWith('ana') ? [{ id: 'person-1', name: 'Ana', surname: 'Ruiz' }] : [],
+  getPerson: () => null,
   isReady: true,
+  version: 1,
+  hasError: false,
+  isEmpty: false,
+  groups: [],
+  relationshipTypes: [],
   refreshIndex: () => {},
 }));
 

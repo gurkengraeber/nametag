@@ -4,10 +4,16 @@ import { NextRequest } from 'next/server';
 // Use vi.hoisted to create mocks before hoisting
 const mocks = vi.hoisted(() => ({
   personFindMany: vi.fn(),
+  groupFindMany: vi.fn(),
+  relationshipTypeFindMany: vi.fn(),
 }));
 
 vi.mock('../../lib/prisma', () => ({
-  prisma: { person: { findMany: mocks.personFindMany } },
+  prisma: {
+    person: { findMany: mocks.personFindMany },
+    group: { findMany: mocks.groupFindMany },
+    relationshipType: { findMany: mocks.relationshipTypeFindMany },
+  },
 }));
 
 vi.mock('../../lib/auth', () => ({
@@ -38,6 +44,8 @@ import { GET } from '../../app/api/people/search-index/route';
 describe('GET /api/people/search-index', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mocks.groupFindMany.mockResolvedValue([]);
+    mocks.relationshipTypeFindMany.mockResolvedValue([]);
   });
 
   it('should return denormalized search data', async () => {
@@ -66,7 +74,9 @@ describe('GET /api/people/search-index', () => {
         }],
         urls: [{ url: 'https://maria.dev' }],
         imHandles: [{ handle: 'maria_telegram' }],
-        groups: [{ group: { name: 'Work' } }],
+        groups: [{ group: { id: 'g1', name: 'Work' } }],
+        lastContact: new Date('2026-03-04T00:00:00.000Z'),
+        relationshipToUser: { id: 'rt1', label: 'Friend', deletedAt: null },
         customFields: [{ key: 'hobby', value: 'painting' }],
         customFieldValues: [{ value: 'Blue', template: { name: 'Favorite Color' } }],
       },
@@ -159,5 +169,97 @@ describe('GET /api/people/search-index', () => {
     expect(person.imHandles).toBe('');
     expect(person.groups).toBe('');
     expect(person.customFields).toBe('');
+  });
+
+  it('should add context for search hits and quick actions', async () => {
+    mocks.personFindMany.mockResolvedValue([
+      {
+        id: 'p3',
+        name: 'Ada',
+        surname: null,
+        middleName: null,
+        secondLastName: null,
+        nickname: null,
+        organization: null,
+        jobTitle: null,
+        notes: null,
+        photo: null,
+        lastContact: new Date('2026-03-04T00:00:00.000Z'),
+        relationshipToUser: { id: 'rt1', label: 'Friend', deletedAt: null },
+        phoneNumbers: [],
+        emails: [],
+        addresses: [
+          { streetLine1: null, streetLine2: null, locality: null, region: null, postalCode: null, country: 'Spain' },
+          { streetLine1: null, streetLine2: null, locality: 'Madrid', region: null, postalCode: null, country: 'Spain' },
+        ],
+        urls: [],
+        imHandles: [],
+        groups: [{ group: { id: 'g1', name: 'Work' } }, { group: { id: 'g2', name: 'Chess' } }],
+        customFields: [],
+        customFieldValues: [],
+      },
+    ]);
+
+    const response = await GET(new NextRequest('http://localhost:3000/api/people/search-index'));
+    const person = (await response.json()).people[0];
+
+    expect(person.relationship).toBe('Friend');
+    expect(person.relationshipTypeId).toBe('rt1');
+    expect(person.locality).toBe('Madrid');
+    expect(person.groupIds).toEqual(['g1', 'g2']);
+    expect(person.groupNames).toEqual(['Work', 'Chess']);
+    expect(person.lastContact).toBe('2026-03-04');
+  });
+
+  it('should ignore a soft-deleted relationship type', async () => {
+    mocks.personFindMany.mockResolvedValue([
+      {
+        id: 'p4',
+        name: 'Bo',
+        surname: null,
+        middleName: null,
+        secondLastName: null,
+        nickname: null,
+        organization: null,
+        jobTitle: null,
+        notes: null,
+        photo: null,
+        lastContact: null,
+        relationshipToUser: { id: 'rt9', label: 'Gone', deletedAt: new Date() },
+        phoneNumbers: [],
+        emails: [],
+        addresses: [],
+        urls: [],
+        imHandles: [],
+        groups: [],
+        customFields: [],
+        customFieldValues: [],
+      },
+    ]);
+
+    const response = await GET(new NextRequest('http://localhost:3000/api/people/search-index'));
+    const person = (await response.json()).people[0];
+
+    expect(person.relationship).toBeNull();
+    expect(person.relationshipTypeId).toBeNull();
+    expect(person.lastContact).toBeNull();
+  });
+
+  it('should return the groups and relationship types the quick actions offer', async () => {
+    mocks.personFindMany.mockResolvedValue([]);
+    mocks.groupFindMany.mockResolvedValue([{ id: 'g1', name: 'Work' }]);
+    mocks.relationshipTypeFindMany.mockResolvedValue([{ id: 'rt1', label: 'Friend' }]);
+
+    const response = await GET(new NextRequest('http://localhost:3000/api/people/search-index'));
+    const data = await response.json();
+
+    expect(data.groups).toEqual([{ id: 'g1', name: 'Work' }]);
+    expect(data.relationshipTypes).toEqual([{ id: 'rt1', label: 'Friend' }]);
+    expect(mocks.groupFindMany).toHaveBeenCalledWith(
+      expect.objectContaining({ where: { userId: 'user123', deletedAt: null } })
+    );
+    expect(mocks.relationshipTypeFindMany).toHaveBeenCalledWith(
+      expect.objectContaining({ where: { userId: 'user123', deletedAt: null } })
+    );
   });
 });
