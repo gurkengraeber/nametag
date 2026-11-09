@@ -643,3 +643,11 @@ Nametag serves both casual personal users (tracking family, friends, life connec
 - Tailwind CSS v4 with inline theme configuration in globals.css
 - Class-based dark mode (`.dark` on `<html>`)
 - CSS custom properties for all color tokens
+
+## Fork notes (gurkengraeber/nametag)
+
+This repository is a personal fork. Read [`FORK-NOTES.md`](FORK-NOTES.md) before working: it lists the branches, the rules for this fork and everything learned so far.
+
+- Never publish anything to the original project (`mattogodoy/nametag`): no pull requests, comments, reviews or issues until the owner of this fork has tested the changes and agreed. Pushing to this fork is fine.
+- In this fork the owner explicitly allows the `Co-Authored-By` line in commits, which overrides rule 5 above. Re-check this before preparing a pull request to the original project.
+- Keep the existing visual style. No redesign, only existing Tailwind tokens and components.
