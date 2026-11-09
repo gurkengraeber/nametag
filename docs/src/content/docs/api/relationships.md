@@ -202,6 +202,27 @@ curl -X POST https://your-instance.example.com/api/relationship-types \
 
 Returns `409` with `code` `relationship_type_name_taken` if a type with that name already exists, or if the inverse type to auto-create does (then `params.name` is the inverse name).
 
+### Create the standard relationship types
+
+```
+POST /api/relationship-types/defaults
+```
+
+Creates the standard types (Parent, Child, Sibling, Spouse, Partner, Friend, Colleague, Acquaintance, Relative, Other) that you do not have yet, together with their inverse types. Types you already have are left untouched, so the call is safe to repeat. The optional `labels` object translates the display names, keyed by the standard name.
+
+```bash
+curl -X POST https://your-instance.example.com/api/relationship-types/defaults \
+  -H "Authorization: Bearer ntag_xxx" \
+  -H "Content-Type: application/json" \
+  -d '{ "labels": { "FRIEND": "Freund", "COLLEAGUE": "Kollege" } }'
+```
+
+```json
+{ "created": 10, "skipped": 0 }
+```
+
+Returns `201` when at least one type was created and `200` when nothing was missing.
+
 ### Get a relationship type by ID
 
 ```
@@ -275,6 +296,27 @@ curl -X POST https://your-instance.example.com/api/relationship-types/clxtype1/m
 ```
 
 Returns `404` if the type or the person does not exist.
+
+### Set your relationship to several people
+
+```
+POST /api/relationship-types/{id}/members/bulk
+```
+
+Sets this type for up to 500 people in one request, replacing any type they had before. IDs that are not your own people are ignored.
+
+```bash
+curl -X POST https://your-instance.example.com/api/relationship-types/clxtype1/members/bulk \
+  -H "Authorization: Bearer ntag_xxx" \
+  -H "Content-Type: application/json" \
+  -d '{ "personIds": ["clxperson1", "clxperson2"] }'
+```
+
+```json
+{ "updated": 2 }
+```
+
+Returns `404` if the type does not exist.
 
 ### Clear your relationship to a person
 

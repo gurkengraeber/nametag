@@ -340,6 +340,16 @@ export const addRelationshipTypeMemberSchema = z.object({
   personId: z.string().min(1, 'Person ID is required'),
 });
 
+export const addRelationshipTypeMembersBulkSchema = z.object({
+  personIds: z.array(z.string().min(1)).min(1, 'At least one person is required').max(500)
+    .describe('IDs of the people to set this relationship type for'),
+});
+
+export const createDefaultRelationshipTypesSchema = z.object({
+  labels: z.record(z.string(), z.string().trim().min(1).max(50)).optional()
+    .describe('Display labels in the user language, keyed by standard type name (FRIEND, PARENT, ...)'),
+});
+
 // ============================================
 // Journal schemas
 // ============================================

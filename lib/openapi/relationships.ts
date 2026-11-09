@@ -1,7 +1,8 @@
 import {
   createRelationshipSchema, updateRelationshipSchema,
   createRelationshipTypeSchema, updateRelationshipTypeSchema,
-  addRelationshipTypeMemberSchema,
+  addRelationshipTypeMemberSchema, addRelationshipTypeMembersBulkSchema,
+  createDefaultRelationshipTypesSchema,
 } from '../validations';
 import { zodBody, pathParam, jsonResponse, ref400, ref401, ref404, refMessage, refSuccess, resp, sessionOrToken } from './helpers';
 
@@ -155,6 +156,27 @@ export function relationshipsPaths(): Record<string, Record<string, unknown>> {
         },
       },
     },
+    '/api/relationship-types/defaults': {
+      post: {
+        tags: ['Relationship Types'],
+        summary: 'Create the standard relationship types',
+        description: 'Creates the standard relationship types (Parent, Child, Sibling, Spouse, Partner, Friend, Colleague, Acquaintance, Relative, Other) that the user does not have yet, with their inverse types. Existing types are left untouched, so the call is safe to repeat. The optional labels map translates the display names.',
+        security: sessionOrToken(),
+        requestBody: zodBody(createDefaultRelationshipTypesSchema),
+        responses: {
+          '200': jsonResponse('Nothing to create, all standard types already exist', {
+            type: 'object',
+            properties: { created: { type: 'integer' }, skipped: { type: 'integer' } },
+          }),
+          '201': jsonResponse('Missing standard types created', {
+            type: 'object',
+            properties: { created: { type: 'integer' }, skipped: { type: 'integer' } },
+          }),
+          '400': ref400(),
+          '401': ref401(),
+        },
+      },
+    },
     '/api/relationship-types/{id}': {
       get: {
         tags: ['Relationship Types'],
@@ -212,6 +234,25 @@ export function relationshipsPaths(): Record<string, Record<string, unknown>> {
         requestBody: zodBody(addRelationshipTypeMemberSchema),
         responses: {
           '200': refSuccess(),
+          '400': ref400(),
+          '401': ref401(),
+          '404': ref404(),
+        },
+      },
+    },
+    '/api/relationship-types/{id}/members/bulk': {
+      post: {
+        tags: ['Relationships'],
+        summary: 'Set your relationship to several people',
+        description: 'Sets this relationship type as how you relate to each of the given people in one request. Replaces any relationship type they had before. IDs that are not your own people are ignored; the response tells how many people were updated.',
+        security: sessionOrToken(),
+        parameters: [pathParam('id', 'Relationship type ID')],
+        requestBody: zodBody(addRelationshipTypeMembersBulkSchema),
+        responses: {
+          '200': jsonResponse('People updated', {
+            type: 'object',
+            properties: { updated: { type: 'integer', description: 'Number of people that now have this relationship type' } },
+          }),
           '400': ref400(),
           '401': ref401(),
           '404': ref404(),
