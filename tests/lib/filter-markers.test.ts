@@ -1,6 +1,15 @@
 import { describe, it, expect } from 'vitest';
-import { filterMarkers, distinctCities, distinctCountries, distinctRegions } from '../../lib/map/filter-markers';
-import type { MapMarker } from '../../lib/map/types';
+import {
+  filterMarkers,
+  distinctCities,
+  distinctCountries,
+  distinctRegions,
+  EMPTY_MAP_FILTERS,
+  countDistinctPeople,
+  hasActiveMapFilters,
+  personMatchesFilters,
+} from '../../lib/map/filter-markers';
+import type { MapMarker, MapPerson } from '../../lib/map/types';
 
 function marker(overrides: Partial<MapMarker>): MapMarker {
   return {
@@ -28,7 +37,7 @@ const markers: MapMarker[] = [
   marker({ id: 'loc_1', source: 'location', personName: 'Carol King', city: null, region: null, country: null, groupIds: [] }),
 ];
 
-const noFilters = { query: '', groupId: '', city: '', region: '', country: '' };
+const noFilters = EMPTY_MAP_FILTERS;
 
 describe('filterMarkers', () => {
   it('returns everything when no filters are set', () => {
@@ -70,5 +79,65 @@ describe('distinct value helpers', () => {
 
   it('lists sorted distinct regions, skipping nulls', () => {
     expect(distinctRegions(markers)).toEqual(['Greater London', 'Ile-de-France']);
+  });
+});
+
+describe('person level filters', () => {
+  const now = new Date(2026, 10, 9);
+  const people = new Map<string, MapPerson>([
+    ['p1', { personId: 'p1', personName: 'Alice Smith', groupIds: ['g1'], relationshipTypeId: 'friend', lastContact: '2026-10-30' }],
+    ['p2', { personId: 'p2', personName: 'Bob Jones', groupIds: ['g2'], relationshipTypeId: null, lastContact: '2025-01-10' }],
+    ['p3', { personId: 'p3', personName: 'Carol King', groupIds: [], relationshipTypeId: 'friend', lastContact: null }],
+  ]);
+  const located: MapMarker[] = [
+    marker({ id: 'addr_1', personId: 'p1', personName: 'Alice Smith' }),
+    marker({ id: 'addr_2', personId: 'p2', personName: 'Bob Jones' }),
+    marker({ id: 'loc_1', source: 'location', personId: 'p3', personName: 'Carol King' }),
+  ];
+
+  it('filters by relationship, including "none"', () => {
+    const byFriend = filterMarkers(located, { ...noFilters, relationshipId: 'friend' }, people, now);
+    expect(byFriend.map((m) => m.personId)).toEqual(['p1', 'p3']);
+    const none = filterMarkers(located, { ...noFilters, relationshipId: 'none' }, people, now);
+    expect(none.map((m) => m.personId)).toEqual(['p2']);
+  });
+
+  it('filters by last contact, counting people never contacted as not talked to', () => {
+    const over6m = filterMarkers(located, { ...noFilters, lastContact: 'over6m' }, people, now);
+    expect(over6m.map((m) => m.personId)).toEqual(['p2', 'p3']);
+    const never = filterMarkers(located, { ...noFilters, lastContact: 'never' }, people, now);
+    expect(never.map((m) => m.personId)).toEqual(['p3']);
+  });
+
+  it('takes group membership from the live person data when given', () => {
+    const edited = new Map(people);
+    edited.set('p1', { ...people.get('p1')!, groupIds: ['g2'] });
+    const result = filterMarkers(located, { ...noFilters, groupId: 'g2' }, edited, now);
+    expect(result.map((m) => m.personId)).toEqual(['p1', 'p2']);
+  });
+
+  it('combines person filters', () => {
+    const result = filterMarkers(
+      located,
+      { ...noFilters, relationshipId: 'friend', lastContact: 'over1m' },
+      people,
+      now
+    );
+    expect(result.map((m) => m.personId)).toEqual(['p3']);
+  });
+
+  it('applies the same person rules to people without a marker', () => {
+    expect(personMatchesFilters(people.get('p2')!, { ...noFilters, query: 'bob' }, now)).toBe(true);
+    expect(personMatchesFilters(people.get('p2')!, { ...noFilters, query: 'alice' }, now)).toBe(false);
+  });
+
+  it('counts people, not markers', () => {
+    const two = [marker({ id: 'a', personId: 'p1' }), marker({ id: 'b', personId: 'p1' }), marker({ id: 'c', personId: 'p2' })];
+    expect(countDistinctPeople(two)).toBe(2);
+  });
+
+  it('detects active filters', () => {
+    expect(hasActiveMapFilters(noFilters)).toBe(false);
+    expect(hasActiveMapFilters({ ...noFilters, lastContact: 'over3m' })).toBe(true);
   });
 });

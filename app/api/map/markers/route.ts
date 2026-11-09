@@ -2,11 +2,18 @@ import { prisma } from '@/lib/prisma';
 import { apiResponse, handleApiError, withAuth } from '@/lib/api-utils';
 import { formatGraphName, type NameDisplayFormat } from '@/lib/nameUtils';
 import { getCountryName } from '@/lib/countries';
-import type { MapGroup, MapMarker, UnlocatedPerson } from '@/lib/map/types';
+import { classifyUnplaced } from '@/lib/map/unplaced';
+import type {
+  MapGroup,
+  MapMarker,
+  MapPerson,
+  UnlocatedPerson,
+  UnplacedPerson,
+} from '@/lib/map/types';
 
 export const GET = withAuth(async (request, session) => {
   try {
-    const [user, people, pendingCount, failedCount] = await Promise.all([
+    const [user, people, pendingCount, failedCount, allGroups, relationshipTypes] = await Promise.all([
       prisma.user.findUnique({
         where: { id: session.user.id },
         select: { nameOrder: true, nameDisplayFormat: true, geocodingEnabled: true },
@@ -20,6 +27,8 @@ export const GET = withAuth(async (request, session) => {
           nickname: true,
           displayNameOverride: true,
           photo: true,
+          lastContact: true,
+          relationshipToUserId: true,
           addresses: {
             select: {
               id: true,
@@ -62,11 +71,24 @@ export const GET = withAuth(async (request, session) => {
           geocodeStatus: 'failed',
         },
       }),
+      prisma.group.findMany({
+        where: { userId: session.user.id, deletedAt: null },
+        orderBy: { name: 'asc' },
+        select: { id: true, name: true, color: true },
+      }),
+      prisma.relationshipType.findMany({
+        where: { userId: session.user.id, deletedAt: null },
+        orderBy: { label: 'asc' },
+        select: { id: true, label: true, color: true },
+      }),
     ]);
 
     const groupsById = new Map<string, MapGroup>();
     const markers: MapMarker[] = [];
     const unlocatedPeople: UnlocatedPerson[] = [];
+    const mapPeople: MapPerson[] = [];
+    const unplacedPeople: UnplacedPerson[] = [];
+    const geocodingEnabled = user?.geocodingEnabled ?? true;
 
     for (const person of people) {
       // formatGraphName honors the user's name display settings (FULL,
@@ -85,6 +107,15 @@ export const GET = withAuth(async (request, session) => {
       // First group (in returned order) that has a color, matching how the
       // network graph picks a node's fill/ring color.
       const groupColor = person.groups.find((pg) => pg.group.color)?.group.color ?? null;
+
+      mapPeople.push({
+        personId: person.id,
+        personName,
+        groupIds,
+        relationshipTypeId: person.relationshipToUserId,
+        lastContact: person.lastContact ? person.lastContact.toISOString().slice(0, 10) : null,
+      });
+      const markerCountBefore = markers.length;
 
       const personFailedCount = person.addresses.filter(
         (address) => address.geocodeStatus === 'failed'
@@ -144,18 +175,43 @@ export const GET = withAuth(async (request, session) => {
           groupColor,
         });
       }
+
+      // A contact without any marker goes to the "no place yet" list, with
+      // its addresses so the map can offer a quick city and country entry.
+      if (markers.length === markerCountBefore) {
+        unplacedPeople.push({
+          personId: person.id,
+          personName,
+          reason: classifyUnplaced(person.addresses, geocodingEnabled),
+          addresses: person.addresses.map((address) => ({
+            type: address.type,
+            streetLine1: address.streetLine1,
+            streetLine2: address.streetLine2,
+            locality: address.locality,
+            region: address.region,
+            postalCode: address.postalCode,
+            country: address.country,
+          })),
+        });
+      }
     }
 
     const groups = [...groupsById.values()].sort((a, b) => a.name.localeCompare(b.name));
     unlocatedPeople.sort((a, b) => a.personName.localeCompare(b.personName));
+    unplacedPeople.sort((a, b) => a.personName.localeCompare(b.personName));
+    mapPeople.sort((a, b) => a.personName.localeCompare(b.personName));
 
     return apiResponse.ok({
       markers,
       groups,
+      allGroups,
+      relationshipTypes,
+      people: mapPeople,
+      unplacedPeople,
       pendingCount,
       failedCount,
       unlocatedPeople,
-      geocodingEnabled: user?.geocodingEnabled ?? true,
+      geocodingEnabled,
     });
   } catch (error) {
     return handleApiError(error, 'map-markers');
