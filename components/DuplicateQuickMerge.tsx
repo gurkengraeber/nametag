@@ -33,6 +33,8 @@ type LoadState =
   | { status: 'ready'; personA: PersonForCompare; personB: PersonForCompare };
 
 /**
+ * Mount it only while open: each mount starts a fresh load.
+ *
  * One-step merge for the duplicates page: preselects the kept contact and the
  * newer value of every conflict, shows what will happen, and merges on one tap.
  * "Review every field" opens the full merge page instead.
@@ -56,9 +58,6 @@ export default function DuplicateQuickMerge({
   useEffect(() => {
     if (!isOpen) return;
     let cancelled = false;
-    setLoad({ status: 'loading' });
-    setPrimaryId(null);
-    setFailed(false);
 
     (async () => {
       try {
