@@ -174,7 +174,7 @@ export function peoplePaths(): Record<string, Record<string, unknown>> {
       get: {
         tags: ['People'],
         summary: 'Search people by name',
-        description: 'Searches across name, surname, middle name, second last name, and nickname. Case-insensitive. Returns up to 20 results.',
+        description: 'Searches across name, surname, middle name, second last name, and nickname. Case-insensitive. Returns up to 20 results, with names that start with the query first.',
         security: sessionOrToken(),
         parameters: [
           { name: 'q', in: 'query', required: true, schema: { type: 'string' }, description: 'Search query (min 1 character)' },
@@ -197,7 +197,9 @@ export function peoplePaths(): Record<string, Record<string, unknown>> {
         description:
           'Returns all searchable data for the authenticated user\'s contacts in a flat, ' +
           'denormalized format optimized for client-side indexing. Multi-value fields ' +
-          '(phones, emails, addresses, etc.) are joined into single strings.',
+          '(phones, emails, addresses, etc.) are joined into single strings. Also returns ' +
+          'the context shown next to a search hit (relationship, place, group ids and names, ' +
+          'last contact) and the groups and relationship types the quick actions offer.',
         security: sessionOrToken(),
         responses: {
           '200': jsonResponse('Search index data', {
@@ -225,8 +227,28 @@ export function peoplePaths(): Record<string, Record<string, unknown>> {
                     groups: { type: 'string', description: 'All group names, space-joined' },
                     customFields: { type: 'string', description: 'All custom field key-value pairs, space-joined' },
                     photo: { type: 'string', nullable: true },
+                    relationship: { type: 'string', nullable: true, description: 'Label of the relationship to the user' },
+                    relationshipTypeId: { type: 'string', nullable: true },
+                    locality: { type: 'string', nullable: true, description: 'First city found in the addresses' },
+                    groupIds: { type: 'array', items: { type: 'string' } },
+                    groupNames: { type: 'array', items: { type: 'string' } },
+                    lastContact: { type: 'string', nullable: true, description: 'Date of the last contact (YYYY-MM-DD)' },
                   },
                   required: ['id', 'name', 'phones', 'emails', 'addresses', 'urls', 'imHandles', 'groups', 'customFields'],
+                },
+              },
+              groups: {
+                type: 'array',
+                items: {
+                  type: 'object',
+                  properties: { id: { type: 'string' }, name: { type: 'string' } },
+                },
+              },
+              relationshipTypes: {
+                type: 'array',
+                items: {
+                  type: 'object',
+                  properties: { id: { type: 'string' }, label: { type: 'string' } },
                 },
               },
             },

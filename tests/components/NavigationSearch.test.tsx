@@ -77,11 +77,16 @@ const ADA = {
   matchedIn: 'notes',
 };
 
+interface FakeResponse {
+  ok: boolean;
+  json: () => Promise<unknown>;
+}
+
 function fetchMock() {
-  return vi.fn(async (url: string, init?: RequestInit) => {
+  return vi.fn(async (url: string, init?: RequestInit): Promise<FakeResponse> => {
+    void init;
     if (url === '/api/user/profile') return { ok: true, json: async () => ({ user: {} }) };
     if (url.startsWith('/api/people/search?')) return { ok: true, json: async () => ({ people: [{ id: 'p9', name: 'Server', surname: 'Hit' }] }) };
-    void init;
     return { ok: true, json: async () => ({ success: true }) };
   });
 }
@@ -231,7 +236,7 @@ describe('NavigationSearch', () => {
 
   it('tells the user when a quick action fails and keeps the panel', async () => {
     const user = userEvent.setup();
-    fetchSpy.mockImplementation(async (url: string) =>
+    fetchSpy.mockImplementation(async (url: string): Promise<FakeResponse> =>
       url === '/api/user/profile'
         ? { ok: true, json: async () => ({ user: {} }) }
         : { ok: false, json: async () => ({}) }
@@ -318,7 +323,7 @@ describe('NavigationSearch', () => {
     it('says so when the server cannot be reached, and retries on request', async () => {
       const user = userEvent.setup();
       let fail = true;
-      fetchSpy.mockImplementation(async (url: string) => {
+      fetchSpy.mockImplementation(async (url: string): Promise<FakeResponse> => {
         if (url === '/api/user/profile') return { ok: true, json: async () => ({ user: {} }) };
         if (fail) throw new Error('offline');
         return { ok: true, json: async () => ({ people: [{ id: 'p9', name: 'Server', surname: 'Hit' }] }) };

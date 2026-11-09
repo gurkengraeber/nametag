@@ -47,6 +47,16 @@ interface IndexPayload {
   relationshipTypes?: SearchRelationshipTypeOption[];
 }
 
+async function fetchIndexPayload(): Promise<IndexPayload | null> {
+  try {
+    const response = await fetch('/api/people/search-index');
+    if (!response.ok) return null;
+    return await response.json();
+  } catch {
+    return null;
+  }
+}
+
 export function SearchIndexProvider({ children }: { children: React.ReactNode }) {
   const { data: session } = useSession();
   const [isReady, setIsReady] = useState(false);
@@ -57,27 +67,24 @@ export function SearchIndexProvider({ children }: { children: React.ReactNode })
   const [relationshipTypes, setRelationshipTypes] = useState<SearchRelationshipTypeOption[]>([]);
   const indexRef = useRef<MiniSearch<SearchDocument> | null>(null);
 
-  const loadIndex = useCallback(async () => {
-    try {
-      const response = await fetch('/api/people/search-index');
-      if (!response.ok) {
-        setHasError(true);
-        return;
-      }
-      const data: IndexPayload = await response.json();
-
-      indexRef.current = createSearchIndex(data.people);
-      setGroups(data.groups ?? []);
-      setRelationshipTypes(data.relationshipTypes ?? []);
-      setIsEmpty(data.people.length === 0);
-      setHasError(false);
-      setIsReady(true);
-      setVersion((current) => current + 1);
-    } catch {
+  const applyPayload = useCallback((data: IndexPayload | null) => {
+    if (!data || !Array.isArray(data.people)) {
       // Search falls back to the server; the error flag lets the UI say so.
       setHasError(true);
+      return;
     }
+    indexRef.current = createSearchIndex(data.people);
+    setGroups(data.groups ?? []);
+    setRelationshipTypes(data.relationshipTypes ?? []);
+    setIsEmpty(data.people.length === 0);
+    setHasError(false);
+    setIsReady(true);
+    setVersion((current) => current + 1);
   }, []);
+
+  const loadIndex = useCallback(() => {
+    fetchIndexPayload().then(applyPayload);
+  }, [applyPayload]);
 
   useEffect(() => {
     if (session?.user) {

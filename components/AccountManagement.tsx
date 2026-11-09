@@ -7,6 +7,7 @@ import GroupsSelector from './GroupsSelector';
 import { Button } from './ui/Button';
 import { useTranslations } from 'next-intl';
 import { importDataSchema } from '@/lib/validations';
+import { clearNametagStorage } from '@/lib/client-storage';
 import { z } from 'zod';
 import { personToVCard } from '@/lib/carddav/vcard-export';
 import {
@@ -411,6 +412,7 @@ export default function AccountManagement({ groups, peopleCount }: AccountManage
       }
 
       // Sign out and redirect to login
+      clearNametagStorage();
       await signOut({ redirect: true, callbackUrl: '/login' });
     } catch {
       setDeleteError(t('deleteFailed'));
