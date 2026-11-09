@@ -1,4 +1,5 @@
 import { prisma as prismaClient } from './prisma';
+import { sanitizeLabel } from './sanitize';
 
 // Type that accepts the extended prisma client
 type PrismaClientLike = typeof prismaClient;
@@ -66,4 +67,101 @@ export async function createPreloadedRelationshipTypes(
       });
     }
   }
+}
+
+/** Internal name of a relationship type, derived from its label. */
+export function relationshipTypeNameFromLabel(label: string): string {
+  return label.trim().toUpperCase().replace(/\s+/g, '_');
+}
+
+export interface CreateMissingTypesResult {
+  created: number;
+  skipped: number;
+}
+
+/**
+ * Creates the standard relationship types a user does not have yet, so a
+ * user who deleted them all (or never had them) can bring them back with one
+ * click. Existing types are never touched, except that a missing counterpart
+ * (for example Child when Parent exists) is linked to its partner when the
+ * partner has no inverse yet.
+ *
+ * `labels` optionally maps the standard internal names (FRIEND, PARENT, ...)
+ * to display labels in the user's language. The internal name of a created
+ * type is derived from its label, like for types created in the form.
+ */
+export async function createMissingPreloadedRelationshipTypes(
+  prisma: PrismaClientLike,
+  userId: string,
+  labels: Record<string, string> = {}
+): Promise<CreateMissingTypesResult> {
+  const existing = await prisma.relationshipType.findMany({
+    where: { userId, deletedAt: null },
+    select: { id: true, name: true, inverseId: true },
+  });
+  const existingByName = new Map(existing.map((type) => [type.name.toUpperCase(), type]));
+
+  const planned = PRELOADED_RELATIONSHIP_TYPES.map((config) => {
+    const label = sanitizeLabel(labels[config.name]?.trim()) || config.label;
+    return { config, label, name: relationshipTypeNameFromLabel(label) };
+  });
+
+  // Standard key (PARENT, ...) to the id of the type that fills that role.
+  const idByKey = new Map<string, string>();
+  const inverseIdByKey = new Map<string, string | null>();
+  for (const { config, name } of planned) {
+    const found = existingByName.get(name);
+    if (found) {
+      idByKey.set(config.name, found.id);
+      inverseIdByKey.set(config.name, found.inverseId);
+    }
+  }
+
+  const createdKeys: string[] = [];
+  const usedNames = new Set(existingByName.keys());
+  for (const { config, label, name } of planned) {
+    if (usedNames.has(name)) continue;
+    usedNames.add(name);
+    const created = await prisma.relationshipType.create({
+      data: { userId, name, label, color: config.color },
+    });
+    idByKey.set(config.name, created.id);
+    inverseIdByKey.set(config.name, null);
+    createdKeys.push(config.name);
+  }
+
+  for (const config of PRELOADED_RELATIONSHIP_TYPES) {
+    if (!createdKeys.includes(config.name)) continue;
+    const typeId = idByKey.get(config.name);
+    if (!typeId) continue;
+
+    let partnerKey: string | undefined;
+    if ('symmetric' in config && config.symmetric) {
+      partnerKey = config.name;
+    } else if ('inverseName' in config && config.inverseName) {
+      partnerKey = config.inverseName;
+    }
+    const partnerId = partnerKey ? idByKey.get(partnerKey) : undefined;
+    if (!partnerKey || !partnerId) continue;
+
+    await prisma.relationshipType.update({
+      where: { id: typeId },
+      data: { inverseId: partnerId },
+    });
+    inverseIdByKey.set(config.name, partnerId);
+
+    // Link an existing partner back only when it has no inverse yet.
+    if (partnerKey !== config.name && !createdKeys.includes(partnerKey) && !inverseIdByKey.get(partnerKey)) {
+      await prisma.relationshipType.update({
+        where: { id: partnerId },
+        data: { inverseId: typeId },
+      });
+      inverseIdByKey.set(partnerKey, typeId);
+    }
+  }
+
+  return {
+    created: createdKeys.length,
+    skipped: PRELOADED_RELATIONSHIP_TYPES.length - createdKeys.length,
+  };
 }

@@ -1640,7 +1640,9 @@
       "errorSomethingWrong": "Er is iets misgegaan",
       "errorConnection": "Kan geen verbinding maken met de server. Controleer uw verbinding en probeer het opnieuw.",
       "successCreated": "Groep \"{name}\" is aangemaakt",
-      "successUpdated": "Groep \"{name}\" is bijgewerkt"
+      "successUpdated": "Groep \"{name}\" is bijgewerkt",
+      "nameExists": "Er bestaat al een groep met de naam \"{name}\".",
+      "nameSimilar": "Lijkt op de bestaande groep \"{name}\". Typfout?"
     },
     "members": {
       "label": "Leden ({count})",
@@ -1691,7 +1693,34 @@
     "showing": "{start}-{end} van {total} groepen tonen",
     "noMembersYet": "Nog geen leden",
     "oneMember": "1 lid",
-    "membersCount": "{count} leden"
+    "membersCount": "{count} leden",
+    "quickAdd": {
+      "label": "Naam van een nieuwe groep",
+      "placeholder": "Snel toevoegen: naam van nieuwe groep",
+      "add": "Toevoegen",
+      "adding": "Toevoegen...",
+      "changeColor": "Kleur wijzigen",
+      "created": "Groep \"{name}\" is aangemaakt",
+      "error": "Groep aanmaken mislukt",
+      "errorConnection": "Kan geen verbinding maken met de server",
+      "nameExists": "Er bestaat al een groep met de naam \"{name}\".",
+      "nameSimilar": "Lijkt op de bestaande groep \"{name}\". Typfout?"
+    },
+    "suggestions": {
+      "intro": "Begin met een paar gangbare groepen, met één tik per groep:",
+      "family": "Familie",
+      "friends": "Vrienden",
+      "work": "Werk",
+      "neighbors": "Buren"
+    },
+    "sort": {
+      "label": "Groepen sorteren",
+      "name": "Naam (A tot Z)",
+      "size": "Meeste leden eerst"
+    },
+    "noSearchResults": "Geen groepen gevonden voor \"{query}\".",
+    "clearSearch": "Zoekopdracht wissen",
+    "morePeople": "+{count} meer"
   },
   "map": {
     "title": "Kaart",
@@ -1733,7 +1762,6 @@
     "relationship": "Relatie",
     "inverseRelationship": "Omgekeerde relatie",
     "actions": "Acties",
-    "usedTimes": "{count} keer gebruikt",
     "edit": "Bewerken",
     "noRelationshipTypes": "Geen relatietypen",
     "noRelationshipTypesDescription": "Maak relatietypen aan om de verbindingen in uw netwerk te categoriseren.",
@@ -1741,15 +1769,16 @@
     "backToTypes": "← Terug naar relatietypen",
     "delete": {
       "button": "Verwijderen",
-      "confirmPrompt": "Verwijderen",
-      "usedCount": "{count} keer gebruikt",
-      "usedCount_plural": "{count} keer gebruikt",
       "confirmButton": "Bevestigen",
       "deleting": "Verwijderen...",
       "cancel": "Annuleren",
-      "confirmTitle": "Verwijdering bevestigen",
-      "cancelTitle": "Annuleren",
-      "errorDelete": "Kon relatietype niet verwijderen"
+      "errorDelete": "Kon relatietype niet verwijderen",
+      "title": "Relatiesoort verwijderen",
+      "confirmMessage": "Weet je zeker dat je dit wilt verwijderen:",
+      "blockedByConnections": "{count, plural, one {# verbinding tussen twee personen gebruikt deze soort nog.} other {# verbindingen tussen personen gebruiken deze soort nog.}} Wijzig of verwijder ze eerst en verwijder daarna de soort.",
+      "affectsPeople": "{count, plural, one {Je hebt deze relatie met # persoon. Die wordt niet verwijderd, maar toont de relatie niet meer.} other {Je hebt deze relatie met # personen. Zij worden niet verwijderd, maar tonen de relatie niet meer.}}",
+      "unused": "Niemand gebruikt deze soort op dit moment.",
+      "restoreHint": "Je kunt de soort terugzetten uit de prullenbak in de instellingen."
     },
     "form": {
       "labelRequired": "Relatielabel *",
@@ -1757,8 +1786,6 @@
       "labelHelp": "De naam die aan gebruikers wordt weergegeven",
       "inverseRelationship": "Omgekeerde relatie",
       "symmetric": "Symmetrisch (zelfde als omgekeerde)",
-      "symmetricHelp": "Beide richtingen gebruiken hetzelfde label (bijv. Vriend ↔ Vriend)",
-      "nonSymmetricHelp": "De wederzijdse relatie (bijv. Ouder ↔ Kind, Mentor ↔ Student)",
       "inversePlaceholder": "Zoek bestaand of typ om nieuw aan te maken...",
       "color": "Kleur",
       "customColor": "Of kies een aangepaste kleur:",
@@ -1769,7 +1796,15 @@
       "errorSomethingWrong": "Er is iets misgegaan",
       "errorConnection": "Kan geen verbinding maken met de server. Controleer uw verbinding en probeer het opnieuw.",
       "successCreated": "Relatietype \"{label}\" is aangemaakt",
-      "successUpdated": "Relatietype \"{label}\" is bijgewerkt"
+      "successUpdated": "Relatietype \"{label}\" is bijgewerkt",
+      "labelExists": "Er bestaat al een soort met de naam \"{label}\".",
+      "labelSimilar": "Lijkt op de bestaande soort \"{label}\". Typfout?",
+      "inverseIntro": "De tegenrelatie beschrijft hoe jij overkomt vanuit de andere persoon.",
+      "exampleLabelFallback": "deze relatie",
+      "exampleSymmetric": "Voorbeeld: als Alex jouw {label} is, ben jij ook Alex' {label}.",
+      "exampleInverse": "Voorbeeld: als Alex jouw {label} is, ben jij Alex' {inverse}.",
+      "exampleNoInverse": "Voorbeeld: als Alex jouw {label} is, wordt er niets ingesteld voor de kant van Alex.",
+      "generateRandomColor": "Willekeurige kleur genereren"
     },
     "autocomplete": {
       "placeholder": "Zoek of maak een omgekeerde relatie...",
@@ -1780,7 +1815,7 @@
       "label": "Personen ({count})",
       "placeholder": "Typ een naam om personen toe te voegen...",
       "emptyMessage": "Geen personen gevonden die overeenkomen",
-      "helpText": "Typ om personen te zoeken en druk op Enter om ze toe te voegen. Wie al een andere relatie heeft, wordt naar deze omgezet. Klik op × om ze te verwijderen.",
+      "helpText": "Typ om personen te zoeken en druk op Enter om ze toe te voegen. Wie al een andere relatie heeft, krijgt deze.",
       "addedSuccess": "{name} toegevoegd aan {type}",
       "removedSuccess": "{name} verwijderd uit {type}",
       "errorAdd": "Lid toevoegen mislukt",
@@ -1788,7 +1823,49 @@
       "errorConnection": "Kan geen verbinding maken met de server",
       "remove": "Verwijderen",
       "clearAll": "Alles wissen",
-      "allSelected": "Alle items zijn al geselecteerd"
+      "allSelected": "Alle items zijn al geselecteerd",
+      "empty": "Nog niemand is jouw {type}. Voeg hieronder personen toe.",
+      "columnName": "Naam",
+      "columnGroups": "Groepen",
+      "columnLastContact": "Laatste contact",
+      "lastContactLine": "Laatste contact: {date}",
+      "never": "nooit",
+      "undo": "Ongedaan maken",
+      "addTitle": "Personen toevoegen",
+      "bulkAddedSuccess": "{count, plural, one {# persoon toegevoegd aan {type}} other {# personen toegevoegd aan {type}}}",
+      "withoutRelationshipTitle": "Personen zonder relatie met jou ({count})",
+      "withoutRelationshipHelp": "Vink iedereen aan die jouw {type} is en voeg ze in één keer toe.",
+      "searchChecklist": "Zoeken in deze personen",
+      "noChecklistMatches": "Niemand komt overeen met je zoekopdracht.",
+      "selectAll": "Alles selecteren",
+      "selectAllMatching": "Alle resultaten selecteren",
+      "checklistTruncated": "De eerste {count} worden getoond. Zoek om de rest te vinden.",
+      "addSelected": "{count, plural, =0 {Selectie toevoegen} one {# persoon toevoegen als {type}} other {# personen toevoegen als {type}}}",
+      "clearSelection": "Selectie wissen"
+    },
+    "peopleColumn": "Personen",
+    "connectionsColumn": "Verbindingen",
+    "peopleCount": "{count, plural, one {# persoon} other {# personen}}",
+    "connectionsCount": "{count, plural, one {# verbinding} other {# verbindingen}}",
+    "defaults": {
+      "intro": "Begin met de gebruikelijke soorten zoals Vriend, Familie en Collega, elk met een passend tegenovergestelde.",
+      "button": "Standaardsoorten toevoegen",
+      "creating": "Toevoegen...",
+      "success": "{count, plural, one {# soort toegevoegd} other {# soorten toegevoegd}}",
+      "error": "Standaardsoorten toevoegen mislukt",
+      "errorConnection": "Kan geen verbinding maken met de server",
+      "labels": {
+        "PARENT": "Ouder",
+        "CHILD": "Kind",
+        "SIBLING": "Broer/zus",
+        "SPOUSE": "Echtgenoot",
+        "PARTNER": "Partner",
+        "FRIEND": "Vriend",
+        "COLLEAGUE": "Collega",
+        "ACQUAINTANCE": "Kennis",
+        "RELATIVE": "Familielid",
+        "OTHER": "Overig"
+      }
     }
   },
   "relationships": {

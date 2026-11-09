@@ -1640,7 +1640,9 @@
       "errorSomethingWrong": "Something went wrong",
       "errorConnection": "Unable to connect to server. Please check your connection and try again.",
       "successCreated": "Group \"{name}\" has been created",
-      "successUpdated": "Group \"{name}\" has been updated"
+      "successUpdated": "Group \"{name}\" has been updated",
+      "nameExists": "A group called \"{name}\" already exists.",
+      "nameSimilar": "Looks similar to the existing group \"{name}\". Typo?"
     },
     "members": {
       "label": "Members ({count})",
@@ -1691,7 +1693,34 @@
     "showing": "Showing {start}-{end} of {total} groups",
     "noMembersYet": "No members yet",
     "oneMember": "1 member",
-    "membersCount": "{count} members"
+    "membersCount": "{count} members",
+    "quickAdd": {
+      "label": "Name of a new group",
+      "placeholder": "Quick add: new group name",
+      "add": "Add",
+      "adding": "Adding...",
+      "changeColor": "Change color",
+      "created": "Group \"{name}\" has been created",
+      "error": "Failed to create group",
+      "errorConnection": "Unable to connect to server",
+      "nameExists": "A group called \"{name}\" already exists.",
+      "nameSimilar": "Looks similar to the existing group \"{name}\". Typo?"
+    },
+    "suggestions": {
+      "intro": "Start with a few common groups, one tap each:",
+      "family": "Family",
+      "friends": "Friends",
+      "work": "Work",
+      "neighbors": "Neighbors"
+    },
+    "sort": {
+      "label": "Sort groups",
+      "name": "Name (A to Z)",
+      "size": "Most members first"
+    },
+    "noSearchResults": "No groups match \"{query}\".",
+    "clearSearch": "Clear search",
+    "morePeople": "+{count} more"
   },
   "map": {
     "title": "Map",
@@ -1733,7 +1762,6 @@
     "relationship": "Relationship",
     "inverseRelationship": "Inverse Relationship",
     "actions": "Actions",
-    "usedTimes": "Used {count} time(s)",
     "edit": "Edit",
     "noRelationshipTypes": "No relationship types",
     "noRelationshipTypesDescription": "Create relationship types to categorize the connections in your network.",
@@ -1741,15 +1769,16 @@
     "backToTypes": "← Back to Relationship Types",
     "delete": {
       "button": "Delete",
-      "confirmPrompt": "Delete",
-      "usedCount": "used {count} time",
-      "usedCount_plural": "used {count} times",
       "confirmButton": "Confirm",
       "deleting": "Deleting...",
       "cancel": "Cancel",
-      "confirmTitle": "Confirm delete",
-      "cancelTitle": "Cancel",
-      "errorDelete": "Failed to delete relationship type"
+      "errorDelete": "Failed to delete relationship type",
+      "title": "Delete Relationship Type",
+      "confirmMessage": "Are you sure you want to delete",
+      "blockedByConnections": "{count, plural, one {# connection between two people still uses this type.} other {# connections between people still use this type.}} Change or remove them first, then delete the type.",
+      "affectsPeople": "{count, plural, one {You have this relationship with # person. They are not deleted, but will no longer show it.} other {You have this relationship with # people. They are not deleted, but will no longer show it.}}",
+      "unused": "Nobody uses this type right now.",
+      "restoreHint": "You can bring the type back from the trash in the settings."
     },
     "form": {
       "labelRequired": "Relationship Label *",
@@ -1757,8 +1786,6 @@
       "labelHelp": "The name that will be displayed to users",
       "inverseRelationship": "Inverse Relationship",
       "symmetric": "Symmetric (same as inverse)",
-      "symmetricHelp": "Both directions will use the same label (e.g., Friend ↔ Friend)",
-      "nonSymmetricHelp": "The reciprocal relationship (e.g., Parent ↔ Child, Mentor ↔ Student)",
       "inversePlaceholder": "Search existing or type to create new...",
       "color": "Color",
       "customColor": "Or choose a custom color:",
@@ -1769,7 +1796,15 @@
       "errorSomethingWrong": "Something went wrong",
       "errorConnection": "Unable to connect to server. Please check your connection and try again.",
       "successCreated": "Relationship type \"{label}\" has been created",
-      "successUpdated": "Relationship type \"{label}\" has been updated"
+      "successUpdated": "Relationship type \"{label}\" has been updated",
+      "labelExists": "A type called \"{label}\" already exists.",
+      "labelSimilar": "Looks similar to the existing type \"{label}\". Typo?",
+      "inverseIntro": "The inverse describes how you appear from the other person's side.",
+      "exampleLabelFallback": "this relationship",
+      "exampleSymmetric": "Example: if Alex is your {label}, you are Alex's {label} too.",
+      "exampleInverse": "Example: if Alex is your {label}, you are Alex's {inverse}.",
+      "exampleNoInverse": "Example: if Alex is your {label}, nothing is set for Alex's side.",
+      "generateRandomColor": "Generate a random color"
     },
     "autocomplete": {
       "placeholder": "Search or create inverse relationship...",
@@ -1780,7 +1815,7 @@
       "label": "People ({count})",
       "placeholder": "Type a name to add people...",
       "emptyMessage": "No people found matching",
-      "helpText": "Type to search for people and press Enter to add them. Anyone who already has a different relationship is switched to this one. Click × to remove.",
+      "helpText": "Type to search for people and press Enter to add them. Anyone who already has a different relationship is switched to this one.",
       "addedSuccess": "{name} added to {type}",
       "removedSuccess": "{name} removed from {type}",
       "errorAdd": "Failed to add member",
@@ -1788,7 +1823,49 @@
       "errorConnection": "Unable to connect to server",
       "remove": "Remove",
       "clearAll": "Clear all",
-      "allSelected": "All items are already selected"
+      "allSelected": "All items are already selected",
+      "empty": "Nobody is your {type} yet. Add people below.",
+      "columnName": "Name",
+      "columnGroups": "Groups",
+      "columnLastContact": "Last contact",
+      "lastContactLine": "Last contact: {date}",
+      "never": "never",
+      "undo": "Undo",
+      "addTitle": "Add people",
+      "bulkAddedSuccess": "{count, plural, one {# person added to {type}} other {# people added to {type}}}",
+      "withoutRelationshipTitle": "People without a relationship to you ({count})",
+      "withoutRelationshipHelp": "Tick everyone who is your {type}, then add them all at once.",
+      "searchChecklist": "Search these people",
+      "noChecklistMatches": "Nobody matches your search.",
+      "selectAll": "Select all",
+      "selectAllMatching": "Select all matching",
+      "checklistTruncated": "Showing the first {count}. Search to find the others.",
+      "addSelected": "{count, plural, =0 {Add selected} one {Add # person as {type}} other {Add # people as {type}}}",
+      "clearSelection": "Clear selection"
+    },
+    "peopleColumn": "People",
+    "connectionsColumn": "Connections",
+    "peopleCount": "{count, plural, one {# person} other {# people}}",
+    "connectionsCount": "{count, plural, one {# connection} other {# connections}}",
+    "defaults": {
+      "intro": "Start with the usual ones like Friend, Family and Colleague, each with a matching opposite.",
+      "button": "Add standard types",
+      "creating": "Adding...",
+      "success": "{count, plural, one {# type added} other {# types added}}",
+      "error": "Failed to add the standard types",
+      "errorConnection": "Unable to connect to server",
+      "labels": {
+        "PARENT": "Parent",
+        "CHILD": "Child",
+        "SIBLING": "Sibling",
+        "SPOUSE": "Spouse",
+        "PARTNER": "Partner",
+        "FRIEND": "Friend",
+        "COLLEAGUE": "Colleague",
+        "ACQUAINTANCE": "Acquaintance",
+        "RELATIVE": "Relative",
+        "OTHER": "Other"
+      }
     }
   },
   "relationships": {

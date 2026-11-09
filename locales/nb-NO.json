@@ -1640,7 +1640,9 @@
       "errorSomethingWrong": "Noe gikk galt",
       "errorConnection": "Kan ikke koble til serveren. Kontroller tilkoblingen din og prøv igjen.",
       "successCreated": "Gruppen \"{name}\" ble opprettet",
-      "successUpdated": "Gruppen \"{name}\" ble oppdatert"
+      "successUpdated": "Gruppen \"{name}\" ble oppdatert",
+      "nameExists": "En gruppe som heter «{name}» finnes allerede.",
+      "nameSimilar": "Ser lik ut som den eksisterende gruppen «{name}». Skrivefeil?"
     },
     "members": {
       "label": "Medlemmer ({count})",
@@ -1691,7 +1693,34 @@
     "showing": "Viser {start}-{end} av {total} grupper",
     "noMembersYet": "Ingen medlemmer ennå",
     "oneMember": "1 medlem",
-    "membersCount": "{count} medlemmer"
+    "membersCount": "{count} medlemmer",
+    "quickAdd": {
+      "label": "Navn på en ny gruppe",
+      "placeholder": "Hurtigopprett: navn på ny gruppe",
+      "add": "Legg til",
+      "adding": "Legger til...",
+      "changeColor": "Endre farge",
+      "created": "Gruppen «{name}» er opprettet",
+      "error": "Kunne ikke opprette gruppen",
+      "errorConnection": "Kan ikke koble til serveren",
+      "nameExists": "En gruppe som heter «{name}» finnes allerede.",
+      "nameSimilar": "Ser lik ut som den eksisterende gruppen «{name}». Skrivefeil?"
+    },
+    "suggestions": {
+      "intro": "Start med noen vanlige grupper, ett trykk hver:",
+      "family": "Familie",
+      "friends": "Venner",
+      "work": "Jobb",
+      "neighbors": "Naboer"
+    },
+    "sort": {
+      "label": "Sorter grupper",
+      "name": "Navn (A til Å)",
+      "size": "Flest medlemmer først"
+    },
+    "noSearchResults": "Ingen grupper samsvarer med «{query}».",
+    "clearSearch": "Tøm søket",
+    "morePeople": "+{count} til"
   },
   "map": {
     "title": "Kart",
@@ -1733,7 +1762,6 @@
     "relationship": "Relasjon",
     "inverseRelationship": "Omvendt relasjon",
     "actions": "Handlinger",
-    "usedTimes": "Brukt {count} gang(er)",
     "edit": "Rediger",
     "noRelationshipTypes": "Ingen relasjonstyper",
     "noRelationshipTypesDescription": "Opprett relasjonstyper for å kategorisere forbindelsene i nettverket ditt.",
@@ -1741,15 +1769,16 @@
     "backToTypes": "← Tilbake til relasjonstyper",
     "delete": {
       "button": "Slett",
-      "confirmPrompt": "Slett",
-      "usedCount": "brukt {count} gang",
-      "usedCount_plural": "brukt {count} ganger",
       "confirmButton": "Bekreft",
       "deleting": "Sletter...",
       "cancel": "Avbryt",
-      "confirmTitle": "Bekreft sletting",
-      "cancelTitle": "Avbryt",
-      "errorDelete": "Kunne ikke slette relasjonstype"
+      "errorDelete": "Kunne ikke slette relasjonstype",
+      "title": "Slett relasjonstype",
+      "confirmMessage": "Er du sikker på at du vil slette",
+      "blockedByConnections": "{count, plural, one {# forbindelse mellom to personer bruker fortsatt denne typen.} other {# forbindelser mellom personer bruker fortsatt denne typen.}} Endre eller fjern dem først, og slett deretter typen.",
+      "affectsPeople": "{count, plural, one {Du har denne relasjonen til # person. Personen slettes ikke, men viser den ikke lenger.} other {Du har denne relasjonen til # personer. De slettes ikke, men viser den ikke lenger.}}",
+      "unused": "Ingen bruker denne typen akkurat nå.",
+      "restoreHint": "Du kan hente typen tilbake fra papirkurven i innstillingene."
     },
     "form": {
       "labelRequired": "Relasjonsetikett *",
@@ -1757,8 +1786,6 @@
       "labelHelp": "Navnet som vises til brukerne",
       "inverseRelationship": "Omvendt relasjon",
       "symmetric": "Symmetrisk (samme som omvendt)",
-      "symmetricHelp": "Begge retninger bruker samme etikett (f.eks. Venn ↔ Venn)",
-      "nonSymmetricHelp": "Den gjensidige relasjonen (f.eks. Forelder ↔ Barn, Mentor ↔ Student)",
       "inversePlaceholder": "Søk etter eksisterende eller skriv for å opprette ny...",
       "color": "Farge",
       "customColor": "Eller velg en egendefinert farge:",
@@ -1769,7 +1796,15 @@
       "errorSomethingWrong": "Noe gikk galt",
       "errorConnection": "Kan ikke koble til serveren. Kontroller tilkoblingen din og prøv igjen.",
       "successCreated": "Relasjonstypen \"{label}\" ble opprettet",
-      "successUpdated": "Relasjonstypen \"{label}\" ble oppdatert"
+      "successUpdated": "Relasjonstypen \"{label}\" ble oppdatert",
+      "labelExists": "En type som heter «{label}» finnes allerede.",
+      "labelSimilar": "Ser lik ut som den eksisterende typen «{label}». Skrivefeil?",
+      "inverseIntro": "Motparten beskriver hvordan du fremstår fra den andre personens side.",
+      "exampleLabelFallback": "denne relasjonen",
+      "exampleSymmetric": "Eksempel: Hvis Alex er din {label}, er du også Alex sin {label}.",
+      "exampleInverse": "Eksempel: Hvis Alex er din {label}, er du Alex sin {inverse}.",
+      "exampleNoInverse": "Eksempel: Hvis Alex er din {label}, settes ingenting for Alex sin side.",
+      "generateRandomColor": "Lag en tilfeldig farge"
     },
     "autocomplete": {
       "placeholder": "Søk etter eller opprett omvendt relasjon...",
@@ -1780,7 +1815,7 @@
       "label": "Personer ({count})",
       "placeholder": "Skriv et navn for å legge til personer...",
       "emptyMessage": "Fant ingen personer som samsvarer med",
-      "helpText": "Skriv for å søke etter personer og trykk Enter for å legge dem til. Alle som allerede har en annen relasjon, byttes til denne. Klikk på × for å fjerne.",
+      "helpText": "Skriv for å søke etter personer, og trykk Enter for å legge dem til. Den som allerede har en annen relasjon, bytter til denne.",
       "addedSuccess": "{name} ble lagt til i {type}",
       "removedSuccess": "{name} ble fjernet fra {type}",
       "errorAdd": "Kunne ikke legge til medlem",
@@ -1788,7 +1823,49 @@
       "errorConnection": "Kan ikke koble til serveren",
       "remove": "Fjern",
       "clearAll": "Fjern alle",
-      "allSelected": "Alle elementer er allerede valgt"
+      "allSelected": "Alle elementer er allerede valgt",
+      "empty": "Ingen er din {type} ennå. Legg til personer under.",
+      "columnName": "Navn",
+      "columnGroups": "Grupper",
+      "columnLastContact": "Siste kontakt",
+      "lastContactLine": "Siste kontakt: {date}",
+      "never": "aldri",
+      "undo": "Angre",
+      "addTitle": "Legg til personer",
+      "bulkAddedSuccess": "{count, plural, one {# person lagt til i {type}} other {# personer lagt til i {type}}}",
+      "withoutRelationshipTitle": "Personer uten relasjon til deg ({count})",
+      "withoutRelationshipHelp": "Kryss av for alle som er din {type}, og legg dem til på én gang.",
+      "searchChecklist": "Søk blant disse personene",
+      "noChecklistMatches": "Ingen samsvarer med søket.",
+      "selectAll": "Velg alle",
+      "selectAllMatching": "Velg alle treff",
+      "checklistTruncated": "Viser de første {count}. Søk for å finne de andre.",
+      "addSelected": "{count, plural, =0 {Legg til valgte} one {Legg til # person som {type}} other {Legg til # personer som {type}}}",
+      "clearSelection": "Fjern valg"
+    },
+    "peopleColumn": "Personer",
+    "connectionsColumn": "Forbindelser",
+    "peopleCount": "{count, plural, one {# person} other {# personer}}",
+    "connectionsCount": "{count, plural, one {# forbindelse} other {# forbindelser}}",
+    "defaults": {
+      "intro": "Start med de vanlige typene som Venn, Familie og Kollega, hver med en passende motpart.",
+      "button": "Legg til standardtyper",
+      "creating": "Legger til...",
+      "success": "{count, plural, one {# type lagt til} other {# typer lagt til}}",
+      "error": "Kunne ikke legge til standardtypene",
+      "errorConnection": "Kan ikke koble til serveren",
+      "labels": {
+        "PARENT": "Forelder",
+        "CHILD": "Barn",
+        "SIBLING": "Søsken",
+        "SPOUSE": "Ektefelle",
+        "PARTNER": "Partner",
+        "FRIEND": "Venn",
+        "COLLEAGUE": "Kollega",
+        "ACQUAINTANCE": "Bekjent",
+        "RELATIVE": "Slektning",
+        "OTHER": "Annet"
+      }
     }
   },
   "relationships": {

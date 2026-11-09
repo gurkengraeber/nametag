@@ -1,12 +1,14 @@
 'use client';
 
-import { useState, FormEvent } from 'react';
+import { useMemo, useState, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
 import PillSelector from './PillSelector';
 import { formatFullName } from '@/lib/nameUtils';
-import { getRandomColor, PRESET_COLORS } from '@/lib/colors';
+import { pickFreshColor } from '@/lib/color-choice';
+import { findSimilarName } from '@/lib/name-similarity';
+import ColorPicker from './ColorPicker';
 import { Button } from './ui/Button';
 
 interface Person {
@@ -27,6 +29,8 @@ interface GroupFormProps {
   mode: 'create' | 'edit';
   availablePeople?: Person[]; // Only used in create mode
   nameOrder?: 'WESTERN' | 'EASTERN';
+  /** Other groups of the user, used to warn about duplicates and typos. */
+  existingGroups?: { id: string; name: string; color?: string | null }[];
 }
 
 export default function GroupForm({
@@ -34,6 +38,7 @@ export default function GroupForm({
   mode,
   availablePeople = [],
   nameOrder,
+  existingGroups = [],
 }: GroupFormProps) {
   const t = useTranslations('groups.form');
   const router = useRouter();
@@ -43,18 +48,21 @@ export default function GroupForm({
   const [formData, setFormData] = useState({
     name: group?.name || '',
     description: group?.description || '',
-    color: group?.color || getRandomColor(),
+    color: group?.color || pickFreshColor(existingGroups.map((g) => g.color)),
   });
 
   // State for selected people (only used in create mode)
   const [selectedPeople, setSelectedPeople] = useState<{ id: string; label: string }[]>([]);
 
-  const handleRerollColor = () => {
-    setFormData((prev) => ({
-      ...prev,
-      color: getRandomColor(),
-    }));
-  };
+  const similarGroup = useMemo(
+    () =>
+      findSimilarName(
+        formData.name,
+        existingGroups.filter((g) => g.id !== group?.id),
+        (g) => g.name
+      ),
+    [formData.name, existingGroups, group?.id]
+  );
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -129,7 +137,17 @@ export default function GroupForm({
           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
           className="w-full px-3 py-2 border border-border rounded-lg bg-surface text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
           placeholder={t('groupNamePlaceholder')}
+          autoFocus={mode === 'create'}
+          autoComplete="off"
+          enterKeyHint="done"
         />
+        {similarGroup && (
+          <p role="status" className="text-xs text-warning mt-1">
+            {similarGroup.exact
+              ? t('nameExists', { name: similarGroup.item.name })
+              : t('nameSimilar', { name: similarGroup.item.name })}
+          </p>
+        )}
       </div>
 
       <div>
@@ -141,7 +159,7 @@ export default function GroupForm({
         </label>
         <textarea
           id="description"
-          rows={3}
+          rows={2}
           value={formData.description}
           onChange={(e) =>
             setFormData({ ...formData, description: e.target.value })
@@ -151,60 +169,13 @@ export default function GroupForm({
         />
       </div>
 
-      <div>
-        <label className="block text-sm font-medium text-muted mb-2">
-          {t('color')}
-        </label>
-        <div className="flex flex-wrap gap-3">
-          {PRESET_COLORS.map((color) => (
-            <button
-              key={color}
-              type="button"
-              onClick={() => setFormData({ ...formData, color })}
-              className={`w-10 h-10 rounded-full transition-shadow ${
-                formData.color === color
-                  ? 'ring-4 ring-primary ring-offset-2 dark:ring-offset-gray-800'
-                  : 'hover:ring-2 hover:ring-border'
-              }`}
-              style={{ backgroundColor: color }}
-              title={color}
-            />
-          ))}
-        </div>
-        <div className="mt-3">
-          <label
-            htmlFor="customColor"
-            className="block text-xs text-muted mb-1"
-          >
-            {t('customColor')}
-          </label>
-          <div className="flex items-center gap-2">
-            <input
-              type="color"
-              id="customColor"
-              value={formData.color}
-              onChange={(e) => setFormData({ ...formData, color: e.target.value })}
-              className="w-20 h-10 rounded cursor-pointer"
-            />
-            <button
-              type="button"
-              onClick={handleRerollColor}
-              className="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted hover:bg-surface-elevated hover:text-foreground"
-              aria-label={t('generateRandomColor')}
-              title={t('generateRandomColor')}
-            >
-              <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24" aria-hidden="true">
-                <rect width="12" height="12" x="2" y="10" rx="2" ry="2" strokeLinecap="round" strokeLinejoin="round" />
-                <path strokeLinecap="round" strokeLinejoin="round" d="m17.92 14 3.5-3.5a2.24 2.24 0 0 0 0-3l-5-4.92a2.24 2.24 0 0 0-3 0L10 6" />
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18h.01" />
-                <path strokeLinecap="round" strokeLinejoin="round" d="M10 14h.01" />
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15 6h.01" />
-                <path strokeLinecap="round" strokeLinejoin="round" d="M18 9h.01" />
-              </svg>
-            </button>
-          </div>
-        </div>
-      </div>
+      <ColorPicker
+        value={formData.color}
+        onChange={(color) => setFormData({ ...formData, color })}
+        label={t('color')}
+        customLabel={t('customColor')}
+        randomLabel={t('generateRandomColor')}
+      />
 
       {/* People selector - only shown when creating a new group */}
       {mode === 'create' && availablePeople.length > 0 && (

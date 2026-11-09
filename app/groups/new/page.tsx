@@ -24,6 +24,12 @@ export default async function NewGroupPage() {
   // Fetch user's name order preference
   const { nameOrder } = await getUserDisplayPreferences(session.user.id);
 
+  // Existing groups, to warn about duplicate names and pick an unused color
+  const existingGroups = await prisma.group.findMany({
+    where: { userId: session.user.id, deletedAt: null },
+    select: { id: true, name: true, color: true },
+  });
+
   // Fetch available people to add to the group
   const availablePeople = await prisma.person.findMany({
     where: {
@@ -71,6 +77,7 @@ export default async function NewGroupPage() {
                 mode="create"
                 availablePeople={availablePeople}
                 nameOrder={nameOrder}
+                existingGroups={existingGroups}
               />
             </div>
           )}

@@ -1,11 +1,13 @@
 'use client';
 
-import { useState, FormEvent } from 'react';
+import { useMemo, useState, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
 import RelationshipTypeAutocomplete from './RelationshipTypeAutocomplete';
-import { getRandomColor, PRESET_COLORS } from '@/lib/colors';
+import { pickFreshColor } from '@/lib/color-choice';
+import { findSimilarName } from '@/lib/name-similarity';
+import ColorPicker from './ColorPicker';
 import { Button } from './ui/Button';
 
 interface RelationshipType {
@@ -39,7 +41,7 @@ export default function RelationshipTypeForm({
 
   const [formData, setFormData] = useState({
     label: relationshipType?.label || '',
-    color: relationshipType?.color || getRandomColor(),
+    color: relationshipType?.color || pickFreshColor(availableTypes.map((type) => type.color)),
   });
 
   // Track inverse relationship
@@ -48,15 +50,32 @@ export default function RelationshipTypeForm({
   const [inverseLabel, setInverseLabel] = useState(relationshipType?.inverse?.label || '');
 
   // Symmetric relationship toggle (inverse is the same as main, e.g., friend <-> friend)
-  const isInitiallySymmetric = relationshipType?.inverseId === relationshipType?.id;
+  // New types start symmetric, because most custom ones (Neighbor, Teammate) are
+  const isInitiallySymmetric =
+    mode === 'create' || relationshipType?.inverseId === relationshipType?.id;
   const [isSymmetric, setIsSymmetric] = useState(isInitiallySymmetric);
 
-  const handleRerollColor = () => {
-    setFormData((prev) => ({
-      ...prev,
-      color: getRandomColor(),
-    }));
-  };
+  // Warn about an existing type with a (nearly) identical label
+  const similarType = useMemo(
+    () =>
+      findSimilarName(
+        formData.label,
+        availableTypes.filter((type) => type.id !== relationshipType?.id),
+        (type) => type.label
+      ),
+    [formData.label, availableTypes, relationshipType?.id]
+  );
+
+  // Live example that shows what the inverse means
+  const exampleLabel = formData.label.trim() || t('exampleLabelFallback');
+  const exampleInverse = inverseIsExisting
+    ? availableTypes.find((type) => type.id === inverseValue)?.label ?? ''
+    : (inverseLabel || inverseValue).trim();
+  const example = isSymmetric
+    ? t('exampleSymmetric', { label: exampleLabel })
+    : exampleInverse
+    ? t('exampleInverse', { label: exampleLabel, inverse: exampleInverse })
+    : t('exampleNoInverse', { label: exampleLabel });
 
   // Sanitize label to create internal name
   const sanitizeName = (label: string): string => {
@@ -165,10 +184,21 @@ export default function RelationshipTypeForm({
           onChange={(e) => setFormData({ ...formData, label: e.target.value })}
           className="w-full px-3 py-2 border border-border rounded-lg bg-surface text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
           placeholder={t('labelPlaceholder')}
+          autoFocus={mode === 'create'}
+          autoComplete="off"
+          enterKeyHint="next"
         />
-        <p className="text-xs text-muted mt-1">
-          {t('labelHelp')}
-        </p>
+        {similarType ? (
+          <p role="status" className="text-xs text-warning mt-1">
+            {similarType.exact
+              ? t('labelExists', { label: similarType.item.label })
+              : t('labelSimilar', { label: similarType.item.label })}
+          </p>
+        ) : (
+          <p className="text-xs text-muted mt-1">
+            {t('labelHelp')}
+          </p>
+        )}
       </div>
 
       <div>
@@ -177,7 +207,7 @@ export default function RelationshipTypeForm({
         </label>
 
         {/* Symmetric toggle */}
-        <div className="flex items-center mb-3">
+        <div className="flex items-center mb-3 min-h-11 sm:min-h-0">
           <button
             type="button"
             role="switch"
@@ -205,8 +235,9 @@ export default function RelationshipTypeForm({
             {t('symmetric')}
           </span>
         </div>
-        <p className="text-xs text-muted mb-3">
-          {isSymmetric ? t('symmetricHelp') : t('nonSymmetricHelp')}
+        <p className="text-xs text-muted mb-1">{t('inverseIntro')}</p>
+        <p className="text-xs text-foreground mb-3" aria-live="polite">
+          {example}
         </p>
 
         {/* Inverse autocomplete - only shown when not symmetric */}
@@ -225,60 +256,13 @@ export default function RelationshipTypeForm({
         )}
       </div>
 
-      <div>
-        <label className="block text-sm font-medium text-muted mb-2">
-          {t('color')}
-        </label>
-        <div className="flex flex-wrap gap-3">
-          {PRESET_COLORS.map((color) => (
-            <button
-              key={color}
-              type="button"
-              onClick={() => setFormData({ ...formData, color })}
-              className={`w-10 h-10 rounded-full transition-shadow ${
-                formData.color === color
-                  ? 'ring-4 ring-primary ring-offset-2 dark:ring-offset-gray-800'
-                  : 'hover:ring-2 hover:ring-border'
-              }`}
-              style={{ backgroundColor: color }}
-              title={color}
-            />
-          ))}
-        </div>
-        <div className="mt-3">
-          <label
-            htmlFor="customColor"
-            className="block text-xs text-muted mb-1"
-          >
-            {t('customColor')}
-          </label>
-          <div className="flex items-center gap-2">
-            <input
-              type="color"
-              id="customColor"
-              value={formData.color}
-              onChange={(e) => setFormData({ ...formData, color: e.target.value })}
-              className="w-20 h-10 rounded cursor-pointer"
-            />
-            <button
-              type="button"
-              onClick={handleRerollColor}
-              className="inline-flex h-7 w-7 items-center justify-center rounded-md text-muted hover:bg-surface-elevated hover:text-foreground"
-              aria-label={t('generateRandomColor')}
-              title={t('generateRandomColor')}
-            >
-              <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24" aria-hidden="true">
-                <rect width="12" height="12" x="2" y="10" rx="2" ry="2" strokeLinecap="round" strokeLinejoin="round" />
-                <path strokeLinecap="round" strokeLinejoin="round" d="m17.92 14 3.5-3.5a2.24 2.24 0 0 0 0-3l-5-4.92a2.24 2.24 0 0 0-3 0L10 6" />
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18h.01" />
-                <path strokeLinecap="round" strokeLinejoin="round" d="M10 14h.01" />
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15 6h.01" />
-                <path strokeLinecap="round" strokeLinejoin="round" d="M18 9h.01" />
-              </svg>
-            </button>
-          </div>
-        </div>
-      </div>
+      <ColorPicker
+        value={formData.color}
+        onChange={(color) => setFormData({ ...formData, color })}
+        label={t('color')}
+        customLabel={t('customColor')}
+        randomLabel={t('generateRandomColor')}
+      />
 
       <div className="flex justify-end space-x-4 pt-4">
         <Button variant="secondary" href="/relationship-types">
