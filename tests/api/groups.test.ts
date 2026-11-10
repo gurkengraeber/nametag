@@ -8,6 +8,7 @@ const mocks = vi.hoisted(() => ({
   groupCreate: vi.fn(),
   groupUpdate: vi.fn(),
   groupDelete: vi.fn(),
+  personFindMany: vi.fn(),
 }));
 
 // Mock Prisma
@@ -20,6 +21,9 @@ vi.mock('../../lib/prisma', () => ({
       create: mocks.groupCreate,
       update: mocks.groupUpdate,
       delete: mocks.groupDelete,
+    },
+    person: {
+      findMany: mocks.personFindMany,
     },
   },
 }));
@@ -285,6 +289,7 @@ describe('Groups API', () => {
       };
 
       mocks.groupFindFirst.mockResolvedValue(null);
+      mocks.personFindMany.mockResolvedValue([{ id: 'person-1' }, { id: 'person-2' }]);
       mocks.groupCreate.mockResolvedValue(newGroup);
 
       const request = new Request('http://localhost/api/groups', {
@@ -317,6 +322,33 @@ describe('Groups API', () => {
             people: expect.objectContaining({
               where: { person: { deletedAt: null } },
             }),
+          }),
+        })
+      );
+    });
+
+    it('should not add people who belong to someone else', async () => {
+      mocks.groupFindFirst.mockResolvedValue(null);
+      mocks.personFindMany.mockResolvedValue([{ id: 'person-1' }]);
+      mocks.groupCreate.mockResolvedValue({ id: 'new', name: 'Family', people: [] });
+
+      const request = new Request('http://localhost/api/groups', {
+        method: 'POST',
+        body: JSON.stringify({ name: 'Family', peopleIds: ['person-1', 'foreign-person'] }),
+        headers: { 'content-type': 'application/json' },
+      });
+
+      await POST(request);
+
+      expect(mocks.personFindMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { id: { in: ['person-1', 'foreign-person'] }, userId: 'user-123', deletedAt: null },
+        })
+      );
+      expect(mocks.groupCreate).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({
+            people: { create: [{ person: { connect: { id: 'person-1' } } }] },
           }),
         })
       );
