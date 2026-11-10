@@ -489,6 +489,7 @@ describe('GET /api/map/markers', () => {
     };
 
     it('returns all people with relationship, last contact and groups', async () => {
+      mocks.relationshipTypeFindMany.mockResolvedValue([{ id: 'rel-1', label: 'Friend', color: null }]);
       mocks.personFindMany.mockResolvedValue([
         {
           ...basePerson,
@@ -530,6 +531,18 @@ describe('GET /api/map/markers', () => {
           lastContact: null,
         },
       ]);
+    });
+
+    it('treats a relationship type in the trash as no relationship', async () => {
+      mocks.relationshipTypeFindMany.mockResolvedValue([{ id: 'rel-1', label: 'Friend', color: null }]);
+      mocks.personFindMany.mockResolvedValue([
+        { ...basePerson, id: 'person-1', name: 'Alice', surname: 'Smith', lastContact: null, relationshipToUserId: 'rel-gone', addresses: [] },
+      ]);
+
+      const response = await GET(new Request('http://localhost/api/map/markers'));
+      const body = await response.json();
+
+      expect(body.people[0].relationshipTypeId).toBeNull();
     });
 
     it('returns every group and relationship type of the user, scoped and without deleted ones', async () => {

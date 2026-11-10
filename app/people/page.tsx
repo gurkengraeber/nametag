@@ -81,8 +81,8 @@ export default async function PeoplePage({
           where: { group: { deletedAt: null } },
           include: { group: { select: { name: true, color: true } } },
         },
-        relationshipsFrom: { select: { id: true } },
-        relationshipsTo: { select: { id: true } },
+        relationshipsFrom: { where: { deletedAt: null }, select: { id: true } },
+        relationshipsTo: { where: { deletedAt: null }, select: { id: true } },
       },
     }),
     prisma.group.findMany({

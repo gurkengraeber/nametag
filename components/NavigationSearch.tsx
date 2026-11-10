@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 import { formatFullName } from '@/lib/nameUtils';
 import { getLocalDateString } from '@/lib/date-format';
 import { navigateTo } from '@/lib/client-navigation';
+import { isSearchShortcut } from '@/lib/keyboard-shortcuts';
 import { forgetRecentPeople, readRecentPeople, rememberRecentPerson } from '@/lib/recent-people';
 import type { PersonSearchResult } from '@/lib/search-index';
 import PersonAvatar from './PersonPhoto';
@@ -100,7 +101,7 @@ export default function NavigationSearch({ autoFocus, onClose }: NavigationSearc
   // Cmd+K / Ctrl+K global shortcut to focus search
   useEffect(() => {
     const handleGlobalKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+      if (isSearchShortcut(e)) {
         e.preventDefault();
         inputRef.current?.focus();
       }
@@ -108,7 +109,6 @@ export default function NavigationSearch({ autoFocus, onClose }: NavigationSearc
     document.addEventListener('keydown', handleGlobalKeyDown);
     return () => document.removeEventListener('keydown', handleGlobalKeyDown);
   }, []);
-  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
   const itemRefs = useRef<Map<number, HTMLDivElement>>(new Map());
 
   const hasTerm = searchTerm.trim().length > 0;
@@ -118,11 +118,6 @@ export default function NavigationSearch({ autoFocus, onClose }: NavigationSearc
 
   // Search: instant client-side when index is ready, server fallback otherwise
   useEffect(() => {
-    if (debounceTimerRef.current) {
-      clearTimeout(debounceTimerRef.current);
-      debounceTimerRef.current = null;
-    }
-
     if (!searchTerm.trim()) {
       setResults([]);
       setIsLoading(false);
@@ -137,34 +132,33 @@ export default function NavigationSearch({ autoFocus, onClose }: NavigationSearc
       return;
     }
 
-    // Fallback: server-side search with debounce
+    // Fallback: server-side search with debounce. A slow answer for an earlier
+    // term must never replace the results of the current one, so every run owns
+    // an AbortController and ignores what comes back once it was cancelled.
     setIsLoading(true);
     setSearchFailed(false);
-    debounceTimerRef.current = setTimeout(async () => {
+    const controller = new AbortController();
+    const timer = setTimeout(async () => {
       try {
-        const response = await fetch(
-          `/api/people/search?q=${encodeURIComponent(searchTerm)}`
-        );
-        if (response.ok) {
-          const data = await response.json();
-          setResults(data.people || []);
-        } else {
-          setResults([]);
-          setSearchFailed(true);
-        }
+        const response = await fetch(`/api/people/search?q=${encodeURIComponent(searchTerm)}`, {
+          signal: controller.signal,
+        });
+        const data = response.ok ? await response.json() : null;
+        if (controller.signal.aborted) return;
+        setResults(data?.people || []);
+        setSearchFailed(!response.ok);
       } catch {
+        if (controller.signal.aborted) return;
         setResults([]);
         setSearchFailed(true);
       } finally {
-        setIsLoading(false);
+        if (!controller.signal.aborted) setIsLoading(false);
       }
     }, 300);
 
     return () => {
-      if (debounceTimerRef.current) {
-        clearTimeout(debounceTimerRef.current);
-        debounceTimerRef.current = null;
-      }
+      clearTimeout(timer);
+      controller.abort();
     };
     // indexVersion re-runs the search after a quick action changed the data.
   }, [searchTerm, searchIndexReady, clientSearch, indexVersion, retryCount]);
@@ -253,6 +247,10 @@ export default function NavigationSearch({ autoFocus, onClose }: NavigationSearc
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    // Enter and Escape belong to the input method while a Japanese or Chinese
+    // word is being composed; they must not pick a result.
+    if (e.nativeEvent.isComposing) return;
+
     // Escape dismisses the whole search surface, even with the results list closed,
     // so an empty on-demand field can still be backed out of with one key.
     if (e.key === 'Escape') {

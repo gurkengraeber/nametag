@@ -131,6 +131,14 @@ describe('person level filters', () => {
     expect(personMatchesFilters(people.get('p2')!, { ...noFilters, query: 'alice' }, now)).toBe(false);
   });
 
+  it('finds names regardless of accents and case', () => {
+    const jose = { personName: 'José Müller', groupIds: [], relationshipTypeId: null, lastContact: null };
+    expect(personMatchesFilters(jose, { ...noFilters, query: 'jose' }, now)).toBe(true);
+    expect(personMatchesFilters(jose, { ...noFilters, query: 'MULLER' }, now)).toBe(true);
+    expect(personMatchesFilters(jose, { ...noFilters, query: 'josé m' }, now)).toBe(true);
+    expect(personMatchesFilters(jose, { ...noFilters, query: 'ana' }, now)).toBe(false);
+  });
+
   it('counts people, not markers', () => {
     const two = [marker({ id: 'a', personId: 'p1' }), marker({ id: 'b', personId: 'p1' }), marker({ id: 'c', personId: 'p2' })];
     expect(countDistinctPeople(two)).toBe(2);

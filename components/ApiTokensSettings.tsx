@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/Button';
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
+import { getLocalDateString } from '@/lib/date-format';
 import {
   TOKEN_EXPIRY_PRESETS,
   expiryForPreset,
@@ -267,6 +268,7 @@ export default function ApiTokensSettings() {
                 id="token-expiry"
                 type="date"
                 aria-label={t('expiry.custom')}
+                min={getLocalDateString()}
                 value={expiresAt}
                 onChange={(e) => setExpiresAt(e.target.value)}
                 className="mt-2 w-full min-h-11 px-3 py-2 border border-border rounded-lg bg-surface text-foreground focus:outline-none focus:ring-2 focus:ring-primary"

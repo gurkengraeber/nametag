@@ -29,7 +29,13 @@ const RESERVED_SEGMENTS = new Set(['new', 'merge', 'duplicates']);
 export function personIdFromPath(pathname: string): string | null {
   const match = /^\/people\/([^/]+)(?:\/edit)?\/?$/.exec(pathname);
   if (!match) return null;
-  const segment = decodeURIComponent(match[1]);
+  let segment: string;
+  try {
+    segment = decodeURIComponent(match[1]);
+  } catch {
+    // A hand-typed address with a broken % escape is not a profile.
+    return null;
+  }
   return RESERVED_SEGMENTS.has(segment) ? null : segment;
 }
 

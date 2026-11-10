@@ -1,5 +1,6 @@
 import type { MapMarker, MapPerson } from './types';
 import { matchesLastContactFilter } from './last-contact';
+import { matchesSearch } from '@/lib/search';
 
 export interface MapFilterState {
   query: string;
@@ -39,8 +40,8 @@ export function personMatchesFilters(
   filters: MapFilterState,
   now: Date = new Date()
 ): boolean {
-  const query = filters.query.trim().toLowerCase();
-  if (query && !person.personName.toLowerCase().includes(query)) return false;
+  const query = filters.query.trim();
+  if (query && !matchesSearch(person.personName, query)) return false;
   if (filters.groupId && !person.groupIds.includes(filters.groupId)) return false;
   if (filters.relationshipId) {
     if (filters.relationshipId === NO_RELATIONSHIP_FILTER) {

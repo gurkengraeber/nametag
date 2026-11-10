@@ -26,7 +26,7 @@ For the `G` shortcuts, press `G`, release it, and press the second key within ab
 
 ## When shortcuts are off
 
-Shortcuts never fire while you are typing in a text field, a note or a dropdown, so writing a name with an "n" in it is safe. They are also off while a dialog or the phone menu is open, and any combination with `Ctrl`, `Cmd` or `Alt` is left to your browser. Letters are matched by key position, so they work on keyboard layouts that do not type Latin letters.
+Shortcuts never fire while you are typing in a text field, a note or a dropdown, so writing a name with an "n" in it is safe. They are also off while a dialog or the phone menu is open, and any combination with `Ctrl`, `Cmd` or `Alt` is left to your browser. Letters are matched by key position, so they work on keyboard layouts that do not type Latin letters. The `/` key works where it needs `Shift`, as on a German keyboard.
 
 ## In the search
 

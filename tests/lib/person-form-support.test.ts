@@ -5,6 +5,7 @@ import {
   savePersonFormDefaults,
   sanitizePersonFormDefaults,
   mapServerFieldErrors,
+  isAfterToday,
 } from '@/lib/person-form-support';
 
 function memoryStorage(initial: Record<string, string> = {}) {
@@ -123,5 +124,13 @@ describe('mapServerFieldErrors', () => {
   it('ignores malformed input', () => {
     expect(mapServerFieldErrors(undefined)).toEqual({});
     expect(mapServerFieldErrors([null, 'x', { path: 3 }, { path: 'a', issue: 'weird' }])).toEqual({});
+  });
+});
+
+describe('isAfterToday', () => {
+  it('compares calendar days, so today is not in the future', () => {
+    expect(isAfterToday('2026-03-02', '2026-03-02')).toBe(false);
+    expect(isAfterToday('2026-03-01', '2026-03-02')).toBe(false);
+    expect(isAfterToday('2026-03-03', '2026-03-02')).toBe(true);
   });
 });

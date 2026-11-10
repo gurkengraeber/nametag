@@ -63,6 +63,14 @@ export function isTypingTarget(target: EventTarget | null): boolean {
   return false;
 }
 
+/**
+ * Ctrl+K or Cmd+K. Matched by key position as well, so it keeps working while
+ * Caps Lock is on and on layouts that do not type Latin letters.
+ */
+export function isSearchShortcut(event: ShortcutKeyEvent): boolean {
+  return Boolean(event.ctrlKey || event.metaKey) && letterOf(event) === 'k';
+}
+
 export interface ShortcutResult {
   state: ShortcutState;
   action: ShortcutAction | null;
@@ -83,6 +91,11 @@ export function handleShortcutKey(state: ShortcutState, event: ShortcutKeyEvent)
     return { state: idle, action: { type: 'help' } };
   }
 
+  // "/" needs Shift on some layouts (German: Shift+7), so it is checked before the Shift rule.
+  if (event.key === '/' && !state.pendingGo) {
+    return { state: idle, action: { type: 'search' } };
+  }
+
   // Letters with Shift are capitals or other layers; leave them alone.
   if (event.shiftKey) {
     return { state: idle, action: null };
@@ -92,10 +105,6 @@ export function handleShortcutKey(state: ShortcutState, event: ShortcutKeyEvent)
     const letter = letterOf(event);
     const destination = GO_DESTINATIONS.find((entry) => entry.letter === letter);
     return { state: idle, action: destination ? { type: 'go', href: destination.href } : null };
-  }
-
-  if (event.key === '/') {
-    return { state: idle, action: { type: 'search' } };
   }
 
   const letter = letterOf(event);

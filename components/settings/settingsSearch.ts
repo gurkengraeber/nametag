@@ -1,5 +1,6 @@
 import type { SettingsGroupId, SettingsItem } from './settingsCatalog';
 import { SETTINGS_GROUP_ORDER } from './settingsCatalog';
+import { normalizeForSearch } from '@/lib/search';
 
 /** A settings entry with its text already translated, ready to be searched. */
 export interface SearchableSetting {
@@ -10,23 +11,14 @@ export interface SearchableSetting {
   keywords: string;
 }
 
-/** Lower-case and strip accents so "Benachrichtigung" and "benachrichtigüng" both match. */
-export function normalizeSearchText(text: string): string {
-  return text
-    .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '')
-    .toLowerCase()
-    .trim();
-}
-
 /**
  * Every word the person typed has to appear somewhere in the label,
  * description or keywords. An empty query matches everything.
  */
 export function matchesSetting(entry: SearchableSetting, query: string): boolean {
-  const words = normalizeSearchText(query).split(/\s+/).filter(Boolean);
+  const words = normalizeForSearch(query).split(/\s+/).filter(Boolean);
   if (words.length === 0) return true;
-  const haystack = normalizeSearchText(`${entry.label} ${entry.description} ${entry.keywords}`);
+  const haystack = normalizeForSearch(`${entry.label} ${entry.description} ${entry.keywords}`);
   return words.every((word) => haystack.includes(word));
 }
 

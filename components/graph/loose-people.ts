@@ -1,15 +1,11 @@
 import type { RawGraphPerson } from './bubble-composition';
-import type { SimulationEdge, SimulationNode } from './simulation-types';
+import { edgeEndpointId, type SimulationEdge } from './simulation-types';
 
 export interface LoosePeopleSplit {
   /** The center node and everyone with at least one edge. */
   connected: RawGraphPerson[];
   /** People without any edge, sorted by name. */
   loose: RawGraphPerson[];
-}
-
-function endpointId(value: string | SimulationNode): string {
-  return typeof value === 'string' ? value : value.id;
 }
 
 /**
@@ -24,8 +20,8 @@ export function splitLoosePeople(
 ): LoosePeopleSplit {
   const linked = new Set<string>();
   for (const edge of edges) {
-    linked.add(endpointId(edge.source));
-    linked.add(endpointId(edge.target));
+    linked.add(edgeEndpointId(edge.source));
+    linked.add(edgeEndpointId(edge.target));
   }
 
   const connected: RawGraphPerson[] = [];

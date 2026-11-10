@@ -3,6 +3,8 @@
  * mapping of server validation errors onto the field they belong to.
  */
 
+import { getLocalDateString } from '@/lib/date-format';
+
 /** Remembered values are dropped after this many days. */
 export const PERSON_FORM_DEFAULTS_MAX_AGE_DAYS = 30;
 const MAX_AGE_MS = PERSON_FORM_DEFAULTS_MAX_AGE_DAYS * 24 * 60 * 60 * 1000;
@@ -104,6 +106,15 @@ export function sanitizePersonFormDefaults(
       : '',
     groupIds: defaults.groupIds.filter((id) => validGroupIds.includes(id)),
   };
+}
+
+/**
+ * True when a YYYY-MM-DD value lies after today in the viewer's timezone.
+ * Compared as calendar days: `new Date('2026-03-01')` is UTC midnight, which
+ * for someone east of UTC is still "in the future" shortly after local midnight.
+ */
+export function isAfterToday(date: string, today: string = getLocalDateString()): boolean {
+  return date > today;
 }
 
 export type FieldIssue = 'required' | 'too_long' | 'too_short' | 'invalid_format' | 'invalid_value';

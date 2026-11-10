@@ -1855,8 +1855,7 @@
       "quickMergeDifferences": "Wo sie sich unterscheiden (neuerer Wert vorausgewählt)",
       "quickMergeFrom": "von {name}",
       "quickMergeReview": "Jedes Feld prüfen",
-      "quickMergeConfirm": "Jetzt zusammenführen",
-      "hint": "{count, plural, one {# mögliches Duplikat zu prüfen} other {# mögliche Duplikate zu prüfen}}"
+      "quickMergeConfirm": "Jetzt zusammenführen"
     },
     "merge": {
       "title": "Kontakte zusammenführen",

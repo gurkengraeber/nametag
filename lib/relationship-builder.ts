@@ -48,16 +48,6 @@ export const AUTO_SCROLL_MAX_SPEED = 18;
 export const MAX_RECENT_TYPES = 12;
 export const MAX_RECENT_LINKS = 10;
 
-/** Directed key: "a is related to b". */
-export function pairKey(a: string, b: string): string {
-  return `${a}>${b}`;
-}
-
-/** Order-independent key for the pair {a, b}. */
-export function unorderedPairKey(a: string, b: string): string {
-  return a < b ? `${a}|${b}` : `${b}|${a}`;
-}
-
 /** Type ids already stored in the direction a -> b ("a is b's ..."). */
 export function typeIdsBetween(links: BuilderLink[], a: string, b: string): string[] {
   const ids: string[] = [];
@@ -65,15 +55,6 @@ export function typeIdsBetween(links: BuilderLink[], a: string, b: string): stri
     if (link.personId === a && link.relatedPersonId === b) ids.push(link.relationshipTypeId);
   }
   return ids;
-}
-
-/** True when any relationship exists between the two people, in either direction. */
-export function isPairConnected(links: BuilderLink[], a: string, b: string): boolean {
-  return links.some(
-    (link) =>
-      (link.personId === a && link.relatedPersonId === b) ||
-      (link.personId === b && link.relatedPersonId === a)
-  );
 }
 
 /**

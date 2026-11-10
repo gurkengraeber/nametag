@@ -39,6 +39,9 @@ interface SearchIndexContextType {
   userId?: string;
 }
 
+const NO_GROUPS: SearchGroupOption[] = [];
+const NO_TYPES: SearchRelationshipTypeOption[] = [];
+
 const SearchIndexContext = createContext<SearchIndexContextType | undefined>(undefined);
 
 interface IndexPayload {
@@ -57,68 +60,81 @@ async function fetchIndexPayload(): Promise<IndexPayload | null> {
   }
 }
 
+interface LoadedIndex {
+  userId: string;
+  index: MiniSearch<SearchDocument>;
+  groups: SearchGroupOption[];
+  relationshipTypes: SearchRelationshipTypeOption[];
+  isEmpty: boolean;
+}
+
 export function SearchIndexProvider({ children }: { children: React.ReactNode }) {
   const { data: session } = useSession();
-  const [isReady, setIsReady] = useState(false);
-  const [hasError, setHasError] = useState(false);
-  const [isEmpty, setIsEmpty] = useState(false);
+  const userId = session?.user?.id;
+  const [loaded, setLoaded] = useState<LoadedIndex | null>(null);
+  const [failedFor, setFailedFor] = useState<string | null>(null);
   const [version, setVersion] = useState(0);
-  const [groups, setGroups] = useState<SearchGroupOption[]>([]);
-  const [relationshipTypes, setRelationshipTypes] = useState<SearchRelationshipTypeOption[]>([]);
-  const indexRef = useRef<MiniSearch<SearchDocument> | null>(null);
+  // Only the newest load may apply its answer; older ones are stale.
+  const loadCounterRef = useRef(0);
 
-  const applyPayload = useCallback((data: IndexPayload | null) => {
-    if (!data || !Array.isArray(data.people)) {
-      // Search falls back to the server; the error flag lets the UI say so.
-      setHasError(true);
-      return;
-    }
-    indexRef.current = createSearchIndex(data.people);
-    setGroups(data.groups ?? []);
-    setRelationshipTypes(data.relationshipTypes ?? []);
-    setIsEmpty(data.people.length === 0);
-    setHasError(false);
-    setIsReady(true);
-    setVersion((current) => current + 1);
+  const loadIndex = useCallback((forUser: string) => {
+    const loadId = ++loadCounterRef.current;
+    fetchIndexPayload().then((data) => {
+      if (loadId !== loadCounterRef.current) return;
+      if (!data || !Array.isArray(data.people)) {
+        // Search falls back to the server; the error flag lets the UI say so.
+        setFailedFor(forUser);
+        return;
+      }
+      setLoaded({
+        userId: forUser,
+        index: createSearchIndex(data.people),
+        groups: data.groups ?? [],
+        relationshipTypes: data.relationshipTypes ?? [],
+        isEmpty: data.people.length === 0,
+      });
+      setFailedFor(null);
+      setVersion((current) => current + 1);
+    });
   }, []);
 
-  const loadIndex = useCallback(() => {
-    fetchIndexPayload().then(applyPayload);
-  }, [applyPayload]);
-
+  // Keyed on the account, not the session object: the session object is
+  // replaced on every refetch, which would reload every person each time.
   useEffect(() => {
-    if (session?.user) {
-      loadIndex();
-    }
-  }, [session, loadIndex]);
+    if (userId) loadIndex(userId);
+    else loadCounterRef.current++;
+  }, [userId, loadIndex]);
 
-  const search = useCallback((query: string): PersonSearchResult[] => {
-    if (!indexRef.current) return [];
-    return performSearch(indexRef.current, query);
-  }, []);
+  // People loaded for another account, or after signing out, are never served.
+  const active = loaded && loaded.userId === userId ? loaded : null;
 
-  const getPerson = useCallback((id: string): PersonSearchResult | null => {
-    if (!indexRef.current) return null;
-    return getIndexedPerson(indexRef.current, id);
-  }, []);
+  const search = useCallback(
+    (query: string): PersonSearchResult[] => (active ? performSearch(active.index, query) : []),
+    [active]
+  );
+
+  const getPerson = useCallback(
+    (id: string): PersonSearchResult | null => (active ? getIndexedPerson(active.index, id) : null),
+    [active]
+  );
 
   const refreshIndex = useCallback(() => {
-    loadIndex();
-  }, [loadIndex]);
+    if (userId) loadIndex(userId);
+  }, [userId, loadIndex]);
 
   return (
     <SearchIndexContext.Provider
       value={{
         search,
         getPerson,
-        isReady,
+        isReady: active !== null,
         version,
-        hasError,
-        groups,
-        relationshipTypes,
-        isEmpty,
+        hasError: failedFor === userId,
+        groups: active?.groups ?? NO_GROUPS,
+        relationshipTypes: active?.relationshipTypes ?? NO_TYPES,
+        isEmpty: active?.isEmpty ?? false,
         refreshIndex,
-        userId: session?.user?.id,
+        userId,
       }}
     >
       {children}

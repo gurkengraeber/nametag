@@ -1855,8 +1855,7 @@
       "quickMergeDifferences": "Où ils diffèrent (valeur la plus récente présélectionnée)",
       "quickMergeFrom": "de {name}",
       "quickMergeReview": "Examiner chaque champ",
-      "quickMergeConfirm": "Fusionner maintenant",
-      "hint": "{count, plural, one {# doublon possible à examiner} other {# doublons possibles à examiner}}"
+      "quickMergeConfirm": "Fusionner maintenant"
     },
     "merge": {
       "title": "Fusionner les contacts",

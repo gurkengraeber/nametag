@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, waitFor, within } from '@testing-library/react';
+import { render, screen, waitFor, within, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { NextIntlClientProvider } from 'next-intl';
 import enMessages from '@/locales/en.json';
@@ -71,6 +71,22 @@ describe('ApiTokensSettings', () => {
     expect(await screen.findByTestId('new-token')).toHaveTextContent('nt_secret_value');
     expect(body).not.toBeNull();
     expect(body!.expiresAt).not.toBeNull();
+  });
+
+  it('does not create a token whose chosen expiry day is already over', async () => {
+    const methods: string[] = [];
+    mockFetch((_url, init) => {
+      methods.push(init?.method ?? 'GET');
+      return new Response(JSON.stringify({ tokens: [] }));
+    });
+    const user = userEvent.setup();
+    renderTokens();
+    await user.type(await screen.findByLabelText('Name'), 'My tool');
+    await user.selectOptions(screen.getByLabelText('Expires (optional)'), 'custom');
+    fireEvent.change(screen.getByLabelText('Pick a date'), { target: { value: '2000-01-01' } });
+    await user.click(screen.getByRole('button', { name: 'Create token' }));
+
+    expect(methods).not.toContain('POST');
   });
 
   it('asks in a dialog before revoking and only then deletes', async () => {

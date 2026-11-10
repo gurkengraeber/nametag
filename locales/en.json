@@ -1855,8 +1855,7 @@
       "quickMergeDifferences": "Where they differ (newer value preselected)",
       "quickMergeFrom": "from {name}",
       "quickMergeReview": "Review every field",
-      "quickMergeConfirm": "Merge now",
-      "hint": "{count, plural, one {# possible duplicate to review} other {# possible duplicates to review}}"
+      "quickMergeConfirm": "Merge now"
     },
     "merge": {
       "title": "Merge Contacts",

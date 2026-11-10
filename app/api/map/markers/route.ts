@@ -89,6 +89,8 @@ export const GET = withAuth(async (request, session) => {
     const mapPeople: MapPerson[] = [];
     const unplacedPeople: UnplacedPerson[] = [];
     const geocodingEnabled = user?.geocodingEnabled ?? true;
+    // A person can still point at a relationship type that was moved to the trash.
+    const activeTypeIds = new Set(relationshipTypes.map((type) => type.id));
 
     for (const person of people) {
       // formatGraphName honors the user's name display settings (FULL,
@@ -112,7 +114,10 @@ export const GET = withAuth(async (request, session) => {
         personId: person.id,
         personName,
         groupIds,
-        relationshipTypeId: person.relationshipToUserId,
+        relationshipTypeId:
+          person.relationshipToUserId && activeTypeIds.has(person.relationshipToUserId)
+            ? person.relationshipToUserId
+            : null,
         lastContact: person.lastContact ? person.lastContact.toISOString().slice(0, 10) : null,
       });
       const markerCountBefore = markers.length;

@@ -78,6 +78,16 @@ export const POST = withAuth(async (request, session) => {
       return apiError('group_name_taken', 'A group with this name already exists');
     }
 
+    // Only the user's own people can become members; other ids are ignored
+    const memberIds = peopleIds && peopleIds.length > 0
+      ? (
+          await prisma.person.findMany({
+            where: { id: { in: peopleIds }, userId: session.user.id, deletedAt: null },
+            select: { id: true },
+          })
+        ).map((person) => person.id)
+      : [];
+
     // Create the group and optionally add people to it
     const group = await prisma.group.create({
       data: {
@@ -86,9 +96,9 @@ export const POST = withAuth(async (request, session) => {
         description: sanitizedDescription,
         color: color || getRandomColor(),
         // If peopleIds are provided, create PersonGroup associations
-        ...(peopleIds && peopleIds.length > 0 && {
+        ...(memberIds.length > 0 && {
           people: {
-            create: peopleIds.map((personId) => ({
+            create: memberIds.map((personId) => ({
               person: {
                 connect: { id: personId },
               },

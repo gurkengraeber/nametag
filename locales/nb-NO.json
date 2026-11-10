@@ -1855,8 +1855,7 @@
       "quickMergeDifferences": "Hvor de er forskjellige (nyere verdi er forhåndsvalgt)",
       "quickMergeFrom": "fra {name}",
       "quickMergeReview": "Se over hvert felt",
-      "quickMergeConfirm": "Slå sammen nå",
-      "hint": "{count, plural, one {# mulig duplikat å se over} other {# mulige duplikater å se over}}"
+      "quickMergeConfirm": "Slå sammen nå"
     },
     "merge": {
       "title": "Slå sammen kontakter",

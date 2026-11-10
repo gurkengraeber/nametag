@@ -7,6 +7,12 @@
  */
 export const STORAGE_PREFIX = 'nametag:';
 
+/**
+ * The "back to the list" link stores the list's address, search text included
+ * (see BackLink), so it is wiped on sign-out as well.
+ */
+const BACK_LINK_PREFIX = 'backLink:';
+
 /** Entries older than this are dropped when read. */
 export const STORAGE_MAX_AGE_MS = 30 * 24 * 60 * 60 * 1000;
 
@@ -18,13 +24,13 @@ function clearPrefixed(storage: Storage): void {
   const doomed: string[] = [];
   for (let i = 0; i < storage.length; i++) {
     const key = storage.key(i);
-    if (key && key.startsWith(STORAGE_PREFIX)) doomed.push(key);
+    if (key && (key.startsWith(STORAGE_PREFIX) || key.startsWith(BACK_LINK_PREFIX))) doomed.push(key);
   }
   doomed.forEach((key) => storage.removeItem(key));
 }
 
 /**
- * Removes every `nametag:` key from local and session storage. Call it when the
+ * Removes every `nametag:` key (and the back links) from local and session storage. Call it when the
  * user signs out. Blocked or unavailable storage is not an error.
  */
 export function clearNametagStorage(): void {

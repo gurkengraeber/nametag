@@ -3,6 +3,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { NextIntlClientProvider } from 'next-intl';
 import JournalTimeline from '../../components/JournalTimeline';
 import enMessages from '../../locales/en.json';
+import { restoreTimezoneAfterEach, setProcessTimezone } from '../helpers/timezone';
 
 function Wrapper({ children }: { children: React.ReactNode }) {
   return (
@@ -20,6 +21,21 @@ const baseEntry = {
 };
 
 describe('JournalTimeline', () => {
+  restoreTimezoneAfterEach();
+
+  it('files a timed entry under the month of its local day', () => {
+    setProcessTimezone('Europe/Madrid');
+    // 00:30 on 1 March in Madrid, still 28 February in UTC.
+    const entries = [{ ...baseEntry, date: '2026-02-28T23:30:00.000Z', hasTime: true }];
+    render(
+      <Wrapper>
+        <JournalTimeline entries={entries} nameOrder="WESTERN" locale="en" />
+      </Wrapper>
+    );
+    expect(screen.getByRole('region', { name: 'March 2026' })).toBeInTheDocument();
+    expect(screen.queryByRole('region', { name: 'February 2026' })).toBeNull();
+  });
+
   it('omits the time line when hasTime is false', () => {
     const entries = [{
       ...baseEntry,

@@ -13,6 +13,7 @@ import { RelationshipCell, LastContactCell, LocationCell, toDateInputValue } fro
 import { formatCanonicalName, type NameDisplayFormat } from '@/lib/nameUtils';
 import CustomFieldFilter from './customFields/CustomFieldFilter';
 import { formatCustomFieldFilter, type PeopleFilter } from '@/lib/people-filter';
+import { setAllSelected, toggleSelected } from '@/lib/people-selection';
 import type { CustomFieldTemplate } from '@prisma/client';
 
 interface PersonRow {
@@ -154,7 +155,11 @@ export default function PeopleListClient({
   // Save current people list URL so the "back to people" link can return here
   useEffect(() => {
     const url = searchParams.toString() ? `${pathname}?${searchParams.toString()}` : pathname;
-    sessionStorage.setItem('backLink:/people', url);
+    try {
+      sessionStorage.setItem('backLink:/people', url);
+    } catch {
+      // Blocked storage only costs the "back to people" shortcut.
+    }
   }, [pathname, searchParams]);
 
   // Selection state
@@ -179,44 +184,48 @@ export default function PeopleListClient({
     [groupFilter, relationshipFilter, cfFilter],
   );
 
+  // A selection made under other filters would act on the wrong people
+  const filterKey = JSON.stringify(activeFilter);
+  const [selectionFilterKey, setSelectionFilterKey] = useState(filterKey);
+  if (selectionFilterKey !== filterKey) {
+    setSelectionFilterKey(filterKey);
+    setSelectedIds(new Set());
+    setSelectAllPages(false);
+  }
+
   const pageIds = useMemo(() => people.map((p) => p.id), [people]);
   const allPageSelected = pageIds.length > 0 && pageIds.every((id) => selectedIds.has(id));
   const someSelected = selectedIds.size > 0 || selectAllPages;
+  // Stable between renders, so the bulk modals do not restart their requests on every keystroke elsewhere
+  const selectedIdList = useMemo(() => Array.from(selectedIds), [selectedIds]);
 
   const effectiveCount = selectAllPages ? totalCount : selectedIds.size;
-
-  const togglePerson = useCallback((id: string) => {
-    setSelectedIds((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) {
-        next.delete(id);
-        setSelectAllPages(false);
-      } else {
-        next.add(id);
-      }
-      return next;
-    });
-  }, []);
-
-  const togglePage = useCallback(() => {
-    setSelectedIds((prev) => {
-      if (allPageSelected) {
-        const next = new Set(prev);
-        pageIds.forEach((id) => next.delete(id));
-        setSelectAllPages(false);
-        return next;
-      } else {
-        const next = new Set(prev);
-        pageIds.forEach((id) => next.add(id));
-        return next;
-      }
-    });
-  }, [allPageSelected, pageIds]);
 
   const clearSelection = useCallback(() => {
     setSelectedIds(new Set());
     setSelectAllPages(false);
   }, []);
+
+  const togglePerson = useCallback(
+    (id: string) => {
+      if (selectAllPages) {
+        // Unticking one person ends "everyone": keep the other rows of this page ticked
+        setSelectAllPages(false);
+        setSelectedIds(new Set(pageIds.filter((pageId) => pageId !== id)));
+      } else {
+        setSelectedIds((prev) => toggleSelected(prev, id));
+      }
+    },
+    [selectAllPages, pageIds],
+  );
+
+  const togglePage = useCallback(() => {
+    if (selectAllPages) {
+      clearSelection();
+    } else {
+      setSelectedIds((prev) => setAllSelected(prev, pageIds, !allPageSelected));
+    }
+  }, [selectAllPages, allPageSelected, pageIds, clearSelection]);
 
   const handleSelectAllPages = useCallback(() => {
     setSelectAllPages(true);
@@ -256,7 +265,7 @@ export default function PeopleListClient({
     const params = new URLSearchParams();
     if (groupFilter) params.set('group', groupFilter);
     if (relationshipFilter) params.set('relationship', relationshipFilter);
-    if (cfFilter) params.set('cf', `${cfFilter.slug}:${cfFilter.value}`);
+    if (activeFilter.cf) params.set('cf', activeFilter.cf);
     return params;
   };
 
@@ -288,7 +297,7 @@ export default function PeopleListClient({
     const filters: Record<string, string> = {
       group: groupFilter,
       relationship: relationshipFilter,
-      cf: cfFilter ? `${cfFilter.slug}:${cfFilter.value}` : '',
+      cf: activeFilter.cf ?? '',
       [key]: value,
     };
     if (filters.group) params.set('group', filters.group);
@@ -345,7 +354,7 @@ export default function PeopleListClient({
                 <th className="pl-4 pr-2 py-3 w-10">
                   <input
                     type="checkbox"
-                    checked={allPageSelected}
+                    checked={selectAllPages || allPageSelected}
                     onChange={togglePage}
                     className="w-4 h-4 text-primary bg-surface-elevated border-border rounded focus:ring-primary"
                     title={t('selectAll')}
@@ -603,9 +612,10 @@ export default function PeopleListClient({
         className={`fixed bottom-0 left-0 right-0 z-40 transition-transform duration-300 ${
           someSelected ? 'translate-y-0' : 'translate-y-full'
         }`}
+        inert={!someSelected}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-4">
-          <div className="bg-surface shadow-lg border border-border rounded-lg px-4 py-3 flex items-center justify-between gap-4">
+          <div className="bg-surface shadow-lg border border-border rounded-lg px-4 py-3 flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
             <div className="flex items-center gap-3">
               <span className="text-sm font-medium text-foreground">
                 {selectAllPages
@@ -617,7 +627,7 @@ export default function PeopleListClient({
                   <span className="text-muted">·</span>
                   <button
                     onClick={handleSelectAllPages}
-                    className="text-sm text-primary hover:underline font-medium"
+                    className="py-2 -my-2 text-sm text-primary hover:underline font-medium"
                   >
                     {t('selectAllPages', { count: totalCount })}
                   </button>
@@ -625,30 +635,31 @@ export default function PeopleListClient({
               )}
               <button
                 onClick={clearSelection}
-                className="text-muted hover:text-foreground transition-colors"
+                className="p-2 -m-2 text-muted hover:text-foreground transition-colors"
                 title={t('clearSelection')}
+                aria-label={t('clearSelection')}
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <button
                 onClick={() => setShowGroupModal(true)}
-                className="px-3 py-1.5 text-sm font-medium text-foreground bg-surface-elevated border border-border rounded-lg hover:bg-surface-elevated/80 transition-colors"
+                className="px-3 py-1.5 min-h-11 sm:min-h-0 text-sm font-medium text-foreground bg-surface-elevated border border-border rounded-lg hover:bg-surface-elevated/80 transition-colors"
               >
                 {t('addToGroups')}
               </button>
               <button
                 onClick={() => setShowRelationshipModal(true)}
-                className="px-3 py-1.5 text-sm font-medium text-foreground bg-surface-elevated border border-border rounded-lg hover:bg-surface-elevated/80 transition-colors"
+                className="px-3 py-1.5 min-h-11 sm:min-h-0 text-sm font-medium text-foreground bg-surface-elevated border border-border rounded-lg hover:bg-surface-elevated/80 transition-colors"
               >
                 {t('setRelationship')}
               </button>
               <button
                 onClick={() => setShowDeleteModal(true)}
-                className="px-3 py-1.5 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors"
+                className="px-3 py-1.5 min-h-11 sm:min-h-0 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors"
               >
                 {t('delete')}
               </button>
@@ -661,7 +672,7 @@ export default function PeopleListClient({
       <BulkDeleteModal
         isOpen={showDeleteModal}
         onClose={() => setShowDeleteModal(false)}
-        selectedIds={Array.from(selectedIds)}
+        selectedIds={selectedIdList}
         selectAll={selectAllPages}
         filter={activeFilter}
         selectedNames={selectedNames}
@@ -672,7 +683,7 @@ export default function PeopleListClient({
       <BulkGroupAssignModal
         isOpen={showGroupModal}
         onClose={() => setShowGroupModal(false)}
-        selectedIds={Array.from(selectedIds)}
+        selectedIds={selectedIdList}
         selectAll={selectAllPages}
         filter={activeFilter}
         totalCount={totalCount}
@@ -684,7 +695,7 @@ export default function PeopleListClient({
       <BulkRelationshipModal
         isOpen={showRelationshipModal}
         onClose={() => setShowRelationshipModal(false)}
-        selectedIds={Array.from(selectedIds)}
+        selectedIds={selectedIdList}
         selectAll={selectAllPages}
         filter={activeFilter}
         totalCount={totalCount}

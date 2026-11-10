@@ -102,10 +102,6 @@ export function usePersonDrag({ enabled, onDrop }: UsePersonDragOptions) {
     [cardUnder]
   );
 
-  const cancel = useCallback(() => {
-    teardownRef.current?.();
-  }, []);
-
   const start = useCallback(
     (event: ReactPointerEvent<HTMLElement>, personId: string) => {
       if (!enabled || !event.isPrimary) return;
@@ -264,5 +260,5 @@ export function usePersonDrag({ enabled, onDrop }: UsePersonDragOptions) {
     return true;
   }, []);
 
-  return { drag, ghostRef: placeGhost, start, cancel, consumeClick };
+  return { drag, ghostRef: placeGhost, start, consumeClick };
 }

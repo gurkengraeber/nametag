@@ -24,6 +24,10 @@ describe('personIdFromPath', () => {
     expect(personIdFromPath('/groups/abc123')).toBeNull();
     expect(personIdFromPath('/people/abc123/other')).toBeNull();
   });
+
+  it('does not throw on a broken percent escape in a typed address', () => {
+    expect(personIdFromPath('/people/%E0%A4%A')).toBeNull();
+  });
 });
 
 const NOW = Date.UTC(2026, 10, 9);

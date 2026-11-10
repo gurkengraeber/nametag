@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { clearNametagStorage } from '../../lib/client-storage';
 import {
   stripMarkdown,
   deriveEntryTitle,
@@ -18,7 +19,6 @@ import {
   isDraftEmpty,
   editEntryDraftKey,
   newEntryDraftKey,
-  clearAllJournalDrafts,
   purgeStaleJournalDrafts,
   DRAFT_MAX_AGE_MS,
   JOURNAL_DRAFT_PREFIX,
@@ -331,11 +331,11 @@ describe('draft storage', () => {
     expect(window.localStorage.getItem(key)).toBeNull();
   });
 
-  it('clears all journal drafts of every account and nothing else', () => {
+  it('leaves no journal draft behind when the browser storage is cleared on sign out', () => {
     writeDraft(newEntryDraftKey('user-1'), 'user-1', draft, NOW);
     writeDraft(editEntryDraftKey('user-2', 'e1'), 'user-2', draft, NOW);
     window.localStorage.setItem('theme', 'dark');
-    clearAllJournalDrafts();
+    clearNametagStorage();
     expect(window.localStorage.length).toBe(1);
     expect(window.localStorage.getItem('theme')).toBe('dark');
   });
@@ -369,7 +369,6 @@ describe('draft storage', () => {
     expect(readDraft(key, USER)).toBeNull();
     expect(writeDraft(key, USER, draft)).toBe(false);
     expect(() => clearDraft(key)).not.toThrow();
-    expect(() => clearAllJournalDrafts()).not.toThrow();
     expect(() => purgeStaleJournalDrafts()).not.toThrow();
   });
 });

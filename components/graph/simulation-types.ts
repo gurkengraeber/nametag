@@ -38,3 +38,8 @@ export interface SimulationEdge {
 export type PhotoCacheEntry = HTMLImageElement | 'loading' | 'error';
 
 export const UNGROUPED_SYNTHETIC_ID = '__ungrouped__';
+
+/** Id of an edge end, which d3-force replaces by the node object once the layout runs. */
+export function edgeEndpointId(value: string | SimulationNode): string {
+  return typeof value === 'string' ? value : value.id;
+}

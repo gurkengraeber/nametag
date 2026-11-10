@@ -57,13 +57,15 @@ export const POST = withAuth(async (request, session) => {
       return apiError('self_relationship', 'Cannot create a relationship with the same person');
     }
 
-    // Check for duplicate relationship
+    // Check for duplicate relationship. Scoped to the user, so the answer
+    // never says anything about other users' relationships.
     const existingRelationship = await prisma.relationship.findFirst({
       where: {
         personId,
         relatedPersonId,
         relationshipTypeId,
         deletedAt: null,
+        person: { userId: session.user.id },
       },
     });
 

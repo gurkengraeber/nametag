@@ -819,5 +819,88 @@ describe('PeopleListClient', () => {
       // Should show "Select all 50 people" button
       expect(screen.getByText(/select all 50 people/i)).toBeInTheDocument();
     });
+
+    const twoOfFifty = (extra: Partial<React.ComponentProps<typeof PeopleListClient>> = {}) =>
+      defaultProps({
+        people: [
+          makePerson({ id: 'p-1', name: 'Alice', surname: null }),
+          makePerson({ id: 'p-2', name: 'Bob', surname: null }),
+        ],
+        totalCount: 50,
+        totalPages: 25,
+        currentPage: 1,
+        ...extra,
+      });
+
+    it('ends "all people" when one person is unticked and keeps the others ticked', async () => {
+      const user = userEvent.setup();
+      render(
+        <Wrapper>
+          <PeopleListClient {...twoOfFifty()} />
+        </Wrapper>
+      );
+
+      await user.click(screen.getAllByRole('checkbox')[0]);
+      await user.click(screen.getByText(/select all 50 people/i));
+      expect(screen.getByText('All 50 people selected')).toBeInTheDocument();
+
+      await user.click(screen.getByRole('checkbox', { name: /Alice/ }));
+
+      expect(screen.queryByText('All 50 people selected')).not.toBeInTheDocument();
+      expect(screen.getByText('1 selected')).toBeInTheDocument();
+      expect(screen.getByRole('checkbox', { name: /Alice/ })).not.toBeChecked();
+      expect(screen.getByRole('checkbox', { name: /Bob/ })).toBeChecked();
+    });
+
+    it('lets the header checkbox clear "all people" even when the page was reached later', async () => {
+      const user = userEvent.setup();
+      const view = render(
+        <Wrapper>
+          <PeopleListClient {...twoOfFifty()} />
+        </Wrapper>
+      );
+      await user.click(screen.getAllByRole('checkbox')[0]);
+      await user.click(screen.getByText(/select all 50 people/i));
+
+      // Page 2 shows other people than the ones that were ticked on page 1
+      view.rerender(
+        <Wrapper>
+          <PeopleListClient
+            {...twoOfFifty({
+              people: [makePerson({ id: 'p-3', name: 'Carol', surname: null })],
+              currentPage: 2,
+            })}
+          />
+        </Wrapper>
+      );
+      const header = screen.getAllByRole('checkbox')[0];
+      expect(header).toBeChecked();
+
+      await user.click(header);
+
+      expect(screen.queryByText('All 50 people selected')).not.toBeInTheDocument();
+      expect(screen.getByRole('checkbox', { name: /Carol/ })).not.toBeChecked();
+    });
+
+    it('drops the selection when a filter changes, so it cannot act on other people', async () => {
+      const user = userEvent.setup();
+      const view = render(
+        <Wrapper>
+          <PeopleListClient {...twoOfFifty()} />
+        </Wrapper>
+      );
+      await user.click(screen.getAllByRole('checkbox')[0]);
+      await user.click(screen.getByText(/select all 50 people/i));
+      expect(screen.getByText('All 50 people selected')).toBeInTheDocument();
+
+      view.rerender(
+        <Wrapper>
+          <PeopleListClient {...twoOfFifty({ groupFilter: 'g-1', totalCount: 7 })} />
+        </Wrapper>
+      );
+
+      expect(screen.queryByText(/people selected/)).not.toBeInTheDocument();
+      expect(screen.getByRole('checkbox', { name: /Alice/ })).not.toBeChecked();
+    });
   });
 });

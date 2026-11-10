@@ -1855,8 +1855,7 @@
       "quickMergeDifferences": "違いのある項目(新しい値を選択済み)",
       "quickMergeFrom": "{name}の値",
       "quickMergeReview": "すべての項目を確認",
-      "quickMergeConfirm": "今すぐ統合",
-      "hint": "{count, plural, other {確認する重複候補が#件}}"
+      "quickMergeConfirm": "今すぐ統合"
     },
     "merge": {
       "title": "連絡先の統合",
