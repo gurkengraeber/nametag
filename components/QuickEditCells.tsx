@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 import { getLocalDateString } from '@/lib/date-format';
@@ -30,30 +30,69 @@ export function toDateInputValue(value: Date | string | null): string {
   return isNaN(date.getTime()) ? '' : date.toISOString().slice(0, 10);
 }
 
-function useQuickUpdate(personId: string) {
+/**
+ * One field that is saved as soon as it changes.
+ *
+ * - Saves run one after another, so a quick second change cannot be overtaken by the first.
+ * - A failed save shows the last value the server confirmed again, unless a newer change is already on its way.
+ * - A new value from the server (after a refresh) replaces what is shown.
+ */
+function useQuickField(personId: string, field: keyof QuickUpdate, serverValue: string) {
   const t = useTranslations('people.quickEdit');
+  const [value, setValue] = useState(serverValue);
+  const [seenServerValue, setSeenServerValue] = useState(serverValue);
+  const confirmed = useRef(serverValue);
+  const requested = useRef(serverValue);
+  const latest = useRef(0);
+  const queue = useRef<Promise<unknown>>(Promise.resolve());
+
+  if (serverValue !== seenServerValue) {
+    setSeenServerValue(serverValue);
+    setValue(serverValue);
+  }
+
+  useEffect(() => {
+    confirmed.current = serverValue;
+    requested.current = serverValue;
+  }, [serverValue]);
+
   const save = useCallback(
-    async (update: QuickUpdate): Promise<boolean> => {
+    async (next: string): Promise<boolean> => {
       try {
         const response = await fetch(`/api/people/${personId}/quick-update`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(update),
+          body: JSON.stringify({ [field]: next || null }),
         });
-        if (!response.ok) {
-          toast.error(t('saveError'));
-          return false;
-        }
-        return true;
+        if (response.ok) return true;
       } catch {
-        toast.error(t('saveError'));
-        return false;
+        // Reported below, like a rejected request.
       }
+      toast.error(t('saveError'));
+      return false;
     },
-    [personId, t],
+    [personId, field, t],
   );
 
-  return { save };
+  /** Shows and saves `next`. Resolves to whether the server has it. */
+  const commit = async (next: string): Promise<boolean> => {
+    setValue(next);
+    if (next === requested.current) return true;
+    requested.current = next;
+    const mine = ++latest.current;
+    const run = queue.current.then(() => save(next));
+    queue.current = run;
+    const ok = await run;
+    if (ok) {
+      confirmed.current = next;
+    } else if (mine === latest.current) {
+      requested.current = confirmed.current;
+      setValue(confirmed.current);
+    }
+    return ok;
+  };
+
+  return { value, edit: setValue, commit };
 }
 
 export function RelationshipCell({
@@ -68,17 +107,12 @@ export function RelationshipCell({
   onSaved?: () => void;
 }) {
   const t = useTranslations('people');
-  const { save } = useQuickUpdate(personId);
-  const [current, setCurrent] = useState(value ?? '');
+  const { value: current, commit } = useQuickField(personId, 'relationshipToUserId', value ?? '');
 
   const selected = types.find((type) => type.id === current);
 
   const handleChange = async (next: string) => {
-    const previous = current;
-    setCurrent(next);
-    const ok = await save({ relationshipToUserId: next || null });
-    if (ok) onSaved?.();
-    else setCurrent(previous);
+    if (await commit(next)) onSaved?.();
   };
 
   return (
@@ -109,15 +143,12 @@ export function LastContactCell({
 }) {
   const tPicker = useTranslations('datePicker');
   const tPeople = useTranslations('people');
-  const { save } = useQuickUpdate(personId);
-  const [current, setCurrent] = useState(value);
+  const { value: current, edit, commit } = useQuickField(personId, 'lastContact', value);
 
-  const update = async (next: string) => {
-    if (next === current) return;
-    const previous = current;
-    setCurrent(next);
-    const ok = await save({ lastContact: next || null });
-    if (!ok) setCurrent(previous);
+  const update = (next: string) => {
+    // While a year is typed the field passes through dates like 0002-11-09, which must not be saved
+    if (next !== '' && next < '1000') edit(next);
+    else void commit(next);
   };
 
   const today = getLocalDateString();
@@ -135,7 +166,7 @@ export function LastContactCell({
       {current !== today && (
         <button
           type="button"
-            onClick={() => update(today)}
+          onClick={() => update(today)}
           className="px-2 py-1 text-xs font-medium text-primary bg-primary/10 rounded hover:bg-primary/20 transition-colors"
         >
           {tPicker('today')}
@@ -155,23 +186,10 @@ export function LocationCell({
   country: string | null;
 }) {
   const t = useTranslations('people.quickEdit');
-  const { save } = useQuickUpdate(personId);
-  const [cityValue, setCityValue] = useState(city ?? '');
-  const [countryValue, setCountryValue] = useState(country ?? '');
-  const saved = useRef({ city: city ?? '', country: country ?? '' });
-
-  const commit = async (field: 'city' | 'country', value: string) => {
-    const trimmed = value.trim();
-    if (trimmed === saved.current[field]) return;
-    const previous = saved.current[field];
-    saved.current[field] = trimmed;
-    const ok = await save({ [field]: trimmed || null });
-    if (!ok) {
-      saved.current[field] = previous;
-      if (field === 'city') setCityValue(previous);
-      else setCountryValue(previous);
-    }
-  };
+  const cityField = useQuickField(personId, 'city', city ?? '');
+  const countryField = useQuickField(personId, 'country', country ?? '');
+  const cityValue = cityField.value;
+  const countryValue = countryField.value;
 
   // Imported contacts may carry a country name or free text instead of a code. Show those as they are
   // (a known name selects its code) so nothing is lost until the user picks another country.
@@ -192,18 +210,15 @@ export function LocationCell({
         maxLength={100}
         placeholder={t('cityPlaceholder')}
         aria-label={t('cityPlaceholder')}
-        onChange={(event) => setCityValue(event.target.value)}
-        onBlur={(event) => commit('city', event.target.value)}
+        onChange={(event) => cityField.edit(event.target.value)}
+        onBlur={(event) => void cityField.commit(event.target.value.trim())}
         onKeyDown={commitOnEnter}
         className={`${inputClass} w-32`}
       />
       <select
         value={selectedCountry}
         aria-label={t('countryPlaceholder')}
-        onChange={(event) => {
-          setCountryValue(event.target.value);
-          void commit('country', event.target.value);
-        }}
+        onChange={(event) => void countryField.commit(event.target.value)}
         className={`${inputClass} w-36${selectedCountry === '' ? ' text-muted' : ''}`}
       >
         <option value="">{t('countryPlaceholder')}</option>
