@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
@@ -67,6 +67,13 @@ export default function PersonQuickActions({
   const [noteText, setNoteText] = useState('');
   const [isSavingNote, setIsSavingNote] = useState(false);
   const [noteError, setNoteError] = useState('');
+
+  // The notes prop only updates after router.refresh() finishes, so a second
+  // note added before that would otherwise overwrite the first one.
+  const latestNotes = useRef(notes);
+  useEffect(() => {
+    latestNotes.current = notes;
+  }, [notes]);
 
   useEffect(() => {
     setRelationshipId(relationshipToUserId ?? '');
@@ -137,7 +144,7 @@ export default function PersonQuickActions({
 
   async function handleSaveNote(event: React.FormEvent) {
     event.preventDefault();
-    const combined = appendNote(notes, noteText);
+    const combined = appendNote(latestNotes.current, noteText);
     if (combined === null) {
       setNoteError(noteText.trim() ? t('noteTooLong', { max: MAX_NOTES_LENGTH }) : t('noteEmpty'));
       return;
@@ -152,6 +159,7 @@ export default function PersonQuickActions({
         body: JSON.stringify({ notes: combined }),
       });
       if (!response.ok) throw new Error('Failed to save note');
+      latestNotes.current = combined;
       toast.success(t('noteSaved'));
       setNoteText('');
       setShowNote(false);
