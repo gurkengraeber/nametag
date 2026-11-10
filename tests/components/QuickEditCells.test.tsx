@@ -142,7 +142,7 @@ describe('quick edit race conditions', () => {
 
     fireEvent.change(select, { target: { value: 'rt-2' } });
     fireEvent.change(select, { target: { value: 'rt-3' } });
-    expect(fetchMock).toHaveBeenCalledTimes(1);
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(1));
 
     first.resolve(false);
     await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(2));
@@ -177,7 +177,7 @@ describe('quick edit race conditions', () => {
 });
 
 describe('LastContactCell', () => {
-  it('does not save while the year is still being typed', () => {
+  it('does not save while the year is still being typed', async () => {
     render(
       <Wrapper>
         <LastContactCell personId="p-1" value="2026-08-10" />
@@ -191,7 +191,7 @@ describe('LastContactCell', () => {
     expect(input).toHaveValue('0020-08-10');
 
     fireEvent.change(input, { target: { value: '2025-08-10' } });
-    expect(fetchMock).toHaveBeenCalledTimes(1);
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(1));
     expect(lastRequest().body).toEqual({ lastContact: '2025-08-10' });
   });
 
