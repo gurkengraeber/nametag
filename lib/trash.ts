@@ -89,10 +89,6 @@ export function formatPersonName(person: { name: string; surname: string | null 
   return person.surname ? `${person.name} ${person.surname}` : person.name;
 }
 
-export function getDeletedAt(item: DeletedItem): string {
-  return item.deletedAt;
-}
-
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 /** Whole days left before the purge job removes the item (0 means under a day). */

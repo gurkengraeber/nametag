@@ -153,7 +153,8 @@ function ConnectionEditModal({
     }
   };
 
-  const isFormComplete = serverUrl && username && (password || existingConnection);
+  // The password may stay empty: the saved one is kept
+  const isFormComplete = Boolean(serverUrl && username);
   const canSave = testState.status === 'success' && !isSaving;
 
   return (
@@ -172,7 +173,7 @@ function ConnectionEditModal({
           passwordOptional
           testState={testState}
           onTest={handleTestConnection}
-          canTest={Boolean(isFormComplete)}
+          canTest={isFormComplete}
         />
 
         {/* Form validation message */}

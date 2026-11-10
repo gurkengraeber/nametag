@@ -129,11 +129,6 @@ export default function TrashManager() {
     });
   }, []);
 
-  const handleTabChange = (tab: TabKey) => {
-    if (tab === activeTab) return;
-    setActiveTab(tab);
-  };
-
   const toggleSelected = (key: string) => {
     setSelected((prev) => {
       const next = new Set(prev);
@@ -285,7 +280,7 @@ export default function TrashManager() {
           {TABS.map((tab) => (
             <button
               key={tab}
-              onClick={() => handleTabChange(tab)}
+              onClick={() => setActiveTab(tab)}
               aria-current={activeTab === tab ? 'true' : undefined}
               className={`whitespace-nowrap py-3 px-1 min-h-11 border-b-2 font-medium text-sm transition-colors ${
                 activeTab === tab

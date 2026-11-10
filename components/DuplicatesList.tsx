@@ -24,9 +24,9 @@ export interface DuplicateCandidateDisplay {
   similarity: number;
 }
 
-type DuplicatesListProps =
-  | { targetPersonId: string; candidates: DuplicateCandidateDisplay[]; groups?: never; onDismiss?: (personId: string) => void }
-  | { targetPersonId?: never; candidates?: never; groups: DuplicateGroupDisplay[]; onDismiss?: never };
+interface DuplicatesListProps {
+  groups: DuplicateGroupDisplay[];
+}
 
 function formatName(name: string, surname: string | null): string {
   return [name, surname].filter(Boolean).join(' ');
@@ -72,12 +72,7 @@ function EmptyDuplicates({ title, description }: { title: string; description: s
   );
 }
 
-export default function DuplicatesList({
-  targetPersonId,
-  candidates,
-  groups,
-  onDismiss,
-}: DuplicatesListProps) {
+export default function DuplicatesList({ groups }: DuplicatesListProps) {
   const t = useTranslations('people.duplicates');
   const locale = useLocale();
 
@@ -86,7 +81,7 @@ export default function DuplicatesList({
   const [removedIds, setRemovedIds] = useState<Set<string>>(new Set());
   const [mergeTarget, setMergeTarget] = useState<DuplicateSuggestion | null>(null);
 
-  const suggestions = useMemo(() => buildSuggestions(groups ?? []), [groups]);
+  const suggestions = useMemo(() => buildSuggestions(groups), [groups]);
 
   const handleDismiss = async (suggestion: DuplicateSuggestion) => {
     const { key, a, b } = suggestion;
@@ -123,152 +118,98 @@ export default function DuplicatesList({
     });
   };
 
-  // Per-person mode
-  if (targetPersonId && candidates) {
-    if (candidates.length === 0) {
-      return (
-        <p className="text-sm text-muted py-4">{t('noDuplicates')}</p>
-      );
-    }
+  const visible = filterSuggestions(suggestions, dismissedKeys, removedIds);
+  const sections = groupByConfidence(visible);
 
+  if (visible.length === 0) {
     return (
-      <div className="space-y-3">
-        {candidates.map((candidate) => (
-          <div
-            key={candidate.personId}
-            className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4 bg-surface border border-border rounded-lg"
-          >
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 min-w-0">
-              <span className="font-semibold text-foreground break-words">
-                {formatName(candidate.name, candidate.surname)}
-              </span>
-              <SimilarityBadge
-                score={t('similarity', {
-                  score: Math.round(candidate.similarity * 100),
-                })}
-              />
-            </div>
-            <div className="flex items-center gap-2 flex-shrink-0">
-              <Button
-                variant="secondary"
-                size="sm"
-                onClick={() => {
-                  if (onDismiss) onDismiss(candidate.personId);
-                  dismissPair(targetPersonId, candidate.personId);
-                }}
-              >
-                {t('notDuplicate')}
-              </Button>
-              <Button
-                size="sm"
-                href={`/people/merge?primary=${targetPersonId}&secondary=${candidate.personId}`}
-              >
-                {t('merge')}
-              </Button>
-            </div>
-          </div>
-        ))}
-      </div>
+      <EmptyDuplicates
+        title={t('noDuplicates')}
+        description={t('noDuplicatesDescription')}
+      />
     );
   }
 
-  // Global mode
-  if (groups) {
-    const visible = filterSuggestions(suggestions, dismissedKeys, removedIds);
-    const sections = groupByConfidence(visible);
+  const sectionTitle: Record<DuplicateConfidence, string> = {
+    high: t('confidenceHigh'),
+    medium: t('confidenceMedium'),
+    low: t('confidenceLow'),
+  };
 
-    if (visible.length === 0) {
-      return (
-        <EmptyDuplicates
-          title={t('noDuplicates')}
-          description={t('noDuplicatesDescription')}
-        />
-      );
-    }
+  const reasonLabel = (reason: DuplicateSuggestion['reasons'][number]) => t(`reason.${reason}`);
 
-    const sectionTitle: Record<DuplicateConfidence, string> = {
-      high: t('confidenceHigh'),
-      medium: t('confidenceMedium'),
-      low: t('confidenceLow'),
-    };
+  return (
+    <div className="space-y-6">
+      <p className="text-sm text-muted" aria-live="polite">
+        {t('openSuggestions', { count: visible.length })}
+      </p>
 
-    const reasonLabel = (reason: DuplicateSuggestion['reasons'][number]) => t(`reason.${reason}`);
+      {sections.map(({ confidence, items }) => (
+        <section key={confidence} aria-label={sectionTitle[confidence]} className="space-y-3">
+          <h2 className="text-sm font-semibold text-foreground">
+            {sectionTitle[confidence]}
+            <span className="ml-2 text-muted font-normal">{items.length}</span>
+          </h2>
 
-    return (
-      <div className="space-y-6">
-        <p className="text-sm text-muted" aria-live="polite">
-          {t('openSuggestions', { count: visible.length })}
-        </p>
-
-        {sections.map(({ confidence, items }) => (
-          <section key={confidence} aria-label={sectionTitle[confidence]} className="space-y-3">
-            <h2 className="text-sm font-semibold text-foreground">
-              {sectionTitle[confidence]}
-              <span className="ml-2 text-muted font-normal">{items.length}</span>
-            </h2>
-
-            {items.map((suggestion) => {
-              const { key, a, b, similarity, reasons } = suggestion;
-              const nameA = formatName(a.name, a.surname);
-              const nameB = formatName(b.name, b.surname);
-              return (
-                <div
-                  key={key}
-                  className="bg-surface border border-border rounded-lg p-4 space-y-3"
-                >
-                  <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-1">
-                    <p className="font-semibold text-foreground break-words min-w-0">
-                      {nameA} <span className="text-muted font-normal">&amp;</span> {nameB}
-                    </p>
-                    <SimilarityBadge score={t('similarity', { score: Math.round(similarity * 100) })} />
-                  </div>
-
-                  {reasons.length > 0 && (
-                    <p className="text-sm text-muted">
-                      {t('reasonLine', { reasons: formatList(reasons.map(reasonLabel), locale) })}
-                    </p>
-                  )}
-
-                  <div className="flex flex-col sm:flex-row sm:flex-wrap gap-2">
-                    <Button size="sm" onClick={() => setMergeTarget(suggestion)}>
-                      {t('quickMerge')}
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="secondary"
-                      href={`/people/merge?primary=${a.id}&secondary=${b.id}`}
-                    >
-                      {t('review')}
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={() => handleDismiss(suggestion)}
-                      disabled={busyKeys.has(key)}
-                    >
-                      {t('notDuplicate')}
-                    </Button>
-                  </div>
+          {items.map((suggestion) => {
+            const { key, a, b, similarity, reasons } = suggestion;
+            const nameA = formatName(a.name, a.surname);
+            const nameB = formatName(b.name, b.surname);
+            return (
+              <div
+                key={key}
+                className="bg-surface border border-border rounded-lg p-4 space-y-3"
+              >
+                <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-1">
+                  <p className="font-semibold text-foreground break-words min-w-0">
+                    {nameA} <span className="text-muted font-normal">&amp;</span> {nameB}
+                  </p>
+                  <SimilarityBadge score={t('similarity', { score: Math.round(similarity * 100) })} />
                 </div>
-              );
-            })}
-          </section>
-        ))}
 
-        {mergeTarget && (
-          <DuplicateQuickMerge
-            isOpen
-            personAId={mergeTarget.a.id}
-            personBId={mergeTarget.b.id}
-            onClose={() => setMergeTarget(null)}
-            onMerged={(_primaryId, secondaryId) =>
-              setRemovedIds((prev) => new Set(prev).add(secondaryId))
-            }
-          />
-        )}
-      </div>
-    );
-  }
+                {reasons.length > 0 && (
+                  <p className="text-sm text-muted">
+                    {t('reasonLine', { reasons: formatList(reasons.map(reasonLabel), locale) })}
+                  </p>
+                )}
 
-  return null;
+                <div className="flex flex-col sm:flex-row sm:flex-wrap gap-2">
+                  <Button size="sm" onClick={() => setMergeTarget(suggestion)}>
+                    {t('quickMerge')}
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="secondary"
+                    href={`/people/merge?primary=${a.id}&secondary=${b.id}`}
+                  >
+                    {t('review')}
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => handleDismiss(suggestion)}
+                    disabled={busyKeys.has(key)}
+                  >
+                    {t('notDuplicate')}
+                  </Button>
+                </div>
+              </div>
+            );
+          })}
+        </section>
+      ))}
+
+      {mergeTarget && (
+        <DuplicateQuickMerge
+          isOpen
+          personAId={mergeTarget.a.id}
+          personBId={mergeTarget.b.id}
+          onClose={() => setMergeTarget(null)}
+          onMerged={(_primaryId, secondaryId) =>
+            setRemovedIds((prev) => new Set(prev).add(secondaryId))
+          }
+        />
+      )}
+    </div>
+  );
 }
