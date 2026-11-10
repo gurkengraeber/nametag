@@ -12,7 +12,7 @@ import { buildJournalWhere, parseDateParam, parsePersonIds } from '@/lib/journal
 export default async function JournalPage({
   searchParams,
 }: {
-  searchParams: Promise<{ person?: string; q?: string; from?: string; to?: string }>;
+  searchParams: Promise<{ person?: string; q?: string; from?: string; to?: string; tz?: string }>;
 }) {
   const session = await auth();
   const t = await getTranslations('journal');
@@ -51,6 +51,7 @@ export default async function JournalPage({
         search: searchQuery,
         from: fromDay,
         to: toDay,
+        timeZone: params.tz,
       }),
       include: {
         people: {

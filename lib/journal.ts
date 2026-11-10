@@ -226,6 +226,12 @@ export interface JournalListFilters {
   search?: string | null;
   from?: string | null;
   to?: string | null;
+  /** IANA zone of the viewer, used to compare entries that have a time of day. */
+  timeZone?: string | null;
+}
+
+function toDayAfter(day: string): string {
+  return nextUtcDay(day).toISOString().slice(0, 10);
 }
 
 function nextUtcDay(day: string): Date {
@@ -233,10 +239,45 @@ function nextUtcDay(day: string): Date {
   return new Date(Date.UTC(y, m - 1, d + 1));
 }
 
+/** Milliseconds the zone is ahead of UTC at the given instant, or null for an unknown zone. */
+function zoneOffsetMs(instant: number, timeZone: string): number | null {
+  try {
+    const parts = new Intl.DateTimeFormat('en-US', {
+      timeZone,
+      hourCycle: 'h23',
+      year: 'numeric',
+      month: 'numeric',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+      second: 'numeric',
+    }).formatToParts(new Date(instant));
+    const get = (type: string) => Number(parts.find((p) => p.type === type)?.value);
+    const asUtc = Date.UTC(get('year'), get('month') - 1, get('day'), get('hour'), get('minute'), get('second'));
+    return asUtc - Math.floor(instant / 1000) * 1000;
+  } catch {
+    return null;
+  }
+}
+
+/** The instant a calendar day (YYYY-MM-DD) starts in the given IANA zone, or null for an unknown zone. */
+export function startOfDayInZone(day: string, timeZone: string): Date | null {
+  const [y, m, d] = day.split('-').map(Number);
+  const wallClock = Date.UTC(y, m - 1, d);
+  const first = zoneOffsetMs(wallClock, timeZone);
+  if (first === null) return null;
+  // The offset can differ at the resulting instant (daylight saving), so settle it once more.
+  const second = zoneOffsetMs(wallClock - first, timeZone) ?? first;
+  return new Date(wallClock - second);
+}
+
 /**
  * Where clause shared by the journal page and GET /api/journal. Several people
  * narrow the list (an entry must tag all of them). `from` and `to` are
- * inclusive calendar days, compared as UTC days; invalid values are ignored.
+ * inclusive calendar days; invalid values are ignored. Entries without a time
+ * are stored as the UTC midnight of their day and compared as UTC days. Entries
+ * with a time are real instants, so with a valid IANA `timeZone` they are
+ * compared as days of that zone (the viewer's); without one, as UTC days too.
  */
 export function buildJournalWhere(filters: JournalListFilters): Prisma.JournalEntryWhereInput {
   const personIds = filters.personIds ?? [];
@@ -244,13 +285,30 @@ export function buildJournalWhere(filters: JournalListFilters): Prisma.JournalEn
   const from = parseDateParam(filters.from);
   const to = parseDateParam(filters.to);
 
+  const utcRange = {
+    ...(from && { gte: new Date(`${from}T00:00:00.000Z`) }),
+    ...(to && { lt: nextUtcDay(to) }),
+  };
+  const zoneFrom = from && filters.timeZone ? startOfDayInZone(from, filters.timeZone) : null;
+  const zoneEnd = to && filters.timeZone ? startOfDayInZone(toDayAfter(to), filters.timeZone) : null;
+  const zoned = Boolean(filters.timeZone) && (!from || zoneFrom) && (!to || zoneEnd);
+  const timedRange = {
+    ...(zoneFrom && { gte: zoneFrom }),
+    ...(zoneEnd && { lt: zoneEnd }),
+  };
+
   return {
     userId: filters.userId,
     deletedAt: null,
-    ...(personIds.length > 0 && {
-      AND: personIds.map((personId) => ({
-        people: { some: { personId, person: { deletedAt: null } } },
-      })),
+    ...((personIds.length > 0 || (zoned && (from || to))) && {
+      AND: [
+        ...personIds.map((personId) => ({
+          people: { some: { personId, person: { deletedAt: null } } },
+        })),
+        ...(zoned && (from || to)
+          ? [{ OR: [{ hasTime: false, date: utcRange }, { hasTime: true, date: timedRange }] }]
+          : []),
+      ],
     }),
     ...(search && {
       OR: [
@@ -258,12 +316,7 @@ export function buildJournalWhere(filters: JournalListFilters): Prisma.JournalEn
         { body: { contains: search, mode: 'insensitive' as const } },
       ],
     }),
-    ...((from || to) && {
-      date: {
-        ...(from && { gte: new Date(`${from}T00:00:00.000Z`) }),
-        ...(to && { lt: nextUtcDay(to) }),
-      },
-    }),
+    ...(!zoned && (from || to) && { date: utcRange }),
   };
 }
 

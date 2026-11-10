@@ -24,8 +24,9 @@ Returns entries ordered by date descending. This is the one list endpoint in the
 | `page` | integer | Page number, defaults to 1. Page size is fixed at 50. |
 | `person` | string | Filter to entries tagging this person ID. Pass several IDs separated by commas to get only entries that tag all of them. |
 | `q` | string | Search text in title and body. |
-| `from` | string | First calendar day to include, as `YYYY-MM-DD`. Compared as a UTC day. Invalid values are ignored. |
-| `to` | string | Last calendar day to include, as `YYYY-MM-DD`. Compared as a UTC day. Invalid values are ignored. |
+| `from` | string | First calendar day to include, as `YYYY-MM-DD`. Compared as a UTC day unless `tz` is set. Invalid values are ignored. |
+| `to` | string | Last calendar day to include, as `YYYY-MM-DD`. Compared as a UTC day unless `tz` is set. Invalid values are ignored. |
+| `tz` | string | IANA time zone such as `Europe/Berlin`. Entries with a time of day are compared to `from` and `to` as days of this zone instead of UTC days. Entries without a time always use their calendar day. Unknown zones are ignored. |
 
 ```bash
 curl "https://your-instance.example.com/api/journal?page=1&person=clx1" \

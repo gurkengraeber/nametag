@@ -15,8 +15,9 @@ export function journalPaths(): Record<string, Record<string, unknown>> {
           { name: 'page', in: 'query', schema: { type: 'integer', default: 1 }, description: 'Page number' },
           { name: 'person', in: 'query', schema: { type: 'string' }, description: 'Filter by person ID. Pass several IDs separated by commas to get only entries that tag all of them.' },
           { name: 'q', in: 'query', schema: { type: 'string' }, description: 'Search text in title and body' },
-          { name: 'from', in: 'query', schema: { type: 'string', format: 'date' }, description: 'First calendar day to include, as YYYY-MM-DD (compared as a UTC day). Invalid values are ignored.' },
-          { name: 'to', in: 'query', schema: { type: 'string', format: 'date' }, description: 'Last calendar day to include, as YYYY-MM-DD (compared as a UTC day). Invalid values are ignored.' },
+          { name: 'from', in: 'query', schema: { type: 'string', format: 'date' }, description: 'First calendar day to include, as YYYY-MM-DD (compared as a UTC day unless tz is set). Invalid values are ignored.' },
+          { name: 'to', in: 'query', schema: { type: 'string', format: 'date' }, description: 'Last calendar day to include, as YYYY-MM-DD (compared as a UTC day unless tz is set). Invalid values are ignored.' },
+          { name: 'tz', in: 'query', schema: { type: 'string' }, description: 'IANA time zone such as Europe/Berlin. Entries with a time of day are compared to from and to as days of this zone instead of UTC days. Unknown zones are ignored.' },
         ],
         responses: {
           '200': jsonResponse('List of journal entries', {
