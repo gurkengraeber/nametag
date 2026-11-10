@@ -169,6 +169,27 @@ describe('Relationship Types API', () => {
       expect(body.error).toBe('A relationship type with this name already exists');
     });
 
+    it('should not link an inverse type that belongs to someone else', async () => {
+      mocks.relationshipTypeFindFirst
+        .mockResolvedValueOnce(null) // Check for duplicates
+        .mockResolvedValueOnce(null); // The inverse is not one of the user's types
+
+      const request = new Request('http://localhost/api/relationship-types', {
+        method: 'POST',
+        body: JSON.stringify({ name: 'TEACHER', label: 'Teacher', inverseId: 'foreign-type' }),
+        headers: { 'content-type': 'application/json' },
+      });
+
+      const response = await POST(request);
+
+      expect(response.status).toBe(404);
+      expect(mocks.relationshipTypeFindFirst).toHaveBeenLastCalledWith({
+        where: { id: 'foreign-type', userId: 'user-123', deletedAt: null },
+        select: { id: true },
+      });
+      expect(mocks.relationshipTypeCreate).not.toHaveBeenCalled();
+    });
+
     it('should create inverse type when inverseLabel is provided', async () => {
       const mainType = {
         id: 'parent-type',
@@ -325,6 +346,26 @@ describe('Relationship Types API', () => {
         }),
         include: expect.any(Object),
       });
+    });
+
+    it('should not change the inverse type of someone else', async () => {
+      const existing = { id: 'type-1', name: 'TEACHER', label: 'Teacher', userId: 'user-123', color: '#112233' };
+      mocks.relationshipTypeFindFirst
+        .mockResolvedValueOnce(existing) // Find existing
+        .mockResolvedValueOnce(null) // Check for duplicates
+        .mockResolvedValueOnce(null); // The inverse is not one of the user's types
+
+      const request = new Request('http://localhost/api/relationship-types/type-1', {
+        method: 'PUT',
+        body: JSON.stringify({ name: 'TEACHER', label: 'Teacher', inverseId: 'foreign-type' }),
+        headers: { 'content-type': 'application/json' },
+      });
+      const context = { params: Promise.resolve({ id: 'type-1' }) };
+
+      const response = await PUT(request, context);
+
+      expect(response.status).toBe(404);
+      expect(mocks.relationshipTypeUpdate).not.toHaveBeenCalled();
     });
 
     it('should return 404 for non-existent type', async () => {
