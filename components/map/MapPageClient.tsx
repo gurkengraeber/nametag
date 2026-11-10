@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
+import { useDebouncedCallback } from '@/hooks/useDebouncedCallback';
 import BulkGroupAssignModal from '@/components/BulkGroupAssignModal';
 import BulkRelationshipModal from '@/components/BulkRelationshipModal';
 import { getCountryName } from '@/lib/countries';
@@ -41,6 +42,10 @@ const MapView = dynamic(() => import('./MapView'), { ssr: false });
 // After saving a place the geocoder works in the background; look again a
 // little later so the new marker shows up without a manual reload.
 const RELOAD_DELAYS_MS = [4000, 12000];
+
+// Typing in the search box updates the map at once; the address bar follows
+// when the typing pauses, so the router is not asked to navigate per keystroke.
+const URL_WRITE_DELAY_MS = 300;
 
 interface InitialState {
   filters: MapFilterState;
@@ -147,16 +152,27 @@ function MapPageInner({ dateFormat, userId }: MapPageClientProps) {
     );
   }, []);
 
+  const writtenKeyRef = useRef(writtenKey);
+  useEffect(() => {
+    writtenKeyRef.current = writtenKey;
+  }, [writtenKey]);
+
+  const writeFiltersToUrl = useDebouncedCallback((next: MapFilterState) => {
+    // The address bar was changed from outside (back button) while we waited
+    if (serializeFilters(next) !== writtenKeyRef.current) return;
+    // Changing filters drops the focus deep link on purpose
+    const qs = filtersToParams(next).toString();
+    router.replace(qs ? `/map?${qs}` : '/map', { scroll: false });
+  }, URL_WRITE_DELAY_MS);
+
   const handleFiltersChange = useCallback(
     (next: MapFilterState) => {
       setFilters(next);
       setWrittenKey(serializeFilters(next));
       writeStoredFilters(userId, next);
-      // Changing filters drops the focus deep link on purpose
-      const qs = filtersToParams(next).toString();
-      router.replace(qs ? `/map?${qs}` : '/map', { scroll: false });
+      writeFiltersToUrl.run(next);
     },
-    [router, userId]
+    [userId, writeFiltersToUrl]
   );
 
   // Arriving at a bare /map with remembered filters: put them in the URL too,
