@@ -506,6 +506,9 @@ describe('Soft Delete Integration', () => {
       mocks.relationshipFindUnique.mockResolvedValue(deletedRelationship);
       mocks.relationshipUpdate.mockResolvedValue({ ...deletedRelationship, deletedAt: null });
       mocks.relationshipFindFirst.mockResolvedValue(deletedInverse);
+      // Neither person nor type is in the trash
+      mocks.personFindUnique.mockResolvedValue(null);
+      mocks.relationshipTypeFindFirst.mockResolvedValue(null);
 
       const request = new Request('http://localhost/api/relationships/rel-1/restore', {
         method: 'POST',
