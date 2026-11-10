@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import {
   failureKindFromResponse,
   normalizeServerUrl,
@@ -26,10 +26,18 @@ interface TestInput {
 /** Runs "Test connection" and keeps the outcome in a shape the page can explain. */
 export function useConnectionTest(initial: ConnectionTestState = { status: 'idle' }) {
   const [state, setState] = useState<ConnectionTestState>(initial);
+  // Bumped by every new test and every reset. An answer that arrives after the
+  // user edited the form describes old values and must not show as a success.
+  const latestRun = useRef(0);
 
-  const reset = useCallback(() => setState({ status: 'idle' }), []);
+  const reset = useCallback(() => {
+    latestRun.current++;
+    setState({ status: 'idle' });
+  }, []);
 
   const run = useCallback(async (input: TestInput): Promise<AddressBookInfo[] | null> => {
+    const runId = ++latestRun.current;
+    const isStale = () => runId !== latestRun.current;
     setState({ status: 'testing' });
     try {
       const response = await fetch('/api/carddav/connection/test', {
@@ -42,6 +50,7 @@ export function useConnectionTest(initial: ConnectionTestState = { status: 'idle
         }),
       });
       const body: unknown = await response.json().catch(() => null);
+      if (isStale()) return null;
 
       if (!response.ok) {
         const message =
@@ -58,7 +67,7 @@ export function useConnectionTest(initial: ConnectionTestState = { status: 'idle
       setState({ status: 'success', books, summary: summarizeAddressBooks(books) });
       return books;
     } catch {
-      setState({ status: 'failure', kind: 'network', serverMessage: null });
+      if (!isStale()) setState({ status: 'failure', kind: 'network', serverMessage: null });
       return null;
     }
   }, []);

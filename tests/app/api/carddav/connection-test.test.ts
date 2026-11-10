@@ -77,6 +77,21 @@ describe('POST /api/carddav/connection/test', () => {
     expect(data.params).toEqual({ reason });
   });
 
+  it('gives up on a server that never answers', async () => {
+    vi.useFakeTimers();
+    try {
+      mocks.createDAVClient.mockReturnValue(new Promise(() => {}));
+      const pending = post({ serverUrl: 'https://dav.example.com', username: 'ada', password: 'pw' });
+      await vi.advanceTimersByTimeAsync(31_000);
+      const res = await pending;
+      const data = await res.json();
+      expect(res.status).toBe(502);
+      expect(data.params).toEqual({ reason: 'timeout' });
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   describe('without a password', () => {
     it('uses the saved password for the saved server', async () => {
       mocks.findConnection.mockResolvedValue({ serverUrl: 'https://dav.example.com/', password: 'enc' });

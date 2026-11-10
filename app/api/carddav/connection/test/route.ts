@@ -24,6 +24,66 @@ function sameServer(a: string, b: string): boolean {
   return normalize(a) === normalize(b);
 }
 
+// A host that accepts the connection but never answers would hold the request
+// open until the platform gives up, so the whole test gets a deadline.
+const TEST_TIMEOUT_MS = 30_000;
+
+function withTimeout<T>(work: Promise<T>, ms: number): Promise<T> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const deadline = new Promise<never>((_, reject) => {
+    timer = setTimeout(() => reject(new Error('Connection test timed out')), ms);
+  });
+  return Promise.race([work, deadline]).finally(() => clearTimeout(timer));
+}
+
+async function listAddressBooks(serverUrl: string, username: string, password: string) {
+  const client = await createDAVClient({
+    serverUrl,
+    credentials: { username, password },
+    authMethod: 'Basic',
+    defaultAccountType: 'carddav',
+  });
+
+  const addressBooks = await client.fetchAddressBooks();
+
+  // Per address book, a lightweight PROPFIND (depth 1) for etags and the
+  // description gives the contact count and the description. tsdav's
+  // fetchAddressBooks does not expose the description, so it is read from the
+  // raw response.
+  return Promise.all(
+    addressBooks.map(async (ab) => {
+      const absoluteUrl = /^https?:\/\//i.test(ab.url) ? ab.url : new URL(ab.url, serverUrl).href;
+      let contactCount: number | null = null;
+      let description: string | null = null;
+      try {
+        const resources = await client.propfind({
+          url: absoluteUrl,
+          props: {
+            'd:getetag': {},
+            'card:addressbook-description': {},
+          },
+          depth: '1',
+        });
+        // The first response is the collection itself, the rest are vCard resources
+        contactCount = Math.max(0, resources.length - 1);
+        const collectionProps = resources[0]?.props as Record<string, unknown> | undefined;
+        const rawDesc = collectionProps?.addressbookDescription;
+        if (typeof rawDesc === 'string' && rawDesc.trim()) {
+          description = rawDesc.trim();
+        }
+      } catch (err) {
+        log.warn({ err: err instanceof Error ? err : new Error(String(err)), url: absoluteUrl }, 'Failed to count contacts in address book');
+      }
+      return {
+        url: absoluteUrl,
+        displayName: typeof ab.displayName === 'string' ? ab.displayName : null,
+        description,
+        contactCount,
+      };
+    })
+  );
+}
+
 // Dials whatever host the caller supplies, so it stays session-only: an API
 // token must not be able to drive outbound requests to an arbitrary server.
 export const POST = withAuth(async (request, session) => {
@@ -61,59 +121,10 @@ export const POST = withAuth(async (request, session) => {
       return apiError('bad_request', error instanceof Error ? error.message : 'Invalid server URL');
     }
 
-    // Test connection using tsdav
     try {
-      const client = await createDAVClient({
-        serverUrl,
-        credentials: {
-          username,
-          password,
-        },
-        authMethod: 'Basic',
-        defaultAccountType: 'carddav',
-      });
-
-      // Fetch address books to verify connection
-      const addressBooks = await client.fetchAddressBooks();
-
-      // For each address book, do a lightweight PROPFIND (depth 1) requesting
-      // only getetag and addressbook-description. This gives us:
-      // - Contact count: number of child resources with an etag
-      // - Description: from the collection resource itself (first response)
-      // tsdav's fetchAddressBooks doesn't expose the description, so we read it
-      // from the raw PROPFIND response.
-      const addressBooksWithCounts = await Promise.all(
-        addressBooks.map(async (ab) => {
-          const absoluteUrl = /^https?:\/\//i.test(ab.url) ? ab.url : new URL(ab.url, serverUrl).href;
-          let contactCount: number | null = null;
-          let description: string | null = null;
-          try {
-            const resources = await client.propfind({
-              url: absoluteUrl,
-              props: {
-                'd:getetag': {},
-                'card:addressbook-description': {},
-              },
-              depth: '1',
-            });
-            // First response is the collection itself; the rest are vCard resources
-            contactCount = Math.max(0, resources.length - 1);
-            // Read description from the collection resource (first response)
-            const collectionProps = resources[0]?.props as Record<string, unknown> | undefined;
-            const rawDesc = collectionProps?.addressbookDescription;
-            if (typeof rawDesc === 'string' && rawDesc.trim()) {
-              description = rawDesc.trim();
-            }
-          } catch (err) {
-            log.warn({ err: err instanceof Error ? err : new Error(String(err)), url: absoluteUrl }, 'Failed to count contacts in address book');
-          }
-          return {
-            url: absoluteUrl,
-            displayName: typeof ab.displayName === 'string' ? ab.displayName : null,
-            description,
-            contactCount,
-          };
-        })
+      const addressBooksWithCounts = await withTimeout(
+        listAddressBooks(serverUrl, username, password),
+        TEST_TIMEOUT_MS
       );
 
       return NextResponse.json({
