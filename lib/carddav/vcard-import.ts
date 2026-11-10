@@ -215,6 +215,60 @@ export async function restorePersonFromVCardData(
   return person;
 }
 
+type ImportantDateInput = NonNullable<ParsedVCardData['importantDates']>[number];
+
+const calendarDay = (value: Date | string) => new Date(value).toISOString().slice(0, 10);
+
+/**
+ * Bring a person's important dates in line with the server without throwing
+ * away what the server does not know. A date that is also on the server (same
+ * day, and the same type or title) stays as it is, so its reminder settings
+ * survive. Local dates the server lacks go to the trash, where they can be
+ * restored, and server dates that are new are created.
+ */
+async function replaceImportantDates(
+  tx: TxClient,
+  personId: string,
+  remoteDates: ImportantDateInput[] | undefined,
+): Promise<void> {
+  const local = await tx.importantDate.findMany({
+    where: { personId, deletedAt: null },
+    select: { id: true, type: true, title: true, date: true },
+  });
+
+  const kept = new Set<string>();
+  const toCreate: ImportantDateInput[] = [];
+  for (const remote of remoteDates ?? []) {
+    const match = local.find(
+      (existing) =>
+        !kept.has(existing.id)
+        && calendarDay(existing.date) === calendarDay(remote.date)
+        && (existing.type && remote.type ? existing.type === remote.type : existing.title === remote.title),
+    );
+    if (match) kept.add(match.id);
+    else toCreate.push(remote);
+  }
+
+  const removedIds = local.filter((existing) => !kept.has(existing.id)).map((existing) => existing.id);
+  if (removedIds.length > 0) {
+    await tx.importantDate.updateMany({
+      where: { id: { in: removedIds } },
+      data: { deletedAt: new Date() },
+    });
+  }
+  if (toCreate.length > 0) {
+    await tx.importantDate.createMany({
+      data: toCreate.map((date) => ({
+        personId,
+        type: date.type ?? null,
+        title: date.title,
+        date: date.date,
+        reminderEnabled: false,
+      })),
+    });
+  }
+}
+
 /**
  * Update an existing Person from parsed vCard data.
  *
@@ -249,7 +303,7 @@ export async function updatePersonFromVCard(
     await tx.personIM.deleteMany({ where: { personId } });
     await tx.personLocation.deleteMany({ where: { personId } });
     await tx.personCustomField.deleteMany({ where: { personId } });
-    await tx.importantDate.deleteMany({ where: { personId } });
+    await replaceImportantDates(tx, personId, parsedData.importantDates);
 
     await tx.person.update({
       where: { id: personId },
@@ -280,14 +334,6 @@ export async function updatePersonFromVCard(
         customFields: parsedData.customFields
           ? { create: parsedData.customFields }
           : undefined,
-        importantDates: parsedData.importantDates?.length
-          ? { create: parsedData.importantDates.map((date) => ({
-              type: date.type ?? null,
-              title: date.title,
-              date: date.date,
-              reminderEnabled: false,
-            })) }
-          : undefined,
       },
     });
   }));
@@ -315,7 +361,7 @@ export async function updatePersonFromVCardInTransaction(
   await tx.personIM.deleteMany({ where: { personId } });
   await tx.personLocation.deleteMany({ where: { personId } });
   await tx.personCustomField.deleteMany({ where: { personId } });
-  await tx.importantDate.deleteMany({ where: { personId } });
+  await replaceImportantDates(tx, personId, parsedData.importantDates);
 
   // Update person with remote data
   await tx.person.update({
@@ -344,14 +390,6 @@ export async function updatePersonFromVCardInTransaction(
         : undefined,
       customFields: parsedData.customFields
         ? { create: parsedData.customFields }
-        : undefined,
-      importantDates: parsedData.importantDates?.length
-        ? { create: parsedData.importantDates.map((date) => ({
-            type: date.type ?? null,
-            title: date.title,
-            date: date.date,
-            reminderEnabled: false,
-          })) }
         : undefined,
     },
   });

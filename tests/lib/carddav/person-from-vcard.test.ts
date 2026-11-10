@@ -21,6 +21,9 @@ const mocks = vi.hoisted(() => ({
   personIMDeleteMany: vi.fn(),
   personLocationDeleteMany: vi.fn(),
   personCustomFieldDeleteMany: vi.fn(),
+  importantDateFindMany: vi.fn(),
+  importantDateUpdateMany: vi.fn(),
+  importantDateCreateMany: vi.fn(),
   importantDateDeleteMany: vi.fn(),
   $transaction: vi.fn(),
 
@@ -56,6 +59,7 @@ vi.mock('uuid', () => ({
 // --- Import after mocks ---
 import {
   updatePersonFromVCard,
+  updatePersonFromVCardInTransaction,
   createPersonFromVCardData,
   restorePersonFromVCardData,
   savePhotoForPerson,
@@ -102,15 +106,137 @@ describe('person-from-vcard', () => {
           personIM: { deleteMany: mocks.personIMDeleteMany },
           personLocation: { deleteMany: mocks.personLocationDeleteMany },
           personCustomField: { deleteMany: mocks.personCustomFieldDeleteMany },
-          importantDate: { deleteMany: mocks.importantDateDeleteMany },
+          importantDate: {
+            findMany: mocks.importantDateFindMany,
+            updateMany: mocks.importantDateUpdateMany,
+            createMany: mocks.importantDateCreateMany,
+            deleteMany: mocks.importantDateDeleteMany,
+          },
         };
         return fn(tx);
       },
     );
 
+    mocks.importantDateFindMany.mockResolvedValue([]);
     mocks.personUpdate.mockResolvedValue({});
     mocks.personCreate.mockResolvedValue({ id: PERSON_ID });
     mocks.savePhoto.mockResolvedValue(null);
+  });
+
+  describe('updatePersonFromVCard important dates', () => {
+    const day = new Date('1990-05-17T00:00:00.000Z');
+    const local = (overrides: Record<string, unknown> = {}) => ({
+      id: 'date-1',
+      type: 'birthday',
+      title: 'Birthday',
+      date: day,
+      ...overrides,
+    });
+
+    it('keeps a date the server also has, so its reminder survives', async () => {
+      mocks.importantDateFindMany.mockResolvedValue([local()]);
+
+      await updatePersonFromVCard(
+        PERSON_ID,
+        makeMinimalParsedData({ importantDates: [{ type: 'birthday', title: '', date: day }] }),
+        USER_ID,
+      );
+
+      expect(mocks.importantDateDeleteMany).not.toHaveBeenCalled();
+      expect(mocks.importantDateUpdateMany).not.toHaveBeenCalled();
+      expect(mocks.importantDateCreateMany).not.toHaveBeenCalled();
+    });
+
+    it('moves a date the server lacks to the trash and creates a new one', async () => {
+      mocks.importantDateFindMany.mockResolvedValue([
+        local(),
+        local({ id: 'date-2', type: null, title: 'First met', date: new Date('2015-01-02T00:00:00.000Z') }),
+      ]);
+
+      await updatePersonFromVCard(
+        PERSON_ID,
+        makeMinimalParsedData({
+          importantDates: [
+            { type: 'birthday', title: '', date: day },
+            { type: 'anniversary', title: '', date: new Date('2012-06-01T00:00:00.000Z') },
+          ],
+        }),
+        USER_ID,
+      );
+
+      expect(mocks.importantDateDeleteMany).not.toHaveBeenCalled();
+      expect(mocks.importantDateUpdateMany).toHaveBeenCalledWith({
+        where: { id: { in: ['date-2'] } },
+        data: { deletedAt: expect.any(Date) },
+      });
+      expect(mocks.importantDateCreateMany).toHaveBeenCalledWith({
+        data: [
+          {
+            personId: PERSON_ID,
+            type: 'anniversary',
+            title: '',
+            date: new Date('2012-06-01T00:00:00.000Z'),
+            reminderEnabled: false,
+          },
+        ],
+      });
+    });
+
+    it('matches dates that arrive as ISO strings from a stored conflict', async () => {
+      mocks.importantDateFindMany.mockResolvedValue([local()]);
+
+      await updatePersonFromVCard(
+        PERSON_ID,
+        makeMinimalParsedData({
+          importantDates: [{ type: 'birthday', title: '', date: '1990-05-17T00:00:00.000Z' as unknown as Date }],
+        }),
+        USER_ID,
+      );
+
+      expect(mocks.importantDateUpdateMany).not.toHaveBeenCalled();
+      expect(mocks.importantDateCreateMany).not.toHaveBeenCalled();
+    });
+
+    it('keeps a matching date when resolving a conflict with the remote version', async () => {
+      mocks.importantDateFindMany.mockResolvedValue([local()]);
+      const tx = {
+        person: { update: mocks.personUpdate },
+        personPhone: { deleteMany: mocks.personPhoneDeleteMany },
+        personEmail: { deleteMany: mocks.personEmailDeleteMany },
+        personAddress: { deleteMany: mocks.personAddressDeleteMany },
+        personUrl: { deleteMany: mocks.personUrlDeleteMany },
+        personIM: { deleteMany: mocks.personIMDeleteMany },
+        personLocation: { deleteMany: mocks.personLocationDeleteMany },
+        personCustomField: { deleteMany: mocks.personCustomFieldDeleteMany },
+        importantDate: {
+          findMany: mocks.importantDateFindMany,
+          updateMany: mocks.importantDateUpdateMany,
+          createMany: mocks.importantDateCreateMany,
+          deleteMany: mocks.importantDateDeleteMany,
+        },
+      };
+
+      await updatePersonFromVCardInTransaction(
+        tx as unknown as Parameters<typeof updatePersonFromVCardInTransaction>[0],
+        PERSON_ID,
+        makeMinimalParsedData({ importantDates: [{ type: 'birthday', title: '', date: day }] }),
+      );
+
+      expect(mocks.importantDateDeleteMany).not.toHaveBeenCalled();
+      expect(mocks.importantDateUpdateMany).not.toHaveBeenCalled();
+    });
+
+    it('trashes every local date when the server has none', async () => {
+      mocks.importantDateFindMany.mockResolvedValue([local()]);
+
+      await updatePersonFromVCard(PERSON_ID, makeMinimalParsedData(), USER_ID);
+
+      expect(mocks.importantDateUpdateMany).toHaveBeenCalledWith({
+        where: { id: { in: ['date-1'] } },
+        data: { deletedAt: expect.any(Date) },
+      });
+      expect(mocks.importantDateDeleteMany).not.toHaveBeenCalled();
+    });
   });
 
   describe('updatePersonFromVCard', () => {
