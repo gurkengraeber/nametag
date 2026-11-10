@@ -9,6 +9,7 @@ const mocks = vi.hoisted(() => ({
   relationshipDelete: vi.fn(),
   personFindUnique: vi.fn(),
   relationshipTypeFindFirst: vi.fn(),
+  tx: { open: false, runs: 0 },
 }));
 
 // Mock Prisma
@@ -23,6 +24,16 @@ vi.mock('../../lib/prisma', () => ({
     },
     person: {
       findUnique: mocks.personFindUnique,
+    },
+    // Interactive transactions run against the same doubles
+    $transaction: async (fn: (tx: unknown) => Promise<unknown>) => {
+      mocks.tx.open = true;
+      mocks.tx.runs += 1;
+      try {
+        return await fn({ relationship: { create: mocks.relationshipCreate, findFirst: mocks.relationshipFindFirst } });
+      } finally {
+        mocks.tx.open = false;
+      }
     },
     relationshipType: {
       findFirst: mocks.relationshipTypeFindFirst,
@@ -46,6 +57,7 @@ import { PUT, DELETE } from '../../app/api/relationships/[id]/route';
 describe('Relationships API', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mocks.tx.runs = 0;
   });
 
   describe('POST /api/relationships', () => {
@@ -221,6 +233,31 @@ describe('Relationships API', () => {
     });
   });
 
+  describe('POST /api/relationships atomicity', () => {
+    it('writes both directions inside one transaction', async () => {
+      const writtenInside: boolean[] = [];
+      mocks.relationshipFindFirst.mockResolvedValue(null);
+      mocks.personFindUnique.mockResolvedValue({ id: 'p', userId: 'user-123' });
+      mocks.relationshipTypeFindFirst.mockResolvedValue({ id: 'parent', inverseId: 'child' });
+      mocks.relationshipCreate.mockImplementation(async () => {
+        writtenInside.push(mocks.tx.open);
+        return { id: 'rel-x' };
+      });
+
+      const response = await POST(
+        new Request('http://localhost/api/relationships', {
+          method: 'POST',
+          body: JSON.stringify({ personId: 'person-1', relatedPersonId: 'person-2', relationshipTypeId: 'parent' }),
+          headers: { 'content-type': 'application/json' },
+        })
+      );
+
+      expect(response.status).toBe(201);
+      expect(mocks.tx.runs).toBe(1);
+      expect(writtenInside).toEqual([true, true]);
+    });
+  });
+
   describe('PUT /api/relationships/[id]', () => {
     it('should update a relationship', async () => {
       const existing = {
@@ -390,6 +427,55 @@ describe('Relationships API', () => {
           data: expect.objectContaining({ deletedAt: expect.any(Date) })
         })
       );
+    });
+
+    it('only removes the inverse row that carries the inverse type', async () => {
+      mocks.relationshipFindUnique.mockResolvedValue({
+        id: 'rel-1',
+        personId: 'person-1',
+        relatedPersonId: 'person-2',
+        relationshipTypeId: 'parent',
+        relationshipType: { inverseId: 'child' },
+        person: { id: 'person-1', userId: 'user-123' },
+      });
+      mocks.relationshipUpdate.mockResolvedValue({});
+      mocks.relationshipFindFirst.mockResolvedValue(null);
+
+      await DELETE(new Request('http://localhost/api/relationships/rel-1', { method: 'DELETE' }), {
+        params: Promise.resolve({ id: 'rel-1' }),
+      });
+
+      expect(mocks.relationshipFindFirst).toHaveBeenCalledWith({
+        where: {
+          personId: 'person-2',
+          relatedPersonId: 'person-1',
+          deletedAt: null,
+          OR: [{ relationshipTypeId: 'child' }, { relationshipType: { inverseId: 'parent' } }],
+        },
+      });
+    });
+
+    it('treats a type without an inverse as its own inverse', async () => {
+      mocks.relationshipFindUnique.mockResolvedValue({
+        id: 'rel-1',
+        personId: 'person-1',
+        relatedPersonId: 'person-2',
+        relationshipTypeId: 'friend',
+        relationshipType: { inverseId: null },
+        person: { id: 'person-1', userId: 'user-123' },
+      });
+      mocks.relationshipUpdate.mockResolvedValue({});
+      mocks.relationshipFindFirst.mockResolvedValue(null);
+
+      await DELETE(new Request('http://localhost/api/relationships/rel-1', { method: 'DELETE' }), {
+        params: Promise.resolve({ id: 'rel-1' }),
+      });
+
+      expect(mocks.relationshipFindFirst).toHaveBeenCalledWith({
+        where: expect.objectContaining({
+          OR: [{ relationshipTypeId: 'friend' }, { relationshipType: { inverseId: 'friend' } }],
+        }),
+      });
     });
 
     it('should return 404 for non-existent relationship', async () => {

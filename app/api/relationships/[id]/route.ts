@@ -134,6 +134,7 @@ export const DELETE = withAuth(async (_request, session, context) => {
       where: { id, deletedAt: null },
       include: {
         person: true,
+        relationshipType: { select: { inverseId: true } },
       },
     });
 
@@ -154,12 +155,21 @@ export const DELETE = withAuth(async (_request, session, context) => {
       },
     });
 
-    // Find and soft delete the inverse relationship
+    // Find and soft delete the inverse relationship. Only the row that carries
+    // the inverse type belongs to this one; a second, unrelated relationship
+    // between the same two people stays. A type without an inverse is its own.
+    const inverseTypeId = existing.relationshipType?.inverseId ?? existing.relationshipTypeId;
     const inverse = await prisma.relationship.findFirst({
       where: {
         personId: existing.relatedPersonId,
         relatedPersonId: existing.personId,
         deletedAt: null,
+        OR: [
+          { relationshipTypeId: inverseTypeId },
+          ...(existing.relationshipTypeId
+            ? [{ relationshipType: { inverseId: existing.relationshipTypeId } }]
+            : []),
+        ],
       },
     });
 

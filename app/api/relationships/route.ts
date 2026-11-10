@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/prisma';
+import { withDeadlockRetry } from '@/lib/db/deadlock';
 import { createRelationshipSchema, validateRequest } from '@/lib/validations';
 import { apiResponse, handleApiError, parseRequestBody, withAuth } from '@/lib/api-utils';
 import { apiError } from '@/lib/api-errors';
@@ -98,41 +99,45 @@ export const POST = withAuth(async (request, session) => {
       return apiResponse.notFound('Relationship type not found');
     }
 
-    // Create the primary relationship
-    const relationship = await prisma.relationship.create({
-      data: {
-        personId,
-        relatedPersonId,
-        relationshipTypeId,
-        notes: notes || null,
-      },
-    });
-
     // Always create the inverse relationship
     // Use the inverse type if it exists, otherwise use the same type
     const inverseTypeId = relationshipType.inverseId || relationshipTypeId;
 
-    // Check if inverse relationship already exists
-    const existingInverse = await prisma.relationship.findFirst({
-      where: {
-        personId: relatedPersonId,
-        relatedPersonId: personId,
-        relationshipTypeId: inverseTypeId,
-        deletedAt: null,
-      },
-    });
-
-    // Only create if it doesn't exist
-    if (!existingInverse) {
-      await prisma.relationship.create({
+    // Both directions are written together, so a failure never leaves one side.
+    // Retried as a whole on a sync deadlock (lib/db/deadlock.ts).
+    const relationship = await withDeadlockRetry(() => prisma.$transaction(async (tx) => {
+      const primary = await tx.relationship.create({
         data: {
-          personId: relatedPersonId,
-          relatedPersonId: personId,
-          relationshipTypeId: inverseTypeId,
+          personId,
+          relatedPersonId,
+          relationshipTypeId,
           notes: notes || null,
         },
       });
-    }
+
+      // Only create the inverse if it doesn't exist
+      const existingInverse = await tx.relationship.findFirst({
+        where: {
+          personId: relatedPersonId,
+          relatedPersonId: personId,
+          relationshipTypeId: inverseTypeId,
+          deletedAt: null,
+        },
+      });
+
+      if (!existingInverse) {
+        await tx.relationship.create({
+          data: {
+            personId: relatedPersonId,
+            relatedPersonId: personId,
+            relationshipTypeId: inverseTypeId,
+            notes: notes || null,
+          },
+        });
+      }
+
+      return primary;
+    }));
 
     return apiResponse.created({ relationship });
   } catch (error) {

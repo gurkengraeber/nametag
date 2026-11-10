@@ -56,6 +56,9 @@ vi.mock('../../lib/prisma', () => ({
       findFirst: mocks.relationshipFindFirst,
       create: mocks.relationshipCreate,
     },
+    // Interactive transactions run against the same doubles
+    $transaction: (fn: (tx: unknown) => unknown) =>
+      fn({ relationship: { create: mocks.relationshipCreate, findFirst: mocks.relationshipFindFirst } }),
     relationshipType: {
       findMany: mocks.relationshipTypeFindMany,
       findFirst: mocks.relationshipTypeFindFirst,
