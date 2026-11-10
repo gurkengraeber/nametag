@@ -179,7 +179,7 @@ describe('POST /api/people/merge', () => {
 
   // ─── CardDAV pre-merge: vCard deletion ──────────────────────────
 
-  describe('CardDAV pre-merge vCard deletion', () => {
+  describe('CardDAV vCard deletion', () => {
     const CONNECTION = { id: 'conn-1' };
     const MAPPING = {
       id: 'cdm-1',
@@ -326,6 +326,30 @@ describe('POST /api/people/merge', () => {
         'https://carddav.example.com/contacts/dad.vcf',
         '*',
       );
+    });
+
+    it('keeps the vCard on the server when the merge finds a person missing', async () => {
+      mocks.personFindUnique.mockResolvedValue({
+        id: SECONDARY_ID, name: 'Jane', surname: 'Doe', displayNameOverride: null, cardDavMapping: MAPPING,
+      });
+      mocks.mergePeople.mockResolvedValue(null);
+
+      const response = await POST(makeRequest({ primaryId: PRIMARY_ID, secondaryId: SECONDARY_ID }));
+
+      expect(response.status).toBe(404);
+      expect(mocks.deleteVCardDirect).not.toHaveBeenCalled();
+    });
+
+    it('keeps the vCard on the server when the merge fails', async () => {
+      mocks.personFindUnique.mockResolvedValue({
+        id: SECONDARY_ID, name: 'Jane', surname: 'Doe', displayNameOverride: null, cardDavMapping: MAPPING,
+      });
+      mocks.mergePeople.mockRejectedValue(new Error('database down'));
+
+      const response = await POST(makeRequest({ primaryId: PRIMARY_ID, secondaryId: SECONDARY_ID }));
+
+      expect(response.status).toBe(500);
+      expect(mocks.deleteVCardDirect).not.toHaveBeenCalled();
     });
 
     it('skips CardDAV deletion when secondary has no mapping', async () => {

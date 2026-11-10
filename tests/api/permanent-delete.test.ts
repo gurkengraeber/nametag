@@ -17,6 +17,7 @@ const mocks = vi.hoisted(() => ({
   duplicateDismissalDeleteMany: vi.fn(),
   journalEntryPersonDeleteMany: vi.fn(),
   deletePersonPhotos: vi.fn(),
+  transaction: vi.fn(),
   // Group mocks
   groupFindFirst: vi.fn(),
   groupDelete: vi.fn(),
@@ -38,6 +39,7 @@ const mocks = vi.hoisted(() => ({
 
 vi.mock('../../lib/prisma', () => ({
   prismaIncludingDeleted: {
+    $transaction: mocks.transaction,
     person: {
       findFirst: mocks.personFindFirst,
       delete: mocks.personDelete,
@@ -148,6 +150,7 @@ describe('Permanent delete API', () => {
       mocks.duplicateDismissalDeleteMany.mockResolvedValue({ count: 0 });
       mocks.journalEntryPersonDeleteMany.mockResolvedValue({ count: 0 });
       mocks.personDelete.mockResolvedValue({ id: 'p1' });
+      mocks.transaction.mockImplementation((operations: Promise<unknown>[]) => Promise.all(operations));
 
       const request = new Request('http://localhost/api/people/p1/permanent');
       const context = { params: Promise.resolve({ id: 'p1' }) };
@@ -158,6 +161,21 @@ describe('Permanent delete API', () => {
       expect(body.success).toBe(true);
       expect(mocks.deletePersonPhotos).toHaveBeenCalledWith('user-123', 'p1');
       expect(mocks.personDelete).toHaveBeenCalledWith({ where: { id: 'p1' } });
+      // Everything goes through one transaction
+      expect(mocks.transaction).toHaveBeenCalledTimes(1);
+      expect(mocks.transaction.mock.calls[0][0]).toHaveLength(15);
+    });
+
+    it('keeps the photo files when the database delete fails', async () => {
+      mocks.personFindFirst.mockResolvedValue({ id: 'p1', userId: 'user-123', deletedAt: new Date() });
+      mocks.transaction.mockRejectedValue(new Error('constraint failed'));
+
+      const request = new Request('http://localhost/api/people/p1/permanent');
+      const context = { params: Promise.resolve({ id: 'p1' }) };
+      const response = await deletePerson(request, context);
+
+      expect(response.status).toBe(500);
+      expect(mocks.deletePersonPhotos).not.toHaveBeenCalled();
     });
   });
 

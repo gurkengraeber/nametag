@@ -136,8 +136,8 @@ export const POST = withAuth(async (request, session) => {
 
     const { primaryId, secondaryId, fieldOverrides } = validation.data;
 
-    // Pre-fetch both people's CardDAV data for server-side vCard cleanup.
-    // The core merge logic in mergePeople() handles all DB operations.
+    // Read both people's CardDAV data first: the merge removes the secondary's
+    // mapping, and the server-side vCard cleanup below needs it.
     const [primaryCardDav, secondaryForCardDav] = await Promise.all([
       prisma.cardDavMapping.findUnique({
         where: { personId: primaryId },
@@ -154,17 +154,19 @@ export const POST = withAuth(async (request, session) => {
       }),
     ]);
 
-    // Best-effort: delete secondary's vCard from the CardDAV server
-    if (secondaryForCardDav) {
-      await deleteSecondaryVCard(secondaryForCardDav);
-    }
-
     // Core merge — handles all DB operations (scalar transfer, dedup,
     // relationship re-parenting, group transfer, soft-delete)
     const result = await mergePeople(primaryId, secondaryId, session.user.id, fieldOverrides);
 
     if (!result) {
       return apiResponse.notFound('Person not found');
+    }
+
+    // Best-effort, and only once the merge has committed: removing the vCard
+    // first would lose it on the server when the merge then fails or finds
+    // that one of the people is gone.
+    if (secondaryForCardDav) {
+      await deleteSecondaryVCard(secondaryForCardDav);
     }
 
     // Mark primary's CardDAV mapping as pending so merge changes get pushed

@@ -764,10 +764,12 @@ export async function mergePeople(
   const targetTemplateIds = new Set(
     target.customFieldValues?.map((v) => v.templateId) ?? []
   );
+  // A date in the trash must not count as "already there": the active date of
+  // the source would be dropped and the target would end up with none.
   const targetImportantDates = new Set(
-    target.importantDates.map((d) =>
-      `${d.title}:${d.date instanceof Date ? d.date.toISOString() : d.date}`
-    )
+    target.importantDates
+      .filter((d) => !d.deletedAt)
+      .map((d) => `${d.title}:${d.date instanceof Date ? d.date.toISOString() : d.date}`)
   );
 
   const phonesToTransfer = source.phoneNumbers.filter((p) => !targetPhones.has(p.number));
@@ -791,7 +793,9 @@ export async function mergePeople(
   const customFieldValuesToTransfer = (source.customFieldValues ?? []).filter(
     (v) => !targetTemplateIds.has(v.templateId)
   );
+  // The source's trashed dates move along as well and stay in the trash.
   const importantDatesToTransfer = source.importantDates.filter((d) => {
+    if (d.deletedAt) return true;
     const key = `${d.title}:${d.date instanceof Date ? d.date.toISOString() : d.date}`;
     return !targetImportantDates.has(key);
   });

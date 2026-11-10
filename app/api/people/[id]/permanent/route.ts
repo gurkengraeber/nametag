@@ -17,31 +17,29 @@ export const DELETE = withAuth(async (_request, session, context) => {
     );
     if (!guard.ok) return guard.response;
 
-    // Delete photo files
+    // One transaction: a failure part way must not leave a half-emptied person
+    // in the trash. Child records go first, in foreign key order.
+    const db = prismaIncludingDeleted;
+    await db.$transaction([
+      db.journalEntryPerson.deleteMany({ where: { personId: id } }),
+      db.duplicateDismissal.deleteMany({ where: { OR: [{ personAId: id }, { personBId: id }] } }),
+      db.cardDavMapping.deleteMany({ where: { personId: id } }),
+      db.personCustomFieldValue.deleteMany({ where: { personId: id } }),
+      db.personCustomField.deleteMany({ where: { personId: id } }),
+      db.personLocation.deleteMany({ where: { personId: id } }),
+      db.personIM.deleteMany({ where: { personId: id } }),
+      db.personUrl.deleteMany({ where: { personId: id } }),
+      db.personAddress.deleteMany({ where: { personId: id } }),
+      db.personEmail.deleteMany({ where: { personId: id } }),
+      db.personPhone.deleteMany({ where: { personId: id } }),
+      db.importantDate.deleteMany({ where: { personId: id } }),
+      db.relationship.deleteMany({ where: { OR: [{ personId: id }, { relatedPersonId: id }] } }),
+      db.personGroup.deleteMany({ where: { personId: id } }),
+      db.person.delete({ where: { id } }),
+    ]);
+
+    // Photo files last: they cannot be rolled back
     await deletePersonPhotos(session.user.id, id);
-
-    // Delete child records in FK order
-    await prismaIncludingDeleted.journalEntryPerson.deleteMany({ where: { personId: id } });
-    await prismaIncludingDeleted.duplicateDismissal.deleteMany({
-      where: { OR: [{ personAId: id }, { personBId: id }] },
-    });
-    await prismaIncludingDeleted.cardDavMapping.deleteMany({ where: { personId: id } });
-    await prismaIncludingDeleted.personCustomFieldValue.deleteMany({ where: { personId: id } });
-    await prismaIncludingDeleted.personCustomField.deleteMany({ where: { personId: id } });
-    await prismaIncludingDeleted.personLocation.deleteMany({ where: { personId: id } });
-    await prismaIncludingDeleted.personIM.deleteMany({ where: { personId: id } });
-    await prismaIncludingDeleted.personUrl.deleteMany({ where: { personId: id } });
-    await prismaIncludingDeleted.personAddress.deleteMany({ where: { personId: id } });
-    await prismaIncludingDeleted.personEmail.deleteMany({ where: { personId: id } });
-    await prismaIncludingDeleted.personPhone.deleteMany({ where: { personId: id } });
-    await prismaIncludingDeleted.importantDate.deleteMany({ where: { personId: id } });
-    await prismaIncludingDeleted.relationship.deleteMany({
-      where: { OR: [{ personId: id }, { relatedPersonId: id }] },
-    });
-    await prismaIncludingDeleted.personGroup.deleteMany({ where: { personId: id } });
-
-    // Delete the person
-    await prismaIncludingDeleted.person.delete({ where: { id } });
 
     return apiResponse.ok({ success: true });
   } catch (error) {

@@ -939,7 +939,7 @@ describe('mergePeople', () => {
       locations: [] as Array<{ id: string; latitude: number; longitude: number }>,
       customFields: [] as Array<{ id: string; key: string; value: string }>,
       customFieldValues: [] as Array<{ id: string; templateId: string; value: string }>,
-      importantDates: [] as Array<{ id: string; title: string; date: Date }>,
+      importantDates: [] as Array<{ id: string; title: string; date: Date; deletedAt?: Date | null }>,
       ...overrides,
     };
   }
@@ -1007,6 +1007,50 @@ describe('mergePeople', () => {
     const result = await mergePeople(PERSON_ID, SOURCE_ID, USER_ID);
     expect(result).toBeNull();
     expect(mocks.transaction).not.toHaveBeenCalled();
+  });
+
+  describe('important dates in the trash', () => {
+    const birthday = new Date('1990-03-14T00:00:00.000Z');
+
+    function mockDates(target: Array<Record<string, unknown>>, source: Array<Record<string, unknown>>) {
+      mocks.personFindUnique
+        .mockReset()
+        .mockResolvedValueOnce(makePersonForMerge(PERSON_ID, { importantDates: target }))
+        .mockResolvedValueOnce(makePersonForMerge(SOURCE_ID, { importantDates: source }));
+    }
+
+    it('still moves an active date when the target only has the same date in the trash', async () => {
+      mockDates(
+        [{ id: 'd-trashed', title: 'Birthday', date: birthday, deletedAt: new Date() }],
+        [{ id: 'd-active', title: 'Birthday', date: birthday, deletedAt: null }],
+      );
+      await mergePeople(PERSON_ID, SOURCE_ID, USER_ID);
+      expect(mocks.mockTxClient.importantDate.updateMany).toHaveBeenCalledWith({
+        where: { id: { in: ['d-active'] } },
+        data: { personId: PERSON_ID },
+      });
+    });
+
+    it('does not duplicate a date the target already has', async () => {
+      mockDates(
+        [{ id: 'd-target', title: 'Birthday', date: birthday, deletedAt: null }],
+        [{ id: 'd-source', title: 'Birthday', date: birthday, deletedAt: null }],
+      );
+      await mergePeople(PERSON_ID, SOURCE_ID, USER_ID);
+      expect(mocks.mockTxClient.importantDate.updateMany).not.toHaveBeenCalled();
+    });
+
+    it('moves the source dates that are in the trash instead of deleting them for good', async () => {
+      mockDates(
+        [{ id: 'd-target', title: 'Birthday', date: birthday, deletedAt: null }],
+        [{ id: 'd-gone', title: 'Birthday', date: birthday, deletedAt: new Date() }],
+      );
+      await mergePeople(PERSON_ID, SOURCE_ID, USER_ID);
+      expect(mocks.mockTxClient.importantDate.updateMany).toHaveBeenCalledWith({
+        where: { id: { in: ['d-gone'] } },
+        data: { personId: PERSON_ID },
+      });
+    });
   });
 
   it('returns targetId on success', async () => {
