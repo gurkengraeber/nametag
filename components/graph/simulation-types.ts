@@ -17,7 +17,7 @@ export interface BubbleSimNode extends SimulationNodeDatum {
   kind: 'bubble';
   id: string;            // 'bubble:<groupId>' or 'bubble:__ungrouped__'
   groupId: string;       // real group id or '__ungrouped__'
-  label: string;         // display label incl. count — "Family · 24"
+  label: string;         // display label incl. count, "Family · 24"
   color: string | null;  // group color or null
   memberCount: number;
   memberIds: string[];

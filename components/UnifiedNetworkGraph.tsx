@@ -32,7 +32,7 @@ import { buildHubAndSpokeEdges } from './graph/edge-composition';
 import { UNGROUPED_SYNTHETIC_ID, edgeEndpointId } from './graph/simulation-types';
 import type { SimulationNode, SimulationEdge } from './graph/simulation-types';
 
-// Props interface — unchanged from pre-rewrite file
+// Props interface, unchanged from pre-rewrite file
 interface Group { id: string; name: string; color: string | null; }
 type IncludeMode = 'or' | 'and';
 type GroupFilterItem = { id: string; label: string; color: string | null; isNegative: boolean; };
@@ -510,7 +510,7 @@ export default function UnifiedNetworkGraph({
     return sim;
   }, [isMobile, linkDistance, chargeStrength, requestPaint]);
 
-  // Step 3: Composition helper — recomposes sim data from raw cache
+  // Step 3: Composition helper, recomposes sim data from raw cache
   const recomposeAndBuildSim = useCallback((raw: { nodes: RawGraphPerson[]; edges: SimulationEdge[] }) => {
     // The API labels the signed-in user's node with a fixed English "You"
     // (user node ids are prefixed "user-"), so translate it here.
@@ -519,7 +519,7 @@ export default function UnifiedNetworkGraph({
       n.id.startsWith('user-') ? { ...n, label: youLabel } : n,
     );
 
-    // If no groups prop, we're not on the dashboard — skip bubble logic.
+    // If no groups prop, we're not on the dashboard, skip bubble logic.
     const peopleInView = raw.nodes.filter((n) => !n.isCenter).length;
     const resolvedMode = groups ? resolveGraphMode(localGraphMode, peopleInView) : 'individuals';
 
@@ -563,7 +563,7 @@ export default function UnifiedNetworkGraph({
     // d3-force's forceLink mutates each edge's source/target from string ids
     // to node-object references on the first sim build. If we reused those
     // mutated edges on a later rebuild, forceLink would keep the stale refs
-    // (it skips resolution when source/target is already an object) — so the
+    // (it skips resolution when source/target is already an object), so the
     // new simulation would move new node objects while edges still drew
     // between the previous sim's node objects, leaving the visible
     // disconnect from #240. Clone edges with string ids each time.
@@ -1247,7 +1247,7 @@ export default function UnifiedNetworkGraph({
                         body: JSON.stringify({ graphMode: next }),
                       });
                     } catch {
-                      // Silent fail — local state is source of truth until next page load.
+                      // Silent fail, local state is source of truth until next page load.
                     }
                   }}
                   className={`p-3 border rounded-lg transition-colors ${
