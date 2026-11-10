@@ -170,6 +170,13 @@ export interface CardDavProvider {
   urlPlaceholder?: string;
 }
 
+/**
+ * Addresses and hints are taken from the providers' public help pages. The
+ * entries from mailbox to nextcloud have NOT been tried against a real
+ * account or server: until someone has, treat the address, the port and the
+ * app password advice as a best guess. The connection test is what tells the
+ * user whether an entry works, and "custom" is always available as a fallback.
+ */
 export const CARDDAV_PROVIDERS: Record<string, CardDavProvider> = {
   google: {
     id: 'google',
@@ -194,6 +201,7 @@ export const CARDDAV_PROVIDERS: Record<string, CardDavProvider> = {
     help: 'Use email and password',
     requiresAppPassword: false,
   },
+  // Unverified against a real mailbox.org account
   mailbox: {
     id: 'mailbox',
     name: 'mailbox.org',
@@ -203,6 +211,7 @@ export const CARDDAV_PROVIDERS: Record<string, CardDavProvider> = {
     appPasswordWithTwoFactor: true,
     appPasswordUrl: 'https://login.mailbox.org/',
   },
+  // Unverified against a real Fastmail account
   fastmail: {
     id: 'fastmail',
     name: 'Fastmail',
@@ -211,6 +220,7 @@ export const CARDDAV_PROVIDERS: Record<string, CardDavProvider> = {
     requiresAppPassword: true,
     appPasswordUrl: 'https://app.fastmail.com/settings/security/devicekeys/new',
   },
+  // Unverified against a real Posteo account (the non-standard port is the part to check first)
   posteo: {
     id: 'posteo',
     name: 'Posteo',
@@ -218,6 +228,7 @@ export const CARDDAV_PROVIDERS: Record<string, CardDavProvider> = {
     help: 'Use your Posteo address and password',
     requiresAppPassword: false,
   },
+  // Unverified against a real Nextcloud server; the address is the user's own
   nextcloud: {
     id: 'nextcloud',
     name: 'Nextcloud',
