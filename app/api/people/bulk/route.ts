@@ -55,10 +55,12 @@ export const POST = withAuth(async (request, session) => {
           validOrphanIds = validOrphans.map((o) => o.id);
         }
 
+        // Orphans are only touched when the user chose to delete them too
+        const orphanIdsToDelete = data.deleteOrphans ? validOrphanIds : [];
+
         // If requested, delete from CardDAV server (do this before soft-deleting)
         if (data.deleteFromCardDav) {
-          const allIdsToDelete = [...ids, ...validOrphanIds];
-          for (const id of allIdsToDelete) {
+          for (const id of [...ids, ...orphanIdsToDelete]) {
             await deleteContactFromCardDav(id).catch((error) => {
               log.error(
                 { err: error instanceof Error ? error : new Error(String(error)), personId: id },
@@ -70,9 +72,8 @@ export const POST = withAuth(async (request, session) => {
 
         // Always delete the CardDAV mappings when deleting people
         // This allows re-importing the contacts if they still exist on the server
-        const allIdsForMapping = [...ids, ...(data.deleteOrphans ? validOrphanIds : [])];
         await prisma.cardDavMapping.deleteMany({
-          where: { personId: { in: allIdsForMapping } },
+          where: { personId: { in: [...ids, ...orphanIdsToDelete] } },
         });
 
         // Soft delete the people (set deletedAt instead of removing)
@@ -82,9 +83,9 @@ export const POST = withAuth(async (request, session) => {
         });
 
         // If requested, also soft delete the orphans
-        if (data.deleteOrphans && validOrphanIds.length > 0) {
+        if (orphanIdsToDelete.length > 0) {
           await prisma.person.updateMany({
-            where: { id: { in: validOrphanIds }, userId: session.user.id },
+            where: { id: { in: orphanIdsToDelete }, userId: session.user.id },
             data: { deletedAt: new Date() },
           });
         }
