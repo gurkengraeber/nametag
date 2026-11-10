@@ -117,7 +117,8 @@
       "help": "显示此帮助",
       "goTo": "前往",
       "then": "然后"
-    }
+    },
+    "calendar": "日历"
   },
   "notifications": {
     "push": {
@@ -2857,5 +2858,11 @@
       "noTypesDescription": "关系类型说明两个人之间是什么关系，例如朋友或同事。创建一个即可开始关联。",
       "createType": "创建关系类型"
     }
+  },
+  "calendar": {
+    "previousMonth": "上个月",
+    "nextMonth": "下个月",
+    "today": "今天",
+    "noEvents": "本月没有安排"
   }
 }

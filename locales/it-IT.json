@@ -117,7 +117,8 @@
       "help": "Mostra questa guida",
       "goTo": "Vai a",
       "then": "poi"
-    }
+    },
+    "calendar": "Calendario"
   },
   "notifications": {
     "push": {
@@ -2857,5 +2858,11 @@
       "noTypesDescription": "I tipi di relazione dicono come due persone sono legate, per esempio amico o collega. Creane uno per iniziare.",
       "createType": "Crea un tipo di relazione"
     }
+  },
+  "calendar": {
+    "previousMonth": "Mese precedente",
+    "nextMonth": "Mese successivo",
+    "today": "Oggi",
+    "noEvents": "Niente in programma questo mese"
   }
 }

@@ -117,7 +117,8 @@
       "help": "Mostrar esta ayuda",
       "goTo": "Ir a",
       "then": "luego"
-    }
+    },
+    "calendar": "Calendario"
   },
   "notifications": {
     "push": {
@@ -2857,5 +2858,11 @@
       "noTypesDescription": "Los tipos de relación indican cómo se relacionan dos personas, por ejemplo amigo o colega. Crea uno para empezar.",
       "createType": "Crear un tipo de relación"
     }
+  },
+  "calendar": {
+    "previousMonth": "Mes anterior",
+    "nextMonth": "Mes siguiente",
+    "today": "Hoy",
+    "noEvents": "No hay nada previsto este mes"
   }
 }

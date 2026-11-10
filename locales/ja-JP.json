@@ -117,7 +117,8 @@
       "help": "このヘルプを表示",
       "goTo": "移動",
       "then": "次に"
-    }
+    },
+    "calendar": "カレンダー"
   },
   "notifications": {
     "push": {
@@ -2857,5 +2858,11 @@
       "noTypesDescription": "関係の種類は、2人がどんな間柄かを表します（友人、同僚など）。つなげ始めるには1つ作成してください。",
       "createType": "関係の種類を作成"
     }
+  },
+  "calendar": {
+    "previousMonth": "前の月",
+    "nextMonth": "次の月",
+    "today": "今日",
+    "noEvents": "今月の予定はありません"
   }
 }

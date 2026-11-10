@@ -117,7 +117,8 @@
       "help": "Vis denne hjelpen",
       "goTo": "Gå til",
       "then": "deretter"
-    }
+    },
+    "calendar": "Kalender"
   },
   "notifications": {
     "push": {
@@ -2857,5 +2858,11 @@
       "noTypesDescription": "Relasjonstyper forteller hvordan to personer henger sammen, for eksempel venn eller kollega. Opprett en for å komme i gang.",
       "createType": "Opprett en relasjonstype"
     }
+  },
+  "calendar": {
+    "previousMonth": "Forrige måned",
+    "nextMonth": "Neste måned",
+    "today": "I dag",
+    "noEvents": "Ingenting planlagt denne måneden"
   }
 }

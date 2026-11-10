@@ -117,7 +117,8 @@
       "help": "Diese Hilfe anzeigen",
       "goTo": "Gehe zu",
       "then": "dann"
-    }
+    },
+    "calendar": "Kalender"
   },
   "notifications": {
     "push": {
@@ -2857,5 +2858,11 @@
       "noTypesDescription": "Beziehungsarten sagen, wie zwei Personen zusammenhängen, zum Beispiel Freund oder Kollegin. Lege eine an, um loszulegen.",
       "createType": "Beziehungsart anlegen"
     }
+  },
+  "calendar": {
+    "previousMonth": "Vorheriger Monat",
+    "nextMonth": "Nächster Monat",
+    "today": "Heute",
+    "noEvents": "Diesen Monat steht nichts an"
   }
 }

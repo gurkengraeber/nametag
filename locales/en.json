@@ -117,7 +117,8 @@
       "help": "Show this help",
       "goTo": "Go to",
       "then": "then"
-    }
+    },
+    "calendar": "Calendar"
   },
   "notifications": {
     "push": {
@@ -2857,5 +2858,11 @@
       "noTypesDescription": "Relationship types say how two people are related, for example friend or colleague. Create one to start linking.",
       "createType": "Create a relationship type"
     }
+  },
+  "calendar": {
+    "previousMonth": "Previous month",
+    "nextMonth": "Next month",
+    "today": "Today",
+    "noEvents": "Nothing planned this month"
   }
 }

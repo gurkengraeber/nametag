@@ -117,7 +117,8 @@
       "help": "Deze hulp tonen",
       "goTo": "Ga naar",
       "then": "dan"
-    }
+    },
+    "calendar": "Kalender"
   },
   "notifications": {
     "push": {
@@ -2857,5 +2858,11 @@
       "noTypesDescription": "Relatietypes geven aan hoe twee personen met elkaar verbonden zijn, bijvoorbeeld vriend of collega. Maak er een om te beginnen.",
       "createType": "Relatietype aanmaken"
     }
+  },
+  "calendar": {
+    "previousMonth": "Vorige maand",
+    "nextMonth": "Volgende maand",
+    "today": "Vandaag",
+    "noEvents": "Niets gepland deze maand"
   }
 }
