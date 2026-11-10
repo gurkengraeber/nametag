@@ -28,7 +28,7 @@ import { diffSimulationData } from './graph/diff-simulation';
 import { resolveGraphMode } from './graph/mode-resolution';
 import { buildSimulationNodes, type RawGraphPerson } from './graph/bubble-composition';
 import { buildHubAndSpokeEdges } from './graph/edge-composition';
-import { UNGROUPED_SYNTHETIC_ID } from './graph/simulation-types';
+import { UNGROUPED_SYNTHETIC_ID, edgeEndpointId } from './graph/simulation-types';
 import type { SimulationNode, SimulationEdge } from './graph/simulation-types';
 
 // Props interface — unchanged from pre-rewrite file
@@ -128,6 +128,8 @@ export default function UnifiedNetworkGraph({
   }, [isFullscreen]);
   useEffect(() => () => {
     if (zoomHintTimerRef.current !== null) window.clearTimeout(zoomHintTimerRef.current);
+    // The layout keeps ticking on its own timer until it is stopped
+    simRef.current?.stop();
   }, []);
 
   // Ungrouped label for bubble composition
@@ -191,16 +193,27 @@ export default function UnifiedNetworkGraph({
     };
   }, []);
 
-  // Put "you" in the middle of the canvas and bring the network into view
-  const fitView = useCallback((animate: boolean) => {
+  const moveView = useCallback((target: ZoomTransform, animate: boolean) => {
     const canvas = canvasRef.current;
     const zoomBehavior = zoomBehaviorRef.current;
     if (!canvas || !zoomBehavior) return;
+    const selection = select(canvas);
+    if (animate) {
+      selection.transition().duration(500).call(zoomBehavior.transform, target);
+    } else {
+      selection.call(zoomBehavior.transform, target);
+    }
+  }, []);
+
+  // Put "you" in the middle of the canvas and bring the network into view
+  const fitView = useCallback((animate: boolean) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
     const rect = canvas.getBoundingClientRect();
     const linkedIds = new Set<string>();
     for (const edge of edgesRef.current) {
-      linkedIds.add(typeof edge.source === 'string' ? edge.source : edge.source.id);
-      linkedIds.add(typeof edge.target === 'string' ? edge.target : edge.target.id);
+      linkedIds.add(edgeEndpointId(edge.source));
+      linkedIds.add(edgeEndpointId(edge.target));
     }
     const fitNodes = nodesRef.current.map((n) => ({
       x: n.x,
@@ -213,25 +226,13 @@ export default function UnifiedNetworkGraph({
       height: rect.height,
       padding: isMobile ? 36 : undefined,
     });
-    const target = zoomIdentity.translate(fit.x, fit.y).scale(fit.k);
-    const selection = select(canvas);
-    if (animate) {
-      selection.transition().duration(500).call(zoomBehavior.transform, target);
-    } else {
-      selection.call(zoomBehavior.transform, target);
-    }
-  }, [isMobile]);
-
-  // Re-center the graph view
-  const recenterGraph = useCallback(() => {
-    fitView(true);
-  }, [fitView]);
+    moveView(zoomIdentity.translate(fit.x, fit.y).scale(fit.k), animate);
+  }, [isMobile, moveView]);
 
   // Put one person in the middle and zoom in on them
   const applyFocus = useCallback((personId: string, animate: boolean) => {
     const canvas = canvasRef.current;
-    const zoomBehavior = zoomBehaviorRef.current;
-    if (!canvas || !zoomBehavior) return;
+    if (!canvas) return;
     const node = nodesRef.current.find((n) => n.kind === 'person' && n.id === personId);
     if (!node || node.x === undefined || node.y === undefined) return;
     focusedNodeIdRef.current = personId;
@@ -243,15 +244,9 @@ export default function UnifiedNetworkGraph({
       { x: node.x, y: node.y },
       { width: rect.width, height: rect.height, currentScale: transformRef.current.k },
     );
-    const target = zoomIdentity.translate(focus.x, focus.y).scale(focus.k);
-    const selection = select(canvas);
-    if (animate) {
-      selection.transition().duration(500).call(zoomBehavior.transform, target);
-    } else {
-      selection.call(zoomBehavior.transform, target);
-    }
+    moveView(zoomIdentity.translate(focus.x, focus.y).scale(focus.k), animate);
     dirtyRef.current = true;
-  }, []);
+  }, [moveView]);
 
   const clearFocus = useCallback(() => {
     focusedNodeIdRef.current = null;
@@ -572,8 +567,8 @@ export default function UnifiedNetworkGraph({
     // disconnect from #240. Clone edges with string ids each time.
     const incomingEdges: SimulationEdge[] = composedEdges.map((e) => ({
       ...e,
-      source: typeof e.source === 'string' ? e.source : e.source.id,
-      target: typeof e.target === 'string' ? e.target : e.target.id,
+      source: edgeEndpointId(e.source),
+      target: edgeEndpointId(e.target),
     }));
 
     const { nodes, edges } = diffSimulationData(nodesRef.current, incomingNodes, edgesRef.current, incomingEdges);
@@ -614,6 +609,14 @@ export default function UnifiedNetworkGraph({
     includeGroupIds, ungroupedLabel, buildSimulation, tPeople, fitView, applyFocus, compact,
   ]);
 
+  // The fetch below finishes long after the render that started it, so it must
+  // call the newest composer (mobile layout, current bubble state), not the one
+  // from that render
+  const recomposeRef = useRef(recomposeAndBuildSim);
+  useEffect(() => {
+    recomposeRef.current = recomposeAndBuildSim;
+  });
+
   // Step 4: Data-fetch effect
   useEffect(() => {
     if (!canvasRef.current || !apiEndpoint) return;
@@ -626,36 +629,38 @@ export default function UnifiedNetworkGraph({
       if (includeGroupIds.length > 0) url.searchParams.set('includeGroupIds', includeGroupIds.join(','));
       if (excludeGroupIds.length > 0) url.searchParams.set('excludeGroupIds', excludeGroupIds.join(','));
 
-      const response = await fetch(url.toString());
-      if (!response.ok) return;
-      const data = await response.json() as { nodes: RawGraphPerson[]; edges: SimulationEdge[] };
+      try {
+        const response = await fetch(url.toString());
+        if (!response.ok) return;
+        const data = await response.json() as { nodes: RawGraphPerson[]; edges: SimulationEdge[] };
 
-      if (cancelled) return;
+        if (cancelled) return;
 
-      // On the dashboard, people without any connection are listed below the
-      // network instead of drifting far away from it
-      let graph = data;
-      if (isDashboard) {
-        const { connected, loose } = splitLoosePeople(data.nodes, data.edges);
-        graph = { nodes: connected, edges: data.edges };
-        setLoosePeople(loose);
+        // On the dashboard, people without any connection are listed below the
+        // network instead of drifting far away from it
+        let graph = data;
+        if (isDashboard) {
+          const { connected, loose } = splitLoosePeople(data.nodes, data.edges);
+          graph = { nodes: connected, edges: data.edges };
+          setLoosePeople(loose);
+        }
+        setGraphPeople(graph.nodes);
+        setGraphEdges(graph.edges);
+        setNetworkSize(graph.nodes.filter((n) => !n.isCenter).length);
+
+        rawCacheRef.current = graph;
+        userMovedViewRef.current = false;
+        recomposeRef.current(graph);
+      } catch {
+        // Offline or a broken response: the graph that is already shown stays
       }
-      setGraphPeople(graph.nodes);
-      setGraphEdges(graph.edges);
-      setNetworkSize(graph.nodes.filter((n) => !n.isCenter).length);
-
-      rawCacheRef.current = graph;
-      userMovedViewRef.current = false;
-      recomposeAndBuildSim(graph);
     };
 
     fetchData();
     return () => { cancelled = true; };
-    // recomposeAndBuildSim intentionally excluded: it depends on bubble state
-    // (expandedBubbles, localGraphMode) which are handled by the Step 5 effect
-    // from the cached raw data — no need to re-fetch.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [apiEndpoint, refreshKey, reloadKey, includeMode, includeGroupIds, excludeGroupIds]);
+    // The bubble state (expandedBubbles, localGraphMode) is handled by the
+    // Step 5 effect from the cached raw data, so it needs no re-fetch.
+  }, [apiEndpoint, refreshKey, reloadKey, includeMode, includeGroupIds, excludeGroupIds, isDashboard]);
 
   // Step 5: Recompose when bubble state changes (mode toggle, expand/collapse)
   useEffect(() => {
@@ -1270,7 +1275,7 @@ export default function UnifiedNetworkGraph({
             );
           })()}
           <button
-            onClick={recenterGraph}
+            onClick={() => fitView(true)}
             className="p-3 bg-surface border border-border rounded-lg hover:bg-surface-elevated transition-colors"
             aria-label={t('recenterGraph')}
             title={t('recenterGraph')}

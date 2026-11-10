@@ -127,6 +127,27 @@ describe('Relationships API', () => {
       expect(body.error).toBe('This relationship already exists');
     });
 
+    it('should only look for duplicates among the current user\'s relationships', async () => {
+      mocks.relationshipFindFirst.mockResolvedValue(null);
+      mocks.personFindUnique.mockResolvedValue(null);
+
+      await POST(
+        new Request('http://localhost/api/relationships', {
+          method: 'POST',
+          body: JSON.stringify({
+            personId: 'person-1',
+            relatedPersonId: 'person-2',
+            relationshipTypeId: 'rel-type-1',
+          }),
+          headers: { 'content-type': 'application/json' },
+        })
+      );
+
+      expect(mocks.relationshipFindFirst).toHaveBeenCalledWith({
+        where: expect.objectContaining({ person: { userId: 'user-123' } }),
+      });
+    });
+
     it('should return 404 when person not found', async () => {
       mocks.relationshipFindFirst.mockResolvedValue(null);
       mocks.personFindUnique.mockResolvedValue(null);

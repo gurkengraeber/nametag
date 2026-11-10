@@ -113,6 +113,33 @@ describe('Bulk Actions API', () => {
       expect(body.affectedCount).toBe(1);
       expect(mocks.personUpdateMany).toHaveBeenCalledTimes(2);
     });
+
+    it('should leave orphans on the CardDAV server when they are kept', async () => {
+      mocks.personFindMany
+        .mockResolvedValueOnce([{ id: 'p1' }]) // the selected people
+        .mockResolvedValueOnce([{ id: 'orphan-1' }]); // the orphans of the selection
+      mocks.personUpdateMany.mockResolvedValue({ count: 1 });
+      mocks.cardDavMappingDeleteMany.mockResolvedValue({ count: 0 });
+      mocks.deleteFromCardDav.mockResolvedValue(undefined);
+
+      const request = new Request('http://localhost/api/people/bulk', {
+        method: 'POST',
+        body: JSON.stringify({
+          action: 'delete',
+          personIds: ['p1'],
+          deleteOrphans: false,
+          orphanIds: ['orphan-1'],
+          deleteFromCardDav: true,
+        }),
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      const response = await POST(request);
+
+      expect(response.status).toBe(200);
+      expect(mocks.deleteFromCardDav).toHaveBeenCalledTimes(1);
+      expect(mocks.deleteFromCardDav).toHaveBeenCalledWith('p1');
+    });
   });
 
   describe('addToGroups action', () => {

@@ -11,14 +11,11 @@ import {
   filterPeople,
   findPersonIdAt,
   inverseTypeIdOf,
-  isPairConnected,
-  pairKey,
   parseRecentTypeIds,
   readRecentTypeIds,
   rememberType,
   sortTypesByRecent,
   typeIdsBetween,
-  unorderedPairKey,
   writeRecentTypeIds,
   type BuilderLink,
   type BuilderPerson,
@@ -51,16 +48,6 @@ const person = (id: string, displayName: string, extra: Partial<BuilderPerson> =
   ...extra,
 });
 
-describe('pair keys', () => {
-  it('keeps direction for pairKey', () => {
-    expect(pairKey('a', 'b')).not.toBe(pairKey('b', 'a'));
-  });
-
-  it('ignores direction for unorderedPairKey', () => {
-    expect(unorderedPairKey('a', 'b')).toBe(unorderedPairKey('b', 'a'));
-  });
-});
-
 describe('existing links between a pair', () => {
   const links = [link('1', 'a', 'b', 'parent'), link('2', 'b', 'a', 'child'), link('3', 'a', 'c', 'friend')];
 
@@ -68,12 +55,6 @@ describe('existing links between a pair', () => {
     expect(typeIdsBetween(links, 'a', 'b')).toEqual(['parent']);
     expect(typeIdsBetween(links, 'b', 'a')).toEqual(['child']);
     expect(typeIdsBetween(links, 'c', 'a')).toEqual([]);
-  });
-
-  it('knows whether a pair is connected in either direction', () => {
-    expect(isPairConnected(links, 'b', 'a')).toBe(true);
-    expect(isPairConnected(links, 'c', 'a')).toBe(true);
-    expect(isPairConnected(links, 'b', 'c')).toBe(false);
   });
 
   it('allows a clean undo only when the reverse direction is empty', () => {

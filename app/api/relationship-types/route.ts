@@ -82,6 +82,17 @@ export const POST = withAuth(async (request, session) => {
       return apiResponse.created({ relationshipType: updatedType });
     }
 
+    // The inverse has to be one of the user's own types
+    if (inverseId) {
+      const inverseType = await prisma.relationshipType.findFirst({
+        where: { id: inverseId, userId: session.user.id, deletedAt: null },
+        select: { id: true },
+      });
+      if (!inverseType) {
+        return apiResponse.notFound('Relationship type not found');
+      }
+    }
+
     let finalInverseId = inverseId || null;
 
     // If inverseLabel is provided (new type to create), create it first

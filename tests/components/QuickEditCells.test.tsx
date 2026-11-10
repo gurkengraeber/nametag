@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { NextIntlClientProvider } from 'next-intl';
 import { RelationshipCell, LastContactCell, LocationCell, toDateInputValue } from '../../components/QuickEditCells';
@@ -96,7 +96,106 @@ describe('RelationshipCell', () => {
   });
 });
 
+describe('quick edit race conditions', () => {
+  const types = [
+    { id: 'rt-1', label: 'Friend', color: null },
+    { id: 'rt-2', label: 'Family', color: null },
+    { id: 'rt-3', label: 'Colleague', color: null },
+  ];
+
+  function deferred() {
+    let resolve!: (ok: boolean) => void;
+    const promise = new Promise<{ ok: boolean; json: () => Promise<unknown> }>((done) => {
+      resolve = (ok) => done({ ok, json: () => Promise.resolve({}) });
+    });
+    return { promise, resolve };
+  }
+
+  it('shows the value the server sends after a refresh', () => {
+    const view = render(
+      <Wrapper>
+        <RelationshipCell personId="p-1" value="rt-1" types={types} />
+      </Wrapper>
+    );
+    expect(screen.getByLabelText('Relationship to User')).toHaveValue('rt-1');
+
+    view.rerender(
+      <Wrapper>
+        <RelationshipCell personId="p-1" value="rt-3" types={types} />
+      </Wrapper>
+    );
+
+    expect(screen.getByLabelText('Relationship to User')).toHaveValue('rt-3');
+  });
+
+  it('keeps a newer choice when an older save fails, and sends the saves in order', async () => {
+    const first = deferred();
+    const second = deferred();
+    fetchMock.mockReset();
+    fetchMock.mockReturnValueOnce(first.promise).mockReturnValueOnce(second.promise);
+    render(
+      <Wrapper>
+        <RelationshipCell personId="p-1" value="rt-1" types={types} />
+      </Wrapper>
+    );
+    const select = screen.getByLabelText('Relationship to User');
+
+    fireEvent.change(select, { target: { value: 'rt-2' } });
+    fireEvent.change(select, { target: { value: 'rt-3' } });
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(1));
+
+    first.resolve(false);
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(2));
+    expect(lastRequest().body).toEqual({ relationshipToUserId: 'rt-3' });
+    expect(select).toHaveValue('rt-3');
+
+    second.resolve(true);
+    await waitFor(() => expect(toastError).toHaveBeenCalledTimes(1));
+    expect(select).toHaveValue('rt-3');
+  });
+
+  it('goes back to the last saved value when the newest save fails', async () => {
+    const first = deferred();
+    const second = deferred();
+    fetchMock.mockReset();
+    fetchMock.mockReturnValueOnce(first.promise).mockReturnValueOnce(second.promise);
+    render(
+      <Wrapper>
+        <RelationshipCell personId="p-1" value="rt-1" types={types} />
+      </Wrapper>
+    );
+    const select = screen.getByLabelText('Relationship to User');
+
+    fireEvent.change(select, { target: { value: 'rt-2' } });
+    fireEvent.change(select, { target: { value: 'rt-3' } });
+    first.resolve(true);
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(2));
+    second.resolve(false);
+
+    await waitFor(() => expect(select).toHaveValue('rt-2'));
+  });
+});
+
 describe('LastContactCell', () => {
+  it('does not save while the year is still being typed', async () => {
+    render(
+      <Wrapper>
+        <LastContactCell personId="p-1" value="2026-08-10" />
+      </Wrapper>
+    );
+    const input = screen.getByLabelText('Last Contact');
+
+    fireEvent.change(input, { target: { value: '0002-08-10' } });
+    fireEvent.change(input, { target: { value: '0020-08-10' } });
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(input).toHaveValue('0020-08-10');
+
+    fireEvent.change(input, { target: { value: '2025-08-10' } });
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(1));
+    expect(lastRequest().body).toEqual({ lastContact: '2025-08-10' });
+  });
+
+
   it('saves a picked date', async () => {
     render(
       <Wrapper>

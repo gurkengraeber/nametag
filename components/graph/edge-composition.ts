@@ -1,4 +1,4 @@
-import type { SimulationEdge, SimulationNode } from './simulation-types';
+import { edgeEndpointId as endpoint, type SimulationEdge, type SimulationNode } from './simulation-types';
 
 export interface BuildEdgesArgs {
   rawEdges: SimulationEdge[];
@@ -35,8 +35,6 @@ export function buildHubAndSpokeEdges(args: BuildEdgesArgs): SimulationEdge[] {
 
   const emitted = new Set<string>();
   const out: SimulationEdge[] = [];
-
-  const endpoint = (v: string | SimulationNode): string => (typeof v === 'string' ? v : v.id);
 
   for (const edge of rawEdges) {
     const srcPerson = endpoint(edge.source);
