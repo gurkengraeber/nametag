@@ -3,6 +3,8 @@ import { render, screen, fireEvent, act } from '@testing-library/react';
 import { NextIntlClientProvider } from 'next-intl';
 import RelationshipManager from '../../components/RelationshipManager';
 import enMessages from '../../locales/en.json';
+import deMessages from '../../locales/de-DE.json';
+import { toast } from 'sonner';
 
 // Mock sonner toast
 vi.mock('sonner', () => ({
@@ -403,6 +405,56 @@ describe('RelationshipManager', () => {
       );
 
       fetchSpy.mockRestore();
+    });
+  });
+
+  describe('translated feedback', () => {
+    const propsWithBob = {
+      ...defaultProps,
+      availablePeople: [{ id: 'person-bob', name: 'Bob', surname: 'Brown', nickname: null }],
+    };
+
+    function renderGerman() {
+      render(
+        <NextIntlClientProvider locale="de-DE" messages={deMessages}>
+          <RelationshipManager {...propsWithBob} />
+        </NextIntlClientProvider>
+      );
+      fireEvent.click(screen.getByText('Beziehung hinzufügen'));
+      act(() => {
+        capturedOnChange?.('person-bob', 'Bob Brown');
+      });
+      return screen.getByTestId('relationship-preview').closest('form') as HTMLFormElement;
+    }
+
+    it('confirms an added relationship in the user language', async () => {
+      vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: true, json: async () => ({}) }));
+      const form = renderGerman();
+      await act(async () => {
+        fireEvent.submit(form);
+      });
+      expect(toast.success).toHaveBeenCalledWith('Beziehung zu Bob Brown wurde hinzugefügt');
+      vi.unstubAllGlobals();
+    });
+
+    it('shows the connection error in the user language', async () => {
+      vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('offline')));
+      const form = renderGerman();
+      await act(async () => {
+        fireEvent.submit(form);
+      });
+      expect(screen.getByText(deMessages.people.connectionError)).toBeInTheDocument();
+      vi.unstubAllGlobals();
+    });
+
+    it('falls back to a translated message when the server sends no error text', async () => {
+      vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, json: async () => ({}) }));
+      const form = renderGerman();
+      await act(async () => {
+        fireEvent.submit(form);
+      });
+      expect(screen.getByText('Beziehung konnte nicht angelegt werden')).toBeInTheDocument();
+      vi.unstubAllGlobals();
     });
   });
 });

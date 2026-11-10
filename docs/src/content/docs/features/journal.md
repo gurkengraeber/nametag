@@ -43,7 +43,7 @@ Three filters, usable together:
 
 - **By person**: select one or more people to narrow the list. This uses AND logic, so if you select two people, only entries that mention both of them appear, not entries mentioning either one
 - **By text search**: searches both the title and the body of your entries. Results update as you type, and the matching words are highlighted
-- **By time range**: one tap for the last 7 days, the last 30 days or this year. The range is kept in the address (`from` and `to`), so a filtered view can be bookmarked
+- **By time range**: one tap for the last 7 days, the last 30 days or this year. Entries with a time of day are matched by the day in your own time zone. The range is kept in the address (`from`, `to` and `tz`), so a filtered view can be bookmarked
 
 When a filter is active the list shows how many entries match and a link to clear the filters. If nothing matches, you get a button to clear the filters and one to write an entry (with the filtered people already tagged). **Add new entry** also carries the filtered people along.
 

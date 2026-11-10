@@ -18,6 +18,7 @@ export const GET = withAuth(async (request, session) => {
       search: url.searchParams.get('q'),
       from: url.searchParams.get('from'),
       to: url.searchParams.get('to'),
+      timeZone: url.searchParams.get('tz'),
     });
 
     const [entries, totalCount] = await Promise.all([

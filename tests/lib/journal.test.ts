@@ -11,6 +11,7 @@ import {
   getRangePresets,
   parsePersonIds,
   buildJournalWhere,
+  startOfDayInZone,
   recentPersonIds,
   parseDraft,
   readDraft,
@@ -205,6 +206,68 @@ describe('buildJournalWhere', () => {
       gte: new Date('2026-03-01T00:00:00.000Z'),
     });
     expect(buildJournalWhere({ userId: 'u1', from: 'nope', to: '2026-13-01' }).date).toBeUndefined();
+  });
+});
+
+describe('startOfDayInZone', () => {
+  it('finds local midnight across offsets and daylight saving', () => {
+    expect(startOfDayInZone('2026-03-01', 'Europe/Berlin')).toEqual(new Date('2026-02-28T23:00:00.000Z'));
+    expect(startOfDayInZone('2026-07-01', 'Europe/Berlin')).toEqual(new Date('2026-06-30T22:00:00.000Z'));
+    expect(startOfDayInZone('2026-03-30', 'Europe/Berlin')).toEqual(new Date('2026-03-29T22:00:00.000Z'));
+    expect(startOfDayInZone('2026-03-01', 'America/New_York')).toEqual(new Date('2026-03-01T05:00:00.000Z'));
+    expect(startOfDayInZone('2026-03-01', 'UTC')).toEqual(new Date('2026-03-01T00:00:00.000Z'));
+  });
+
+  it('returns null for an unknown zone', () => {
+    expect(startOfDayInZone('2026-03-01', 'Nowhere/Land')).toBeNull();
+  });
+});
+
+describe('buildJournalWhere with a time zone', () => {
+  it('compares entries with a time as local days and entries without as UTC days', () => {
+    const where = buildJournalWhere({
+      userId: 'u1',
+      from: '2026-03-01',
+      to: '2026-03-31',
+      timeZone: 'Europe/Berlin',
+    });
+    expect(where.date).toBeUndefined();
+    expect(where.AND).toEqual([
+      {
+        OR: [
+          {
+            hasTime: false,
+            date: {
+              gte: new Date('2026-03-01T00:00:00.000Z'),
+              lt: new Date('2026-04-01T00:00:00.000Z'),
+            },
+          },
+          {
+            hasTime: true,
+            date: {
+              gte: new Date('2026-02-28T23:00:00.000Z'),
+              lt: new Date('2026-03-31T22:00:00.000Z'),
+            },
+          },
+        ],
+      },
+    ]);
+  });
+
+  it('keeps the person filters next to the day range', () => {
+    const where = buildJournalWhere({
+      userId: 'u1',
+      personIds: ['p1'],
+      from: '2026-03-01',
+      timeZone: 'Asia/Tokyo',
+    });
+    expect(where.AND).toHaveLength(2);
+  });
+
+  it('falls back to UTC days for an unknown zone and ignores a zone without a range', () => {
+    const utc = buildJournalWhere({ userId: 'u1', from: '2026-03-01', to: '2026-03-31' });
+    expect(buildJournalWhere({ userId: 'u1', from: '2026-03-01', to: '2026-03-31', timeZone: 'Nowhere/Land' })).toEqual(utc);
+    expect(buildJournalWhere({ userId: 'u1', timeZone: 'Europe/Berlin' })).toEqual({ userId: 'u1', deletedAt: null });
   });
 });
 

@@ -26,12 +26,13 @@ import { getCachedPhoto, loadPhoto } from './graph/photo-cache';
 import { buildQuadtree, findNodeAtPoint, type NodeQuadtree } from './graph/hit-test';
 import { diffSimulationData } from './graph/diff-simulation';
 import { resolveGraphMode } from './graph/mode-resolution';
+import { useFocusTrap } from '@/hooks/useFocusTrap';
 import { buildSimulationNodes, type RawGraphPerson } from './graph/bubble-composition';
 import { buildHubAndSpokeEdges } from './graph/edge-composition';
 import { UNGROUPED_SYNTHETIC_ID, edgeEndpointId } from './graph/simulation-types';
 import type { SimulationNode, SimulationEdge } from './graph/simulation-types';
 
-// Props interface — unchanged from pre-rewrite file
+// Props interface, unchanged from pre-rewrite file
 interface Group { id: string; name: string; color: string | null; }
 type IncludeMode = 'or' | 'and';
 type GroupFilterItem = { id: string; label: string; color: string | null; isNegative: boolean; };
@@ -64,6 +65,7 @@ export default function UnifiedNetworkGraph({
   const t = useTranslations('dashboard.graph');
   const tPeople = useTranslations('people');
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const rootRef = useRef<HTMLDivElement>(null);
   const canvasWrapRef = useRef<HTMLDivElement>(null);
   const looseSectionRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
@@ -508,7 +510,7 @@ export default function UnifiedNetworkGraph({
     return sim;
   }, [isMobile, linkDistance, chargeStrength, requestPaint]);
 
-  // Step 3: Composition helper — recomposes sim data from raw cache
+  // Step 3: Composition helper, recomposes sim data from raw cache
   const recomposeAndBuildSim = useCallback((raw: { nodes: RawGraphPerson[]; edges: SimulationEdge[] }) => {
     // The API labels the signed-in user's node with a fixed English "You"
     // (user node ids are prefixed "user-"), so translate it here.
@@ -517,7 +519,7 @@ export default function UnifiedNetworkGraph({
       n.id.startsWith('user-') ? { ...n, label: youLabel } : n,
     );
 
-    // If no groups prop, we're not on the dashboard — skip bubble logic.
+    // If no groups prop, we're not on the dashboard, skip bubble logic.
     const peopleInView = raw.nodes.filter((n) => !n.isCenter).length;
     const resolvedMode = groups ? resolveGraphMode(localGraphMode, peopleInView) : 'individuals';
 
@@ -561,7 +563,7 @@ export default function UnifiedNetworkGraph({
     // d3-force's forceLink mutates each edge's source/target from string ids
     // to node-object references on the first sim build. If we reused those
     // mutated edges on a later rebuild, forceLink would keep the stale refs
-    // (it skips resolution when source/target is already an object) — so the
+    // (it skips resolution when source/target is already an object), so the
     // new simulation would move new node objects while edges still drew
     // between the previous sim's node objects, leaving the visible
     // disconnect from #240. Clone edges with string ids each time.
@@ -744,6 +746,13 @@ export default function UnifiedNetworkGraph({
       }
     };
 
+    const onLeave = () => {
+      if (hoveredNodeIdRef.current === null) return;
+      hoveredNodeIdRef.current = null;
+      canvas.style.cursor = 'default';
+      requestPaint();
+    };
+
     const handleNodeActivate = (node: SimulationNode) => {
       if (node.kind === 'bubble') {
         // Collapse is instant.
@@ -882,10 +891,12 @@ export default function UnifiedNetworkGraph({
     };
 
     canvas.addEventListener('mousemove', onMove);
+    canvas.addEventListener('mouseleave', onLeave);
     canvas.addEventListener('touchend', onTapEmpty);
 
     return () => {
       canvas.removeEventListener('mousemove', onMove);
+      canvas.removeEventListener('mouseleave', onLeave);
       canvas.removeEventListener('touchend', onTapEmpty);
       select(canvas).on('.zoom', null);
       select(canvas).on('.drag', null);
@@ -917,6 +928,9 @@ export default function UnifiedNetworkGraph({
       observer.disconnect();
     };
   }, [compact, isFullscreen]);
+
+  // Full screen is a modal dialog: focus moves in, stays in and returns to the button
+  useFocusTrap(rootRef, isFullscreen);
 
   // Full screen: no page scrolling behind it, Escape closes the legend first
   // and then the full screen view
@@ -976,6 +990,7 @@ export default function UnifiedNetworkGraph({
 
   return (
     <div
+      ref={rootRef}
       className={
         isFullscreen
           ? 'fixed inset-0 z-[60] flex flex-col bg-background p-3 sm:p-4 pt-[max(0.75rem,env(safe-area-inset-top))] pb-[max(0.75rem,env(safe-area-inset-bottom))]'
@@ -1232,7 +1247,7 @@ export default function UnifiedNetworkGraph({
                         body: JSON.stringify({ graphMode: next }),
                       });
                     } catch {
-                      // Silent fail — local state is source of truth until next page load.
+                      // Silent fail, local state is source of truth until next page load.
                     }
                   }}
                   className={`p-3 border rounded-lg transition-colors ${

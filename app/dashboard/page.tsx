@@ -9,6 +9,7 @@ import GraphFilterHelpModal from '@/components/GraphFilterHelpModal';
 import { formatDate, formatDateWithoutYear } from '@/lib/date-format';
 import { getUpcomingEvents } from '@/lib/upcoming-events';
 import { getTranslations } from 'next-intl/server';
+import DashboardGreeting from '@/components/DashboardGreeting';
 import DashboardUpcomingEvents, { type DashboardEventItem } from '@/components/DashboardUpcomingEvents';
 import { getUserDisplayPreferences } from '@/lib/user-preferences';
 
@@ -33,10 +34,6 @@ export default async function DashboardPage() {
       where: { userId: session.user.id, deletedAt: null },
     }),
   ]);
-
-  // Time-of-day greeting
-  const hour = new Date().getHours();
-  const greetingKey = hour < 12 ? 'greetingMorning' : hour < 18 ? 'greetingAfternoon' : 'greetingEvening';
 
   // Helper function to format days until
   const formatDaysUntil = (days: number): string => {
@@ -80,7 +77,7 @@ export default async function DashboardPage() {
         {/* Greeting and key figures in one slim row, so the network fits on the first screen */}
         <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <h1 className="text-xl sm:text-2xl font-bold text-foreground">
-            {t(greetingKey, { name: session.user.nickname || session.user.name || '' })}
+            <DashboardGreeting name={session.user.nickname || session.user.name || ''} />
           </h1>
           {peopleCount > 0 && (
             <nav aria-label={t('stats.ariaLabel')} className="flex flex-wrap gap-2">

@@ -109,7 +109,7 @@ export default function RelationshipManager({
         const selectedType = relationshipTypes.find(rt => rt.id === formData.relationshipTypeId);
 
         if (!selectedType) {
-          setError('Cannot create this relationship: no relationship type selected');
+          setError(t('relationshipNoTypeSelected'));
           setIsLoading(false);
           return;
         }
@@ -129,12 +129,12 @@ export default function RelationshipManager({
         const data = await response.json();
 
         if (!response.ok) {
-          setError(data.error || 'Failed to create relationship');
+          setError(data.error || t('relationshipCreateFailed'));
           setIsLoading(false);
           return;
         }
 
-        toast.success(`Relationship with you has been added`);
+        toast.success(t('relationshipAddedWithYou'));
         setShowAddModal(false);
         setFormData({ relatedPersonId: '', relationshipTypeId: defaultTypeId, notes: '' });
         router.refresh();
@@ -159,20 +159,20 @@ export default function RelationshipManager({
       const data = await response.json();
 
       if (!response.ok) {
-        setError(data.error || 'Failed to create relationship');
+        setError(data.error || t('relationshipCreateFailed'));
         setIsLoading(false);
         return;
       }
 
       const relatedPerson = peopleWithUser.find(p => p.id === formData.relatedPersonId);
-      toast.success(`Relationship with ${formatGraphName(relatedPerson!, nameOrder, nameDisplayFormat)} has been added`);
+      toast.success(t('relationshipAddedNamed', { name: formatGraphName(relatedPerson!, nameOrder, nameDisplayFormat) }));
 
       setShowAddModal(false);
       setFormData({ relatedPersonId: '', relationshipTypeId: defaultTypeId, notes: '' });
       router.refresh();
       refreshIndex();
     } catch (_error) {
-      setError('Unable to connect to server. Please check your connection and try again.');
+      setError(t('connectionError'));
     } finally {
       setIsLoading(false);
     }
@@ -198,19 +198,19 @@ export default function RelationshipManager({
       const data = await response.json();
 
       if (!response.ok) {
-        setError(data.error || 'Failed to update relationship');
+        setError(data.error || t('relationshipUpdateFailed'));
         setIsLoading(false);
         return;
       }
 
-      toast.success(`Relationship with ${formatGraphName(selectedRelationship.person, nameOrder, nameDisplayFormat)} has been updated`);
+      toast.success(t('relationshipUpdatedNamed', { name: formatGraphName(selectedRelationship.person, nameOrder, nameDisplayFormat) }));
 
       setShowEditModal(false);
       setSelectedRelationship(null);
       router.refresh();
       refreshIndex();
     } catch (_error) {
-      setError('Unable to connect to server. Please check your connection and try again.');
+      setError(t('connectionError'));
     } finally {
       setIsLoading(false);
     }
@@ -229,7 +229,7 @@ export default function RelationshipManager({
 
       if (!response.ok) {
         const data = await response.json();
-        setError(data.error || 'Failed to delete relationship. Please try again.');
+        setError(data.error || t('relationshipDeleteFailed'));
         return;
       }
 
@@ -238,7 +238,7 @@ export default function RelationshipManager({
       router.refresh();
       refreshIndex();
     } catch (_error) {
-      setError('Unable to connect to server. Please check your connection and try again.');
+      setError(t('connectionError'));
     } finally {
       setIsLoading(false);
     }

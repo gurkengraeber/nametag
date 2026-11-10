@@ -85,6 +85,8 @@ export default function JournalFilters({
     if (next.search) url.searchParams.set('q', next.search);
     if (next.from) url.searchParams.set('from', next.from);
     if (next.to) url.searchParams.set('to', next.to);
+    // Entries with a time of day are compared as days of the viewer's zone.
+    if (next.from || next.to) url.searchParams.set('tz', Intl.DateTimeFormat().resolvedOptions().timeZone);
     const href = url.pathname + url.search;
     if (replace) {
       router.replace(href);

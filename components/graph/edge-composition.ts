@@ -45,7 +45,7 @@ export function buildHubAndSpokeEdges(args: BuildEdgesArgs): SimulationEdge[] {
     const srcIsBubble = srcSim.startsWith('bubble:');
     const tgtIsBubble = tgtSim.startsWith('bubble:');
 
-    // Hide edges where both endpoints collapse into bubbles — too noisy.
+    // Hide edges where both endpoints collapse into bubbles, too noisy.
     if (srcIsBubble && tgtIsBubble) continue;
 
     const isAggregated = srcIsBubble || tgtIsBubble;

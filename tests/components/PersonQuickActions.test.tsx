@@ -133,6 +133,25 @@ describe('PersonQuickActions', () => {
     expect(screen.queryByLabelText('New note')).not.toBeInTheDocument();
   });
 
+  it('builds a second note on the first one while the page still has the old notes', async () => {
+    const user = userEvent.setup();
+    renderIt();
+
+    for (const text of ['Moved to Hamburg', 'Started chess']) {
+      await user.click(screen.getByRole('button', { name: 'Add note' }));
+      await user.type(screen.getByLabelText('New note'), text);
+      await user.click(screen.getByRole('button', { name: 'Add to notes' }));
+      await waitFor(() => expect(screen.queryByLabelText('New note')).not.toBeInTheDocument());
+    }
+
+    expect(global.fetch).toHaveBeenLastCalledWith(
+      '/api/people/p-1',
+      expect.objectContaining({
+        body: JSON.stringify({ notes: 'Likes tea\n\nMoved to Hamburg\n\nStarted chess' }),
+      })
+    );
+  });
+
   it('does not send an empty note', async () => {
     const user = userEvent.setup();
     renderIt();
