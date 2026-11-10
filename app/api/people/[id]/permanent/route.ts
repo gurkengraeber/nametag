@@ -1,6 +1,7 @@
 import { prismaIncludingDeleted } from '@/lib/prisma';
 import { apiResponse, handleApiError, withAuth } from '@/lib/api-utils';
 import { requireTrashedRecord } from '@/lib/api/trash-guards';
+import { withDeadlockRetry } from '@/lib/db/deadlock';
 import { deletePersonPhotos } from '@/lib/photo-storage';
 
 // DELETE /api/people/[id]/permanent - Permanently delete a trashed person
@@ -20,7 +21,7 @@ export const DELETE = withAuth(async (_request, session, context) => {
     // One transaction: a failure part way must not leave a half-emptied person
     // in the trash. Child records go first, in foreign key order.
     const db = prismaIncludingDeleted;
-    await db.$transaction([
+    await withDeadlockRetry(() => db.$transaction([
       db.journalEntryPerson.deleteMany({ where: { personId: id } }),
       db.duplicateDismissal.deleteMany({ where: { OR: [{ personAId: id }, { personBId: id }] } }),
       db.cardDavMapping.deleteMany({ where: { personId: id } }),
@@ -36,7 +37,7 @@ export const DELETE = withAuth(async (_request, session, context) => {
       db.relationship.deleteMany({ where: { OR: [{ personId: id }, { relatedPersonId: id }] } }),
       db.personGroup.deleteMany({ where: { personId: id } }),
       db.person.delete({ where: { id } }),
-    ]);
+    ]));
 
     // Photo files last: they cannot be rolled back
     await deletePersonPhotos(session.user.id, id);
