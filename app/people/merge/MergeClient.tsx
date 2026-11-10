@@ -35,12 +35,15 @@ function MergePageContent() {
       return;
     }
 
+    let cancelled = false;
+
     async function fetchPeople() {
       try {
         const [loadedA, loadedB] = await Promise.all([
           fetchPersonForCompare(primaryParam as string),
           fetchPersonForCompare(secondaryParam as string),
         ]);
+        if (cancelled) return;
 
         if (!loadedA || !loadedB) {
           setError(t('personNotFound'));
@@ -51,13 +54,16 @@ function MergePageContent() {
         setPersonA(loadedA);
         setPersonB(loadedB);
       } catch {
-        setError(t('error'));
+        if (!cancelled) setError(t('error'));
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     }
 
     fetchPeople();
+    return () => {
+      cancelled = true;
+    };
   }, [primaryParam, secondaryParam, t]);
 
   const handleSelectionsChange = useCallback(

@@ -40,7 +40,7 @@ export function mapApiPersonToCompare(apiPerson: ApiPersonForCompare): PersonFor
 
 /** Load one contact for comparison. Resolves to null when it cannot be loaded. */
 export async function fetchPersonForCompare(id: string): Promise<PersonForCompare | null> {
-  const res = await fetch(`/api/people/${id}`);
+  const res = await fetch(`/api/people/${encodeURIComponent(id)}`);
   if (!res.ok) return null;
   const data: { person: ApiPersonForCompare } = await res.json();
   return mapApiPersonToCompare(data.person);
