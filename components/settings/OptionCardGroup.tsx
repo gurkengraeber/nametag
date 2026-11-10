@@ -1,6 +1,6 @@
 'use client';
 
-import type { ReactNode } from 'react';
+import { useRef, type KeyboardEvent, type ReactNode } from 'react';
 
 export interface OptionCardOption<T extends string> {
   value: T;
@@ -24,7 +24,8 @@ interface OptionCardGroupProps<T extends string> {
 /**
  * A group of mutually exclusive choices drawn as bordered cards, the pattern
  * the appearance settings already used. Exposed as a radio group so screen
- * readers and the keyboard treat it as one choice.
+ * readers and the keyboard treat it as one choice: Tab enters the group on the
+ * selected card and the arrow keys move the choice.
  */
 export default function OptionCardGroup<T extends string>({
   label,
@@ -34,20 +35,47 @@ export default function OptionCardGroup<T extends string>({
   disabled = false,
   columns = 1,
 }: OptionCardGroupProps<T>) {
+  const buttonRefs = useRef<Array<HTMLButtonElement | null>>([]);
+
+  function handleKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
+    const step =
+      event.key === 'ArrowRight' || event.key === 'ArrowDown'
+        ? 1
+        : event.key === 'ArrowLeft' || event.key === 'ArrowUp'
+          ? -1
+          : 0;
+    if (step === 0) return;
+    event.preventDefault();
+    const next = (index + step + options.length) % options.length;
+    onChange(options[next].value);
+    buttonRefs.current[next]?.focus();
+  }
+
+  // Only one card is a tab stop: the selected one, or the first when none is.
+  const tabStopIndex = Math.max(
+    0,
+    options.findIndex((option) => option.value === value)
+  );
+
   return (
     <div
       role="radiogroup"
       aria-label={label}
       className={columns === 2 ? 'grid grid-cols-1 sm:grid-cols-2 gap-3' : 'space-y-3'}
     >
-      {options.map((option) => {
+      {options.map((option, index) => {
         const selected = option.value === value;
         return (
           <button
             key={option.value}
+            ref={(el) => {
+              buttonRefs.current[index] = el;
+            }}
             type="button"
             role="radio"
             aria-checked={selected}
+            tabIndex={index === tabStopIndex ? 0 : -1}
+            onKeyDown={(event) => handleKeyDown(event, index)}
             disabled={disabled}
             onClick={() => {
               if (!selected) onChange(option.value);
