@@ -128,6 +128,8 @@ export default function UnifiedNetworkGraph({
   }, [isFullscreen]);
   useEffect(() => () => {
     if (zoomHintTimerRef.current !== null) window.clearTimeout(zoomHintTimerRef.current);
+    // The layout keeps ticking on its own timer until it is stopped
+    simRef.current?.stop();
   }, []);
 
   // Ungrouped label for bubble composition
@@ -614,6 +616,14 @@ export default function UnifiedNetworkGraph({
     includeGroupIds, ungroupedLabel, buildSimulation, tPeople, fitView, applyFocus, compact,
   ]);
 
+  // The fetch below finishes long after the render that started it, so it must
+  // call the newest composer (mobile layout, current bubble state), not the one
+  // from that render
+  const recomposeRef = useRef(recomposeAndBuildSim);
+  useEffect(() => {
+    recomposeRef.current = recomposeAndBuildSim;
+  });
+
   // Step 4: Data-fetch effect
   useEffect(() => {
     if (!canvasRef.current || !apiEndpoint) return;
@@ -626,36 +636,38 @@ export default function UnifiedNetworkGraph({
       if (includeGroupIds.length > 0) url.searchParams.set('includeGroupIds', includeGroupIds.join(','));
       if (excludeGroupIds.length > 0) url.searchParams.set('excludeGroupIds', excludeGroupIds.join(','));
 
-      const response = await fetch(url.toString());
-      if (!response.ok) return;
-      const data = await response.json() as { nodes: RawGraphPerson[]; edges: SimulationEdge[] };
+      try {
+        const response = await fetch(url.toString());
+        if (!response.ok) return;
+        const data = await response.json() as { nodes: RawGraphPerson[]; edges: SimulationEdge[] };
 
-      if (cancelled) return;
+        if (cancelled) return;
 
-      // On the dashboard, people without any connection are listed below the
-      // network instead of drifting far away from it
-      let graph = data;
-      if (isDashboard) {
-        const { connected, loose } = splitLoosePeople(data.nodes, data.edges);
-        graph = { nodes: connected, edges: data.edges };
-        setLoosePeople(loose);
+        // On the dashboard, people without any connection are listed below the
+        // network instead of drifting far away from it
+        let graph = data;
+        if (isDashboard) {
+          const { connected, loose } = splitLoosePeople(data.nodes, data.edges);
+          graph = { nodes: connected, edges: data.edges };
+          setLoosePeople(loose);
+        }
+        setGraphPeople(graph.nodes);
+        setGraphEdges(graph.edges);
+        setNetworkSize(graph.nodes.filter((n) => !n.isCenter).length);
+
+        rawCacheRef.current = graph;
+        userMovedViewRef.current = false;
+        recomposeRef.current(graph);
+      } catch {
+        // Offline or a broken response: the graph that is already shown stays
       }
-      setGraphPeople(graph.nodes);
-      setGraphEdges(graph.edges);
-      setNetworkSize(graph.nodes.filter((n) => !n.isCenter).length);
-
-      rawCacheRef.current = graph;
-      userMovedViewRef.current = false;
-      recomposeAndBuildSim(graph);
     };
 
     fetchData();
     return () => { cancelled = true; };
-    // recomposeAndBuildSim intentionally excluded: it depends on bubble state
-    // (expandedBubbles, localGraphMode) which are handled by the Step 5 effect
-    // from the cached raw data — no need to re-fetch.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [apiEndpoint, refreshKey, reloadKey, includeMode, includeGroupIds, excludeGroupIds]);
+    // The bubble state (expandedBubbles, localGraphMode) is handled by the
+    // Step 5 effect from the cached raw data, so it needs no re-fetch.
+  }, [apiEndpoint, refreshKey, reloadKey, includeMode, includeGroupIds, excludeGroupIds, isDashboard]);
 
   // Step 5: Recompose when bubble state changes (mode toggle, expand/collapse)
   useEffect(() => {
