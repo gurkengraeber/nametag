@@ -41,15 +41,22 @@ export default async function ExportPage() {
       deletedAt: null,
       cardDavMapping: null,
     },
-    include: {
+    // Only what the list shows and searches: a full person row carries notes
+    // and photo data, which adds up to a lot for a large address book.
+    select: {
+      id: true,
+      name: true,
+      surname: true,
+      nickname: true,
+      displayNameOverride: true,
+      organization: true,
+      jobTitle: true,
       groups: {
         where: { group: { deletedAt: null } },
-        include: {
-          group: true,
-        },
+        select: { group: { select: { id: true, name: true, color: true } } },
       },
-      phoneNumbers: true,
-      emails: true,
+      phoneNumbers: { select: { type: true, number: true } },
+      emails: { select: { type: true, email: true } },
     },
     orderBy: {
       name: 'asc',

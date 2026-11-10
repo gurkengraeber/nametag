@@ -7,6 +7,14 @@
 export const IMPORT_BATCH_SIZE = 25;
 export const EXPORT_BATCH_SIZE = 25;
 
+/** A failed batch whose message is meant for the person, unlike a browser's "Failed to fetch". */
+export class BatchRequestError extends Error {}
+
+/** The text to show for a failed batch: our own message, or the fallback for anything else. */
+export function batchErrorMessage(error: unknown, fallback: string): string {
+  return error instanceof BatchRequestError ? error.message : fallback;
+}
+
 export interface ImportOptions {
   globalGroupIds: string[];
   globalRelationshipTypeId: string;

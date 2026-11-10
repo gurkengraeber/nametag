@@ -14,7 +14,9 @@ import StepIndicator from '@/components/carddav/StepIndicator';
 import { useSearchIndex } from '@/components/SearchIndexProvider';
 import {
   IMPORT_BATCH_SIZE,
+  BatchRequestError,
   addImportResult,
+  batchErrorMessage,
   buildImportBody,
   emptyImportTotals,
   type ImportTotals,
@@ -60,8 +62,6 @@ interface ImportContactsListProps {
 
 type Step = 'choose' | 'assign' | 'importing' | 'done';
 type Filter = 'all' | 'new' | 'existing';
-
-class ImportRequestError extends Error {}
 
 export default function ImportContactsList({
   pendingImports,
@@ -267,14 +267,14 @@ export default function ImportContactsList({
         if (!response.ok) {
           const body = (data ?? {}) as { error?: string; code?: string; params?: { available?: number; requested?: number } };
           if (response.status === 403 && body.code === 'plan_limit_reached') {
-            throw new ImportRequestError(
+            throw new BatchRequestError(
               t('importLimitExceeded', {
                 available: body.params?.available ?? 0,
                 requested: body.params?.requested ?? 0,
               })
             );
           }
-          throw new ImportRequestError(body.error || t('importFailed'));
+          throw new BatchRequestError(body.error || t('importFailed'));
         }
         running = addImportResult(running, data);
         setTotals(running);
@@ -286,7 +286,7 @@ export default function ImportContactsList({
     refreshIndex();
     setNotProcessed(ids.length - run.processed);
     if (run.error) {
-      setError(run.error instanceof Error ? run.error.message : t('importFailed'));
+      setError(batchErrorMessage(run.error, t('importFailed')));
     }
     setStep('done');
     window.scrollTo({ top: 0, behavior: 'smooth' });

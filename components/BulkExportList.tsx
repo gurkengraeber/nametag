@@ -9,7 +9,9 @@ import ListToolbar from '@/components/carddav/ListToolbar';
 import ResultSummary from '@/components/carddav/ResultSummary';
 import {
   EXPORT_BATCH_SIZE,
+  BatchRequestError,
   addExportResult,
+  batchErrorMessage,
   emptyExportTotals,
   type ExportTotals,
 } from '@/lib/carddav-ui/import-batch';
@@ -115,7 +117,7 @@ export default function BulkExportList({ people }: BulkExportListProps) {
         const data: unknown = await response.json().catch(() => ({}));
         if (!response.ok) {
           const body = (data ?? {}) as { error?: string; code?: string };
-          throw new Error(body.code === 'feature_disabled' ? t('syncDisabled') : body.error || t('exportFailed'));
+          throw new BatchRequestError(body.code === 'feature_disabled' ? t('syncDisabled') : body.error || t('exportFailed'));
         }
         running = addExportResult(running, data);
         setTotals(running);
@@ -126,7 +128,7 @@ export default function BulkExportList({ people }: BulkExportListProps) {
 
     setNotSent(ids.length - run.processed);
     if (run.error) {
-      setError(run.error instanceof Error ? run.error.message : t('exportFailed'));
+      setError(batchErrorMessage(run.error, t('exportFailed')));
     }
     setPhase('done');
   };

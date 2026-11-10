@@ -1,5 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import {
+  BatchRequestError,
+  batchErrorMessage,
   buildImportBody,
   addImportResult,
   emptyImportTotals,
@@ -75,5 +77,13 @@ describe('addExportResult', () => {
       { exported: 2, skipped: 0, errors: 1, errorMessages: ['Failed to export Grace'] },
     );
     expect(totals).toEqual({ exported: 6, skipped: 1, errors: 1, errorMessages: ['Failed to export Grace'] });
+  });
+});
+
+describe('batchErrorMessage', () => {
+  it('shows our own messages and hides the browser wording', () => {
+    expect(batchErrorMessage(new BatchRequestError('Plan limit reached'), 'Failed')).toBe('Plan limit reached');
+    expect(batchErrorMessage(new TypeError('Failed to fetch'), 'Import failed')).toBe('Import failed');
+    expect(batchErrorMessage('boom', 'Import failed')).toBe('Import failed');
   });
 });

@@ -227,6 +227,18 @@ describe('ImportContactsList', () => {
       expect(screen.getByText('statImported').parentElement?.textContent).toContain('25');
     });
 
+    it('explains a lost connection in our own words instead of the browser message', async () => {
+      fetchMock.mockRejectedValueOnce(new TypeError('Failed to fetch'));
+      renderList();
+      fireEvent.click(rowCheckbox('Ada Example'));
+      fireEvent.click(screen.getByRole('button', { name: /continueWith/ }));
+      fireEvent.click(screen.getByRole('button', { name: /importSelected/ }));
+
+      await waitFor(() => screen.getByText('importFailed'));
+      expect(screen.queryByText('Failed to fetch')).toBeNull();
+      expect(screen.getByText(/notProcessed/)).toBeDefined();
+    });
+
     it('lists the per contact error messages', async () => {
       fetchMock.mockResolvedValueOnce({
         ok: true,
