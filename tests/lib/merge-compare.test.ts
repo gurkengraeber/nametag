@@ -4,6 +4,7 @@ import {
   compareScalarFields,
   compareRelationshipToUser,
   countNonEmptyFields,
+  formatFieldValue,
   getScalarValue,
   isSecondarySelected,
   pickInitialPrimaryId,
@@ -52,6 +53,38 @@ describe('getScalarValue', () => {
     expect(
       getScalarValue(makePerson({ lastContact: new Date('2024-03-05T00:00:00.000Z') }), 'lastContact')
     ).toBe('2024-03-05');
+  });
+});
+
+describe('dates from the API', () => {
+  it('cuts timestamps to the day, which is all the merge request accepts', () => {
+    const person = makePerson({ anniversary: '2020-06-01T00:00:00.000Z', lastContact: '2024-03-05T14:30:00.000Z' });
+    expect(getScalarValue(person, 'anniversary')).toBe('2020-06-01');
+    expect(getScalarValue(person, 'lastContact')).toBe('2024-03-05');
+  });
+
+  it('does not report two timestamps of the same day as a conflict', () => {
+    const a = makePerson({ id: 'a', lastContact: '2024-03-05T00:00:00.000Z' });
+    const b = makePerson({ id: 'b', lastContact: '2024-03-05T09:15:00.000Z' });
+    expect(compareScalarFields(a, b).find((f) => f.key === 'lastContact')?.status).toBe('same');
+  });
+
+  it('sends the chosen date to the merge as a plain day', () => {
+    const primary = makePerson({ id: 'a', anniversary: '2020-06-01T00:00:00.000Z', updatedAt: '2024-01-01T00:00:00.000Z' });
+    const secondary = makePerson({ id: 'b', anniversary: '2021-07-02T00:00:00.000Z', updatedAt: '2025-01-01T00:00:00.000Z' });
+    expect(buildDefaultOverrides(primary, secondary)).toEqual({ anniversary: '2021-07-02' });
+  });
+
+  it('shows the stored day west of UTC instead of the day before', () => {
+    const previous = process.env.TZ;
+    process.env.TZ = 'America/Los_Angeles';
+    try {
+      expect(formatFieldValue('2024-03-05', 'lastContact')).toBe(new Date(2024, 2, 5).toLocaleDateString());
+      expect(formatFieldValue('2024-03-05', 'lastContact')).toContain('5');
+    } finally {
+      if (previous === undefined) delete process.env.TZ;
+      else process.env.TZ = previous;
+    }
   });
 });
 

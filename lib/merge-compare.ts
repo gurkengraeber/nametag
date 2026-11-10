@@ -105,6 +105,13 @@ export function formatPersonLabel(person: { name: string; surname: string | null
   return [person.name, person.surname].filter(Boolean).join(' ');
 }
 
+const DATE_KEYS: ReadonlySet<ScalarFieldKey> = new Set(['anniversary', 'lastContact']);
+
+/**
+ * The value as text. Dates are cut to the day: the API sends full timestamps,
+ * but the merge request only accepts YYYY-MM-DD and two timestamps for the
+ * same day must not count as a conflict.
+ */
 export function getScalarValue(
   person: PersonForCompare,
   key: ScalarFieldKey
@@ -115,6 +122,9 @@ export function getScalarValue(
     return raw.toISOString().split('T')[0];
   }
   if (typeof raw === 'string' && raw.trim() === '') return null;
+  if (DATE_KEYS.has(key) && /^\d{4}-\d{2}-\d{2}T/.test(String(raw))) {
+    return String(raw).slice(0, 10);
+  }
   return String(raw);
 }
 
@@ -125,7 +135,9 @@ export function formatFieldValue(value: string | null, key: ScalarFieldKey): str
     (key === 'anniversary' || key === 'lastContact') &&
     /^\d{4}-\d{2}-\d{2}/.test(value)
   ) {
-    const date = new Date(value);
+    // Built from the parts so the day does not slip back west of UTC
+    const [year, month, day] = value.slice(0, 10).split('-').map(Number);
+    const date = new Date(year, month - 1, day);
     return Number.isNaN(date.getTime()) ? value : date.toLocaleDateString();
   }
   return value;
