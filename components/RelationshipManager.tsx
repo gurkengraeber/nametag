@@ -269,36 +269,29 @@ export default function RelationshipManager({
     router.push(`/people/new?${params.toString()}`);
   };
 
-  const renderRelationship = (rel: Relationship, grouped: boolean) => (
+  const renderRelationship = (rel: Relationship, grouped: boolean) => {
+    const name = formatGraphName(rel.person, nameOrder, nameDisplayFormat);
+    const personLink = (
+      <span className="inline-flex items-center gap-1.5">
+        <PersonAvatar personId={rel.personId} name={name} photo={rel.person.photo} size={24} />
+        <Link href={`/people/${rel.personId}`} className="text-primary hover:underline font-medium">
+          {name}
+        </Link>
+      </span>
+    );
+
+    return (
     <div
       key={rel.id}
       className="flex items-center justify-between p-3 bg-surface-elevated rounded-lg"
     >
       <div className="flex-1">
         {grouped ? (
-          <span className="inline-flex items-center gap-1.5">
-            <PersonAvatar personId={rel.personId} name={formatGraphName(rel.person, nameOrder, nameDisplayFormat)} photo={rel.person.photo} size={24} />
-            <Link
-              href={`/people/${rel.personId}`}
-              className="text-primary hover:underline font-medium"
-            >
-              {formatGraphName(rel.person, nameOrder, nameDisplayFormat)}
-            </Link>
-          </span>
+          personLink
         ) : (
           <div className="flex items-center gap-1 flex-wrap text-foreground">
             {t.rich('isRelationshipOf', {
-              name: () => (
-                <span className="inline-flex items-center gap-1.5">
-                  <PersonAvatar personId={rel.personId} name={formatGraphName(rel.person, nameOrder, nameDisplayFormat)} photo={rel.person.photo} size={24} />
-                  <Link
-                    href={`/people/${rel.personId}`}
-                    className="text-primary hover:underline font-medium"
-                  >
-                    {formatGraphName(rel.person, nameOrder, nameDisplayFormat)}
-                  </Link>
-                </span>
-              ),
+              name: () => personLink,
               personName: personName,
               type: () => (
                 <span
@@ -343,7 +336,8 @@ export default function RelationshipManager({
         </button>
       </div>
     </div>
-  );
+    );
+  };
 
   return (
     <div>

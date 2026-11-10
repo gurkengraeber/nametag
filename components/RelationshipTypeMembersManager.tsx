@@ -356,7 +356,10 @@ export default function RelationshipTypeMembersManager({
                   ref={selectAllRef}
                   type="checkbox"
                   checked={allState === 'all'}
-                  onChange={(e) => setSelected(setAllSelected(selected, filteredIds, e.target.checked))}
+                  onChange={(e) => {
+                    const checked = e.target.checked;
+                    setSelected((prev) => setAllSelected(prev, filteredIds, checked));
+                  }}
                   className="w-4 h-4 rounded border-border"
                 />
                 {checklistQuery.trim() ? t('selectAllMatching') : t('selectAll')}
@@ -368,7 +371,7 @@ export default function RelationshipTypeMembersManager({
                       <input
                         type="checkbox"
                         checked={selected.has(person.id)}
-                        onChange={() => setSelected(toggleSelected(selected, person.id))}
+                        onChange={() => setSelected((prev) => toggleSelected(prev, person.id))}
                         className="w-4 h-4 rounded border-border flex-shrink-0"
                       />
                       <PersonAvatar personId={person.id} name={label} photo={person.photo} size={28} />
