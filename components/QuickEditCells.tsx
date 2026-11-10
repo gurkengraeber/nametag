@@ -219,7 +219,7 @@ export function LocationCell({
         value={selectedCountry}
         aria-label={t('countryPlaceholder')}
         onChange={(event) => void countryField.commit(event.target.value)}
-        className={`${inputClass} w-36${selectedCountry === '' ? ' text-muted' : ''}`}
+        className={`${inputClass} w-36 ${selectedCountry === '' ? 'text-muted' : ''}`}
       >
         <option value="">{t('countryPlaceholder')}</option>
         {countryIsUnknown && <option value={countryValue}>{countryValue}</option>}
