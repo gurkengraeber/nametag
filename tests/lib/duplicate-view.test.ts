@@ -1,7 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import {
   buildSuggestions,
-  countOpenSuggestions,
   filterSuggestions,
   formatList,
   groupByConfidence,
@@ -69,17 +68,13 @@ describe('buildSuggestions', () => {
   });
 });
 
-describe('filterSuggestions and counting', () => {
+describe('filterSuggestions', () => {
   it('drops dismissed pairs and pairs with removed contacts', () => {
     const suggestions = buildSuggestions(groups);
     expect(filterSuggestions(suggestions, new Set(['a:b']), new Set()).map((s) => s.key)).toEqual(['c:d']);
     expect(filterSuggestions(suggestions, new Set(), new Set(['d'])).map((s) => s.key)).toEqual(['a:b']);
   });
 
-  it('counts open suggestions', () => {
-    expect(countOpenSuggestions(groups)).toBe(2);
-    expect(countOpenSuggestions([])).toBe(0);
-  });
 });
 
 describe('groupByConfidence', () => {

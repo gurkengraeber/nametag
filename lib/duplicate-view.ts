@@ -105,11 +105,6 @@ export function groupByConfidence(
   })).filter((section) => section.items.length > 0);
 }
 
-/** Number of open suggestions, as shown in hints. */
-export function countOpenSuggestions(groups: DuplicateGroupDisplay[]): number {
-  return buildSuggestions(groups).length;
-}
-
 /** Join reason labels into a readable list ("a, b and c") for the given locale. */
 export function formatList(items: string[], locale: string): string {
   if (items.length <= 1) return items.join('');
