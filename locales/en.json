@@ -567,6 +567,7 @@
         "recommendServerAdds": "Recommended: keep the server version. It only adds details that Nametag does not have yet, so nothing of yours is lost.",
         "recommendLocalAdds": "Recommended: keep the Nametag version. It only adds details that the server does not have yet, so nothing is lost.",
         "recommendDiffers": "Both sides changed the same details. Compare the highlighted fields and choose which version to keep.",
+        "recommendUnverified": "The photo, dates or groups of this contact cannot be compared here, so no version is recommended. If you are unsure, check them on the contact first.",
         "unchangedFields": "{count, plural, =1 {1 field is the same on both sides} other {# fields are the same on both sides}}",
         "keepLocalHelp": "Your Nametag version is sent to the server and replaces the server's.",
         "keepRemoteHelp": "Nametag is updated to match the server. Your changes to this contact in Nametag are replaced.",

@@ -18,6 +18,10 @@ export interface ConflictPersonData {
   birthday?: string | null;
   anniversary?: string | null;
   notes?: string | null;
+  /** Not compared, see `ConflictComparison.unverified`. */
+  photo?: string | null;
+  categories?: string[];
+  importantDates?: unknown[];
   phoneNumbers?: Array<{ type: string; number: string }>;
   emails?: Array<{ type: string; email: string }>;
   addresses?: Array<{
@@ -73,6 +77,12 @@ export interface ConflictComparison {
   different: FieldDiff[];
   /** Fields with the same value on both sides, shown collapsed. */
   sameKeys: ConflictFieldKey[];
+  /**
+   * True when a side carries a photo, groups or dates. The stored Nametag
+   * version has no dates or groups to hold them against, so these cannot be
+   * compared, and a conflict can hide a change in exactly these.
+   */
+  unverified: boolean;
 }
 
 export function parseVersion(version: string): ConflictPersonData {
@@ -170,7 +180,11 @@ export function compareVersions(local: ConflictPersonData, remote: ConflictPerso
     });
   }
 
-  return { different, sameKeys };
+  return { different, sameKeys, unverified: hasUncomparedData(local) || hasUncomparedData(remote) };
+}
+
+function hasUncomparedData(data: ConflictPersonData): boolean {
+  return Boolean(data.photo) || (data.categories?.length ?? 0) > 0 || (data.importantDates?.length ?? 0) > 0;
 }
 
 export type ResolutionChoice = 'keep_local' | 'keep_remote';
@@ -183,7 +197,9 @@ export type RecommendationReason =
   /** Nametag only has details that the server lacks, so keeping Nametag loses nothing. */
   | 'localAdds'
   /** Both sides changed the same fields. Only the person can decide. */
-  | 'differs';
+  | 'differs'
+  /** The visible fields look harmless, but a photo, groups or dates cannot be compared. */
+  | 'unverified';
 
 export interface Recommendation {
   choice: ResolutionChoice | null;
@@ -196,19 +212,23 @@ export interface Recommendation {
  * Keeping a side is only recommended when it cannot lose information: the two
  * versions are the same, or one side merely adds to the other. Whenever both
  * sides hold different values for the same field there is no right answer to
- * suggest, because the sync log does not say which edit is newer.
+ * suggest, because the sync log does not say which edit is newer. Nothing is
+ * recommended either when part of the data cannot be compared at all.
  */
 export function recommendResolution(comparison: ConflictComparison): Recommendation {
   const { different } = comparison;
-  if (different.length === 0) {
-    return { choice: 'keep_local', reason: 'identical', safe: true };
-  }
   // Keeping a side loses exactly the values that only the other side has.
   const serverLosesNothing = different.every((d) => d.onlyLocal.length === 0);
   const localLosesNothing = different.every((d) => d.onlyRemote.length === 0);
+  if (!serverLosesNothing && !localLosesNothing) {
+    return { choice: null, reason: 'differs', safe: false };
+  }
+  // A conflict whose visible fields match was most likely caused by the part
+  // that is not visible here, so "nothing is lost" cannot be promised.
+  if (comparison.unverified) return { choice: null, reason: 'unverified', safe: false };
+  if (different.length === 0) return { choice: 'keep_local', reason: 'identical', safe: true };
   if (serverLosesNothing) return { choice: 'keep_remote', reason: 'serverAdds', safe: true };
-  if (localLosesNothing) return { choice: 'keep_local', reason: 'localAdds', safe: true };
-  return { choice: null, reason: 'differs', safe: false };
+  return { choice: 'keep_local', reason: 'localAdds', safe: true };
 }
 
 export type BulkMode = 'safe' | 'keep_local' | 'keep_remote';

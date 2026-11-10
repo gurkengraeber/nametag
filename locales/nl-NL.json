@@ -567,6 +567,7 @@
         "recommendServerAdds": "Aanbevolen: behoud de serverversie. Die voegt alleen gegevens toe die Nametag nog niet heeft, dus er gaat niets verloren.",
         "recommendLocalAdds": "Aanbevolen: behoud de Nametag-versie. Die voegt alleen gegevens toe die de server nog niet heeft, dus er gaat niets verloren.",
         "recommendDiffers": "Beide kanten hebben dezelfde gegevens gewijzigd. Vergelijk de gemarkeerde velden en kies welke versie blijft.",
+        "recommendUnverified": "De foto, data of groepen van dit contact kunnen hier niet worden vergeleken, dus er wordt geen versie aanbevolen. Twijfel je, controleer ze dan eerst bij het contact.",
         "unchangedFields": "{count, plural, =1 {1 veld is aan beide kanten gelijk} other {# velden zijn aan beide kanten gelijk}}",
         "keepLocalHelp": "Je Nametag-versie wordt naar de server gestuurd en vervangt die van de server.",
         "keepRemoteHelp": "Nametag wordt bijgewerkt naar de server. Je wijzigingen aan dit contact in Nametag worden vervangen.",

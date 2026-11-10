@@ -567,6 +567,7 @@
         "recommendServerAdds": "おすすめ：サーバーの版を保持。Nametagにまだない情報が加わるだけで、失われるものはありません。",
         "recommendLocalAdds": "おすすめ：Nametagの版を保持。サーバーにまだない情報が加わるだけで、失われるものはありません。",
         "recommendDiffers": "両方で同じ項目が変更されました。強調表示された項目を比べて、残す版を選んでください。",
+        "recommendUnverified": "この連絡先の写真、日付、グループはここでは比較できないため、どちらのバージョンもおすすめしません。迷う場合は、先に連絡先で確認してください。",
         "unchangedFields": "{count, plural, =1 {1項目は両方で同じです} other {#項目は両方で同じです}}",
         "keepLocalHelp": "Nametagの版がサーバーに送られ、サーバー側の内容を置き換えます。",
         "keepRemoteHelp": "Nametagがサーバーの内容に合わせて更新されます。Nametagでのこの連絡先への変更は置き換えられます。",

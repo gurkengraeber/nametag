@@ -567,6 +567,7 @@
         "recommendServerAdds": "推荐：保留服务器版本。它只补充 Nametag 还没有的信息，不会丢失你的内容。",
         "recommendLocalAdds": "推荐：保留 Nametag 版本。它只补充服务器还没有的信息，不会丢失内容。",
         "recommendDiffers": "双方修改了相同的信息。请对比高亮字段，选择保留哪个版本。",
+        "recommendUnverified": "此联系人的照片、日期或分组无法在此比较，因此不推荐任何版本。如果不确定，请先在联系人页面中查看。",
         "unchangedFields": "{count, plural, =1 {1 个字段两边相同} other {# 个字段两边相同}}",
         "keepLocalHelp": "你的 Nametag 版本会发送到服务器，并替换服务器上的版本。",
         "keepRemoteHelp": "Nametag 将更新为与服务器一致。你在 Nametag 中对此联系人的修改会被替换。",

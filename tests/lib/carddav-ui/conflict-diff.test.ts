@@ -112,6 +112,44 @@ describe('recommendResolution', () => {
   });
 });
 
+describe('data that cannot be compared', () => {
+  it('flags a photo, groups or dates on either side', () => {
+    expect(compareVersions(base, base).unverified).toBe(false);
+    expect(compareVersions(base, { ...base, photo: 'data:image/png;base64,AAAA' }).unverified).toBe(true);
+    expect(compareVersions({ ...base, photo: 'a.jpg' }, base).unverified).toBe(true);
+    expect(compareVersions(base, { ...base, categories: ['Family'] }).unverified).toBe(true);
+    expect(compareVersions(base, { ...base, importantDates: [{ type: 'birthday' }] }).unverified).toBe(true);
+    expect(compareVersions(base, { ...base, categories: [], importantDates: [] }).unverified).toBe(false);
+  });
+
+  it('does not call equal-looking versions identical when a birthday could differ', () => {
+    const remote = { ...base, importantDates: [{ type: 'birthday' }] };
+    expect(recommendResolution(compareVersions(base, remote))).toEqual({
+      choice: null,
+      reason: 'unverified',
+      safe: false,
+    });
+  });
+
+  it('does not promise that keeping the server loses nothing when a photo is involved', () => {
+    const remote = { ...base, jobTitle: 'Programmer', photo: 'data:image/png;base64,AAAA' };
+    expect(recommendResolution(compareVersions(base, remote)).safe).toBe(false);
+  });
+
+  it('keeps reporting a real clash as a clash', () => {
+    const remote = { ...base, organization: 'Other', categories: ['Family'] };
+    expect(recommendResolution(compareVersions(base, remote)).reason).toBe('differs');
+  });
+
+  it('leaves such conflicts out of the safe bulk plan', () => {
+    const conflicts = [
+      { id: 'photo', localVersion: JSON.stringify(base), remoteVersion: JSON.stringify({ ...base, photo: 'data:x' }) },
+      { id: 'plain', localVersion: JSON.stringify(base), remoteVersion: JSON.stringify(base) },
+    ];
+    expect(planBulkResolution(conflicts, 'safe')).toEqual([{ id: 'plain', resolution: 'keep_local' }]);
+  });
+});
+
 describe('planBulkResolution', () => {
   const conflicts = [
     { id: 'same', localVersion: JSON.stringify(base), remoteVersion: JSON.stringify(base) },

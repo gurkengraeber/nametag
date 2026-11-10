@@ -567,6 +567,7 @@
         "recommendServerAdds": "Anbefalt: behold serverversjonen. Den legger bare til detaljer Nametag ikke har ennå, så ingenting går tapt.",
         "recommendLocalAdds": "Anbefalt: behold Nametag-versjonen. Den legger bare til detaljer serveren ikke har ennå, så ingenting går tapt.",
         "recommendDiffers": "Begge sider har endret de samme detaljene. Sammenlign de uthevede feltene og velg hvilken versjon som skal beholdes.",
+        "recommendUnverified": "Bildet, datoene eller gruppene til denne kontakten kan ikke sammenlignes her, så ingen versjon anbefales. Er du usikker, sjekk dem først på kontakten.",
         "unchangedFields": "{count, plural, =1 {1 felt er likt på begge sider} other {# felt er like på begge sider}}",
         "keepLocalHelp": "Nametag-versjonen din sendes til serveren og erstatter serverens.",
         "keepRemoteHelp": "Nametag oppdateres til å samsvare med serveren. Endringene dine av denne kontakten i Nametag erstattes.",

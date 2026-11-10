@@ -77,7 +77,7 @@ If a contact has changed on both sides (in Nametag and on the CardDAV server) si
 
 Go to **CardDAV > Conflicts**. Each conflict lists only the fields that differ: side by side on a wide screen, stacked on a phone. Fields that are the same on both sides are collapsed. Choose **Keep Local** to send your Nametag version to the server, or **Keep Remote** to update Nametag to match the server. Under each button a line explains what happens.
 
-Nametag recommends a side only when keeping it cannot lose anything: the two versions are the same, or one side merely adds details the other lacks. When both sides changed the same field there is no recommendation, because the sync does not know which edit is newer.
+Nametag recommends a side only when keeping it cannot lose anything: the two versions are the same, or one side merely adds details the other lacks. When both sides changed the same field there is no recommendation, because the sync does not know which edit is newer. The same goes for contacts with a photo, groups or dates: the saved Nametag version does not hold those, so Nametag cannot check them and recommends nothing.
 
 To handle many conflicts at once, use **Apply recommendations that lose nothing**, or **Keep all: Nametag** / **Keep all: server**. The two keep-all buttons ask for confirmation first, because they replace one side for every conflict. Conflicts are resolved one after another with a progress bar; any that fail stay in the list.
 

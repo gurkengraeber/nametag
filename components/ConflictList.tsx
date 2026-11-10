@@ -50,6 +50,7 @@ const recommendationKey: Record<RecommendationReason, string> = {
   serverAdds: 'recommendServerAdds',
   localAdds: 'recommendLocalAdds',
   differs: 'recommendDiffers',
+  unverified: 'recommendUnverified',
 };
 
 export default function ConflictList({ conflicts }: ConflictListProps) {
