@@ -1246,6 +1246,7 @@
     "greetingMorning": "God morgen, {name}",
     "greetingAfternoon": "God ettermiddag, {name}",
     "greetingEvening": "God kveld, {name}",
+    "greetingNeutral": "Hei, {name}",
     "upcomingEvents": "Kommende hendelser",
     "yourNetwork": "Nettverket ditt",
     "emptyNetwork": {

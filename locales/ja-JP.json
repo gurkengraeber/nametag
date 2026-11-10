@@ -1246,6 +1246,7 @@
     "greetingMorning": "おはようございます、{name}",
     "greetingAfternoon": "こんにちは、{name}",
     "greetingEvening": "こんばんは、{name}",
+    "greetingNeutral": "こんにちは、{name}",
     "upcomingEvents": "今後のイベント",
     "yourNetwork": "あなたのネットワーク",
     "emptyNetwork": {

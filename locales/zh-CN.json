@@ -1246,6 +1246,7 @@
     "greetingMorning": "早上好，{name}",
     "greetingAfternoon": "下午好，{name}",
     "greetingEvening": "晚上好，{name}",
+    "greetingNeutral": "你好，{name}",
     "upcomingEvents": "即将发生的事件",
     "yourNetwork": "您的网络",
     "emptyNetwork": {

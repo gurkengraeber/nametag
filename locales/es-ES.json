@@ -1246,6 +1246,7 @@
     "greetingMorning": "Buenos días, {name}",
     "greetingAfternoon": "Buenas tardes, {name}",
     "greetingEvening": "Buenas noches, {name}",
+    "greetingNeutral": "Hola, {name}",
     "upcomingEvents": "Próximos Eventos",
     "yourNetwork": "Tu Red",
     "emptyNetwork": {
