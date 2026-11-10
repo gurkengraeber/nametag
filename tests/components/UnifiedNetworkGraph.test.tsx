@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, waitFor, act } from '@testing-library/react';
+import { render, waitFor, act, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { NextIntlClientProvider } from 'next-intl';
 import type { Simulation } from 'd3-force';
 import enMessages from '../../locales/en.json';
@@ -121,5 +122,25 @@ describe('UnifiedNetworkGraph', () => {
       canvas.dispatchEvent(new MouseEvent('mouseleave'));
     });
     expect(canvas.style.cursor).toBe('default');
+  });
+
+  it('moves focus into the full screen view and back to the button on Escape', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: true, json: async () => graph }));
+    render(
+      <NextIntlClientProvider locale="en" messages={enMessages}>
+        <UnifiedNetworkGraph apiEndpoint="/api/dashboard/graph" groups={[]} />
+      </NextIntlClientProvider>,
+    );
+    const opener = await screen.findByRole('button', { name: 'Full screen' });
+    opener.focus();
+    await userEvent.click(opener);
+
+    const dialog = screen.getByRole('dialog', { name: 'Your network in full screen' });
+    expect(dialog).toContainElement(document.activeElement as HTMLElement);
+    expect(document.activeElement).not.toBe(opener);
+
+    await userEvent.keyboard('{Escape}');
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Full screen' })).toHaveFocus();
   });
 });

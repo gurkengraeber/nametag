@@ -26,6 +26,7 @@ import { getCachedPhoto, loadPhoto } from './graph/photo-cache';
 import { buildQuadtree, findNodeAtPoint, type NodeQuadtree } from './graph/hit-test';
 import { diffSimulationData } from './graph/diff-simulation';
 import { resolveGraphMode } from './graph/mode-resolution';
+import { useFocusTrap } from '@/hooks/useFocusTrap';
 import { buildSimulationNodes, type RawGraphPerson } from './graph/bubble-composition';
 import { buildHubAndSpokeEdges } from './graph/edge-composition';
 import { UNGROUPED_SYNTHETIC_ID, edgeEndpointId } from './graph/simulation-types';
@@ -64,6 +65,7 @@ export default function UnifiedNetworkGraph({
   const t = useTranslations('dashboard.graph');
   const tPeople = useTranslations('people');
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const rootRef = useRef<HTMLDivElement>(null);
   const canvasWrapRef = useRef<HTMLDivElement>(null);
   const looseSectionRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
@@ -927,6 +929,9 @@ export default function UnifiedNetworkGraph({
     };
   }, [compact, isFullscreen]);
 
+  // Full screen is a modal dialog: focus moves in, stays in and returns to the button
+  useFocusTrap(rootRef, isFullscreen);
+
   // Full screen: no page scrolling behind it, Escape closes the legend first
   // and then the full screen view
   useEffect(() => {
@@ -985,6 +990,7 @@ export default function UnifiedNetworkGraph({
 
   return (
     <div
+      ref={rootRef}
       className={
         isFullscreen
           ? 'fixed inset-0 z-[60] flex flex-col bg-background p-3 sm:p-4 pt-[max(0.75rem,env(safe-area-inset-top))] pb-[max(0.75rem,env(safe-area-inset-bottom))]'
