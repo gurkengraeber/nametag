@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, type FormEvent } from 'react';
+import { useRef, useState, type FormEvent } from 'react';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/Button';
+import { useFocusTrap } from '@/hooks/useFocusTrap';
 import { countries } from '@/lib/countries';
 import type { UnplacedPerson, UnplacedReason } from '@/lib/map/types';
 
@@ -174,6 +175,9 @@ export default function MapPeoplePanel({
   const t = useTranslations('map');
   const tCommon = useTranslations('common');
   const [openId, setOpenId] = useState<string | null>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+  // Not modal: the map stays usable, so Tab may leave the panel
+  useFocusTrap(panelRef, true, false);
 
   const tabClasses = (active: boolean) =>
     `flex-1 min-h-11 sm:min-h-0 px-3 py-2 text-sm font-medium border-b-2 transition-colors ${
@@ -182,7 +186,19 @@ export default function MapPeoplePanel({
 
   return (
     <div
-      className={`absolute inset-x-0 bottom-0 z-20 max-h-[70%] sm:inset-y-0 sm:left-auto sm:right-0 sm:w-96 sm:max-h-none bg-surface border-t sm:border-t-0 sm:border-l border-border rounded-t-xl sm:rounded-none shadow-lg flex flex-col ${
+      ref={panelRef}
+      tabIndex={-1}
+      onKeyDown={(event) => {
+        if (event.key !== 'Escape') return;
+        // Escape first closes the place form, then the panel
+        if (openId) {
+          setOpenId(null);
+          panelRef.current?.focus();
+        } else {
+          onClose();
+        }
+      }}
+      className={`absolute inset-x-0 bottom-0 z-20 max-h-[70%] sm:inset-y-0 sm:left-auto sm:right-0 sm:w-96 sm:max-h-none bg-surface border-t sm:border-t-0 sm:border-l border-border rounded-t-xl sm:rounded-none shadow-lg flex flex-col focus:outline-none ${
         withSelectionBar ? 'pb-24 sm:pb-0' : ''
       }`}
       role="dialog"

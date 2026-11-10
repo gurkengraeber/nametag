@@ -1,9 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/Button';
+import { useFocusTrap } from '@/hooks/useFocusTrap';
 import { formatDate, getLocalDateString, type DateFormat } from '@/lib/date-format';
 import { describeLastContact } from '@/lib/map/last-contact';
 import { addPersonToGroup, markContactedToday, setPersonRelationship } from '@/lib/map/quick-actions';
@@ -41,6 +42,9 @@ export default function MapPersonCard({
   const tCommon = useTranslations('common');
   const [activePersonId, setActivePersonId] = useState(markers[0]?.personId ?? '');
   const [busy, setBusy] = useState(false);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  // Not modal: the map stays usable, so Tab may leave the card
+  useFocusTrap(dialogRef, true, false);
 
   // One entry per person, keeping the first marker (its address) for the card.
   const entries: MapMarker[] = [];
@@ -94,6 +98,10 @@ export default function MapPersonCard({
 
   return (
     <div
+      ref={dialogRef}
+      onKeyDown={(event) => {
+        if (event.key === 'Escape') onClose();
+      }}
       className="absolute inset-x-0 bottom-0 z-30 sm:inset-x-auto sm:left-4 sm:bottom-4 sm:w-96 max-h-[75%] overflow-y-auto bg-surface border-t sm:border border-border rounded-t-xl sm:rounded-lg shadow-lg p-4 pb-[calc(theme(spacing.4)+env(safe-area-inset-bottom))] sm:pb-4"
       role="dialog"
       aria-label={marker.personName}

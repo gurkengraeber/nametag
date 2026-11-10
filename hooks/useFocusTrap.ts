@@ -12,8 +12,15 @@ const FOCUSABLE = 'button, [href], input, select, textarea, [tabindex]:not([tabi
  * For anything rendered with `aria-modal="true"`: that attribute tells
  * assistive technology the rest of the page is inert, so focus has to
  * actually be inside the dialog, not left on the button that opened it.
+ *
+ * With `trapTab` false (a panel that leaves the page usable beside it) focus
+ * still moves in and comes back, but Tab may leave the container.
  */
-export function useFocusTrap(containerRef: RefObject<HTMLElement | null>, active: boolean) {
+export function useFocusTrap(
+  containerRef: RefObject<HTMLElement | null>,
+  active: boolean,
+  trapTab = true
+) {
   useEffect(() => {
     const container = containerRef.current;
     if (!active || !container) return;
@@ -52,7 +59,7 @@ export function useFocusTrap(containerRef: RefObject<HTMLElement | null>, active
       }
     };
 
-    document.addEventListener('keydown', handleTab);
+    if (trapTab) document.addEventListener('keydown', handleTab);
     focusable()[0]?.focus();
 
     return () => {
@@ -63,5 +70,5 @@ export function useFocusTrap(containerRef: RefObject<HTMLElement | null>, active
         previouslyFocused.focus();
       }
     };
-  }, [containerRef, active]);
+  }, [containerRef, active, trapTab]);
 }
