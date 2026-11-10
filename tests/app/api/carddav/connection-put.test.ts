@@ -215,4 +215,34 @@ describe('PUT /api/carddav/connection', () => {
 
     expect(mocks.encryptPassword).not.toHaveBeenCalled();
   });
+
+  it('requires a new password when the server address changes', async () => {
+    const res = await putConnection({ serverUrl: 'https://other.example.org', username: 'testuser' });
+
+    expect(res.status).toBe(400);
+    const data = await res.json();
+    expect(data.code).toBe('password_required');
+    expect(mocks.updateConnection).not.toHaveBeenCalled();
+  });
+
+  it('accepts a new address when a new password is sent', async () => {
+    const res = await putConnection({
+      serverUrl: 'https://other.example.org',
+      username: 'testuser',
+      password: 'typed-again',
+    });
+
+    expect(res.status).toBe(200);
+    expect(mocks.encryptPassword).toHaveBeenCalledWith('typed-again');
+  });
+
+  it('keeps the saved password when the address only differs in case or trailing slash', async () => {
+    const res = await putConnection({
+      serverUrl: 'https://CardDAV.example.com/',
+      username: 'testuser',
+    });
+
+    expect(res.status).toBe(200);
+    expect(mocks.encryptPassword).not.toHaveBeenCalled();
+  });
 });

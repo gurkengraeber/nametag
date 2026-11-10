@@ -38,7 +38,7 @@ export function carddavPaths(): Record<string, Record<string, unknown>> {
       put: {
         tags: ['CardDAV'],
         summary: 'Update CardDAV connection',
-        description: 'Updates the existing CardDAV connection settings. Password is optional (only updated if provided).',
+        description: 'Updates the existing CardDAV connection settings. Password is optional (only updated if provided), except when `serverUrl` changes to another address: then it is required (code password_required), so the saved password is never sent to a new server.',
         security: sessionOnly(),
         requestBody: jsonBody({
           type: 'object',

@@ -54,7 +54,7 @@ Returns `409` if a connection already exists.
 PUT /api/carddav/connection
 ```
 
-Same fields as create, except `password` is optional (only changed if provided).
+Same fields as create, except `password` is optional (only changed if provided). If `serverUrl` changes to another address, `password` is required (`400` with code `password_required`), so the saved password is never sent to a new server.
 
 ```bash
 curl -X PUT https://your-instance.example.com/api/carddav/connection \

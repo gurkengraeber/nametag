@@ -7,6 +7,7 @@ import { createModuleLogger } from '@/lib/logger';
 import { withAuth } from '@/lib/api-utils';
 import { prisma } from '@/lib/prisma';
 import { decryptPassword } from '@/lib/carddav/encryption';
+import { sameServer } from '@/lib/carddav/same-server';
 import { classifyTestFailure } from '@/lib/carddav-ui/connection-test';
 import { z } from 'zod';
 
@@ -18,11 +19,6 @@ const connectionTestSchema = z.object({
   // Left out when the user edits an existing connection and keeps the saved password
   password: z.string().optional(),
 });
-
-function sameServer(a: string, b: string): boolean {
-  const normalize = (url: string) => url.trim().replace(/\/+$/, '').toLowerCase();
-  return normalize(a) === normalize(b);
-}
 
 // A host that accepts the connection but never answers would hold the request
 // open until the platform gives up, so the whole test gets a deadline.

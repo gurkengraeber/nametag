@@ -3,6 +3,7 @@ import { apiError, validationFailed } from '@/lib/api-errors';
 import { prisma } from '@/lib/prisma';
 import { encryptPassword } from '@/lib/carddav/encryption';
 import { validateServerUrl } from '@/lib/carddav/url-validation';
+import { sameServer } from '@/lib/carddav/same-server';
 import { createModuleLogger } from '@/lib/logger';
 import { withAuth } from '@/lib/api-utils';
 import { z } from 'zod';
@@ -151,6 +152,12 @@ export const PUT = withAuth(async (request, session) => {
 
     if (!existingConnection) {
       return apiError('not_found', 'Connection not found. Use POST to create.');
+    }
+
+    // The saved password may only be sent to the server it was saved for. A new
+    // address needs the password typed again, otherwise it would go to the new host.
+    if (!password && serverUrl !== undefined && !sameServer(existingConnection.serverUrl, serverUrl)) {
+      return apiError('password_required', 'Password is required when the server address changes');
     }
 
     // Prepare update data - only include fields that were provided
