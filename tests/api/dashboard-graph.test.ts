@@ -547,4 +547,25 @@ describe('Dashboard Graph API Route', () => {
       ],
     });
   });
+
+  describe('limit parameter', () => {
+    async function takeFor(query: string) {
+      personFindMany.mockResolvedValue([]);
+      const response = await GET(new NextRequest(`http://localhost:3000/api/dashboard/graph${query}`));
+      expect(response.status).toBe(200);
+      return personFindMany.mock.calls[0][0].take;
+    }
+
+    it('passes a valid limit through', async () => {
+      expect(await takeFor('?limit=25')).toBe(25);
+    });
+
+    it.each(['abc', '', '0', '-5', '1.5', '10abc'])('ignores the invalid limit %j', async (value) => {
+      expect(await takeFor(`?limit=${value}`)).toBeUndefined();
+    });
+
+    it('caps a huge limit', async () => {
+      expect(await takeFor('?limit=99999999')).toBe(10000);
+    });
+  });
 });

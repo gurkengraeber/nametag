@@ -61,8 +61,8 @@ export function dashboardPaths(): Record<string, Record<string, unknown>> {
           {
             name: 'limit',
             in: 'query',
-            schema: { type: 'integer' },
-            description: 'Maximum number of people to include',
+            schema: { type: 'integer', minimum: 1, maximum: 10000 },
+            description: 'Maximum number of people to include. Values that are not a positive whole number are ignored.',
           },
         ],
         responses: {

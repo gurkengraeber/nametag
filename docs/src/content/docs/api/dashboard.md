@@ -57,7 +57,7 @@ Returns a D3-compatible graph (`nodes`, `edges`) of all people and their relatio
 | `includeGroupIds` | comma-separated string | Only include people belonging to at least one (or all, see `groupMatchOperator`) of these groups. |
 | `excludeGroupIds` | comma-separated string | Exclude people belonging to any of these groups. |
 | `groupMatchOperator` | `and` \| `or` | How to match `includeGroupIds`. Defaults to `or`. |
-| `limit` | integer | Maximum number of people to include. |
+| `limit` | integer | Maximum number of people to include (1 to 10000). Values that are not a positive whole number are ignored. |
 
 ```bash
 curl "https://your-instance.example.com/api/dashboard/graph?includeGroupIds=clxgroup1,clxgroup2&groupMatchOperator=or&limit=100" \

@@ -45,6 +45,17 @@ type DashboardGraphPerson = {
   }>;
 };
 
+const MAX_LIMIT = 10_000;
+
+// No limit means everyone. Anything that is not a positive whole number counts
+// as no limit, and a very large one is capped, so a bad query string can never
+// reach Prisma as NaN or a negative take.
+function parseLimit(value: string | null): number | undefined {
+  if (!value || !/^\d+$/.test(value.trim())) return undefined;
+  const parsed = Number(value);
+  return parsed > 0 ? Math.min(parsed, MAX_LIMIT) : undefined;
+}
+
 export const GET = withAuth(async (request, session) => {
   try {
     // Parse query parameters for filtering
@@ -62,7 +73,7 @@ export const GET = withAuth(async (request, session) => {
 
     const includeGroupIds = parseGroupIds(searchParams.get('includeGroupIds'));
     const excludeGroupIds = parseGroupIds(searchParams.get('excludeGroupIds'));
-    const limit = searchParams.get('limit');
+    const limit = parseLimit(searchParams.get('limit'));
     const includePredicates: Array<Record<string, unknown>> = [];
     const excludePredicates: Array<Record<string, unknown>> = [];
 
@@ -190,7 +201,7 @@ export const GET = withAuth(async (request, session) => {
       orderBy: {
         name: 'asc',
       },
-      ...(limit ? { take: parseInt(limit) } : {}),
+      ...(limit ? { take: limit } : {}),
     })) as unknown as DashboardGraphPerson[];
 
     // Build graph data
