@@ -61,6 +61,7 @@ describe('PersonForm (create) flow', () => {
       </Wrapper>
     );
 
+    await user.selectOptions(screen.getByLabelText(/relationship to you/i), 'rt-1');
     await user.type(screen.getByLabelText(/^name/i), 'Alex{Enter}');
 
     await waitFor(() => expect(mockPush).toHaveBeenCalledWith('/people/p-1'));
