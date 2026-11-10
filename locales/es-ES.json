@@ -767,7 +767,7 @@
       "testFailedTitle": "La conexión falló",
       "testReason_auth": "El servidor no aceptó el usuario o la contraseña. Revisa ambos por si hay errores. Si el inicio de sesión en dos pasos está activado, crea una contraseña de aplicación y úsala.",
       "testReason_not_found": "El servidor responde, pero no en esta dirección (404). Revisa la dirección o usa la dirección CardDAV exacta de la ayuda de tu proveedor.",
-      "testReason_discovery": "El acceso funciona, pero no se encontró ninguna libreta de direcciones en esta dirección. Usa la dirección CardDAV exacta de la ayuda de tu proveedor.",
+      "testReason_discovery": "En esta dirección responde un servidor, pero no se encontró ninguna libreta de direcciones. Aún no se ha comprobado el acceso. Usa la dirección CardDAV exacta de la ayuda de tu proveedor.",
       "testReason_timeout": "El servidor no respondió a tiempo. Revisa tu conexión a internet y la dirección, y vuelve a intentarlo.",
       "testReason_dns": "No se encontró el nombre del servidor. Revisa la dirección por si hay errores.",
       "testReason_refused": "El servidor rechazó la conexión. Revisa la dirección y el puerto.",

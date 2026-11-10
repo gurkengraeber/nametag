@@ -767,7 +767,7 @@
       "testFailedTitle": "Connessione non riuscita",
       "testReason_auth": "Il server non ha accettato nome utente o password. Controlla che non ci siano errori. Se l'accesso a due fattori è attivo, crea una password per le app e usala.",
       "testReason_not_found": "Il server risponde, ma non a questo indirizzo (404). Controlla l'indirizzo o usa l'indirizzo CardDAV esatto indicato dal tuo provider.",
-      "testReason_discovery": "L'accesso funziona, ma a questo indirizzo non è stata trovata alcuna rubrica. Usa l'indirizzo CardDAV esatto indicato dal tuo provider.",
+      "testReason_discovery": "A questo indirizzo risponde un server, ma non è stata trovata alcuna rubrica. L'accesso non è ancora stato verificato. Usa l'indirizzo CardDAV esatto indicato dal tuo provider.",
       "testReason_timeout": "Il server non ha risposto in tempo. Controlla la connessione a internet e l'indirizzo, poi riprova.",
       "testReason_dns": "Il nome del server non è stato trovato. Controlla l'indirizzo.",
       "testReason_refused": "Il server ha rifiutato la connessione. Controlla l'indirizzo e la porta.",

@@ -767,7 +767,7 @@
       "testFailedTitle": "La connexion a échoué",
       "testReason_auth": "Le serveur n'a pas accepté l'identifiant ou le mot de passe. Vérifiez-les. Si l'authentification à deux facteurs est activée, créez un mot de passe d'application et utilisez-le.",
       "testReason_not_found": "Le serveur répond, mais pas à cette adresse (404). Vérifiez l'adresse ou utilisez l'adresse CardDAV exacte indiquée par votre fournisseur.",
-      "testReason_discovery": "La connexion fonctionne, mais aucun carnet d'adresses n'a été trouvé à cette adresse. Utilisez l'adresse CardDAV exacte indiquée par votre fournisseur.",
+      "testReason_discovery": "Un serveur répond à cette adresse, mais aucun carnet d'adresses n'y a été trouvé. La connexion n'a pas encore été vérifiée. Utilisez l'adresse CardDAV exacte indiquée par votre fournisseur.",
       "testReason_timeout": "Le serveur n'a pas répondu à temps. Vérifiez votre connexion internet et l'adresse, puis réessayez.",
       "testReason_dns": "Le nom du serveur est introuvable. Vérifiez l'adresse.",
       "testReason_refused": "Le serveur a refusé la connexion. Vérifiez l'adresse et le port.",

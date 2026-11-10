@@ -767,7 +767,7 @@
       "testFailedTitle": "Verbindung fehlgeschlagen",
       "testReason_auth": "Der Server hat Benutzername oder Passwort nicht akzeptiert. Prüfe beides auf Tippfehler. Ist die Zwei-Faktor-Anmeldung aktiv, lege ein App-Passwort an und nimm dieses.",
       "testReason_not_found": "Der Server antwortet, aber nicht unter dieser Adresse (404). Prüfe die Adresse oder nimm die genaue CardDAV-Adresse aus der Hilfe deines Anbieters.",
-      "testReason_discovery": "Die Anmeldung klappt, aber unter dieser Adresse wurde kein Adressbuch gefunden. Nimm die genaue CardDAV-Adresse aus der Hilfe deines Anbieters.",
+      "testReason_discovery": "Unter dieser Adresse antwortet ein Server, aber es wurde kein Adressbuch gefunden. Ob die Anmeldung klappt, ist noch nicht geprüft. Nimm die genaue CardDAV-Adresse aus der Hilfe deines Anbieters.",
       "testReason_timeout": "Der Server hat nicht rechtzeitig geantwortet. Prüfe deine Internetverbindung und die Adresse und versuche es dann erneut.",
       "testReason_dns": "Der Servername wurde nicht gefunden. Prüfe die Adresse auf Tippfehler.",
       "testReason_refused": "Der Server hat die Verbindung abgelehnt. Prüfe Adresse und Port.",

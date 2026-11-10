@@ -767,7 +767,7 @@
       "testFailedTitle": "Połączenie nie powiodło się",
       "testReason_auth": "Serwer nie przyjął nazwy użytkownika lub hasła. Sprawdź oba pod kątem literówek. Jeśli logowanie dwuskładnikowe jest włączone, utwórz hasło aplikacji i użyj go.",
       "testReason_not_found": "Serwer odpowiada, ale nie pod tym adresem (404). Sprawdź adres lub użyj dokładnego adresu CardDAV z pomocy dostawcy.",
-      "testReason_discovery": "Logowanie działa, ale pod tym adresem nie znaleziono książki adresowej. Użyj dokładnego adresu CardDAV z pomocy dostawcy.",
+      "testReason_discovery": "Pod tym adresem odpowiada serwer, ale nie znaleziono książki adresowej. Logowanie nie zostało jeszcze sprawdzone. Użyj dokładnego adresu CardDAV z pomocy dostawcy.",
       "testReason_timeout": "Serwer nie odpowiedział na czas. Sprawdź połączenie z internetem i adres, a potem spróbuj ponownie.",
       "testReason_dns": "Nie znaleziono nazwy serwera. Sprawdź adres pod kątem literówek.",
       "testReason_refused": "Serwer odrzucił połączenie. Sprawdź adres i port.",

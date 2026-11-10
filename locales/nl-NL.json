@@ -767,7 +767,7 @@
       "testFailedTitle": "Verbinding mislukt",
       "testReason_auth": "De server accepteerde de gebruikersnaam of het wachtwoord niet. Controleer beide op typefouten. Staat tweestapsverificatie aan, maak dan een app-wachtwoord aan en gebruik dat.",
       "testReason_not_found": "De server antwoordt, maar niet op dit adres (404). Controleer het adres of gebruik het exacte CardDAV-adres uit de hulp van je provider.",
-      "testReason_discovery": "Inloggen werkt, maar op dit adres is geen adresboek gevonden. Gebruik het exacte CardDAV-adres uit de hulp van je provider.",
+      "testReason_discovery": "Op dit adres antwoordt een server, maar er is geen adresboek gevonden. De inlog is nog niet gecontroleerd. Gebruik het exacte CardDAV-adres uit de hulp van je provider.",
       "testReason_timeout": "De server antwoordde niet op tijd. Controleer je internetverbinding en het adres en probeer het opnieuw.",
       "testReason_dns": "De servernaam is niet gevonden. Controleer het adres op typefouten.",
       "testReason_refused": "De server weigerde de verbinding. Controleer het adres en de poort.",

@@ -767,7 +767,7 @@
       "testFailedTitle": "Tilkoblingen mislyktes",
       "testReason_auth": "Serveren godtok ikke brukernavnet eller passordet. Sjekk begge for skrivefeil. Hvis tofaktorpålogging er på, oppretter du et app-passord og bruker det.",
       "testReason_not_found": "Serveren svarer, men ikke på denne adressen (404). Sjekk adressen eller bruk den nøyaktige CardDAV-adressen fra leverandørens hjelpeside.",
-      "testReason_discovery": "Påloggingen fungerer, men ingen adressebok ble funnet på denne adressen. Bruk den nøyaktige CardDAV-adressen fra leverandørens hjelpeside.",
+      "testReason_discovery": "En server svarer på denne adressen, men ingen adressebok ble funnet. Påloggingen er ikke kontrollert ennå. Bruk den nøyaktige CardDAV-adressen fra leverandørens hjelpeside.",
       "testReason_timeout": "Serveren svarte ikke i tide. Sjekk internettforbindelsen og adressen, og prøv igjen.",
       "testReason_dns": "Servernavnet ble ikke funnet. Sjekk adressen for skrivefeil.",
       "testReason_refused": "Serveren avviste tilkoblingen. Sjekk adressen og porten.",

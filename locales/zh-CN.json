@@ -767,7 +767,7 @@
       "testFailedTitle": "连接失败",
       "testReason_auth": "服务器不接受该用户名或密码。请检查是否有拼写错误。若已开启双重验证，请创建应用专用密码并使用它。",
       "testReason_not_found": "服务器有响应，但不在此地址（404）。请检查地址，或使用服务商帮助页面中的准确 CardDAV 地址。",
-      "testReason_discovery": "登录正常，但在此地址未找到通讯录。请使用服务商帮助页面中的准确 CardDAV 地址。",
+      "testReason_discovery": "此地址有服务器响应，但未找到通讯录。尚未检查登录是否正常。请使用服务商帮助页面中的准确 CardDAV 地址。",
       "testReason_timeout": "服务器未及时响应。请检查网络连接和地址后重试。",
       "testReason_dns": "找不到该服务器名称。请检查地址是否有拼写错误。",
       "testReason_refused": "服务器拒绝了连接。请检查地址和端口。",

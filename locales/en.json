@@ -767,7 +767,7 @@
       "testFailedTitle": "Connection failed",
       "testReason_auth": "The server did not accept the username or password. Check both for typos. If two-factor sign-in is on, create an app password and use that instead.",
       "testReason_not_found": "The server answered, but not at this address (404). Check the address, or use the exact CardDAV address from your provider's help page.",
-      "testReason_discovery": "The login works, but no address book was found at this address. Use the exact CardDAV address from your provider's help page.",
+      "testReason_discovery": "A server answered at this address, but no address book was found there. The login has not been checked yet. Use the exact CardDAV address from your provider's help page.",
       "testReason_timeout": "The server did not answer in time. Check your internet connection and the address, then try again.",
       "testReason_dns": "The server name could not be found. Check the address for typos.",
       "testReason_refused": "The server refused the connection. Check the address and the port.",
