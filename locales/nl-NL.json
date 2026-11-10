@@ -1854,8 +1854,7 @@
       "quickMergeDifferences": "Waar ze verschillen (nieuwere waarde vooraf gekozen)",
       "quickMergeFrom": "van {name}",
       "quickMergeReview": "Elk veld bekijken",
-      "quickMergeConfirm": "Nu samenvoegen",
-      "hint": "{count, plural, one {# mogelijk duplicaat om te bekijken} other {# mogelijke duplicaten om te bekijken}}"
+      "quickMergeConfirm": "Nu samenvoegen"
     },
     "merge": {
       "title": "Contacten samenvoegen",

@@ -1854,8 +1854,7 @@
       "quickMergeDifferences": "Czym się różnią (nowsza wartość jest wybrana)",
       "quickMergeFrom": "od: {name}",
       "quickMergeReview": "Sprawdź każde pole",
-      "quickMergeConfirm": "Połącz teraz",
-      "hint": "{count, plural, one {# możliwy duplikat do sprawdzenia} few {# możliwe duplikaty do sprawdzenia} many {# możliwych duplikatów do sprawdzenia} other {# możliwego duplikatu do sprawdzenia}}"
+      "quickMergeConfirm": "Połącz teraz"
     },
     "merge": {
       "title": "Scal kontakty",

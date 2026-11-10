@@ -4,7 +4,6 @@ import {
   groupSettings,
   isSettingsOverviewPath,
   matchesSetting,
-  normalizeSearchText,
   type SearchableSetting,
 } from '@/components/settings/settingsSearch';
 
@@ -20,12 +19,6 @@ const entries = [
   entry('notifications', 'Notifications', 'Reminders and email', 'push digest'),
   entry('trash', 'Trash', 'Restore deleted items', 'bin'),
 ];
-
-describe('normalizeSearchText', () => {
-  it('lower-cases and strips accents', () => {
-    expect(normalizeSearchText('  Übersicht ')).toBe('ubersicht');
-  });
-});
 
 describe('matchesSetting', () => {
   it('matches everything for an empty query', () => {
@@ -45,7 +38,8 @@ describe('matchesSetting', () => {
   });
 
   it('ignores accents in the query', () => {
-    expect(matchesSetting(entry('profile', 'Übersicht', '', ''), 'ubersicht')).toBe(true);
+    expect(matchesSetting(entry('profile', 'Übersicht', '', ''), '  ubersicht ')).toBe(true);
+    expect(matchesSetting(entry('profile', 'Overview', '', ''), 'ÖVERVIEW')).toBe(true);
   });
 });
 

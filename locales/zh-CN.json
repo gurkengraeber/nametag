@@ -1854,8 +1854,7 @@
       "quickMergeDifferences": "不同之处(已预选较新的值)",
       "quickMergeFrom": "来自 {name}",
       "quickMergeReview": "逐项查看",
-      "quickMergeConfirm": "立即合并",
-      "hint": "{count, plural, other {# 个可能的重复项待查看}}"
+      "quickMergeConfirm": "立即合并"
     },
     "merge": {
       "title": "合并联系人",
