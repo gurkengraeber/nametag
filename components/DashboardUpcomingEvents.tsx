@@ -102,7 +102,7 @@ export default function DashboardUpcomingEvents({ events }: DashboardUpcomingEve
                 disabled={busyId === event.id}
                 aria-label={t('markContactedAria', { name: event.personName })}
                 title={t('markContactedAria', { name: event.personName })}
-                className="mr-2 sm:mr-3 inline-flex min-h-11 shrink-0 items-center gap-1.5 px-3 text-xs font-medium rounded-full border border-border text-muted hover:text-primary hover:border-primary transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-primary"
+                className="mr-2 sm:mr-3 inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center gap-1.5 px-3 text-xs font-medium rounded-full border border-border text-muted hover:text-primary hover:border-primary transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-primary"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />

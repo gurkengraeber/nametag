@@ -1,8 +1,4 @@
-import type { SimulationEdge, SimulationNode } from './simulation-types';
-
-function getEndpointId(v: string | SimulationNode): string {
-  return typeof v === 'string' ? v : v.id;
-}
+import { edgeEndpointId, type SimulationEdge, type SimulationNode } from './simulation-types';
 
 export function diffSimulationData(
   previousNodes: SimulationNode[],
@@ -30,7 +26,7 @@ export function diffSimulationData(
 
   const retainedIds = new Set(mergedNodes.map((n) => n.id));
   const edges = incomingEdges.filter(
-    (e) => retainedIds.has(getEndpointId(e.source)) && retainedIds.has(getEndpointId(e.target)),
+    (e) => retainedIds.has(edgeEndpointId(e.source)) && retainedIds.has(edgeEndpointId(e.target)),
   );
 
   // Seed positions for newly-added nodes based on connected retained nodes.
@@ -40,8 +36,8 @@ export function diffSimulationData(
 
     const neighbors: SimulationNode[] = [];
     for (const edge of edges) {
-      const srcId = getEndpointId(edge.source);
-      const tgtId = getEndpointId(edge.target);
+      const srcId = edgeEndpointId(edge.source);
+      const tgtId = edgeEndpointId(edge.target);
       if (srcId === node.id) {
         const n = mergedById.get(tgtId);
         if (n && n.x !== undefined && n.y !== undefined) neighbors.push(n);
