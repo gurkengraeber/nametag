@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, waitFor } from '@testing-library/react';
+import { render, waitFor, act } from '@testing-library/react';
 import { NextIntlClientProvider } from 'next-intl';
 import type { Simulation } from 'd3-force';
 import enMessages from '../../locales/en.json';
@@ -97,5 +97,29 @@ describe('UnifiedNetworkGraph', () => {
     renderGraph();
     await waitFor(() => expect(created.charges.length).toBeGreaterThan(0));
     expect(created.charges[created.charges.length - 1]).toBe(-250);
+  });
+
+  it('clears the hover when the pointer leaves the canvas', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: true, json: async () => graph }));
+    const { container } = renderGraph();
+    await waitFor(() => expect(created.sims.length).toBeGreaterThan(0));
+    const canvas = container.querySelector('canvas');
+    expect(canvas).not.toBeNull();
+    if (!canvas) return;
+
+    // Sweep the canvas until the pointer is over a node
+    await waitFor(() => {
+      for (let x = -400; x <= 400 && canvas.style.cursor !== 'pointer'; x += 8) {
+        for (let y = -400; y <= 400 && canvas.style.cursor !== 'pointer'; y += 8) {
+          canvas.dispatchEvent(new MouseEvent('mousemove', { clientX: x, clientY: y }));
+        }
+      }
+      expect(canvas.style.cursor).toBe('pointer');
+    });
+
+    act(() => {
+      canvas.dispatchEvent(new MouseEvent('mouseleave'));
+    });
+    expect(canvas.style.cursor).toBe('default');
   });
 });

@@ -744,6 +744,13 @@ export default function UnifiedNetworkGraph({
       }
     };
 
+    const onLeave = () => {
+      if (hoveredNodeIdRef.current === null) return;
+      hoveredNodeIdRef.current = null;
+      canvas.style.cursor = 'default';
+      requestPaint();
+    };
+
     const handleNodeActivate = (node: SimulationNode) => {
       if (node.kind === 'bubble') {
         // Collapse is instant.
@@ -882,10 +889,12 @@ export default function UnifiedNetworkGraph({
     };
 
     canvas.addEventListener('mousemove', onMove);
+    canvas.addEventListener('mouseleave', onLeave);
     canvas.addEventListener('touchend', onTapEmpty);
 
     return () => {
       canvas.removeEventListener('mousemove', onMove);
+      canvas.removeEventListener('mouseleave', onLeave);
       canvas.removeEventListener('touchend', onTapEmpty);
       select(canvas).on('.zoom', null);
       select(canvas).on('.drag', null);
