@@ -36,6 +36,8 @@ export default function GraphSearch({ people, onSelect, onClear }: GraphSearchPr
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    // Enter and Escape confirm or cancel an IME composition (Japanese, Chinese)
+    if (event.nativeEvent.isComposing) return;
     if (event.key === 'ArrowDown') {
       event.preventDefault();
       setOpen(true);
