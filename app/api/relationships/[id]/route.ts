@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/prisma';
+import { withDeadlockRetry } from '@/lib/db/deadlock';
 import { updateRelationshipSchema, validateRequest } from '@/lib/validations';
 import { apiResponse, handleApiError, parseRequestBody, withAuth } from '@/lib/api-utils';
 import { apiError } from '@/lib/api-errors';
@@ -90,33 +91,38 @@ export const PUT = withAuth(async (request, session, context) => {
       return apiResponse.notFound('Relationship type not found');
     }
 
-    // Update the primary relationship
-    const relationship = await prisma.relationship.update({
-      where: { id },
-      data: {
-        relationshipTypeId,
-        notes: notes || null,
-      },
-    });
-
-    // Find and update the inverse relationship
-    const inverse = await prisma.relationship.findFirst({
-      where: {
-        personId: existing.relatedPersonId,
-        relatedPersonId: existing.personId,
-        deletedAt: null,
-      },
-    });
-
-    if (inverse && relationshipType.inverseId) {
-      await prisma.relationship.update({
-        where: { id: inverse.id },
+    // Both directions change together, so a failure never leaves one side behind.
+    // Retried as a whole on a sync deadlock (lib/db/deadlock.ts).
+    const relationship = await withDeadlockRetry(() => prisma.$transaction(async (tx) => {
+      const primary = await tx.relationship.update({
+        where: { id },
         data: {
-          relationshipTypeId: relationshipType.inverseId,
+          relationshipTypeId,
           notes: notes || null,
         },
       });
-    }
+
+      // Find and update the inverse relationship
+      const inverse = await tx.relationship.findFirst({
+        where: {
+          personId: existing.relatedPersonId,
+          relatedPersonId: existing.personId,
+          deletedAt: null,
+        },
+      });
+
+      if (inverse && relationshipType.inverseId) {
+        await tx.relationship.update({
+          where: { id: inverse.id },
+          data: {
+            relationshipTypeId: relationshipType.inverseId,
+            notes: notes || null,
+          },
+        });
+      }
+
+      return primary;
+    }));
 
     return apiResponse.ok({ relationship });
   } catch (error) {
@@ -147,40 +153,44 @@ export const DELETE = withAuth(async (_request, session, context) => {
       return apiResponse.unauthorized();
     }
 
-    // Soft delete the primary relationship (set deletedAt instead of removing)
-    await prisma.relationship.update({
-      where: { id },
-      data: {
-        deletedAt: new Date(),
-      },
-    });
-
-    // Find and soft delete the inverse relationship. Only the row that carries
-    // the inverse type belongs to this one; a second, unrelated relationship
-    // between the same two people stays. A type without an inverse is its own.
-    const inverseTypeId = existing.relationshipType?.inverseId ?? existing.relationshipTypeId;
-    const inverse = await prisma.relationship.findFirst({
-      where: {
-        personId: existing.relatedPersonId,
-        relatedPersonId: existing.personId,
-        deletedAt: null,
-        OR: [
-          { relationshipTypeId: inverseTypeId },
-          ...(existing.relationshipTypeId
-            ? [{ relationshipType: { inverseId: existing.relationshipTypeId } }]
-            : []),
-        ],
-      },
-    });
-
-    if (inverse) {
-      await prisma.relationship.update({
-        where: { id: inverse.id },
+    // Both directions are removed together, so a failure never leaves one side behind.
+    // Retried as a whole on a sync deadlock (lib/db/deadlock.ts).
+    await withDeadlockRetry(() => prisma.$transaction(async (tx) => {
+      // Soft delete the primary relationship (set deletedAt instead of removing)
+      await tx.relationship.update({
+        where: { id },
         data: {
           deletedAt: new Date(),
         },
       });
-    }
+
+      // Find and soft delete the inverse relationship. Only the row that carries
+      // the inverse type belongs to this one; a second, unrelated relationship
+      // between the same two people stays. A type without an inverse is its own.
+      const inverseTypeId = existing.relationshipType?.inverseId ?? existing.relationshipTypeId;
+      const inverse = await tx.relationship.findFirst({
+        where: {
+          personId: existing.relatedPersonId,
+          relatedPersonId: existing.personId,
+          deletedAt: null,
+          OR: [
+            { relationshipTypeId: inverseTypeId },
+            ...(existing.relationshipTypeId
+              ? [{ relationshipType: { inverseId: existing.relationshipTypeId } }]
+              : []),
+          ],
+        },
+      });
+
+      if (inverse) {
+        await tx.relationship.update({
+          where: { id: inverse.id },
+          data: {
+            deletedAt: new Date(),
+          },
+        });
+      }
+    }));
 
     return apiResponse.message('Relationship deleted successfully');
   } catch (error) {

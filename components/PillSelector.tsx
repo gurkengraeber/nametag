@@ -17,6 +17,8 @@ interface PillSelectorProps<T extends PillItem> {
   onRemove: (itemId: string) => void;
   onCreateNew?: (name: string) => void | Promise<void>;
   placeholder?: string;
+  /** Shown instead of `placeholder` once something is selected, because the input then shares the row with the pills. */
+  placeholderWhenFilled?: string;
   emptyMessage?: string;
   createNewLabel?: string;
   helpText?: string;
@@ -38,6 +40,7 @@ export default function PillSelector<T extends PillItem>({
   onRemove,
   onCreateNew,
   placeholder = 'Type to search...',
+  placeholderWhenFilled,
   emptyMessage = 'No items found',
   createNewLabel = 'Create',
   helpText,
@@ -243,7 +246,7 @@ export default function PillSelector<T extends PillItem>({
               placeholder={
                 selectedItems.length === 0
                   ? placeholder
-                  : placeholder.replace('Type to search', 'Add more')
+                  : placeholderWhenFilled ?? placeholder.replace('Type to search', 'Add more')
               }
               disabled={isLoading}
               data-1p-ignore

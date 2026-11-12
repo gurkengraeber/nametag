@@ -1116,7 +1116,7 @@
     },
     "search": {
       "label": "Buscar ajustes",
-      "placeholder": "Buscar ajustes, p. ej. contraseña, idioma, recordatorios",
+      "placeholder": "Buscar ajustes, p. ej. contraseña, idioma",
       "noResults": "Ningún ajuste coincide con \"{query}\"",
       "noResultsHint": "Prueba con una palabra más corta o borra la búsqueda para ver todos los grupos.",
       "keywords": {
@@ -1604,6 +1604,7 @@
         "quickTip": "Consejo rápido:",
         "quickTipMessage": "¿No ves un grupo? Simplemente escribe su nombre y presiona Enter para crearlo al instante",
         "placeholder": "Escribe para buscar o crear grupos...",
+        "placeholderWhenFilled": "Añadir grupo...",
         "emptyMessage": "No se encontraron grupos que coincidan",
         "createGroup": "Crear grupo",
         "helpText": "Haz clic en × sobre un grupo para eliminarlo.",
@@ -2023,6 +2024,7 @@
     "members": {
       "label": "Miembros ({count})",
       "placeholder": "Escribe un nombre para añadir miembros...",
+      "placeholderWhenFilled": "Añadir miembro...",
       "emptyMessage": "No se encontraron personas que coincidan",
       "helpText": "Escribe para buscar personas y presiona Enter para añadirlas. Haz clic en × para eliminar miembros.",
       "addedSuccess": "{name} añadido a {group}",

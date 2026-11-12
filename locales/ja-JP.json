@@ -1604,6 +1604,7 @@
         "quickTip": "クイックヒント：",
         "quickTipMessage": "グループが見つかりませんか？名前を入力してEnterキーを押すだけでその場で作成できます！",
         "placeholder": "グループを検索または作成するには入力してください...",
+        "placeholderWhenFilled": "グループを追加...",
         "emptyMessage": "一致するグループは見つかりませんでした",
         "createGroup": "グループを作成",
         "helpText": "グループを削除するには、グループの×をクリックします。",
@@ -2023,6 +2024,7 @@
     "members": {
       "label": "メンバー（{count}）",
       "placeholder": "名前を入力してメンバーを追加...",
+      "placeholderWhenFilled": "メンバーを追加...",
       "emptyMessage": "一致する人物は見つかりませんでした",
       "helpText": "名前を入力して人物を検索し、Enterキーを押して追加します。メンバーを削除するには×をクリックします。",
       "addedSuccess": "{name}が{group}に追加されました",

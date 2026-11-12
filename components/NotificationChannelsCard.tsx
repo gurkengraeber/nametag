@@ -268,6 +268,9 @@ export default function NotificationChannelsCard({
     }
   }
 
+  // The saved choice stays as it is; without a configured mail server the switch shows what really happens.
+  const emailOn = email && emailAvailable;
+
   return (
     <div className="bg-surface shadow rounded-lg p-6">
       <h2 className="text-xl font-bold text-foreground mb-4">{t('channelsTitle')}</h2>
@@ -279,17 +282,17 @@ export default function NotificationChannelsCard({
           type="button"
           role="switch"
           aria-label={t('channelEmail')}
-          aria-checked={email}
+          aria-checked={emailOn}
           aria-disabled={!emailAvailable}
           disabled={!emailAvailable}
           onClick={() => void toggleEmail(!email)}
           className={`relative inline-flex h-6 w-11 flex-shrink-0 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50 disabled:cursor-not-allowed ${
-            email ? 'bg-primary' : 'bg-muted'
+            emailOn ? 'bg-primary' : 'bg-muted'
           }`}
         >
           <span
             className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-sm transition-transform ${
-              email ? 'translate-x-6' : 'translate-x-1'
+              emailOn ? 'translate-x-6' : 'translate-x-1'
             }`}
           />
         </button>

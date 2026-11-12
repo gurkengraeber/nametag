@@ -1116,7 +1116,7 @@
     },
     "search": {
       "label": "Instellingen doorzoeken",
-      "placeholder": "Zoek, bijv. wachtwoord, taal, herinneringen",
+      "placeholder": "Zoek, bijv. wachtwoord, taal",
       "noResults": "Geen instelling past bij \"{query}\"",
       "noResultsHint": "Probeer een korter woord of wis de zoekopdracht om alle groepen te zien.",
       "keywords": {
@@ -1604,6 +1604,7 @@
         "quickTip": "Snelle tip:",
         "quickTipMessage": "Ziet u geen groep? Typ gewoon de naam en druk op Enter om het ter plekke aan te maken!",
         "placeholder": "Typ om groepen te zoeken of aan te maken...",
+        "placeholderWhenFilled": "Groep toevoegen...",
         "emptyMessage": "Geen groepen gevonden die overeenkomen",
         "createGroup": "Groep aanmaken",
         "helpText": "Klik × op een groep om het te verwijderen.",
@@ -2023,6 +2024,7 @@
     "members": {
       "label": "Leden ({count})",
       "placeholder": "Typ een naam om leden toe te voegen...",
+      "placeholderWhenFilled": "Lid toevoegen...",
       "emptyMessage": "Geen personen gevonden die overeenkomen",
       "helpText": "Typ om personen te zoeken en druk op Enter om ze toe te voegen. Klik × om leden te verwijderen.",
       "addedSuccess": "{name} toegevoegd aan {group}",

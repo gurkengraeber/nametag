@@ -1116,7 +1116,7 @@
     },
     "search": {
       "label": "Search settings",
-      "placeholder": "Search settings, e.g. password, language, reminders",
+      "placeholder": "Search settings, e.g. password, language",
       "noResults": "No settings match \"{query}\"",
       "noResultsHint": "Try a shorter word, or browse the groups by clearing the search.",
       "keywords": {
@@ -1604,6 +1604,7 @@
         "quickTip": "Quick tip:",
         "quickTipMessage": "Don't see a group? Just type its name and press Enter to create it on the fly!",
         "placeholder": "Type to search or create groups...",
+        "placeholderWhenFilled": "Add group...",
         "emptyMessage": "No groups found matching",
         "createGroup": "Create group",
         "helpText": "Click × on a group to remove it.",
@@ -2023,6 +2024,7 @@
     "members": {
       "label": "Members ({count})",
       "placeholder": "Type a name to add members...",
+      "placeholderWhenFilled": "Add member...",
       "emptyMessage": "No people found matching",
       "helpText": "Type to search for people and press Enter to add them. Click × to remove members.",
       "addedSuccess": "{name} added to {group}",

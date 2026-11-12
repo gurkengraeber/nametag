@@ -1604,6 +1604,7 @@
         "quickTip": "快速提示：",
         "quickTipMessage": "看不到分组？只需输入其名称并按 Enter 键即可立即创建！",
         "placeholder": "输入以搜索或创建分组...",
+        "placeholderWhenFilled": "添加分组...",
         "emptyMessage": "未找到匹配的分组",
         "createGroup": "创建分组",
         "helpText": "单击分组上的 × 移除它。",
@@ -2023,6 +2024,7 @@
     "members": {
       "label": "成员({count})",
       "placeholder": "输入名称以添加成员...",
+      "placeholderWhenFilled": "添加成员...",
       "emptyMessage": "未找到匹配的联系人",
       "helpText": "输入以搜索联系人并按 Enter 键添加。单击 × 移除成员。",
       "addedSuccess": "{name} 已添加到 {group}",

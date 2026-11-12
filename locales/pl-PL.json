@@ -1116,7 +1116,7 @@
     },
     "search": {
       "label": "Szukaj w ustawieniach",
-      "placeholder": "Szukaj, np. hasło, język, przypomnienia",
+      "placeholder": "Szukaj, np. hasło, język",
       "noResults": "Żadne ustawienie nie pasuje do \"{query}\"",
       "noResultsHint": "Spróbuj krótszego słowa albo wyczyść wyszukiwanie, aby zobaczyć wszystkie grupy.",
       "keywords": {
@@ -1604,6 +1604,7 @@
         "quickTip": "Wskazówka:",
         "quickTipMessage": "Nie widzisz grupy? Wpisz jej nazwę i naciśnij Enter, aby utworzyć ją od ręki!",
         "placeholder": "Zacznij pisać, aby wyszukać lub utworzyć grupy...",
+        "placeholderWhenFilled": "Dodaj grupę...",
         "emptyMessage": "Nie znaleziono grup pasujących do",
         "createGroup": "Utwórz grupę",
         "helpText": "Kliknij × przy grupie, aby ją usunąć.",
@@ -2023,6 +2024,7 @@
     "members": {
       "label": "Członkowie ({count})",
       "placeholder": "Wpisz imię, aby dodać członków...",
+      "placeholderWhenFilled": "Dodaj członka...",
       "emptyMessage": "Nie znaleziono osób pasujących do",
       "helpText": "Wpisz, aby wyszukać osoby, i naciśnij Enter, aby je dodać. Kliknij ×, aby usunąć członków.",
       "addedSuccess": "Dodano {name} do grupy: {group}",

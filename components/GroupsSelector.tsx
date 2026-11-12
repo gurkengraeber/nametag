@@ -187,6 +187,7 @@ export default function GroupsSelector({
         onRemove={handleRemove}
         onCreateNew={allowCreate ? handleCreateNew : undefined}
         placeholder={placeholder || t('placeholder')}
+        placeholderWhenFilled={placeholder ? undefined : t('placeholderWhenFilled')}
         emptyMessage={t('emptyMessage')}
         createNewLabel={t('createGroup')}
         helpText={t('helpText')}

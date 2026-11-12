@@ -83,7 +83,7 @@ export default function MapFilters({ filters, markers, groups, relationshipTypes
       <select
         value={filters.lastContact}
         onChange={(e) => onChange({ ...filters, lastContact: e.target.value })}
-        className={selectClasses}
+        className={`${selectClasses} col-span-2 sm:col-span-1`}
         aria-label={t('lastContactAny')}
       >
         <option value="">{t('lastContactAny')}</option>

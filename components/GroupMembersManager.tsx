@@ -163,6 +163,7 @@ export default function GroupMembersManager({
       onAdd={handleAdd}
       onRemove={handleRemove}
       placeholder={t('placeholder')}
+      placeholderWhenFilled={t('placeholderWhenFilled')}
       emptyMessage={t('emptyMessage')}
       helpText={t('helpText')}
       removeAriaLabel={t('remove')}

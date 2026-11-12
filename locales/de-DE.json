@@ -1116,7 +1116,7 @@
     },
     "search": {
       "label": "Einstellungen durchsuchen",
-      "placeholder": "Einstellungen suchen, z. B. Passwort, Sprache, Erinnerungen",
+      "placeholder": "Einstellungen suchen, z. B. Passwort, Sprache",
       "noResults": "Keine Einstellung passt zu \"{query}\"",
       "noResultsHint": "Versuche ein kürzeres Wort oder lösche die Suche, um alle Gruppen zu sehen.",
       "keywords": {
@@ -1604,6 +1604,7 @@
         "quickTip": "Kurztipp:",
         "quickTipMessage": "Du siehst keine Gruppe? Tippe einfach den Namen ein und drücke Enter, um sie sofort zu erstellen!",
         "placeholder": "Tippen, um Gruppen zu suchen oder zu erstellen...",
+        "placeholderWhenFilled": "Gruppe hinzufügen...",
         "emptyMessage": "Keine Gruppen gefunden passend zu",
         "createGroup": "Gruppe erstellen",
         "helpText": "Klicke × bei einer Gruppe, um sie zu entfernen.",
@@ -2023,6 +2024,7 @@
     "members": {
       "label": "Mitglieder ({count})",
       "placeholder": "Tippe einen Namen, um Mitglieder hinzuzufügen...",
+      "placeholderWhenFilled": "Mitglied hinzufügen...",
       "emptyMessage": "Keine Personen gefunden passend zu",
       "helpText": "Tippe, um nach Personen zu suchen, und drücke Enter, um sie hinzuzufügen. Klicke ×, um Mitglieder zu entfernen.",
       "addedSuccess": "{name} zu {group} hinzugefügt",

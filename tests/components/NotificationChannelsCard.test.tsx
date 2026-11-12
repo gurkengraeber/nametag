@@ -150,6 +150,12 @@ describe('NotificationChannelsCard', () => {
     expect(toggle.getAttribute('aria-disabled')).toBe('true');
   });
 
+  it('shows the email toggle as off when it cannot send, even if the choice is saved as on', () => {
+    renderCard({ emailAvailable: false, emailEnabled: true });
+
+    expect(screen.getByRole('switch', { name: /email/i }).getAttribute('aria-checked')).toBe('false');
+  });
+
   it('lists subscribed devices', () => {
     renderCard({
       devices: [

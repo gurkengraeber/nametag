@@ -1116,7 +1116,7 @@
     },
     "search": {
       "label": "Cerca nelle impostazioni",
-      "placeholder": "Cerca, ad es. password, lingua, promemoria",
+      "placeholder": "Cerca, ad es. password, lingua",
       "noResults": "Nessuna impostazione corrisponde a \"{query}\"",
       "noResultsHint": "Prova con una parola più corta o cancella la ricerca per vedere tutti i gruppi.",
       "keywords": {
@@ -1604,6 +1604,7 @@
         "quickTip": "Suggerimento rapido:",
         "quickTipMessage": "Non vedi un gruppo? Semplicemente digita il suo nome e premi Invio per crearlo al volo!",
         "placeholder": "Digita per cercare o creare gruppi...",
+        "placeholderWhenFilled": "Aggiungi gruppo...",
         "emptyMessage": "Nessun gruppo trovato corrispondente a",
         "createGroup": "Crea gruppo",
         "helpText": "Clicca × su un gruppo per rimuoverlo.",
@@ -2023,6 +2024,7 @@
     "members": {
       "label": "Membri ({count})",
       "placeholder": "Digita un nome per aggiungere membri...",
+      "placeholderWhenFilled": "Aggiungi membro...",
       "emptyMessage": "Nessuna persona trovata corrispondente a",
       "helpText": "Digita per cercare persone e premi Invio per aggiungerle. Clicca × per rimuovere membri.",
       "addedSuccess": "{name} aggiunto/a a {group}",

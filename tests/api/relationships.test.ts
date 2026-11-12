@@ -30,7 +30,13 @@ vi.mock('../../lib/prisma', () => ({
       mocks.tx.open = true;
       mocks.tx.runs += 1;
       try {
-        return await fn({ relationship: { create: mocks.relationshipCreate, findFirst: mocks.relationshipFindFirst } });
+        return await fn({
+          relationship: {
+            create: mocks.relationshipCreate,
+            findFirst: mocks.relationshipFindFirst,
+            update: mocks.relationshipUpdate,
+          },
+        });
       } finally {
         mocks.tx.open = false;
       }
@@ -253,6 +259,60 @@ describe('Relationships API', () => {
       );
 
       expect(response.status).toBe(201);
+      expect(mocks.tx.runs).toBe(1);
+      expect(writtenInside).toEqual([true, true]);
+    });
+  });
+
+  describe('PUT and DELETE /api/relationships/[id] atomicity', () => {
+    const existing = {
+      id: 'rel-1',
+      personId: 'person-1',
+      relatedPersonId: 'person-2',
+      relationshipTypeId: 'parent',
+      person: { id: 'person-1', userId: 'user-123' },
+      relationshipType: { inverseId: 'child' },
+    };
+    const context = { params: Promise.resolve({ id: 'rel-1' }) };
+
+    it('changes both directions inside one transaction', async () => {
+      const writtenInside: boolean[] = [];
+      mocks.tx.runs = 0;
+      mocks.relationshipFindUnique.mockResolvedValue(existing);
+      mocks.relationshipTypeFindFirst.mockResolvedValue({ id: 'friend', inverseId: 'friend' });
+      mocks.relationshipFindFirst.mockResolvedValue({ id: 'inverse-rel' });
+      mocks.relationshipUpdate.mockImplementation(async () => {
+        writtenInside.push(mocks.tx.open);
+        return { id: 'rel-1' };
+      });
+
+      const response = await PUT(
+        new Request('http://localhost/api/relationships/rel-1', {
+          method: 'PUT',
+          body: JSON.stringify({ relationshipTypeId: 'friend' }),
+          headers: { 'content-type': 'application/json' },
+        }),
+        context
+      );
+
+      expect(response.status).toBe(200);
+      expect(mocks.tx.runs).toBe(1);
+      expect(writtenInside).toEqual([true, true]);
+    });
+
+    it('removes both directions inside one transaction', async () => {
+      const writtenInside: boolean[] = [];
+      mocks.tx.runs = 0;
+      mocks.relationshipFindUnique.mockResolvedValue(existing);
+      mocks.relationshipFindFirst.mockResolvedValue({ id: 'inverse-rel' });
+      mocks.relationshipUpdate.mockImplementation(async () => {
+        writtenInside.push(mocks.tx.open);
+        return { id: 'rel-1' };
+      });
+
+      const response = await DELETE(new Request('http://localhost/api/relationships/rel-1', { method: 'DELETE' }), context);
+
+      expect(response.status).toBe(200);
       expect(mocks.tx.runs).toBe(1);
       expect(writtenInside).toEqual([true, true]);
     });

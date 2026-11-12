@@ -1116,7 +1116,7 @@
     },
     "search": {
       "label": "Søk i innstillinger",
-      "placeholder": "Søk, f.eks. passord, språk, påminnelser",
+      "placeholder": "Søk, f.eks. passord, språk",
       "noResults": "Ingen innstillinger passer til \"{query}\"",
       "noResultsHint": "Prøv et kortere ord, eller tøm søket for å se alle gruppene.",
       "keywords": {
@@ -1604,6 +1604,7 @@
         "quickTip": "Hurtigtips:",
         "quickTipMessage": "Ser du ikke en gruppe? Bare skriv navnet og trykk Enter for å opprette den med en gang!",
         "placeholder": "Skriv for å søke etter eller opprette grupper...",
+        "placeholderWhenFilled": "Legg til gruppe...",
         "emptyMessage": "Fant ingen grupper som samsvarer med",
         "createGroup": "Opprett gruppe",
         "helpText": "Klikk × på en gruppe for å fjerne den.",
@@ -2023,6 +2024,7 @@
     "members": {
       "label": "Medlemmer ({count})",
       "placeholder": "Skriv et navn for å legge til medlemmer...",
+      "placeholderWhenFilled": "Legg til medlem...",
       "emptyMessage": "Fant ingen personer som samsvarer med",
       "helpText": "Skriv for å søke etter personer og trykk Enter for å legge dem til. Klikk × for å fjerne medlemmer.",
       "addedSuccess": "{name} ble lagt til i {group}",
