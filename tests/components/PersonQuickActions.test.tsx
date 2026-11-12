@@ -97,7 +97,7 @@ describe('PersonQuickActions', () => {
     const user = userEvent.setup();
     renderIt();
 
-    await user.click(screen.getByPlaceholderText(/create groups/i));
+    await user.click(screen.getByPlaceholderText(/add group/i));
     await user.click(await screen.findByText('Chess'));
 
     await waitFor(() => expect(toast.success).toHaveBeenCalledWith('Groups updated'));

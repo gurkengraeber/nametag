@@ -126,6 +126,9 @@ vi.mock('../../lib/prisma', () => ({
     cardDavMapping: {
       deleteMany: mocks.cardDavMappingDeleteMany,
     },
+    // Interactive transactions run against the same doubles
+    $transaction: async (fn: (tx: unknown) => Promise<unknown>) =>
+      fn({ relationship: { update: mocks.relationshipUpdate, findFirst: mocks.relationshipFindFirst } }),
   },
   // The trash routes scope ownership inside the lookup, so they use findFirst
   // where they once used findUnique. This double answers either the same way:
