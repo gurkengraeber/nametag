@@ -1,0 +1,65 @@
+# Fork only: builds the server image from fork-main.
+# The home server pulls ghcr.io/<owner>/nametag:fork-main every few minutes.
+name: Fork Image
+
+on:
+  push:
+    branches:
+      - fork-main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: fork-image
+  cancel-in-progress: true
+
+jobs:
+  build:
+    if: github.repository != 'mattogodoy/nametag'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+        with:
+          ref: fork-main
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Image name and tags
+        id: tags
+        run: |
+          IMAGE="ghcr.io/$(echo "$GITHUB_REPOSITORY" | tr '[:upper:]' '[:lower:]')"
+          SHA_SHORT="$(git rev-parse --short=7 HEAD)"
+          echo "image=${IMAGE}" >> "$GITHUB_OUTPUT"
+          echo "sha=${SHA_SHORT}" >> "$GITHUB_OUTPUT"
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          platforms: linux/amd64
+          push: true
+          tags: |
+            ${{ steps.tags.outputs.image }}:fork-main
+            ${{ steps.tags.outputs.image }}:sha-${{ steps.tags.outputs.sha }}
+          labels: |
+            org.opencontainers.image.source=https://github.com/${{ github.repository }}
+            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.description=Nametag fork build (fork-main)
+          # No GitHub Actions cache: upstream-sync runs upstream code in this repository's cache scope.
+          no-cache: true
+          provenance: false
+          sbom: false

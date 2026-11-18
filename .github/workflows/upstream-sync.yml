@@ -1,0 +1,228 @@
+# Fork only: merges upstream master into fork-main once a day.
+# Pushes only when the merge is clean (locale files are merged key by key)
+# and type check, unit tests and database tests pass. Otherwise it opens an
+# issue in this fork. Nothing is ever posted to the upstream repository.
+#
+# Upstream code (npm install scripts, tests) only runs in the "check" job,
+# which has a read-only token and no stored git credentials. The "publish"
+# job runs no repository code: it fetches the tested merge commit from a git
+# bundle and pushes it.
+#
+# Scheduled runs only fire from the repository's default branch, so this file
+# has to be on the default branch for the daily run.
+name: Upstream Sync
+
+on:
+  schedule:
+    - cron: '17 3 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: upstream-sync
+  cancel-in-progress: false
+
+env:
+  UPSTREAM: https://github.com/mattogodoy/nametag.git
+  TARGET: fork-main
+
+jobs:
+  check:
+    if: github.repository != 'mattogodoy/nametag'
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    permissions:
+      contents: read
+    outputs:
+      status: ${{ steps.merge.outputs.status }}
+      upstream: ${{ steps.merge.outputs.upstream }}
+      base: ${{ steps.merge.outputs.base }}
+      merged: ${{ steps.merge.outputs.merged }}
+      conflicts: ${{ steps.merge.outputs.conflicts }}
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: nametag
+          POSTGRES_PASSWORD: nametag
+          POSTGRES_DB: nametag_test
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U nametag"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    steps:
+      - name: Checkout fork-main
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ env.TARGET }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Merge upstream master
+        id: merge
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          BASE="$(git rev-parse HEAD)"
+          echo "base=${BASE}" >> "$GITHUB_OUTPUT"
+          # Keep the locale helper from the fork's own commit, outside the work tree.
+          git show HEAD:.github/scripts/merge-locales.py > "$RUNNER_TEMP/merge-locales.py"
+          git fetch --no-tags "$UPSTREAM" master
+          UPSTREAM_SHA="$(git rev-parse FETCH_HEAD)"
+          echo "upstream=${UPSTREAM_SHA}" >> "$GITHUB_OUTPUT"
+          if git merge-base --is-ancestor "$UPSTREAM_SHA" HEAD; then
+            echo "Nothing new upstream."
+            echo "status=uptodate" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          if ! git merge --no-edit -m "Merge upstream master ${UPSTREAM_SHA:0:7} into fork-main" "$UPSTREAM_SHA"; then
+            python3 -I "$RUNNER_TEMP/merge-locales.py" || true
+            REST="$(git diff --name-only --diff-filter=U)"
+            if [ -n "$REST" ]; then
+              {
+                echo "conflicts<<EOF"
+                echo "$REST"
+                echo "EOF"
+              } >> "$GITHUB_OUTPUT"
+              git merge --abort
+              echo "status=conflict" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+            git commit --no-edit
+          fi
+          echo "merged=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          git bundle create "$RUNNER_TEMP/merge.bundle" "$BASE..HEAD"
+          echo "status=merged" >> "$GITHUB_OUTPUT"
+
+      - name: Setup Node.js
+        if: steps.merge.outputs.status == 'merged'
+        uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          # No npm cache: this job runs upstream code and must not write caches other workflows read.
+
+      - name: Install dependencies
+        if: steps.merge.outputs.status == 'merged'
+        run: npm ci
+
+      - name: Set test environment
+        if: steps.merge.outputs.status == 'merged'
+        run: |
+          echo "NEXTAUTH_URL=http://localhost:3000" >> "$GITHUB_ENV"
+          echo "RESEND_API_KEY=re_test_key" >> "$GITHUB_ENV"
+          echo "EMAIL_DOMAIN=test.example.com" >> "$GITHUB_ENV"
+          echo "NEXT_TELEMETRY_DISABLED=1" >> "$GITHUB_ENV"
+          printf "NEXTAUTH_SECRET=" >> "$GITHUB_ENV"
+          head -c 32 < /dev/zero | tr '\0' 'x' >> "$GITHUB_ENV"
+          printf "\n" >> "$GITHUB_ENV"
+          printf "CRON_SECRET=" >> "$GITHUB_ENV"
+          head -c 16 < /dev/zero | tr '\0' 'x' >> "$GITHUB_ENV"
+          printf "\n" >> "$GITHUB_ENV"
+
+      - name: Generate Prisma Client
+        if: steps.merge.outputs.status == 'merged'
+        env:
+          DATABASE_URL: postgresql://localhost:5432/dummy
+        run: npx prisma generate
+
+      - name: Type check
+        if: steps.merge.outputs.status == 'merged'
+        env:
+          DATABASE_URL: postgresql://localhost:5432/dummy
+        run: npx tsc --noEmit
+
+      - name: Unit tests
+        if: steps.merge.outputs.status == 'merged'
+        env:
+          DATABASE_URL: postgresql://localhost:5432/dummy
+        run: npm run test:run
+
+      - name: Database tests
+        if: steps.merge.outputs.status == 'merged'
+        env:
+          TEST_DATABASE_URL: postgresql://nametag:nametag@localhost:5432/nametag_test
+          DATABASE_URL: postgresql://nametag:nametag@localhost:5432/nametag_test
+        run: npm run test:db
+
+      - name: Upload tested merge
+        if: steps.merge.outputs.status == 'merged'
+        uses: actions/upload-artifact@v4
+        with:
+          name: merge-bundle
+          path: ${{ runner.temp }}/merge.bundle
+          retention-days: 3
+
+  publish:
+    needs: check
+    if: needs.check.result == 'success' && needs.check.outputs.status == 'merged'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      actions: write
+    steps:
+      - name: Download tested merge
+        uses: actions/download-artifact@v4
+        with:
+          name: merge-bundle
+          path: ${{ runner.temp }}/bundle
+
+      - name: Push fork-main and build the image
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BASE: ${{ needs.check.outputs.base }}
+          MERGED: ${{ needs.check.outputs.merged }}
+        run: |
+          set -euo pipefail
+          [[ "$MERGED" =~ ^[0-9a-f]{40}$ && "$BASE" =~ ^[0-9a-f]{40}$ ]]
+          git init -q repo && cd repo
+          git remote add origin "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          # Stored as a ref, so the bundle's prerequisite commit counts as part of the history.
+          git fetch -q --no-tags origin "+refs/heads/${TARGET}:refs/remotes/origin/${TARGET}"
+          # Only fast-forward from the commit that was tested; if fork-main moved meanwhile, stop.
+          [ "$(git rev-parse "refs/remotes/origin/${TARGET}")" = "$BASE" ] || { echo "fork-main moved since the check, not pushing"; exit 1; }
+          git fetch -q "$RUNNER_TEMP/bundle/merge.bundle" "+HEAD:refs/sync/merged"
+          [ "$(git rev-parse --verify "${MERGED}^{commit}")" = "$MERGED" ]
+          git push origin "${MERGED}:refs/heads/${TARGET}"
+          # Pushes made with GITHUB_TOKEN do not trigger other workflows.
+          gh workflow run fork-image.yml --repo "$GITHUB_REPOSITORY" --ref "$TARGET"
+
+  report:
+    needs: [check, publish]
+    if: always() && github.repository != 'mattogodoy/nametag' && (needs.check.outputs.status == 'conflict' || needs.check.result == 'failure' || needs.publish.result == 'failure')
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Open an issue in this fork
+        env:
+          GH_TOKEN: ${{ github.token }}
+          STATUS: ${{ needs.check.outputs.status }}
+          CONFLICTS: ${{ needs.check.outputs.conflicts }}
+          UPSTREAM_SHA: ${{ needs.check.outputs.upstream }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          if [ "$STATUS" = "conflict" ]; then
+            TITLE="Upstream sync: merge conflict"
+            BODY="Upstream master \`${UPSTREAM_SHA:0:7}\` does not merge cleanly into \`${TARGET}\`. Nothing was pushed.
+
+          Conflicting files:
+          \`\`\`
+          ${CONFLICTS}
+          \`\`\`
+
+          Run: ${RUN_URL}"
+          else
+            TITLE="Upstream sync: checks failed"
+            BODY="Upstream master \`${UPSTREAM_SHA:0:7}\` could not be merged, tested or pushed. Nothing was pushed unless the log says otherwise.
+
+          Run: ${RUN_URL}"
+          fi
+          EXISTING="$(gh issue list --repo "$GITHUB_REPOSITORY" --state open --search "in:title \"${TITLE}\"" --json number --jq '.[0].number')"
+          if [ -n "$EXISTING" ]; then
+            gh issue comment "$EXISTING" --repo "$GITHUB_REPOSITORY" --body "$BODY"
+          else
+            gh issue create --repo "$GITHUB_REPOSITORY" --title "$TITLE" --body "$BODY"
+          fi
