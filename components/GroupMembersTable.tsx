@@ -1,7 +1,10 @@
 'use client';
 
+import { useMemo, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import BulkRelationshipModal from './BulkRelationshipModal';
 import PersonAvatar from './PersonPhoto';
 import {
   RelationshipCell,
@@ -11,6 +14,7 @@ import {
   type QuickEditRelationshipType,
 } from './QuickEditCells';
 import { formatCanonicalName, type NameDisplayFormat } from '@/lib/nameUtils';
+import { setAllSelected, toggleSelected } from '@/lib/people-selection';
 
 interface GroupMemberConnection {
   id: string;
@@ -107,9 +111,14 @@ function ConnectionsCell({
   );
 }
 
+const checkboxClass = 'w-4 h-4 text-primary bg-surface-elevated border-border rounded focus:ring-primary';
+const toolbarButtonClass =
+  'px-3 py-1.5 min-h-11 sm:min-h-0 text-sm font-medium text-foreground bg-surface-elevated border border-border rounded-lg hover:bg-surface-elevated/80 transition-colors';
+
 /**
  * The members of a group as a table whose relationship, last contact and
  * location can be changed in place, so people do not have to be opened one by one.
+ * Members can be ticked to give several of them the same relationship at once.
  */
 export default function GroupMembersTable({
   members,
@@ -119,23 +128,63 @@ export default function GroupMembersTable({
 }: GroupMembersTableProps) {
   const t = useTranslations('groups.members');
   const tPeople = useTranslations('people');
+  const tBulk = useTranslations('people.bulk');
+  const router = useRouter();
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [showRelationshipModal, setShowRelationshipModal] = useState(false);
+
+  const memberIdList = useMemo(() => members.map((member) => member.id), [members]);
+  // Members who left the group since they were ticked no longer count.
+  const selectedIds = memberIdList.filter((id) => selected.has(id));
+  const allSelected = memberIdList.length > 0 && selectedIds.length === memberIdList.length;
 
   if (members.length === 0) {
     return null;
   }
 
-  const memberIds = new Set(members.map((member) => member.id));
+  const memberIds = new Set(memberIdList);
 
   const sortedMembers = [...members].sort((a, b) =>
     formatCanonicalName(a, nameOrder).localeCompare(formatCanonicalName(b, nameOrder)),
   );
 
+  const clearSelection = () => setSelected(new Set());
+
   return (
     <div>
+      {/* Always rendered so ticking the first box does not push the rows down under the pointer. */}
+      <div className="mb-3 flex flex-wrap items-center gap-x-4 gap-y-2 px-4 py-2 border border-border rounded-lg bg-surface-elevated">
+        <span className="text-sm font-medium text-foreground">
+          {selectedIds.length > 0 ? tBulk('selected', { count: selectedIds.length }) : t('selectHint')}
+        </span>
+        <button
+          type="button"
+          onClick={() => setShowRelationshipModal(true)}
+          disabled={selectedIds.length === 0}
+          className={`${toolbarButtonClass} disabled:opacity-50 disabled:cursor-not-allowed`}
+        >
+          {tBulk('setRelationship')}
+        </button>
+        {selectedIds.length > 0 && (
+          <button type="button" onClick={clearSelection} className="text-sm text-muted hover:text-foreground transition-colors">
+            {tBulk('clearSelection')}
+          </button>
+        )}
+      </div>
       <div className="overflow-x-auto border border-border rounded-lg">
         <table className="min-w-full divide-y divide-border">
           <thead className="bg-surface-elevated">
             <tr>
+              <th className="pl-4 pr-2 py-2 w-10">
+                <input
+                  type="checkbox"
+                  checked={allSelected}
+                  onChange={() => setSelected((prev) => setAllSelected(prev, memberIdList, !allSelected))}
+                  className={checkboxClass}
+                  title={tBulk('selectAll')}
+                  aria-label={tBulk('selectAll')}
+                />
+              </th>
               <th className="px-4 py-2 text-left text-xs font-medium text-muted uppercase tracking-wider">
                 {tPeople('fullName')}
               </th>
@@ -156,13 +205,27 @@ export default function GroupMembersTable({
           <tbody className="bg-surface divide-y divide-border">
             {sortedMembers.map((member) => {
               const fullName = formatCanonicalName(member, nameOrder);
+              const displayName = formatCanonicalName(member, nameOrder, nameDisplayFormat);
+              const isChecked = selected.has(member.id);
               return (
-                <tr key={member.id} className="hover:bg-surface-elevated transition-colors">
+                <tr
+                  key={member.id}
+                  className={`hover:bg-surface-elevated transition-colors ${isChecked ? 'bg-primary/5' : ''}`}
+                >
+                  <td className="pl-4 pr-2 py-3 w-10">
+                    <input
+                      type="checkbox"
+                      checked={isChecked}
+                      onChange={() => setSelected((prev) => toggleSelected(prev, member.id))}
+                      className={checkboxClass}
+                      aria-label={displayName}
+                    />
+                  </td>
                   <td className="px-4 py-3 whitespace-nowrap">
                     <div className="flex items-center gap-3">
                       <PersonAvatar personId={member.id} name={fullName} photo={member.photo} size={28} />
                       <Link href={`/people/${member.id}`} className="text-primary hover:underline font-medium">
-                        {formatCanonicalName(member, nameOrder, nameDisplayFormat)}
+                        {displayName}
                       </Link>
                     </div>
                   </td>
@@ -197,6 +260,20 @@ export default function GroupMembersTable({
           </tbody>
         </table>
       </div>
+
+      <BulkRelationshipModal
+        isOpen={showRelationshipModal}
+        onClose={() => setShowRelationshipModal(false)}
+        selectedIds={selectedIds}
+        selectAll={false}
+        totalCount={selectedIds.length}
+        relationshipTypes={relationshipTypes}
+        onSuccess={() => {
+          setShowRelationshipModal(false);
+          clearSelection();
+          router.refresh();
+        }}
+      />
     </div>
   );
 }

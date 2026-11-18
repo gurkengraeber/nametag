@@ -2041,7 +2041,8 @@
       "viewLabel": "View",
       "viewList": "List",
       "viewNetwork": "Network",
-      "manageMembers": "Add or remove members"
+      "manageMembers": "Add or remove members",
+      "selectHint": "Tick people to give them a relationship together"
     },
     "delete": {
       "button": "Delete",

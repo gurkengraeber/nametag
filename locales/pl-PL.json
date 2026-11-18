@@ -2041,7 +2041,8 @@
       "viewLabel": "Widok",
       "viewList": "Lista",
       "viewNetwork": "Sieć",
-      "manageMembers": "Dodaj lub usuń członków"
+      "manageMembers": "Dodaj lub usuń członków",
+      "selectHint": "Zaznacz osoby, aby nadać im relację jednocześnie"
     },
     "delete": {
       "button": "Usuń",

@@ -2041,7 +2041,8 @@
       "viewLabel": "表示",
       "viewList": "リスト",
       "viewNetwork": "ネットワーク",
-      "manageMembers": "メンバーを追加または削除"
+      "manageMembers": "メンバーを追加または削除",
+      "selectHint": "人物にチェックを入れて、まとめて関係を設定します"
     },
     "delete": {
       "button": "削除",

@@ -2041,7 +2041,8 @@
       "viewLabel": "Vista",
       "viewList": "Lista",
       "viewNetwork": "Red",
-      "manageMembers": "Añadir o quitar miembros"
+      "manageMembers": "Añadir o quitar miembros",
+      "selectHint": "Marca personas para darles una relación a la vez"
     },
     "delete": {
       "button": "Eliminar",

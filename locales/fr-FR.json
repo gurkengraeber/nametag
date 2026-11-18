@@ -2041,7 +2041,8 @@
       "viewLabel": "Affichage",
       "viewList": "Liste",
       "viewNetwork": "Réseau",
-      "manageMembers": "Ajouter ou retirer des membres"
+      "manageMembers": "Ajouter ou retirer des membres",
+      "selectHint": "Cochez des personnes pour leur attribuer une relation en une fois"
     },
     "delete": {
       "button": "Supprimer",

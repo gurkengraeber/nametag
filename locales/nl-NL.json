@@ -2041,7 +2041,8 @@
       "viewLabel": "Weergave",
       "viewList": "Lijst",
       "viewNetwork": "Netwerk",
-      "manageMembers": "Leden toevoegen of verwijderen"
+      "manageMembers": "Leden toevoegen of verwijderen",
+      "selectHint": "Vink personen aan om ze samen een relatie te geven"
     },
     "delete": {
       "button": "Verwijderen",

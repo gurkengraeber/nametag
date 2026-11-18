@@ -2041,7 +2041,8 @@
       "viewLabel": "视图",
       "viewList": "列表",
       "viewNetwork": "网络",
-      "manageMembers": "添加或移除成员"
+      "manageMembers": "添加或移除成员",
+      "selectHint": "勾选联系人,一次为他们设置关系"
     },
     "delete": {
       "button": "删除",

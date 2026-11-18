@@ -2041,7 +2041,8 @@
       "viewLabel": "Ansicht",
       "viewList": "Liste",
       "viewNetwork": "Netzwerk",
-      "manageMembers": "Mitglieder hinzufügen oder entfernen"
+      "manageMembers": "Mitglieder hinzufügen oder entfernen",
+      "selectHint": "Personen anhaken, um ihnen gemeinsam eine Beziehung zu geben"
     },
     "delete": {
       "button": "Löschen",

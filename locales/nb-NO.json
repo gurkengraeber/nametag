@@ -2041,7 +2041,8 @@
       "viewLabel": "Visning",
       "viewList": "Liste",
       "viewNetwork": "Nettverk",
-      "manageMembers": "Legg til eller fjern medlemmer"
+      "manageMembers": "Legg til eller fjern medlemmer",
+      "selectHint": "Huk av personer for å gi dem en relasjon samtidig"
     },
     "delete": {
       "button": "Slett",

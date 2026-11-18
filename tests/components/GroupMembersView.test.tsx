@@ -11,6 +11,10 @@ vi.mock('@/components/PersonPhoto', () => ({
   default: ({ name }: { name: string }) => <span data-testid="avatar">{name}</span>,
 }));
 
+const refresh = vi.fn();
+vi.mock('next/navigation', () => ({ useRouter: () => ({ refresh, push: vi.fn(), replace: vi.fn() }) }));
+vi.mock('@/components/SearchIndexProvider', () => ({ useSearchIndex: () => ({ refreshIndex: vi.fn() }) }));
+
 vi.mock('@/components/UnifiedNetworkGraph', () => ({
   default: ({ apiEndpoint }: { apiEndpoint?: string }) => <div data-testid="graph">{apiEndpoint}</div>,
 }));
@@ -51,10 +55,12 @@ const connection = (id: string, name: string, typeLabel: string | null) => ({
   typeLabel,
 });
 
+const friend = { id: 'rt-friend', label: 'Friend', color: null };
+
 const renderView = (members: Members) =>
   render(
     <Wrapper>
-      <GroupMembersView groupId="g-1" members={members} relationshipTypes={[]} />
+      <GroupMembersView groupId="g-1" members={members} relationshipTypes={[friend]} />
     </Wrapper>
   );
 
@@ -147,5 +153,60 @@ describe('GroupMembersView', () => {
 
     expect(screen.queryByTestId('graph')).not.toBeInTheDocument();
     expect(screen.getByLabelText('Last Contact')).toBeInTheDocument();
+  });
+
+  describe('selecting several members', () => {
+    it('keeps the toolbar in place but disabled until someone is ticked', async () => {
+      renderView([person('p-1', 'Alice'), person('p-2', 'Bob')]);
+      expect(screen.getByRole('button', { name: 'Set Relationship' })).toBeDisabled();
+      expect(screen.getByText(enMessages.groups.members.selectHint)).toBeInTheDocument();
+
+      await userEvent.click(screen.getByRole('checkbox', { name: 'Alice' }));
+      expect(screen.getByText('1 selected')).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Set Relationship' })).toBeEnabled();
+    });
+
+    it('ticks and unticks every member with the header box', async () => {
+      renderView([person('p-1', 'Alice'), person('p-2', 'Bob'), person('p-3', 'Cleo')]);
+      const all = screen.getByRole('checkbox', { name: 'Select all' });
+
+      await userEvent.click(all);
+      expect(screen.getByText('3 selected')).toBeInTheDocument();
+      expect(screen.getByRole('checkbox', { name: 'Bob' })).toBeChecked();
+
+      await userEvent.click(all);
+      expect(screen.queryByText(/selected$/)).not.toBeInTheDocument();
+    });
+
+    it('clears the selection', async () => {
+      renderView([person('p-1', 'Alice'), person('p-2', 'Bob')]);
+      await userEvent.click(screen.getByRole('checkbox', { name: 'Alice' }));
+      await userEvent.click(screen.getByRole('button', { name: 'Clear selection' }));
+
+      expect(screen.getByRole('checkbox', { name: 'Alice' })).not.toBeChecked();
+      expect(screen.queryByText('1 selected')).not.toBeInTheDocument();
+    });
+
+    it('sets the relationship of the ticked members in one request', async () => {
+      const fetchMock = vi.fn().mockResolvedValue({ ok: true, json: async () => ({ affectedCount: 2 }) });
+      vi.stubGlobal('fetch', fetchMock);
+      refresh.mockClear();
+      renderView([person('p-1', 'Alice'), person('p-2', 'Bob'), person('p-3', 'Cleo')]);
+
+      await userEvent.click(screen.getByRole('checkbox', { name: 'Alice' }));
+      await userEvent.click(screen.getByRole('checkbox', { name: 'Cleo' }));
+      await userEvent.click(screen.getByRole('button', { name: 'Set Relationship' }));
+      expect(screen.getByText('Set Relationship for 2 People')).toBeInTheDocument();
+      await userEvent.selectOptions(screen.getByDisplayValue('Select relationship type...'), 'rt-friend');
+      const [, confirm] = screen.getAllByRole('button', { name: 'Set Relationship' });
+      await userEvent.click(confirm);
+
+      expect(fetchMock).toHaveBeenCalledWith('/api/people/bulk', expect.objectContaining({ method: 'POST' }));
+      const body = JSON.parse(fetchMock.mock.calls[0][1].body);
+      expect(body).toEqual({ action: 'setRelationship', personIds: ['p-1', 'p-3'], relationshipTypeId: 'rt-friend' });
+      expect(refresh).toHaveBeenCalled();
+      expect(screen.getByRole('checkbox', { name: 'Alice' })).not.toBeChecked();
+      vi.unstubAllGlobals();
+    });
   });
 });
