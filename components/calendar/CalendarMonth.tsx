@@ -15,8 +15,11 @@ import {
 
 interface CalendarMonthProps extends MonthRef {
   events: CalendarEvent[];
-  /** True when the URL names no month, so the server picked it from its own clock. */
-  isDefaultMonth?: boolean;
+  /**
+   * True when no month was asked for, so the server picked "this month" from
+   * its own clock. The browser then moves to its own month if they differ.
+   */
+  followToday?: boolean;
 }
 
 const chevron = (path: string) => (
@@ -25,8 +28,7 @@ const chevron = (path: string) => (
   </svg>
 );
 
-export default function CalendarMonth({ year, monthIndex, events, isDefaultMonth = false }: CalendarMonthProps) {
-  const router = useRouter();
+export default function CalendarMonth({ year, monthIndex, events, followToday = false }: CalendarMonthProps) {
   const t = useTranslations('calendar');
   const tDashboard = useTranslations('dashboard');
   const locale = useLocale();
@@ -34,17 +36,18 @@ export default function CalendarMonth({ year, monthIndex, events, isDefaultMonth
   // The viewer's own "today" is only known in the browser, so it is filled in
   // after mount rather than rendered on the server in the server's timezone.
   const [today, setToday] = useState<Date | null>(null);
-  useEffect(() => setToday(new Date()), []);
-
-  // When the server guessed the month from its own clock and the browser is in
-  // another month (different timezone near a month boundary), switch to the browser's.
+  const router = useRouter();
   useEffect(() => {
-    if (!isDefaultMonth) return;
     const now = new Date();
-    if (now.getFullYear() !== year || now.getMonth() !== monthIndex) {
-      router.replace(`/calendar?month=${formatMonthParam({ year: now.getFullYear(), monthIndex: now.getMonth() })}`);
+    setToday(now);
+    // Near a month boundary the server and the viewer can disagree on which
+    // month it is. The viewer's clock wins.
+    if (followToday && (now.getFullYear() !== year || now.getMonth() !== monthIndex)) {
+      router.replace(
+        `/calendar?month=${formatMonthParam({ year: now.getFullYear(), monthIndex: now.getMonth() })}`
+      );
     }
-  }, [isDefaultMonth, year, monthIndex, router]);
+  }, [followToday, year, monthIndex, router]);
 
   const month: MonthRef = { year, monthIndex };
   const firstDayOfWeek = getFirstDayOfWeek(locale);
@@ -120,10 +123,7 @@ export default function CalendarMonth({ year, monthIndex, events, isDefaultMonth
           >
             {chevron('M15.75 19.5L8.25 12l7.5-7.5')}
           </Link>
-          <Link
-            href={today ? `/calendar?month=${formatMonthParam({ year: today.getFullYear(), monthIndex: today.getMonth() })}` : '/calendar'}
-            className={navLinkClass}
-          >
+          <Link href="/calendar" className={navLinkClass}>
             {t('today')}
           </Link>
           <Link

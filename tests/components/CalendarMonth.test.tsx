@@ -5,8 +5,11 @@ import CalendarMonth from '@/components/calendar/CalendarMonth';
 import type { CalendarEvent } from '@/lib/calendar-events';
 import enMessages from '@/locales/en.json';
 
-const replace = vi.fn();
-const router = { replace };
+const { replace, router } = vi.hoisted(() => {
+  const replace = vi.fn();
+  // Stable like the real router, so the effect does not re-run on every render.
+  return { replace, router: { replace } };
+});
 vi.mock('next/navigation', () => ({ useRouter: () => router }));
 
 beforeEach(() => replace.mockClear());
@@ -37,7 +40,7 @@ const events: CalendarEvent[] = [
 ];
 
 function renderMonth(
-  props: { year?: number; monthIndex?: number; events?: CalendarEvent[]; isDefaultMonth?: boolean } = {}
+  props: { year?: number; monthIndex?: number; events?: CalendarEvent[]; followToday?: boolean } = {}
 ) {
   return render(
     <NextIntlClientProvider locale="en" messages={enMessages}>
@@ -62,32 +65,7 @@ describe('CalendarMonth', () => {
       'href',
       '/calendar?month=2026-06'
     );
-    expect(screen.getByRole('link', { name: enMessages.calendar.today })).toHaveAttribute(
-      'href',
-      expect.stringMatching(/^\/calendar\?month=\d{4}-\d{2}$/)
-    );
-  });
-
-  it('points the Today link at the month of the browser clock', () => {
-    vi.useFakeTimers({ toFake: ['Date'], now: new Date(2026, 10, 30, 23, 30) });
-    renderMonth();
-    expect(screen.getByRole('link', { name: enMessages.calendar.today })).toHaveAttribute(
-      'href',
-      '/calendar?month=2026-11'
-    );
-  });
-
-  it('switches to the browser month when the server guessed another one', () => {
-    vi.useFakeTimers({ toFake: ['Date'], now: new Date(2026, 5, 1, 0, 30) });
-    renderMonth({ year: 2026, monthIndex: 4, isDefaultMonth: true });
-    expect(replace).toHaveBeenCalledWith('/calendar?month=2026-06');
-  });
-
-  it('keeps an explicitly chosen month and an agreeing default month', () => {
-    vi.useFakeTimers({ toFake: ['Date'], now: new Date(2026, 5, 1) });
-    renderMonth({ year: 2026, monthIndex: 4 });
-    renderMonth({ year: 2026, monthIndex: 5, isDefaultMonth: true });
-    expect(replace).not.toHaveBeenCalled();
+    expect(screen.getByRole('link', { name: enMessages.calendar.today })).toHaveAttribute('href', '/calendar');
   });
 
   it('wraps from January back to December of the previous year', () => {
@@ -136,5 +114,28 @@ describe('CalendarMonth', () => {
   it('does not show the empty message when there are events', () => {
     renderMonth();
     expect(screen.queryByText(enMessages.calendar.noEvents)).not.toBeInTheDocument();
+  });
+
+  describe('when the server picked the month', () => {
+    it("moves to the browser's month when the server's clock is in another month", () => {
+      vi.useFakeTimers({ toFake: ['Date'] });
+      vi.setSystemTime(new Date(2026, 5, 1, 0, 30));
+      renderMonth({ followToday: true });
+      expect(replace).toHaveBeenCalledWith('/calendar?month=2026-06');
+    });
+
+    it('stays put when both clocks agree on the month', () => {
+      vi.useFakeTimers({ toFake: ['Date'] });
+      vi.setSystemTime(new Date(2026, 4, 20));
+      renderMonth({ followToday: true });
+      expect(replace).not.toHaveBeenCalled();
+    });
+  });
+
+  it('never moves away from a month the user asked for', () => {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date(2026, 5, 1));
+    renderMonth();
+    expect(replace).not.toHaveBeenCalled();
   });
 });
