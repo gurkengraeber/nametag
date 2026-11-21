@@ -213,7 +213,8 @@
         "nlNL": "Nederlands (Dutch)",
         "frFR": "Français (French)",
         "plPL": "Polski (Polish)",
-        "error": "De taal kon niet worden gewijzigd. Probeer het opnieuw."
+        "error": "De taal kon niet worden gewijzigd. Probeer het opnieuw.",
+        "ptBR": "Português (Brazilian Portuguese)"
       },
       "namesTitle": "Namen",
       "namesDescription": "Kies hoe namen worden geschreven en welke delen worden getoond. Het voorbeeld verandert mee met je keuze.",

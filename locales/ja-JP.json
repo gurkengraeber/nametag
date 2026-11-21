@@ -213,7 +213,8 @@
         "nlNL": "Nederlands (Dutch)",
         "frFR": "Français (French)",
         "plPL": "Polski (Polish)",
-        "error": "言語を変更できませんでした。もう一度お試しください。"
+        "error": "言語を変更できませんでした。もう一度お試しください。",
+        "ptBR": "Português (Brazilian Portuguese)"
       },
       "namesTitle": "名前",
       "namesDescription": "名前の書き方と表示する部分を選びます。例は選択に合わせて変わります。",

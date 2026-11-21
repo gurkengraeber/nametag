@@ -213,7 +213,8 @@
         "nlNL": "Nederlands (Dutch)",
         "frFR": "Français (French)",
         "plPL": "Polski (Polish)",
-        "error": "无法更改语言,请重试。"
+        "error": "无法更改语言,请重试。",
+        "ptBR": "Português (Brazilian Portuguese)"
       },
       "namesTitle": "姓名",
       "namesDescription": "选择姓名的书写方式和显示的部分。示例会随你的选择而变化。",

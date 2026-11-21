@@ -213,7 +213,8 @@
         "nlNL": "Nederlands (Dutch)",
         "frFR": "Français (French)",
         "plPL": "Polski (Polish)",
-        "error": "Die Sprache konnte nicht geändert werden. Bitte versuche es noch einmal."
+        "error": "Die Sprache konnte nicht geändert werden. Bitte versuche es noch einmal.",
+        "ptBR": "Português (Brazilian Portuguese)"
       },
       "namesTitle": "Namen",
       "namesDescription": "Lege fest, wie Namen geschrieben werden und welche Teile erscheinen. Das Beispiel ändert sich mit deiner Auswahl.",

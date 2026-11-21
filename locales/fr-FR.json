@@ -213,7 +213,8 @@
         "nlNL": "Nederlands (néerlandais)",
         "frFR": "Français (France)",
         "plPL": "Polski (Polish)",
-        "error": "Impossible de changer la langue. Veuillez réessayer."
+        "error": "Impossible de changer la langue. Veuillez réessayer.",
+        "ptBR": "Português (Brazilian Portuguese)"
       },
       "namesTitle": "Noms",
       "namesDescription": "Choisissez comment les noms s'écrivent et quelles parties s'affichent. L'exemple change selon votre choix.",

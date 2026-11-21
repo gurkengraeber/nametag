@@ -213,7 +213,8 @@
         "nlNL": "Nederlands (Dutch)",
         "frFR": "Français (French)",
         "plPL": "Polski (Polish)",
-        "error": "Kunne ikke endre språk. Prøv igjen."
+        "error": "Kunne ikke endre språk. Prøv igjen.",
+        "ptBR": "Português (Brazilian Portuguese)"
       },
       "namesTitle": "Navn",
       "namesDescription": "Velg hvordan navn skrives og hvilke deler som vises. Eksempelet endrer seg mens du velger.",

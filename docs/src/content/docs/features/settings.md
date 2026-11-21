@@ -25,7 +25,7 @@ Your name, surname, nickname, email address, and profile photo. Use **Upload pho
 ## Appearance
 
 - **Theme**: Dark or Light, shown as two small previews. Dark is the default.
-- **Language**: choose from all of Nametag's supported languages, including English, Spanish, Japanese, Norwegian, German, Chinese, Italian, Russian, Dutch, French, and Polish.
+- **Language**: choose from all of Nametag's supported languages, including English, Spanish, Japanese, Norwegian, German, Chinese, Italian, Russian, Dutch, French, Polish, and Brazilian Portuguese.
 - **Date format**: MDY, DMY, or YMD.
 - **Names**: name order (Western or Eastern) and name display format (Full name, Nickname Preferred, or Short) sit in one card. An example name ("Maria 'Mia' Garcia") above the choices updates as you choose, showing how a name reads on a person's page and in lists and the graph.
 
@@ -101,6 +101,6 @@ App version, license information, and links to the GitHub repository, release no
 | Name order | Western (first, then last), Eastern (last, then first) |
 | Name display | Full, Nickname Preferred, Short |
 | Graph mode | Individuals, Bubbles |
-| Supported languages | English, Spanish, Japanese, Norwegian, German, Chinese, Italian, Russian, Dutch, French, Polish (11 total) |
+| Supported languages | English, Spanish, Japanese, Norwegian, German, Chinese, Italian, Russian, Dutch, French, Polish, Brazilian Portuguese (12 total) |
 | Advance notice | On the day only, 1, 3, 7, 14, or 30 days before |
 | Weekly summary | Off (default) or on, with a day of the week to send it |

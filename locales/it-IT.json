@@ -213,7 +213,8 @@
         "nlNL": "Nederlands (Dutch)",
         "frFR": "Français (French)",
         "plPL": "Polski (Polish)",
-        "error": "Impossibile cambiare la lingua. Riprova."
+        "error": "Impossibile cambiare la lingua. Riprova.",
+        "ptBR": "Português (Brazilian Portuguese)"
       },
       "namesTitle": "Nomi",
       "namesDescription": "Scegli come vengono scritti i nomi e quali parti mostrare. L'esempio cambia mentre scegli.",

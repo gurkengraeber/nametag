@@ -213,7 +213,8 @@
         "nlNL": "Nederlands (Dutch)",
         "frFR": "Français (French)",
         "plPL": "Polski (Polish)",
-        "error": "Не удалось сменить язык. Попробуйте ещё раз."
+        "error": "Не удалось сменить язык. Попробуйте ещё раз.",
+        "ptBR": "Português (Brazilian Portuguese)"
       },
       "namesTitle": "Имена",
       "namesDescription": "Выберите, как записываются имена и какие части показываются. Пример меняется вместе с выбором.",

@@ -213,7 +213,8 @@
         "nlNL": "Nederlands (Dutch)",
         "frFR": "Français (French)",
         "plPL": "Polski",
-        "error": "Nie udało się zmienić języka. Spróbuj ponownie."
+        "error": "Nie udało się zmienić języka. Spróbuj ponownie.",
+        "ptBR": "Português (Brazilian Portuguese)"
       },
       "namesTitle": "Imiona i nazwiska",
       "namesDescription": "Wybierz, jak zapisywane są imiona i nazwiska i które części są widoczne. Przykład zmienia się wraz z wyborem.",

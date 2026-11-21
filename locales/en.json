@@ -213,7 +213,8 @@
         "nlNL": "Nederlands (Dutch)",
         "frFR": "Français (French)",
         "plPL": "Polski (Polish)",
-        "error": "Failed to update language. Please try again."
+        "error": "Failed to update language. Please try again.",
+        "ptBR": "Português (Brazilian Portuguese)"
       },
       "namesTitle": "Names",
       "namesDescription": "Choose how names are written and which parts are shown. The example updates as you choose.",
